@@ -1,0 +1,43 @@
+<mat-table class="mat-elevation-z8" style="width: 100%" [dataSource]="ListItems">
+    <!-- Column: Show selected customer -->
+    <ng-container matColumnDef="selectedCustomer">
+      <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
+      <mat-cell *matCellDef="let customerData">{{ customerData.ItemCode }}</mat-cell>
+    </ng-container>
+  
+    
+    <!-- Column: Show a few items, item code, description, price -->
+    <ng-container matColumnDef="item">
+      <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
+      <mat-cell *matCellDef="let customer">{{ customer.ItemName}}</mat-cell>
+    </ng-container>
+  
+    <!-- Column: Show order total -->
+    <ng-container matColumnDef="orderTotal">
+      <mat-header-cell *matHeaderCellDef>Bar Code</mat-header-cell>
+      <mat-cell *matCellDef="let customer">{{ customer.BarCode }}</mat-cell>
+    </ng-container>
+  
+    <!-- Column: Buttons (import order, change, more info, remove) -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+      <mat-cell *matCellDef="let customer">
+        <button mat-icon-button (click)="importOrder(customer)">
+          <mat-icon>add_shopping_cart</mat-icon>
+        </button>
+        <button mat-icon-button (click)="editCustomer(customer)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="showMoreInfo(customer)">
+          <mat-icon>info</mat-icon>
+        </button>
+        <button mat-icon-button (click)="removeCustomer(customer)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+  
+    <!-- Add columns at the table -->
+    <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
+  </mat-table>	

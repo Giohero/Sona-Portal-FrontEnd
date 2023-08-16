@@ -19,6 +19,7 @@ export class SidenavComponent {
   fillerNav=[
     {name: "Home", route:"Home", icon:"home"},
     {name: "Costumers", route:"Costumers", icon:"person"},
+    {name: "Items", route:"Items", icon:"blur_linear"},
   ]
 
   fillerContent = Array.from(

@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 // code to use an api 
 export class ServiceService {
   myappurlcosmos = "https://functionhandlecosmosdb.azurewebsites.net/"; 
+  myappurlsap = "https://orderpadfunctions.azurewebsites.net/";
 
   myapiurl = "api/"
 
@@ -17,5 +18,9 @@ export class ServiceService {
   getCustomer(): Observable<INResponse> {
     
     return this.myhttp.get<INResponse>(this.myappurlcosmos + this.myapiurl + 'RetrieveCustomer')
+  }
+  getItems(): Observable<INResponse> {
+
+    return this.myhttp.get<INResponse>(this.myappurlsap + this.myapiurl + 'RetrieveItems')
   }
 }

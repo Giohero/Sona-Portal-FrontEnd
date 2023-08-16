@@ -17,6 +17,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CostumersComponent } from './costumers/costumers.component';
+import { ItemsComponent } from './items/items.component';
 
 
 
@@ -25,7 +26,8 @@ import { CostumersComponent } from './costumers/costumers.component';
     AppComponent,
     SidenavComponent,
     HomeComponent,
-    CostumersComponent
+    CostumersComponent,
+    ItemsComponent
   ],
   imports: [
     BrowserModule,
