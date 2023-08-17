@@ -1,0 +1,55 @@
+<div>
+        <button class="" style="cursor:pointer;">
+
+            <div class="">
+
+              Sign in with Microsoft
+
+              <img src="/assets/images/microsoft.png"  class="">
+
+            </div>
+
+          </button>
+
+ 
+
+          <button class="desktop1-group1 login">
+
+            Login
+
+          </button> 
+
+          <div>
+
+          <div class="desktop1-groupLogin">
+
+            <i class="far fa-user-circle desktop1-icon"></i>
+
+            <mat-form-field class="">
+
+                <input matInput placeholder="Username" formControlName="username" class="">
+
+            </mat-form-field>
+
+          </div>
+
+ 
+
+          <div class="desktop1-groupLogin groupPassword">
+
+            <i class="fas fa-key desktop1-icon"></i>
+            
+            <mat-form-field class="">
+
+                <mat-label>Enter your password</mat-label>
+
+                <input matInput [type]="hide ? 'password' : 'text'" class="desktop1-matinputslot1" placeholder="Password"  formControlName="password">
+
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide" >
+
+                    <mat-icon style="font-size: 22px; margin-bottom: 15px;">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+
+                </button>
+                
+            </mat-form-field>
+</div>
