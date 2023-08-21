@@ -19,16 +19,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CostumersComponent } from './costumers/costumers.component';
 import { ItemsComponent } from './items/items.component';
 import { SharedModule } from './shared/shared.module';
+import { LoginComponent } from './login/login.component';
+import { RouterModule } from '@angular/router';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    SidenavComponent,
-    HomeComponent,
-    CostumersComponent,
-    ItemsComponent
+    LoginComponent
+    // SidenavComponent,
+    // HomeComponent,
+    // CostumersComponent,
+    // ItemsComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +45,10 @@ import { SharedModule } from './shared/shared.module';
     MatButtonModule,
     MatTableModule,
     HttpClientModule,
-    SharedModule
+    SharedModule,
+    RouterModule.forRoot([
+      { path: '', component: LoginComponent },
+      { path: 'dashboard', component: DashboardComponent}]),
   ],
   providers: [],
   bootstrap: [AppComponent]

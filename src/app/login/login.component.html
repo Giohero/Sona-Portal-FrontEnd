@@ -1,55 +1,50 @@
-<div>
-        <button class="" style="cursor:pointer;">
+<div fxLayout="row">
 
-            <div class="">
+  <div class="image" fxFlex="50%">
+  </div>
 
-              Sign in with Microsoft
+  <br>
+  <div fxFlex="50%" class="login">
+   <div class="margin">
+    
+    <mat-card>
+      <mat-card-title>LOGIN</mat-card-title>
+      <br>
+      <div class="input">
+        <mat-icon class="icon">person</mat-icon>
+        <mat-form-field class="">
+            <input matInput placeholder="Username" formControlName="username" class="">
+        </mat-form-field>
+      </div>
 
-              <img src="/assets/images/microsoft.png"  class="">
+      <div class="input">
+        <mat-icon class="icon">keygen</mat-icon>
+        <mat-form-field class="">
+            <mat-label>Enter your password</mat-label>
+            <input matInput [type]="hide ? 'password' : 'text'" class="" placeholder="Password"  formControlName="password">
+            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide" >
+                <mat-icon style="font-size: 22px; margin-bottom: 15px;">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+        </mat-form-field>
+      </div>
 
-            </div>
-
-          </button>
-
- 
-
-          <button class="desktop1-group1 login">
-
-            Login
-
-          </button> 
-
-          <div>
-
-          <div class="desktop1-groupLogin">
-
-            <i class="far fa-user-circle desktop1-icon"></i>
-
-            <mat-form-field class="">
-
-                <input matInput placeholder="Username" formControlName="username" class="">
-
-            </mat-form-field>
-
-          </div>
-
- 
-
-          <div class="desktop1-groupLogin groupPassword">
-
-            <i class="fas fa-key desktop1-icon"></i>
-            
-            <mat-form-field class="">
-
-                <mat-label>Enter your password</mat-label>
-
-                <input matInput [type]="hide ? 'password' : 'text'" class="desktop1-matinputslot1" placeholder="Password"  formControlName="password">
-
-                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide" >
-
-                    <mat-icon style="font-size: 22px; margin-bottom: 15px;">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-
-                </button>
-                
-            </mat-form-field>
+      <br>
+      <button mat-button class="button">
+        Login
+      </button>
+    </mat-card>
+    <br>
+    <br>
+    <br>
+    <mat-card>
+      <mat-card-subtitle>or Connect with Social Media</mat-card-subtitle>
+      <br>
+      <button mat-button class="button">
+        Sign in with Microsoft
+        <img src="/assets/images/microsoft.png"  style="height: 20px;width: 20px;">
+      </button>
+      </mat-card>
+      
+      
+  </div>
 </div>

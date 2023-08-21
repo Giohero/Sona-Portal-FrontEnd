@@ -24,6 +24,8 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {MatSortModule} from '@angular/material/sort';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import {MatCardModule} from '@angular/material/card';
 
 @NgModule({
   declarations: [],
@@ -51,7 +53,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatSidenavModule,
     MatListModule,
     MatSortModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    FlexLayoutModule,
+    MatCardModule
   ],
 
  exports: [
@@ -77,7 +81,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatSidenavModule,
     MatListModule,
     MatSortModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    FlexLayoutModule,
+    MatCardModule
  ]
 })
 
