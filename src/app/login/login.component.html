@@ -1,10 +1,11 @@
-<div fxLayout="row">
+<div >
 
-  <div class="image" fxFlex="50%">
+  <div class="image">
+    <a href="https://www.facebook.com/officialsonaenterprises/" class="imageLogo"><span ></span></a>
   </div>
 
   <br>
-  <div fxFlex="50%" class="login">
+  <div  class="login">
    <div class="margin">
     
     <mat-card>
@@ -23,14 +24,14 @@
             <mat-label>Enter your password</mat-label>
             <input matInput [type]="hide ? 'password' : 'text'" class="" placeholder="Password"  formControlName="password">
             <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide" >
-                <mat-icon style="font-size: 22px; margin-bottom: 15px;">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                <mat-icon class="icon" style="font-size: 22px; margin-bottom: 15px;">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
         </mat-form-field>
       </div>
 
       <br>
       <button mat-button class="button">
-        Login
+        <span style="color: white;">Login</span> 
       </button>
     </mat-card>
     <br>
@@ -40,7 +41,7 @@
       <mat-card-subtitle>or Connect with Social Media</mat-card-subtitle>
       <br>
       <button mat-button class="button">
-        Sign in with Microsoft
+        <span style="color: white;">Sign in with Microsoft</span>
         <img src="/assets/images/microsoft.png"  style="height: 20px;width: 20px;">
       </button>
       </mat-card>
