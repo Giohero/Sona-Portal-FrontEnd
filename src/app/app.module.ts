@@ -23,6 +23,11 @@ import { LoginComponent } from './login/login.component';
 import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
+// MSAL imports
+import { MsalModule } from '@azure/msal-angular';
+import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import { MsalGuard } from '@azure/msal-angular';
+
 
 
 @NgModule({
@@ -48,7 +53,22 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     SharedModule,
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
-      { path: 'dashboard', component: DashboardComponent}]),
+      { path: 'dashboard', component: DashboardComponent, canActivate:[MsalGuard]}]),
+    // MSAL configuration
+    MsalModule.forRoot(new PublicClientApplication({
+      auth: {
+        clientId: '58eb92b7-6661-4642-8409-420f059fb6d3',
+        authority: 'https://login.microsoftonline.com/26e6cc6b-2157-4879-a8f3-f2fc5a6a1bfd',
+        redirectUri: 'http://localhost:4200/dashboard'
+      }
+    }), {
+      interactionType: InteractionType.Popup
+    }, {
+      protectedResourceMap: new Map([
+        ['https://graph.microsoft.com/v1.0/me', ['user.read']]
+      ]),
+      interactionType: InteractionType.Redirect
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
