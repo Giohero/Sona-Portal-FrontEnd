@@ -1,0 +1,88 @@
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  
+  .button-group {
+    display: flex;
+    align-items: center;
+    gap: 05px;
+  }
+  
+  .custom-button {
+    width: auto;
+    float: left;
+  }
+  .mat-card{
+    border-top: 8px solid #17bd93;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+  }
+  
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    display: grid;
+  }
+  
+  .label-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .label {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+    color: darkcyan;
+  }
+  .boxCustom{
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  body {
+    background-color: rgb(238, 25, 106);
+  }
+  /* Estilos responsivos */
+  /* Pantallas más pequeñas */
+  @media screen and (max-width: 768px) {
+    .container {
+      grid-template-columns: 1fr; /* Cambiar a una sola columna */
+    }
+  
+    .grid-container {
+      grid-template-columns: 1fr; /* Cambiar a una sola columna */
+      grid-gap: 20px; /* Aumentar el espacio entre elementos */
+    }
+    
+    .label-container {
+      margin-bottom: 20px; /* Aumentar el espacio entre grupos de etiquetas */
+    }
+    
+    .custom-button {
+      font-size: 0.8em; /* Reducir el tamaño de los botones */
+    }
+    
+    .label {
+      font-size: 1em; /* Reducir el tamaño de las etiquetas */
+    }
+    
+    .boxCustom {
+      height: 30px; /* Reducir la altura de los campos de entrada */
+      padding: 8px; /* Reducir el espacio interno */
+    }
+  }
+  
+  /* Pantallas aún más pequeñas (por ejemplo, smartphones en posición vertical) */
+  @media screen and (max-width: 480px) {
+    .boxCustom {
+      height: 25px; /* Reducir aún más la altura de los campos de entrada */
+      padding: 6px; /* Reducir el espacio interno */
+    }
+  }
+  

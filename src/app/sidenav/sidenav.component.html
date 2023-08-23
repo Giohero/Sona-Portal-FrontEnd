@@ -1,34 +1,34 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches" *ngIf="shouldRun">
-    <mat-toolbar [ngClass]="'color'" class="example-toolbar">
-      <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
-      <h1 class="example-app-name">Sona</h1>
-      <div class="spacer"></div>
-      <a mat-button routerLink="Orders">Order lines</a>
-      <a mat-button>Print</a>
-      <a mat-button>Email</a>
-      <a mat-button routerLink="/home">Exit Order</a> <!--Route home provitional-->
-    </mat-toolbar>
-    <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-      <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
-        fixedTopGap="56">
-        <!--Options of sidevar-->
-        <mat-nav-list>
-            <a mat-list-item routerLink="/dashboard">
-              <mat-icon class="icon">home</mat-icon>
-              Home
-            </a>
-            <a mat-list-item routerLink="/dashboard/costumers">
-              <mat-icon class="icon">person</mat-icon>
-              Customers
-            </a>
-            <a mat-list-item routerLink="/dashboard/items">
-              <mat-icon class="icon">blur_linear</mat-icon>
-              Items
-            </a>
-          </mat-nav-list>          
-      </mat-sidenav>
-      <mat-sidenav-content> 
-        <router-outlet></router-outlet>
-      </mat-sidenav-content>
-    </mat-sidenav-container>
-  </div>
+  <mat-toolbar [ngClass]="'color'" class="example-toolbar">
+    <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+    <h1 class="example-app-name">Sona</h1>
+    <div class="spacer"></div>
+    <a mat-button routerLink="/dashboard/orders">Start New Order</a>
+    <a mat-button>Print</a>
+    <a mat-button>Email</a>
+    <a mat-button routerLink="/dashboard">Exit Order</a> <!--Route home provitional-->
+  </mat-toolbar>
+  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
+      fixedTopGap="56">
+      <!--Options of sidevar el mio-->
+      <mat-nav-list>
+          <a mat-list-item routerLink="/dashboard">
+            <mat-icon class="icon">home</mat-icon>
+            Home
+          </a>
+          <a mat-list-item routerLink="/dashboard/costumers">
+            <mat-icon class="icon">person</mat-icon>
+            Customers
+          </a>
+          <a mat-list-item routerLink="/dashboard/items">
+            <mat-icon class="icon">blur_linear</mat-icon>
+            Items
+          </a>
+        </mat-nav-list>          
+    </mat-sidenav>
+    <mat-sidenav-content> 
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

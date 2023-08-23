@@ -27,13 +27,15 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { MsalModule } from '@azure/msal-angular';
 import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { MsalGuard } from '@azure/msal-angular';
+import { OrdersComponent } from './orders/orders.component';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    OrdersComponent
     // SidenavComponent,
     // HomeComponent,
     // CostumersComponent,
