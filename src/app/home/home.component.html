@@ -1,23 +1,58 @@
-<a>hi</a>
+<div class="dashboard-card">
+  <div class="dashboard">
+    <mat-card class="search-card">
+      <mat-form-field>
+        <input matInput placeholder="Buscar..." />
+      </mat-form-field>
+    </mat-card>
 
-<div class="content" role="main">
-    <div class="card">
-      <div class="form-group">
-        <label for="search-text">Search Text</label>
-        <input type="text" class="form-control" id="search-text" aria-describedby="search-text" 
-          [(ngModel)]="searchText" placeholder="Enter text to search" 
-          autofocus [matAutocomplete]="auto">
-      </div>
+    <mat-card class="home-card">
+      <mat-card-header>
+        <mat-card-title>Welcome To Sona</mat-card-title>
+        <mat-card-subtitle>
+          Our thanks to you
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Sona Enterprises would like to take this chance to thank you for your interest 
+          in our products and company. We promise to try our best to provide you with the 
+          best service at even better prices! We would like to express our sincere appreciation 
+          to our returning customers for your continued patronage of our business. 
+          Thanks to customers like you, we are celebrating over 30 years of business. 
+          Here's to many years of doing business with you!
+        </p>
+      </mat-card-content>
+    </mat-card>
 
-      <!-- <mat-option *ngFor="let c of ListItems| appFilter: searchText"  value="{{c.ItemCode}}"  class="optionList" >
-        {{c.ItemCode}} - {{c.ItemName}}
-      </mat-option> -->
-
-      <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectMaterial($event.option.value)">
-        <mat-option *ngFor="let c of ListItems| appFilter: searchText"  value="{{c.ItemCode}}"  class="optionList" >
-          {{c.ItemCode}} - {{c.ItemName}}
-        </mat-option>
-      </mat-autocomplete>
-      
-    </div>
-  </div>
+    <mat-card class="data-card">
+      <h2>Nuevos Usuarios</h2>
+      <!-- Contenido de nuevos usuarios -->
+    </mat-card>
+  
+    <mat-card class="data-card">
+      <h2>Ventas</h2>
+      <!-- Contenido de ventas -->
+    </mat-card>
+  
+    <mat-card class="data-card">
+      <h2>Performance</h2>
+      <!-- Contenido de performance -->
+    </mat-card>
+  
+    <mat-card class="chart-card">
+      <h2>Ventas del Mes</h2>
+      <!-- Gráfica de ventas del mes -->
+    </mat-card>
+  
+    <mat-card class="chart-card">
+      <h2>Total de Órdenes</h2>
+      <!-- Gráfica de total de órdenes -->
+    </mat-card>
+  
+    <mat-card class="table-card">
+      <h2>Visitas y Visitantes</h2>
+      <!-- Tabla de visitas y visitantes -->
+    </mat-card>
+  </div>  
+</div>

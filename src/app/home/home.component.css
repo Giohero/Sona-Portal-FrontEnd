@@ -1,0 +1,81 @@
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Estructura de la página */
+.dashboard-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f7ef;
+  background-image: url('https://cdn.pixabay.com/photo/2019/06/28/03/07/camping-4303357_1280.jpg');
+  background-size: cover; 
+  background-repeat: no-repeat; 
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 2fr; 
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+  background-color: #f3bb4379;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos de tarjetas */
+.mat-card {
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos de encabezados */
+.mat-card-title {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.mat-card-subtitle {
+  font-size: 14px;
+  color: #777;
+}
+
+/* Estilos de contenido */
+.mat-card-content p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Estilos de botones */
+.mat-card-actions button.mat-button {
+  margin-top: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 8px 15px;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.mat-card-actions button.mat-button:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Diseño responsivo */
+@media screen and (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr; 
+    padding: 10px;
+  }
+
+  .mat-card {
+    margin-bottom: 10px;
+  }
+}
