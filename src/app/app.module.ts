@@ -30,6 +30,7 @@ import { MsalGuard } from '@azure/msal-angular';
 import { OrdersComponent } from './orders/orders.component';
 import { FilterPipe } from './service/filter.pipe';
 import { FilterPipeCustomer } from './service/filterCustomers.pipe';
+import { DialogAddressComponent } from './dialog-address/dialog-address.component';
 
 
 
@@ -38,7 +39,8 @@ import { FilterPipeCustomer } from './service/filterCustomers.pipe';
     AppComponent,
     LoginComponent,
     OrdersComponent,
-    FilterPipeCustomer
+    FilterPipeCustomer,
+    DialogAddressComponent
     //FilterPipe
     // SidenavComponent,
     // HomeComponent,
