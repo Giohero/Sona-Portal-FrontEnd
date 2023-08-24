@@ -9,6 +9,7 @@ import { ItemsComponent } from '../items/items.component';
 import { CostumersComponent } from '../costumers/costumers.component';
 import { HomeComponent } from '../home/home.component';
 import { SidenavComponent } from '../sidenav/sidenav.component';
+import { FilterPipe } from '../service/filter.pipe';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { SidenavComponent } from '../sidenav/sidenav.component';
     DashboardComponent,
     ItemsComponent,
     CostumersComponent,
-    HomeComponent
+    HomeComponent,
+    FilterPipe
   ],
   imports: [
     CommonModule,

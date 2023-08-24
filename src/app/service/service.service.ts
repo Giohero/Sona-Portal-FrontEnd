@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { INResponse } from '../models/INResponse';
 import { Observable } from 'rxjs';
+import { BusinessPartner } from '../models/customer';
 
 @Injectable({
   providedIn: 'root'
@@ -17,10 +18,14 @@ export class ServiceService {
   constructor(private myhttp: HttpClient) { }
   getCustomer(): Observable<INResponse> {
     
-    return this.myhttp.get<INResponse>(this.myappurlcosmos + this.myapiurl + 'RetrieveCustomer')
+    return this.myhttp.get<INResponse>(this.myappurlsap + this.myapiurl + 'SearchBusinessPartners')
   }
   getItems(): Observable<INResponse> {
 
     return this.myhttp.get<INResponse>(this.myappurlsap + this.myapiurl + 'RetrieveItems')
+  }
+
+  PostCustomer(Customer: any): Observable<INResponse> {
+    return this.myhttp.post<INResponse>(this.myappurlsap + this.myapiurl + 'CreateBusinessPartner', Customer)
   }
 }

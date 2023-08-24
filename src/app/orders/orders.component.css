@@ -3,6 +3,12 @@
     justify-content: flex-end;
     margin-bottom: 10px;
   }
+
+  .h2Mat{
+    display: flex;
+    text-align: left;
+    color: darkcyan;
+  }
   
   .button-group {
     display: flex;
@@ -13,14 +19,30 @@
   .custom-button {
     width: auto;
     float: left;
+    margin-top: 10px;
+    width: 250px;
+    background-color: #e77155;
   }
   .mat-card{
-    border-top: 8px solid #17bd93;
+    border-top: 8px solid darkcyan;
+    background-color: rgba(254, 254, 254, 0.8); /* Cambia los valores RGB según el color que desees */
+    padding: 20px;
   }
   .container {
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
+    color: #ffffff;
+  
+  }
+
+  .background{
+    background-repeat: no-repeat;
+    position: inherit;
+    background-size: cover;
+    background-image:url('src/assets/images/fireplace.jpg');
+    width: 100%;
+    height: 100%;
   }
   
   .grid-container {
@@ -35,9 +57,9 @@
   }
   
   .label {
-    font-size: 1.2em;
+    font-size: 1.1em;
     margin-bottom: 5px;
-    color: darkcyan;
+    color: #e77155;
   }
   .boxCustom{
     height: 40px;
@@ -76,6 +98,7 @@
       height: 30px; /* Reducir la altura de los campos de entrada */
       padding: 8px; /* Reducir el espacio interno */
     }
+
   }
   
   /* Pantallas aún más pequeñas (por ejemplo, smartphones en posición vertical) */
@@ -83,6 +106,11 @@
     .boxCustom {
       height: 25px; /* Reducir aún más la altura de los campos de entrada */
       padding: 6px; /* Reducir el espacio interno */
+    }
+
+    .background{
+      width: 100%;
+      height: 100%;
     }
   }
   

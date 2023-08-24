@@ -1,1 +1,23 @@
 <a>hi</a>
+
+<div class="content" role="main">
+    <div class="card">
+      <div class="form-group">
+        <label for="search-text">Search Text</label>
+        <input type="text" class="form-control" id="search-text" aria-describedby="search-text" 
+          [(ngModel)]="searchText" placeholder="Enter text to search" 
+          autofocus [matAutocomplete]="auto">
+      </div>
+
+      <!-- <mat-option *ngFor="let c of ListItems| appFilter: searchText"  value="{{c.ItemCode}}"  class="optionList" >
+        {{c.ItemCode}} - {{c.ItemName}}
+      </mat-option> -->
+
+      <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectMaterial($event.option.value)">
+        <mat-option *ngFor="let c of ListItems| appFilter: searchText"  value="{{c.ItemCode}}"  class="optionList" >
+          {{c.ItemCode}} - {{c.ItemName}}
+        </mat-option>
+      </mat-autocomplete>
+      
+    </div>
+  </div>

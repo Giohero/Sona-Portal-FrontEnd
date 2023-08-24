@@ -1,12 +1,15 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches" *ngIf="shouldRun">
   <mat-toolbar [ngClass]="'color'" class="example-toolbar">
     <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+    <img src="../../assets/images/SonaLogo.png" style="width: 50px;height:50px;margin: 0px;">
     <h1 class="example-app-name">Sona</h1>
     <div class="spacer"></div>
-    <a mat-button routerLink="/dashboard/orders">Start New Order</a>
+    <!-- <a mat-button routerLink="/dashboard/orders">Start New Order</a>
     <a mat-button>Print</a>
     <a mat-button>Email</a>
-    <a mat-button routerLink="/dashboard">Exit Order</a> <!--Route home provitional-->
+    <a mat-button routerLink="/dashboard">Exit Order</a>  -->
+    <a mat-button (click)="logout()" ><mat-icon style="font-size: 20px;">account_circle</mat-icon>Logout</a>
+    <!--Route home provitional-->
   </mat-toolbar>
   <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
     <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
@@ -16,6 +19,17 @@
           <a mat-list-item routerLink="/dashboard">
             <mat-icon class="icon">home</mat-icon>
             Home
+          </a>
+          <a mat-list-item [matMenuTriggerFor]="menu" class="button-with-icons">
+            <mat-icon class="icon left-icon">description</mat-icon>
+            Orders
+            <mat-icon class="icon right-icon">arrow_right</mat-icon>
+            <mat-menu #menu="matMenu" xPosition="before">
+              <button mat-menu-item mat-menu-item routerLink="/dashboard/orders">
+                <mat-icon style="color: #ab3548;">note_add</mat-icon>
+                Start New Order
+              </button>
+            </mat-menu>
           </a>
           <a mat-list-item routerLink="/dashboard/costumers">
             <mat-icon class="icon">person</mat-icon>

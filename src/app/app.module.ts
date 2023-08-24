@@ -28,6 +28,8 @@ import { MsalModule } from '@azure/msal-angular';
 import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { MsalGuard } from '@azure/msal-angular';
 import { OrdersComponent } from './orders/orders.component';
+import { FilterPipe } from './service/filter.pipe';
+import { FilterPipeCustomer } from './service/filterCustomers.pipe';
 
 
 
@@ -35,7 +37,9 @@ import { OrdersComponent } from './orders/orders.component';
   declarations: [
     AppComponent,
     LoginComponent,
-    OrdersComponent
+    OrdersComponent,
+    FilterPipeCustomer
+    //FilterPipe
     // SidenavComponent,
     // HomeComponent,
     // CostumersComponent,

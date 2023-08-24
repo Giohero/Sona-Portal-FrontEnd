@@ -26,6 +26,9 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {MatCardModule} from '@angular/material/card';
+import { FilterPipe } from '../service/filter.pipe';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+
 
 @NgModule({
   declarations: [],
@@ -55,7 +58,8 @@ import {MatCardModule} from '@angular/material/card';
     MatSortModule,
     MatSnackBarModule,
     FlexLayoutModule,
-    MatCardModule
+    MatCardModule,
+    MatAutocompleteModule
   ],
 
  exports: [
@@ -83,7 +87,8 @@ import {MatCardModule} from '@angular/material/card';
     MatSortModule,
     MatSnackBarModule,
     FlexLayoutModule,
-    MatCardModule
+    MatCardModule,
+    MatAutocompleteModule
  ]
 })
 

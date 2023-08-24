@@ -34,11 +34,31 @@ mat-sidenav{
 }  
 .icon{
   margin-right: 10px;
+  color: #ab3548;
 }
 .color{
-  background-color: #dc5135;
+  background-color: #ab3548;
+  color: #ffffff;
 }
 .spacer{
 flex: 1 1 auto;
 
+}
+
+.button-with-icons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left-icon {
+  margin-right: 8px;
+}
+
+.right-icon {
+  font-size: 24px; /* Ajusta el tamaño del icono según tus necesidades */
+  position: absolute;
+  right: 12px; /* Ajusta la posición del icono derecho */
+  top: 50%;
+  transform: translateY(-50%);
 }
