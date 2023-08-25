@@ -1,106 +1,49 @@
-<!-- Edit Address Modal -->
-<div>
-    <mat-card class="modal-content">
-            <mat-card-header class="modal-header">
-                <mat-card-title class="modal-title" >Edit Address</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <form [formGroup]="AddressForm" (ngSubmit)="updateAddress()">
-                    <div>
-                        <div>
-                            <label for="AddressName"><b>Addres Name*</b></label>
-                            <input for="AddressName" class="form-control" formControlName="AddressName" id="AddressName">
-                        </div>
-                        <div>
-                            <label for="AddressName2"><b>Addres Name 2</b></label>
-                            <input for="AddressName2" class="form-control" formControlName="AddressName2" id="AddressName2">
-                        </div>
-                        <div>
-                            <label for="Street"><b>Street Address, PO Box*</b></label>
-                            <input for="Street" class="form-control" formControlName="Street" id="Street">
-                        </div>
-                        <div>
-                            <label for="Block"><b>Apartment/Unit (Optional)</b></label>
-                            <input for="Block" class="form-control" formControlName="Block" id="Block">
-                        </div>
-                        <div>
-                            <label for="City"><b>City/Town*</b></label>
-                            <input for="City" class="form-control" formControlName="City" id="City">
-                        </div>
-                        <div>
-                            <label for="State"><b>State*</b></label>
-                            <select for="State" formControlName="State" class="form-control" aria-label="Default select example">
-                                <option selected>Select an option from the list</option>
-                                <option *ngFor="let item of this.StateList?.value"  value="{{ item.Code }}">{{ item.Name }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="ZipCode"><b>Zip Code*</b></label>
-                            <input for="ZipCode" class="form-control" formControlName="ZipCode" id="ZipCode">
-                        </div>
-                        <div>
-                            <h6>Please fill all the mandatory (*) fields</h6>
-                        </div>
-                    </div>
-                </form>
-            </mat-card-content>
-            <mat-card-actions>
-                <button mat-button [mat-dialog-close]="AddressForm.value">Save</button>
-                <button mat-button (click)="close()">Cancel</button>
-              </mat-card-actions>          
-    </mat-card>
-</div>
-
-<!-- New Address Modal -->
-<!-- <div class="modal fade" id="NewAddress" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">New Address</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body m-0 p-0">
-                <form [formGroup]="AddressForm" (ngSubmit)="newAddress()">
-                    <div class="form-row d-flex justify-content-left p-1 pb-0">
-                        <div class="form-group col-md-6 col-12 input-group-sm b-0 p-0 mb-0">
-                            <label for="AddressName"><b>Addres Name*</b></label>
-                            <input for="AddressName" class="form-control" formControlName="AddressName" id="AddressName">
-                        </div>
-                        <div class="form-group col-md-12 col-12 input-group-sm b-0 p-0 mb-0">
-                            <label for="Street"><b>Street Address, PO Box*</b></label>
-                            <input for="Street" class="form-control" formControlName="Street" id="Street">
-                        </div>
-                        <div class="form-group col-md-6 input-group-sm b-0 p-0 mb-0 pr-1">
-                            <label for="Block"><b>Apartment/Unit (Optional)</b></label>
-                            <input for="Block" class="form-control" formControlName="Block" id="Block">
-                        </div>
-                        <div class="form-group col-md-6 input-group-sm b-0 p-0 mb-0">
-                            <label for="City"><b>City/Town*</b></label>
-                            <input for="City" class="form-control" formControlName="City" id="City">
-                        </div>
-                        <div class="form-group col-md-6 input-group-sm b-0 p-0 mb-0 pr-1">
-                            <label for="State"><b>State*</b></label>
-                            <select for="State" formControlName="State" class="form-control" aria-label="Default select example">
-                                <option selected>Select an option from the list</option>
-                                <option *ngFor="let item of this.StateList?.value"  value="{{ item.Code }}">{{ item.Name }}</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-6 input-group-sm b-0 p-0 mb-0">
-                            <label for="ZipCode"><b>Zip Code*</b></label>
-                            <input for="ZipCode" class="form-control" formControlName="ZipCode" id="ZipCode">
-                        </div>
-                        <div class="row mt-1 ml-1 alert alert-danger" role="alert" *ngIf="this.AddressForm.invalid">
-                            <h6>Please fill all the mandatory (*) fields</h6>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="newAddress()" [disabled]="AddressForm.invalid">Add new address</button>
-            </div>
+<mat-card class="modal-content">
+  <mat-card-header class="modal-header">
+    <mat-card-title class="modal-title">Edit Address</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="AddressForm" (ngSubmit)="updateAddress()">
+      <div>
+        <div class="form-group">
+          <mat-label for="AddressName"><b>Address Name*</b></mat-label>
+          <input matInput formControlName="AddressName" id="AddressName">
         </div>
-    </div>
-</div> -->
+        <div class="form-group">
+          <mat-label for="AddressName2"><b>Address Name 2</b></mat-label>
+          <input matInput formControlName="AddressName2" id="AddressName2">
+        </div>
+        <div class="form-group">
+          <mat-label for="Street"><b>Street Address, PO Box*</b></mat-label>
+          <input matInput formControlName="Street" id="Street">
+        </div>
+        <div class="form-group">
+          <mat-label for="Block"><b>Apartment/Unit (Optional)</b></mat-label>
+          <input matInput formControlName="Block" id="Block">
+        </div>
+        <div class="form-group">
+          <mat-label for="City"><b>City/Town*</b></mat-label>
+          <input matInput formControlName="City" id="City">
+        </div>
+        <div class="form-group">
+          <mat-label for="State"><b>State*</b></mat-label>
+          <mat-select formControlName="State" class="form-control" aria-label="Default select example">
+            <mat-option selected>Select an option from the list</mat-option>
+            <mat-option *ngFor="let item of this.StateList?.value" [value]="item.Code">{{ item.Name }}</mat-option>
+          </mat-select>
+        </div>
+        <div class="form-group">
+          <mat-label for="ZipCode"><b>Zip Code*</b></mat-label>
+          <input matInput formControlName="ZipCode" id="ZipCode">
+        </div>
+        <div>
+          <h6>Please fill all the mandatory (*) fields</h6>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+  <mat-card-actions class="modal-actions">
+    <button mat-button [mat-dialog-close]="AddressForm.value">Save</button>
+    <button mat-button (click)="close()">Cancel</button>
+  </mat-card-actions>
+</mat-card>
