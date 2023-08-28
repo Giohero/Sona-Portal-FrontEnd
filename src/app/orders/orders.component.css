@@ -32,7 +32,7 @@
   }
   .mat-card{
     border-top: 8px solid darkcyan;
-    background-color: rgba(254, 254, 254, 0.8); /* Cambia los valores RGB según el color que desees */
+    background-color: rgba(254, 254, 254, 0.8); 
     padding: 20px;
   }
   .container {
