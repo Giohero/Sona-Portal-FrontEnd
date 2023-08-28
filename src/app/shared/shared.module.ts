@@ -24,7 +24,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {MatSortModule} from '@angular/material/sort';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import {FlexLayoutModule } from '@angular/flex-layout';
 import {MatCardModule} from '@angular/material/card';
 import { FilterPipe } from '../service/filter.pipe';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';

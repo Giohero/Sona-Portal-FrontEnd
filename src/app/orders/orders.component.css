@@ -8,6 +8,8 @@
     display: flex;
     text-align: left;
     color: darkcyan;
+    display: inline-block;
+    margin-right: 900px;
   }
   
   .button-group {
@@ -61,6 +63,7 @@
   .label-container {
     display: flex;
     flex-direction: column;
+    margin-top: 1px;
   }
   
   .label {
@@ -91,6 +94,7 @@
     
     .label-container {
       margin-bottom: 20px; /* Aumentar el espacio entre grupos de etiquetas */
+
     }
     
     .custom-button {

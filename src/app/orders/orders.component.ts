@@ -14,6 +14,7 @@ import { DialogAddressComponent } from '../dialog-address/dialog-address.compone
 export class OrdersComponent {
   ListCustomers!: BusinessPartner[] ;
   searchText = '';
+  idcustomer = '';
   ActiveAddButton= true;
   CurrentSellsItem?: BusinessPartner | undefined;
   billingAddress?: string | undefined;
@@ -63,6 +64,7 @@ export class OrdersComponent {
     this.phone1 = this.CurrentSellsItem?.Phone1;
     this.email = this.CurrentSellsItem?.EmailAddress;
     this.taxId = this.CurrentSellsItem?.FederalTaxId;
+    this.idcustomer = this.CurrentSellsItem!.CardCode;
   }
 
   changeCustomer()
@@ -78,24 +80,37 @@ export class OrdersComponent {
     this.email = '';
     this.taxId = '';
     this.CurrentSellsItem = undefined;
+    
+  //   this.orderService.UpdateCustomer(Customer).subscribe(retData => {
+  //     console.log(Customer);
+  //     if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
+  //     {
+  //       console.log("Customer created")
+  //     }
+  //     else
+  //     {
+  //       console.log(retData.response)
+  //     }
+  // });
   }
 
   CreateCustomer()
   {
     var Customer = {
-      CardCode: this.searchText,
+      CardCode: this.idcustomer,
       CardName: this.searchText,
       CardType: 'C'
     };
     
     this.orderService.PostCustomer(Customer).subscribe(retData => {
-      //console.log(retData.statusCode!);
+      console.log(Customer);
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
       {
-        
+        console.log("Customer created")
       }
       else
       {
+        console.log(retData.response)
       }
   });
   }

@@ -31,6 +31,7 @@ import { OrdersComponent } from './orders/orders.component';
 import { FilterPipe } from './service/filter.pipe';
 import { FilterPipeCustomer } from './service/filterCustomers.pipe';
 import { DialogAddressComponent } from './dialog-address/dialog-address.component';
+import { DialogAddcustomComponent } from './dialog-addcustom/dialog-addcustom.component';
 
 
 
@@ -40,7 +41,8 @@ import { DialogAddressComponent } from './dialog-address/dialog-address.componen
     LoginComponent,
     OrdersComponent,
     FilterPipeCustomer,
-    DialogAddressComponent
+    DialogAddressComponent,
+    DialogAddcustomComponent
     //FilterPipe
     // SidenavComponent,
     // HomeComponent,
