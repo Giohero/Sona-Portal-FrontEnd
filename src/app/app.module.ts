@@ -32,6 +32,7 @@ import { FilterPipe } from './service/filter.pipe';
 import { FilterPipeCustomer } from './service/filterCustomers.pipe';
 import { DialogAddressComponent } from './dialog-address/dialog-address.component';
 import { DialogAddcustomComponent } from './dialog-addcustom/dialog-addcustom.component';
+import { CartComponent } from './cart/cart.component';
 
 
 
@@ -42,7 +43,8 @@ import { DialogAddcustomComponent } from './dialog-addcustom/dialog-addcustom.co
     OrdersComponent,
     FilterPipeCustomer,
     DialogAddressComponent,
-    DialogAddcustomComponent
+    DialogAddcustomComponent,
+    //CartComponent
     //FilterPipe
     // SidenavComponent,
     // HomeComponent,

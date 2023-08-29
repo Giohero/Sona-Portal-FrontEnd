@@ -5,12 +5,14 @@ import { HomeComponent } from '../home/home.component';
 import { ItemsComponent } from '../items/items.component';
 import { CostumersComponent } from '../costumers/costumers.component';
 import { OrdersComponent } from '../orders/orders.component';
+import { CartComponent } from '../cart/cart.component';
 const routes: Routes = [
   { path: '', component: DashboardComponent, children: [
     { path: '', component: HomeComponent,},
     { path: 'items', component: ItemsComponent, },
     { path: 'costumers', component: CostumersComponent, },
     {path: 'orders', component: OrdersComponent, },
+    {path: 'cart', component: CartComponent, },
     ]}
 ];
 

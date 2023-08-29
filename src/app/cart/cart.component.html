@@ -1,0 +1,33 @@
+<mat-card>
+  <mat-card-content class="main-content">
+    <mat-card class="main-card">
+      <mat-card-header>
+        <mat-card-title><h1>Order new</h1></mat-card-title>
+      </mat-card-header>
+      
+      <div class="input-container">
+        <label><b>Search by name or code:</b></label>
+        <input matInput placeholder="Search by name or code" class="boxCart">
+      </div>
+      
+      <div class="input-container">
+        <label><b>Item:</b></label>
+        <input type="text" class="boxCart" matInput placeholder="Item" disabled="true">
+      </div>
+      
+      <button mat-raised-button class="add-button">Add</button>
+    </mat-card>
+
+    <mat-card class="info-card">
+      <mat-card-content class="info-content">
+        <div class="info-header">
+          <h1>Insert info</h1>
+          <button mat-raised-button class="btnInfo">
+            <mat-icon>delete</mat-icon>
+            Remove
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+</mat-card>
