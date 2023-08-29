@@ -5,6 +5,8 @@
   align-items: flex-start;
   flex-wrap: wrap;
   background-color: antiquewhite;
+  border-top: 8px solid darkcyan;
+  padding: 20px;
 }
 
 /* Estilos para la tarjeta principal */
@@ -16,6 +18,10 @@
   width: 45%;
   margin-top: 10px;
   order: 1; /* Cambio de orden para dispositivos grandes */
+}
+.icon{
+  padding: 10px;
+  margin-top: -5px;
 }
 
 .input-container {

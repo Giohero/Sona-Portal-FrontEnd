@@ -2,7 +2,8 @@
   <mat-card-content class="main-content">
     <mat-card class="main-card">
       <mat-card-header>
-        <mat-card-title><h1>Order new</h1></mat-card-title>
+        <mat-card-title><h1>Cart</h1></mat-card-title>
+        <mat-icon class="icon">shopping_cart</mat-icon>
       </mat-card-header>
       
       <!-- <div class="input-container">
@@ -10,9 +11,9 @@
         <input matInput placeholder="Search by name or code" class="boxCart">
       </div> -->
 
-      <div class="label-container">
+      <div class="input-container">
         <label class="label"><b>Search by name:</b></label>
-        <input type="text" class="boxCustom" id="search-text" aria-describedby="search-text" 
+        <input type="text" class="boxCart" id="search-text" aria-describedby="search-text" 
         [(ngModel)]="searchText" placeholder="Enter text to search" 
         autofocus [matAutocomplete]="auto" >
         <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectItem($event.option.value)">
