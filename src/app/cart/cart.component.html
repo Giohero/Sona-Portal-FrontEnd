@@ -5,9 +5,21 @@
         <mat-card-title><h1>Order new</h1></mat-card-title>
       </mat-card-header>
       
-      <div class="input-container">
+      <!-- <div class="input-container">
         <label><b>Search by name or code:</b></label>
         <input matInput placeholder="Search by name or code" class="boxCart">
+      </div> -->
+
+      <div class="label-container">
+        <label class="label"><b>Search by name:</b></label>
+        <input type="text" class="boxCustom" id="search-text" aria-describedby="search-text" 
+        [(ngModel)]="searchText" placeholder="Enter text to search" 
+        autofocus [matAutocomplete]="auto" >
+        <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectItem($event.option.value)">
+          <mat-option *ngFor="let c of ListItems| appFilter: searchText"  value="{{c.CardName}}"  class="optionList" >
+            {{c.ItemCode}} - {{c.ItemName}}
+          </mat-option>
+        </mat-autocomplete>
       </div>
       
       <div class="input-container">
