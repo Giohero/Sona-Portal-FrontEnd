@@ -1,15 +1,40 @@
-/* Estilos para el contenedor principal */
-.main-content {
+.backround {
+  background-image: url("https://cdn.pixabay.com/photo/2020/10/01/17/11/store-5619201_1280.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+.background-container {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  background-color: antiquewhite;
-  border-top: 8px solid darkcyan;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  
+}
+
+.body {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  background-color: rgba(254, 254, 254, 0.8);
+    width: 100%;
   padding: 20px;
 }
 
-/* Estilos para la tarjeta principal */
+.main-content {
+  border-top: 8px solid darkcyan;
+  background-color: rgba(254, 254, 254, 0.8);
+  padding: 20px;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: space-between;
+  
+}
+
 .main-card {
   margin-right: 20px;
   display: flex;
@@ -17,11 +42,24 @@
   align-items: flex-start;
   width: 45%;
   margin-top: 10px;
-  order: 1; /* Cambio de orden para dispositivos grandes */
+  color:darkcyan;
+  
 }
-.icon{
-  padding: 10px;
-  margin-top: -5px;
+
+.info-card {
+  width: 50%;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  color:darkcyan;
+
+}
+
+.cartnext {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
 }
 
 .input-container {
@@ -29,10 +67,9 @@
   flex-direction: column;
   margin-bottom: 10px;
   margin-left: 20px;
-  color: dodgerblue;
+  color: #e77155;
 }
 
-/* Estilos para los labels */
 .input-container label {
   margin-top: 5px;
 }
@@ -45,17 +82,8 @@
   width: 300px;
 }
 
-.info-card {
-  margin-left: 1px;
-  width: 50%;
-  margin-top: 10px;
-  order: 2; 
-  display: flex;
-  flex-direction: column;
-}
-
 .info-content {
-  flex: 1; /* El contenido se expandirá para ocupar el espacio disponible */
+  flex: 1;
 }
 
 .info-header {
@@ -65,24 +93,61 @@
 }
 
 .btnInfo {
-  background-color: rgb(255, 119, 126);
+  background-color: rgb(248, 77, 85);
   padding: 5px 10px;
   border-radius: 5px;
+  color: white;
 }
 
 .add-button {
   margin-top: 5px;
   margin-left: 20px;
   background-color: rgb(255, 117, 83);
+  color: white;
+}
+
+.right-button,
+.left-button {
+  width: 45%;
+  margin-top: 5px;
 }
 
 /* Estilos responsivos */
 @media screen and (max-width: 768px) {
   .main-card,
   .info-card {
-    width: 100%; /* 100% del ancho de los cards */
+    width: 100%;
     margin-right: 0;
     margin-bottom: 20px;
-    order: initial; /* regresa a su posición original :D */
+  }
+  
+  .cartnext {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .right-button,
+  .left-button {
+    margin: 5px 0;
+    width: 100%;
+  }
+}
+/* Estilos para dispositivos móviles */
+@media screen and (max-width: 480px) {
+  .main-card,
+  .info-card {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+  
+  .cards-container {
+    flex-direction: column;
+  }
+  
+  .right-button,
+  .left-button {
+    width: 100%;
+    margin: 5px 0;
   }
 }
