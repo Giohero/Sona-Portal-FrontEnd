@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FlexLayoutModule } from '@angular/flex-layout';
 /**Material modules */
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
+import { MatRadioModule } from '@angular/material/radio';
+
 
 /**Components */
 import { SidenavComponent } from './sidenav/sidenav.component';
@@ -32,6 +35,7 @@ import { FilterPipe } from './service/filter.pipe';
 import { FilterPipeCustomer } from './service/filterCustomers.pipe';
 import { DialogAddressComponent } from './dialog-address/dialog-address.component';
 import { DialogAddcustomComponent } from './dialog-addcustom/dialog-addcustom.component';
+import { OrderReviewComponent } from './order-review/order-review.component';
 
 
 
@@ -42,7 +46,8 @@ import { DialogAddcustomComponent } from './dialog-addcustom/dialog-addcustom.co
     OrdersComponent,
     FilterPipeCustomer,
     DialogAddressComponent,
-    DialogAddcustomComponent
+    DialogAddcustomComponent,
+    OrderReviewComponent,
     //FilterPipe
     // SidenavComponent,
     // HomeComponent,
@@ -51,6 +56,7 @@ import { DialogAddcustomComponent } from './dialog-addcustom/dialog-addcustom.co
   ],
   imports: [
     BrowserModule,
+    FlexLayoutModule,
     AppRoutingModule,
     MatSidenavModule,
     MatToolbarModule,
@@ -58,6 +64,7 @@ import { DialogAddcustomComponent } from './dialog-addcustom/dialog-addcustom.co
     MatIconModule,
     MatListModule,
     MatButtonModule,
+    MatRadioModule,
     MatTableModule,
     HttpClientModule,
     SharedModule,

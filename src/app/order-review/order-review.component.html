@@ -1,0 +1,101 @@
+<div class="background">
+    <div class="container-wrapper">
+      <div class="container" fxLayout="column" fxLayoutGap="20px">
+        <h2>Order Review</h2>
+        
+        <!-- Tarjeta 1 -->
+        <mat-card class="mat-card">
+          <mat-card-content>
+            <h2 class="h2Mat">Customer <mat-icon>supervisor_account</mat-icon></h2>
+            <div class="grid-container">
+              <div class="label-container">
+                <label class="label">Name:</label>
+                <input type="text" class="boxCustom">
+              </div>
+              <div class="label-container">
+                <label class="label">Notes and Remarks:</label>
+                <input type="text" class="boxCustom editable-input" matInput placeholder="Notes and Remarks" [(ngModel)]="notes">
+              </div>
+              <div class="label-container">
+                <label class="label">Email:</label>
+                <input type="text" class="boxCustom editable-input" matInput placeholder="Email" [(ngModel)]="email">
+              </div>
+              <div class="label-container">
+                <label class="label">Shipping Type:</label>
+                <input type="text" class="boxCustom editable-input" matInput placeholder="Shipping Type" [(ngModel)]="shippingType">
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <!-- Botones Save & Edit -->
+            <!-- <button mat-raised-button color="primary">
+              <mat-icon>save</mat-icon> Save
+            </button>
+            <button mat-raised-button color="primary">
+              <mat-icon>edit</mat-icon> Edit
+            </button> -->
+          </mat-card-actions>
+        </mat-card>
+        
+        <!-- Tarjetas 2 y 3 al mismo nivel de altura -->
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="20px">
+          <!-- Tarjeta 2 -->
+          <mat-card class="side-cards">
+            <mat-card-content>
+              <h2 class="h2Mat">Address Selection <mat-icon>business</mat-icon></h2>
+              <div class="radio-button-container">
+                <mat-radio-group [(ngModel)]="selectedOption">
+                  <div fxLayout="column">
+                    <mat-radio-button value="option1" (click)="performActionForOption('Option 1')">Option 1</mat-radio-button>
+                    <!-- Contenido para la opción 1 -->
+                    <div class="option-details">
+                      <p>Innormax</p>
+                      <p>Address</p>
+                      <p>San Diego</p>
+                      <p>Zip</p>
+                      <p>US</p>
+                      <button mat-icon-button color="primary" class="small-button">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <mat-radio-button value="option2" (click)="performActionForOption('Option 2')">Option 2</mat-radio-button>
+                    <mat-radio-button value="option3" (click)="performActionForOption('Option 3')">Option 3</mat-radio-button>
+                    <mat-radio-button value="option4" (click)="performActionForOption('Option 4')">Option 4</mat-radio-button>
+                  </div>
+                </mat-radio-group>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+            </mat-card-actions>
+          </mat-card>
+          
+          <!-- Tarjeta 3 -->
+          <mat-card fxFlex="50%" class="side-cards">
+            <mat-card-content>
+              <h2 class="h2Mat">Order check <mat-icon>done_all</mat-icon></h2>
+              <mat-card-content>
+                <!-- Contenido de la tarjeta 3 -->
+                <mat-list>
+                  <mat-list-item>Item 1</mat-list-item>
+                  <mat-divider></mat-divider>
+                  <mat-list-item>Item 2</mat-list-item>
+                  <mat-divider></mat-divider>
+                  <mat-list-item>Item 3</mat-list-item>
+                </mat-list>
+              </mat-card-content>
+            </mat-card-content>
+            <mat-card-actions>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+        
+        <!-- Botones en las esquinas inferiores -->
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
+            <a mat-raised-button color="primary" href="http://localhost:4200/dashboard/orders">Back</a>
+            <a mat-raised-button color="primary" class="mobile-button" href="http://localhost:4200/dashboard/orders">Create Order</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
