@@ -1,22 +1,18 @@
 <div class="background">
-  <!-- <div class="button-container">
+  <div class="button-container">
     <div class="button-group">
-      <button mat-raised-button color="primary" class="custom-button">Back</button>
-      <button mat-raised-button color="warn" class="custom-button">Add</button>
     </div>
-  </div> -->
+  </div>
   <div class="container">
     <br>
     <h2>New Order</h2> 
     <mat-card class="mat-card"> 
       <mat-card-content>
         <h2 class="h2Mat">Customer</h2>
-        <button mat-raised-button color="primary"><mat-icon>save</mat-icon></button>
-        <button mat-raised-button color="primary"><mat-icon>edit</mat-icon></button>
         <div class="grid-container">
-          <div class="label-container">
+          <div class="label-containerC">
             <label class="label">Id Customer: </label>
-          <input type="text" class="boxCustom" id="idcustomer" aria-describedby="Id Customer" [(ngModel)]="idcustomer" [disabled]="inputSearchCutomer">
+            <input type="text" class="boxCustom" id="idcustomer" aria-describedby="Id Customer" [(ngModel)]="idcustomer" [disabled]="inputSearchCutomer">
           </div>            
           <div class="label-container">
             <label class="label">Customer Name:</label>
@@ -71,9 +67,15 @@
             <input type="text" class="boxCustom" matInput placeholder="Tax" disabled="true"
             [(ngModel)]="taxId">
           </div>
+          <div class="btns">
+            <button mat-raised-button color="primary" class="actions"><mat-icon>save</mat-icon></button>
+            <button mat-raised-button color="primary" class="actions"><mat-icon>edit</mat-icon></button>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>
+    <div class="cartnext">
+      <button mat-raised-button color="warn" routerLink="/dashboard/cart" class="right-button">Next</button>
+    </div>
   </div>
 </div>
-  

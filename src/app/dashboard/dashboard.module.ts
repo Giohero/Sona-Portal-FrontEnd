@@ -10,6 +10,7 @@ import { CostumersComponent } from '../costumers/costumers.component';
 import { HomeComponent } from '../home/home.component';
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FilterPipe } from '../service/filter.pipe';
+import { CartComponent } from '../cart/cart.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { FilterPipe } from '../service/filter.pipe';
     ItemsComponent,
     CostumersComponent,
     HomeComponent,
-    FilterPipe
+    FilterPipe,
+    CartComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,46 @@
+<mat-card>
+  <mat-card-content class="main-content">
+    <mat-card class="main-card">
+      <mat-card-header>
+        <mat-card-title><h1>Cart</h1></mat-card-title>
+        <mat-icon class="icon">shopping_cart</mat-icon>
+      </mat-card-header>
+      
+      <!-- <div class="input-container">
+        <label><b>Search by name or code:</b></label>
+        <input matInput placeholder="Search by name or code" class="boxCart">
+      </div> -->
+
+      <div class="input-container">
+        <label class="label"><b>Search by name:</b></label>
+        <input type="text" class="boxCart" id="search-text" aria-describedby="search-text" 
+        [(ngModel)]="searchText" placeholder="Enter text to search" 
+        autofocus [matAutocomplete]="auto" >
+        <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectItem($event.option.value)">
+          <mat-option *ngFor="let c of ListItems| appFilter: searchText"  value="{{c.CardName}}"  class="optionList" >
+            {{c.ItemCode}} - {{c.ItemName}}
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      
+      <div class="input-container">
+        <label><b>Item:</b></label>
+        <input type="text" class="boxCart" matInput placeholder="Item" disabled="true">
+      </div>
+      
+      <button mat-raised-button class="add-button">Add</button>
+    </mat-card>
+
+    <mat-card class="info-card">
+      <mat-card-content class="info-content">
+        <div class="info-header">
+          <h1>Insert info</h1>
+          <button mat-raised-button class="btnInfo">
+            <mat-icon>delete</mat-icon>
+            Remove
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+</mat-card>

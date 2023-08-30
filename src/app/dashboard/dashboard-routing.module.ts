@@ -6,6 +6,7 @@ import { ItemsComponent } from '../items/items.component';
 import { CostumersComponent } from '../costumers/costumers.component';
 import { OrdersComponent } from '../orders/orders.component';
 import { OrderReviewComponent } from '../order-review/order-review.component';
+import { CartComponent } from '../cart/cart.component';
 const routes: Routes = [
   { path: '', component: DashboardComponent, children: [
     { path: '', component: HomeComponent,},
@@ -13,6 +14,8 @@ const routes: Routes = [
     { path: 'costumers', component: CostumersComponent, },
     { path: 'orders', component: OrdersComponent, },
     { path: 'order-review', component: OrderReviewComponent },
+    {path: 'orders', component: OrdersComponent, },
+    {path: 'cart', component: CartComponent, },
     ]}
 ];
 
