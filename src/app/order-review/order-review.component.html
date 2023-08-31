@@ -1,6 +1,7 @@
 <div class="background">
     <div class="container-wrapper">
       <div class="container" fxLayout="column" fxLayoutGap="20px">
+        <br>
         <h2>Order Review</h2>
         
         <!-- Tarjeta 1 -->
@@ -36,6 +37,7 @@
             </button> -->
           </mat-card-actions>
         </mat-card>
+        <br>
         
         <!-- Tarjetas 2 y 3 al mismo nivel de altura -->
         <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="20px">
@@ -89,10 +91,9 @@
             </mat-card-actions>
           </mat-card>
         </div>
-        
         <!-- Botones en las esquinas inferiores -->
         <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
-            <a mat-raised-button color="primary" href="http://localhost:4200/dashboard/cart">Back</a>
+            <a mat-raised-button color="primary" class="mobile-button" href="http://localhost:4200/dashboard/cart">Back</a>
             <a mat-raised-button color="primary" class="mobile-button" href="http://localhost:4200/dashboard/orders">Create Order</a>
         </div>
       </div>

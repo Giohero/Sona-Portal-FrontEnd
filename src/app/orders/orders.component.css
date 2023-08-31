@@ -14,8 +14,9 @@
 
 .btns {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: space-between;
+  
 }
 
 .actions {
@@ -40,7 +41,7 @@
 
 .mat-card {
   border-top: 8px solid darkcyan;
-  background-color: rgba(254, 254, 254, 0.8);
+  background-color: rgba(254, 254, 254, 0.9);
   padding: 20px;
 }
 
@@ -48,14 +49,15 @@
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  color: #ffffff;
+  color:rgb(255, 255, 255);
 }
 
 .background {
   background-repeat: no-repeat;
   position: inherit;
   background-size: cover;
-  background-image: url('src/assets/images/fireplace.jpg');
+  /* background-image: url('src/assets/images/BussinesVector.jpeg'); */
+  background-image: url('src/assets/images/Camping.jpg');
   width: 100%;
   height: 150%;
 }
@@ -135,4 +137,5 @@ body {
     margin-left: 0; 
     
   }
+  
 }

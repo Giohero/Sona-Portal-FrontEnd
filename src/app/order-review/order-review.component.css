@@ -1,25 +1,28 @@
 /* Estilos generales */
+
 .body {
     background-color: rgb(238, 25, 106);
-    
   }
   
   .background {
+    /* background-image: url('src/assets/images/BussinesVector.jpeg'); */
+    background-image: url('src/assets/images/Camping.jpg');
+    background-position: center center;
     background-repeat: no-repeat;
-    position: inherit;
+    background-attachment: fixed;
     background-size: cover;
     width: 100%;
-    height: 100%;
+    height: 150%;
   }
   
   .container {
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
-    color: #f30808;
+    color: rgb(255, 255, 255);
   }
   .container-wrapper {
-    margin: 20px 0; /* Ajusta el valor de margen según sea necesario */
+    margin: 0px 0; /* Ajusta el valor de margen según sea necesario */
   }
   /* Títulos */
   .h2Mat {
@@ -85,7 +88,7 @@
   /* Tarjetas */
   .mat-card {
     border-top: 8px solid darkcyan;
-    background-color: rgba(254, 254, 254, 0.8);
+    background-color: rgba(254, 254, 254, 0.9);
     padding: 20px;
     
   }
@@ -93,6 +96,7 @@
   .side-cards {
     flex: 1;
     border-top: 8px solid darkcyan;
+    background-color: rgba(254, 254, 254, 0.9);
     padding: 20px;
     display: flex;
     flex-direction: column;
