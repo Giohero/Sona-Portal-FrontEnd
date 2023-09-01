@@ -3,6 +3,8 @@ import { ServiceService } from '../service/service.service';
 import { BusinessPartner } from '../models/customer';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Order } from '../models/car';
 
 
 
@@ -17,6 +19,7 @@ export class OrderReviewComponent {
   ListCustomers!: BusinessPartner[] ;
   searchText = '';
   idcustomer = '';
+  cardcode = '';
   ActiveAddButton= true;
   CurrentSellsItem?: BusinessPartner | undefined;
   billingAddress?: string | undefined;
@@ -28,9 +31,24 @@ export class OrderReviewComponent {
   taxId?: string | undefined;
   inputSearchCutomer = false;
   showAddButton = true;
+  OrderReview: Order | undefined;
+  CustomerData: any;
+  option!:number;
 
-  constructor(private orderService: ServiceService, private dialog: MatDialog) {
-    
+  constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute) {
+    this.route.queryParams.subscribe(params => {
+      let datosComoTexto = params['orderR'];
+      this.OrderReview = JSON.parse(datosComoTexto);
+      datosComoTexto = params['customer'];
+      this.CustomerData = JSON.parse(datosComoTexto);
+    console.log(this.CustomerData);
+    });
+
+
+    this.cardcode = this.CustomerData.CardCode;
+    this.notes = this.CustomerData.notes;
+    this.email = this.CustomerData.Email;
+    this.shippingType = this.CustomerData.ShipType;
     this.selectedOption = 'option1'; 
   }
 
@@ -55,6 +73,16 @@ export class OrderReviewComponent {
 
   }
 
+  typeAddress(type:string)
+  {
+    if(type === 'bo_ShipTo')
+      return 'SHIP TO'
+    else if(type === 'bo_BillTo')
+      return 'BILL TO'
+    else
+     return type;
+  }
+
   performActionForOption(option: string): void {
     // Aquí puedes realizar las acciones relacionadas con cada opción seleccionada
     switch (option) {
@@ -73,6 +101,11 @@ export class OrderReviewComponent {
       default:
         break;
     }
+  }
+
+  backWindow()
+  {
+    this.myRouter.navigate(['dashboard/cart'], {queryParams: {customer: JSON.stringify(this.CustomerData)}});
   }
 
   changeCustomer()
@@ -108,5 +141,24 @@ export class OrderReviewComponent {
     this.idcustomer = this.CurrentSellsItem!.CardCode;
   }
 
+  createOrder(option1:number){
+
+    //console.log(option1);
+    const selectedAddress = this.CustomerData.Addresses[this.option];
+    //console.log(selectedAddress);
+
+    //Agregar la direccion en la Orden
+    // this.orderService.PostCustomer(this.OrderReview).subscribe(retData => {
+    //   console.log(this.OrderReview);
+    //   if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
+    //   {
+    //     console.log("Order created")
+    //   }
+    //   else
+    //   {
+    //     console.log(retData.response)
+    //   }
+    // });
+  }
   
 }

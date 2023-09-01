@@ -67,10 +67,18 @@ export class OrdersComponent {
 
 
   nextWindow()
-  {
+  { 
+    var customer ={
+      CardCode: this.idcustomer,
+      Notes: this.notes,
+      Email: this.email,
+      ShipType: this.shippingType,
+      Addresses:  this.CurrentSellsItem?.BPAddresses
+    }
+
     if(this.idcustomer)
     {
-      this.myRouter.navigate(['dashboard/cart', this.idcustomer]);
+      this.myRouter.navigate(['dashboard/cart'], {queryParams: {customer: JSON.stringify(customer)}});
     }
     else
     {

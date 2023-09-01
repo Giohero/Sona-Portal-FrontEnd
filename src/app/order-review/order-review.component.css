@@ -1,5 +1,12 @@
 /* Estilos generales */
 
+mat-list-item{
+  margin: 20px;
+  background-color: rgb(232, 255, 255, 0.5);
+  border-radius: 10%;
+  padding: 5px;
+}
+
 .body {
     background-color: rgb(238, 25, 106);
   }
@@ -71,6 +78,18 @@
     background-color: #e77155;
   }
 
+  .info-item{
+    color: black;
+  }
+
+  .content-wrapper{
+    padding: 20px; /* Ajusta el espaciado interno de la tarjeta */
+    min-height: 300px; /* Ajusta la altura mínima de la tarjeta según tus necesidades */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
   .option1-content {
     position: relative;
     display: flex;
@@ -111,8 +130,9 @@
   }
   /*Radio Button*/
   .radio-button-container {
-    display: flex; /* Agregar estilo */
     align-items: center; 
+    color: black;
+    margin: 5px;
   }
   
   /* Estilos responsivos */

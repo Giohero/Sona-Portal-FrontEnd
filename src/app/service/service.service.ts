@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { INResponse } from '../models/INResponse';
 import { Observable } from 'rxjs';
 import { BusinessPartner } from '../models/customer';
+import { Order } from '../models/car';
 
 @Injectable({
   providedIn: 'root'
@@ -35,5 +36,9 @@ export class ServiceService {
 
   UpdateCustomer(Customer:any): Observable<INResponse> {
     return this.myhttp.post<INResponse>(this.myappurlsap + this.myapiurl + 'UpdateBusinessPartner', Customer)
+  }
+
+  PostOrder(Order: Order):Observable<INResponse> {
+    return this.myhttp.post<INResponse>(this.myappurlsap + this.myapiurl + 'CreateSalesOrder', Order)
   }
 }
