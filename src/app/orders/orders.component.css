@@ -39,6 +39,15 @@
   background-color: #e77155;
 }
 
+.custom-snackbar {
+    background-color: #ff231b; /* Cambia esto al color que desees */
+    color: #ffffff; /* Cambia esto al color del texto deseado */
+    height: 50px;
+    text-align: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    size: 15px;
+}
+
 .mat-card {
   border-top: 8px solid darkcyan;
   background-color: rgba(254, 254, 254, 0.9);

@@ -33,7 +33,7 @@ export class ServiceService {
     return this.myhttp.post<INResponse>(this.myappurlsap + this.myapiurl + 'CreateBusinessPartner', Customer)
   }
 
-  UpdateCustomer(Customer:BusinessPartner): Observable<INResponse> {
+  UpdateCustomer(Customer:any): Observable<INResponse> {
     return this.myhttp.post<INResponse>(this.myappurlsap + this.myapiurl + 'UpdateBusinessPartner', Customer)
   }
 }

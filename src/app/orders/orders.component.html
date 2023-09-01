@@ -29,7 +29,7 @@
           </div>
           <div class="label-container">
             <label class="label">Notes and Remarks:</label>
-            <input type="text" class="boxCustom" matInput placeholder="Notes and Remarks"  disabled="true"
+            <input type="text" class="boxCustom" matInput placeholder="Notes and Remarks"  [disabled]="showEditInputs"
             [(ngModel)]="notes">
           </div>
           <div class="label-container">
@@ -49,34 +49,34 @@
           </div>
           <div class="label-container">
             <label class="label">Phone 1:</label>
-            <input type="text" class="boxCustom" matInput placeholder="Phone 1" disabled="true"
+            <input type="text" class="boxCustom" matInput placeholder="Phone 1" [disabled]="showEditInputs"
             [(ngModel)]="phone1">
           </div>
           <div class="label-container">
             <label class="label">Email:</label>
-            <input type="text" class="boxCustom" matInput placeholder="Email" disabled="true"
+            <input type="text" class="boxCustom" matInput placeholder="Email" [disabled]="showEditInputs"
             [(ngModel)]="email">
           </div>
           <div class="label-container">
             <label class="label">Shipping Type:</label>
-            <input type="text" class="boxCustom" matInput placeholder="Shipping Type" disabled="true"
+            <input type="text" class="boxCustom" matInput placeholder="Shipping Type" [disabled]="showEditInputs"
             [(ngModel)]="shippingType">
           </div>
           <div class="label-container">
             <label class="label">Tax Id:</label>
-            <input type="text" class="boxCustom" matInput placeholder="Tax" disabled="true"
+            <input type="text" class="boxCustom" matInput placeholder="Tax" [disabled]="showEditInputs"
             [(ngModel)]="taxId">
           </div>
           <div class="btns">
-            <button mat-raised-button color="warn" class="actions"><mat-icon>save</mat-icon></button>
-            <button mat-raised-button color="warn" class="actions"><mat-icon>edit</mat-icon></button>
+            <button mat-raised-button color="warn" class="actions" *ngIf="saveUpdates" (click)="UpdateCustomer()" ><mat-icon>save</mat-icon></button>
+            <button mat-raised-button color="warn" class="actions" *ngIf="inputSearchCutomer" (click)="EditInputs()"  [disabled]="showEditInputs == false"><mat-icon>edit</mat-icon></button>
           </div>
         </div>
       </mat-card-content>
     </mat-card>
     <br>
     <div class="cartnext">
-      <button mat-raised-button color="primary" routerLink="/dashboard/cart" class="right-button">Next</button>
+      <button mat-raised-button color="primary" (click)=" nextWindow()" class="right-button">Next</button>
     </div>
   </div>
 </div>

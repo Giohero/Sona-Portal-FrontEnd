@@ -15,26 +15,49 @@
               [(ngModel)]="searchText" placeholder="Enter text to search" 
               autofocus [matAutocomplete]="auto" >
               <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectItem($event.option.value)">
-                <mat-option *ngFor="let c of ListItems| appFilter: searchText"  value="{{c.CardName}}"  class="optionList" >
+                <mat-option *ngFor="let c of ListItems| appFilter: searchText"  value="{{c.ItemCode}}"  class="optionList" >
                   {{c.ItemCode}} - {{c.ItemName}}
                 </mat-option>
               </mat-autocomplete>
             </div>
             <div class="input-container">
               <label><b>Item:</b></label>
-              <input type="text" class="boxCart" matInput placeholder="Item" disabled="true">
+              <input type="text" class="boxCart" matInput placeholder="Item" disabled="true" [(ngModel)]="ItemName">
             </div>
-            <button mat-raised-button class="add-button">Add</button>
+            <div class="input-container" *ngIf="ItemName">
+              <label><b>Quantity:</b></label>
+              <input type="number" class="boxCart" matInput placeholder="Quantity" disabled="false" [(ngModel)]="Quantity" >
+            </div>
+            <div class="input-container" *ngIf="ItemName">
+              <label><b>Price:</b></label>
+              <input type="number" class="boxCart" matInput placeholder="Price" disabled="true" [(ngModel)]="Price" >
+            </div>
+            <button mat-raised-button class="add-button" (click)="addToCart()">Add</button>
             <br>
           </mat-card>        
           <mat-card class="info-card">
+            <mat-card-header>
+              <h1>Insert info</h1>
+            </mat-card-header>
             <mat-card-content class="info-content">
               <div class="info-header">
-                <h1>Insert info</h1>
+                <div class="cart-items" *ngFor="let Item of Cart" >
+                  <div class="input-containerCart input-cart">
+                    <label for="ItemName"><b>Item:</b></label>
+                    <input type="text" matInput class="boxCartItemName" for="ItemName"  id="ItemName" readonly [value]="Item.ItemName">
+                </div>
+                <div class="input-container input-cart">
+                    <label for="Quantity"><b>Quantity:</b></label>
+                    <input type="number" matInput class="boxCartItem" for="Quantity" min="1" max="1000"  readonly [value]="Item.Quantity">
+                </div>
+                <div class="input-container input-cart">
+                  <label for="Price"><b>Price:</b></label>
+                  <input type="number" matInput class="boxCartItem" for="Price" min="1" max="1000" readonly [value]="Item.UnitPrice">
+              </div>
                 <button mat-raised-button class="btnInfo">
                   <mat-icon>delete</mat-icon>
-                  Remove
                 </button>
+                </div>
               </div>
             </mat-card-content>
           </mat-card>
