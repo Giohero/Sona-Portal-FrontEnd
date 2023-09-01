@@ -12,7 +12,25 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  
+}
+.header {
+  display: flex;
+  align-items: center; 
+  width: 45%;
+  color: rgb(255, 255, 255);
+  margin-left: 90px;
+  padding-top: 20px;
+}
+
+.title {
+  margin-right: 10px; 
+}
+
+.icon {
+  font-size: 25px; 
+  color: rgb(255, 255, 255);
+  padding-bottom: 11px;
+  /* margin-left: 90px; */
 }
 
 .body {
@@ -20,8 +38,9 @@
   margin: 0 auto;
   display: grid;
   background-color: rgba(254, 254, 254, 0.8);
-    width: 100%;
+  width: 100%;
   padding: 20px;
+  margin-bottom: 30%;
 }
 
 .main-content {
@@ -33,7 +52,6 @@
 .cards-container {
   display: flex;
   justify-content: space-between;
-  
 }
 
 .main-card {
@@ -44,7 +62,6 @@
   width: 45%;
   margin-top: 10px;
   color:darkcyan;
-  
 }
 
 .info-card {
@@ -53,7 +70,10 @@
   display: flex;
   flex-direction: column;
   color:darkcyan;
-
+  background-image: url('https://cdn.pixabay.com/photo/2016/12/12/13/23/shopping-cart-1901584_1280.png');
+  background-size: 30%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .cartnext {
@@ -68,9 +88,8 @@
   position: relative;
   margin-bottom: 10px;
   margin-left: 5px;
-
   display: flex;
-  flex-direction: row; /* Alinea los elementos en una fila */
+  flex-direction: row; /* elementos en una fila */
   align-items: center;
 }
 
@@ -78,7 +97,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
-  margin-left: 20px;
+  margin-left: 5px;
   color: #e77155;
 }
 
@@ -96,7 +115,7 @@
 
 
 .input-container label {
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .boxCart {
@@ -113,6 +132,7 @@
   border: 1px solid #ccc;
   padding: 10px;
   width: 60px;
+  text-align: center;
 }
 
 .boxCartItemName  {
@@ -143,7 +163,8 @@
   border-radius: 5px;
   color: white;
   margin-top: 14px;
-  margin-left: 5px;
+  margin-left: 4px;
+  width: 0px;
 }
 
 .add-button {
@@ -158,25 +179,40 @@
   width: 45%;
   margin-top: 5px;
 }
-
 /* Estilos responsivos */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1024px) {
+  .cards-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
   .main-card,
   .info-card {
     width: 100%;
     margin-right: 0;
     margin-bottom: 20px;
   }
-  
-  .cartnext {
-    flex-direction: column;
-    align-items: center;
-  }
-  
+
   .right-button,
   .left-button {
-    margin: 5px 0;
     width: 100%;
+    margin: 5px 0;
+  }
+
+  .add-button {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .btnInfo {
+    margin-left: 20px;
+    margin-top: 20px;
+  }
+
+  .input-containerCart {
+    margin-bottom: 20px;
+    align-items: center;
+    margin-left: 20px;
   }
 }
 /* Estilos para dispositivos móviles */
@@ -186,18 +222,62 @@
     width: 100%;
     margin-right: 0;
     margin-bottom: 20px;
+    padding: 10px;
+    box-sizing: border-box;
   }
-  
-  .cards-container {
-    flex-direction: column;
+
+  .boxCart,
+  .boxCartItem,
+  .boxCartItemName {
+    width: 100%;
   }
-  
+
   .right-button,
   .left-button {
     width: 100%;
     margin: 5px 0;
   }
+
+  .add-button {
+    margin-top: 10px;
+  }
+
+  .btnInfo {
+    margin-left: 30px;
+    margin-top: 20px;
+  }
+
   .mobile-button {
-    margin-top: 10px; /* Agregar espacio en el botón */
+    margin-top: 10px;
+  }
+
+  .info-content .input-container {
+    display: flex;
+    align-items: flex-start;
+    margin-right: 100%;
+    width: 30%;
+  }
+
+  .info-content .input-container label {
+    margin-bottom: 5px; 
+    width: 100%; 
+    text-align: left; 
+  }
+
+  .info-content .input-container input {
+    width: 350%;
+  }
+
+  .boxCartItemName {
+    margin-left: 10px;
+  }
+  
+  .info-content .cart-items {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-content .cart-items .input-container {
+    margin-bottom: 10px;
   }
 }

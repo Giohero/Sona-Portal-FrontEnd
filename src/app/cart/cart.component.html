@@ -1,14 +1,13 @@
 <div class="backround">
+  <div class="header">
+    <h1 class="title">Cart</h1>
+    <mat-icon class="icon">shopping_cart</mat-icon>
+  </div>
   <div class="background-container">
     <mat-card class="body">
       <mat-card-content class="main-content">
         <div class="cards-container">
           <mat-card class="main-card">
-            <mat-card-header>
-              <mat-card-title><h1>Cart</h1></mat-card-title>
-              <mat-icon class="icon">shopping_cart</mat-icon>
-            </mat-card-header>
-      
             <div class="input-container">
               <label class="label"><b>Search by name:</b></label>
               <input type="text" class="boxCart" id="search-text" aria-describedby="search-text" 
@@ -41,22 +40,22 @@
             </mat-card-header>
             <mat-card-content class="info-content">
               <div class="info-header">
-                <div class="cart-items" *ngFor="let Item of Cart" >
-                  <div class="input-containerCart input-cart">
+                <div class="cart-items" *ngFor="let Item of Cart; let listIndex=index;" >
+                  <div class="input-container">
                     <label for="ItemName"><b>Item:</b></label>
                     <input type="text" matInput class="boxCartItemName" for="ItemName"  id="ItemName" readonly [value]="Item.ItemName">
-                </div>
-                <div class="input-container input-cart">
+                  </div>
+                  <div class="input-container">
                     <label for="Quantity"><b>Quantity:</b></label>
                     <input type="number" matInput class="boxCartItem" for="Quantity" min="1" max="1000"  readonly [value]="Item.Quantity">
-                </div>
-                <div class="input-container input-cart">
-                  <label for="Price"><b>Price:</b></label>
-                  <input type="number" matInput class="boxCartItem" for="Price" min="1" max="1000" readonly [value]="Item.UnitPrice">
-              </div>
-                <button mat-raised-button class="btnInfo">
-                  <mat-icon>delete</mat-icon>
-                </button>
+                  </div>
+                  <div class="input-container">
+                    <label for="Price"><b>Price:</b></label>
+                    <input type="number" matInput class="boxCartItem" for="Price" min="1" max="1000" readonly [value]="Item.UnitPrice">
+                  </div>
+                  <button mat-raised-button class="btnInfo">
+                    <mat-icon>delete</mat-icon>
+                  </button>
                 </div>
               </div>
             </mat-card-content>
@@ -65,10 +64,9 @@
       </mat-card-content> 
       <br>   
       <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
-        <a mat-raised-button color="primary" class="mobile-button"href="http://localhost:4200/dashboard/orders">Back</a>
+        <a mat-raised-button color="primary" class="mobile-button" href="http://localhost:4200/dashboard/orders">Back</a>
         <a mat-raised-button color="primary" class="mobile-button" href="http://localhost:4200/dashboard/order-review">Review Order</a>
-    </div>
+      </div>
     </mat-card>
-    
   </div>
 </div>
