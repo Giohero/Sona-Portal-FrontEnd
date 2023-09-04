@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Order } from '../models/car';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 
@@ -35,7 +36,7 @@ export class OrderReviewComponent {
   CustomerData: any;
   option!:number;
 
-  constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute) {
+  constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute, private _snackBar: MatSnackBar) {
     this.route.queryParams.subscribe(params => {
       let datosComoTexto = params['orderR'];
       this.OrderReview = JSON.parse(datosComoTexto);
@@ -71,6 +72,15 @@ export class OrderReviewComponent {
 
     });
 
+  }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action,  {
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 5000,
+      panelClass: ['custom-snackbar'], 
+    });
   }
 
   typeAddress(type:string)
@@ -148,17 +158,21 @@ export class OrderReviewComponent {
     //console.log(selectedAddress);
 
     //Agregar la direccion en la Orden
-    // this.orderService.PostCustomer(this.OrderReview).subscribe(retData => {
-    //   console.log(this.OrderReview);
-    //   if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
-    //   {
-    //     console.log("Order created")
-    //   }
-    //   else
-    //   {
-    //     console.log(retData.response)
-    //   }
-    // });
+    //this.OrderReview?.AddressExtension?.BillToCity = selectedAddress.
+
+    this.orderService.PostCustomer(this.OrderReview).subscribe(retData => {
+      console.log(this.OrderReview);
+      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
+      {
+        //console.log("Order created")
+        this.openSnackBar('Order created', '');
+      }
+      else
+      {
+        this.openSnackBar('Error: '+ retData.response, '');
+        //console.log(retData.response)
+      }
+    });
   }
   
 }

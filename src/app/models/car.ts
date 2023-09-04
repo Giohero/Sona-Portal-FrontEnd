@@ -12,5 +12,35 @@ export class Order {
     DocDueDate?: string;
     DocDate?: string;
     TaxDate?: string;
-    DocumentLine: DocumentLines[] | undefined;
+    DocumentLine?: DocumentLines[] | undefined;
+    AddressExtension?: AddressExtension | undefined;
 }
+
+export class AddressExtension{
+    ShipToStreet?: string;
+    ShipToStreetNo?: string;
+    ShipToBlock?: string;
+    ShipToBuilding?: string;
+    ShipToCity?: string;
+    ShipToZipCode?: string;
+    ShipToCounty?: string;
+    ShipToState?: string;
+    ShipToCountry?: string;
+    ShipToAddressType?: string;
+    BillToStreet?: string;
+    BillToStreetNo?: string;
+    BillToBlock?: string;
+    BillToBuilding?: string;
+    BillToCity?: string;
+    BillToZipCode?: string;
+    BillToCounty?: string;
+    BillToState?: string;
+    BillToCountry?: string;
+    BillToAddressType?: string;
+    ShipToAddress2?: string;
+    ShipToAddress3?: string;
+    BillToAddress2?: string;
+    BillToAddress3?: string;
+    DocEntry?: 0;
+  }
+  

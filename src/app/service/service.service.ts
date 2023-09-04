@@ -13,32 +13,33 @@ import { Order } from '../models/car';
 export class ServiceService {
   myappurlcosmos = "https://functionhandlecosmosdb.azurewebsites.net/"; 
   myappurlsap = "https://orderpadfunctions.azurewebsites.net/";
+  myappurlcetos = "https://sonafunctions01.azurewebsites.net/";
 
   myapiurl = "api/"
 
   constructor(private myhttp: HttpClient) { }
   getCustomer(): Observable<INResponse> {
     
-    return this.myhttp.get<INResponse>(this.myappurlsap + this.myapiurl + 'SearchBusinessPartners')
+    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'SearchBusinessPartners')
   }
   getItems(): Observable<INResponse> {
 
-    return this.myhttp.get<INResponse>(this.myappurlsap + this.myapiurl + 'RetrieveItems')
+    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'RetrieveItems')
   }
   getStates(): Observable<INResponse> {
 
-    return this.myhttp.get<INResponse>(this.myappurlsap + this.myapiurl + 'RetrieveSAPStates')
+    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'RetrieveSAPStates')
   }
 
   PostCustomer(Customer: any): Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlsap + this.myapiurl + 'CreateBusinessPartner', Customer)
+    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'CreateBusinessPartner', Customer)
   }
 
   UpdateCustomer(Customer:any): Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlsap + this.myapiurl + 'UpdateBusinessPartner', Customer)
+    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'UpdateBusinessPartner', Customer)
   }
 
   PostOrder(Order: Order):Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlsap + this.myapiurl + 'CreateSalesOrder', Order)
+    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'CreateSalesOrder', Order)
   }
 }

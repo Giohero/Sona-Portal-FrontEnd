@@ -142,11 +142,15 @@ export class OrdersComponent {
       console.log(Customer);
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
       {
-        console.log("Customer created")
+        //console.log("Customer created")
+        this.openSnackBar('Customer Created! ', '')
+        this.inputSearchCutomer = true;
+        this.showAddButton = false;
+
       }
       else
       {
-        console.log(retData.response)
+        this.openSnackBar('Error: ' + retData.response, '')
       }
   });
   }
@@ -155,24 +159,31 @@ export class OrdersComponent {
   {
     var Customer = {
       CardCode: this.idcustomer,
-      CardName: this.searchText,
-      EmailAddress: this.email,
-      Phone1: this.phone1,
-      ShippingType: this.shippingType,
-      FederalTaxId: this.taxId,
-      Notes: this.notes
+      CardName: this.searchText ?? "",
+      EmailAddress: this.email ?? "",
+      Phone1: this.phone1 ?? "",
+      //ShippingType: this.shippingType ?? "",
+      FederalTaxId: this.taxId ?? "",
+      Notes: this.notes ?? "",
+      CardType: 'C'
     };
 
     this.orderService.UpdateCustomer(Customer).subscribe(retData => {
       console.log(Customer);
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
       {
-        console.log("Customer created")
-        
+        //console.log("Customer created")
+        this.openSnackBar('Customer Updated! ', '')
       }
       else
       {
-        console.log(retData.response)
+        this.openSnackBar('Error: ' + retData.response, '')
+        this.notes = this.notes ?? "";
+        this.shippingType = this.shippingType ?? "";
+        this.phone1 = this.phone1 ?? "";
+        this.email = this.email ?? "";
+        this.taxId = this.taxId ?? "";
+        //console.log(retData.response)
       }
   });
 
@@ -225,12 +236,14 @@ export class OrdersComponent {
           console.log(CustomerAdd);
           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
           {
-            console.log("Address Updated")
+            //console.log("Address Updated")
+            this.openSnackBar('Address Updated! ', '')
             this.billingAddress = this.AddressBill!.AddressName +' '+ this.AddressBill!.Street  +' '+ this.AddressBill!.City +' '+ this.AddressBill!.State +' '+ this.AddressBill!.Country +' '+ this.AddressBill!.ZipCode;
           }
           else
           {
-            console.log(retData.response)
+            this.openSnackBar('Error: ' + retData.response, '')
+            //console.log(retData.response)
           }
         });
 
@@ -283,12 +296,14 @@ export class OrdersComponent {
           console.log(CustomerAdd);
           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
           {
-            console.log("Address Updated")
+            //console.log("Address Updated")
+            this.openSnackBar('Address Updated! ', '')
             this.shippingAddress = this.AddressShip!.AddressName +' '+ this.AddressShip!.Street  +' '+ this.AddressShip!.City +' '+ this.AddressShip!.State +' '+ this.AddressShip!.Country +' '+ this.AddressShip!.ZipCode;  
           }
           else
           {
-            console.log(retData.response)
+            this.openSnackBar('Error: ' + retData.response, '')
+            //console.log(retData.response)
           }
         });
       }
