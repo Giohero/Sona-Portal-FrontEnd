@@ -18,9 +18,9 @@ mat-list-item{
     background-attachment: fixed;
     background-size: cover;
     width: 100%;
-    height: 100%;
+    height: 150%;
     margin: 0;
-  padding: 0;
+    padding: 0;
   }
   
   .container {
