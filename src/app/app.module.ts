@@ -37,6 +37,7 @@ import { DialogAddressComponent } from './dialog-address/dialog-address.componen
 import { DialogAddcustomComponent } from './dialog-addcustom/dialog-addcustom.component';
 import { OrderReviewComponent } from './order-review/order-review.component';
 import { CartComponent } from './cart/cart.component';
+import { SnackbarsComponent } from './snackbars/snackbars.component';
 
 
 
@@ -48,7 +49,8 @@ import { CartComponent } from './cart/cart.component';
     FilterPipeCustomer,
     DialogAddressComponent,
     DialogAddcustomComponent,
-    OrderReviewComponent
+    OrderReviewComponent,
+    SnackbarsComponent
     //CartComponent
     //FilterPipe
     // SidenavComponent,
