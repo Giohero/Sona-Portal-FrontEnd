@@ -31,6 +31,10 @@
               <label><b>Price:</b></label>
               <input type="number" class="boxCart" matInput placeholder="Price" disabled="true" [(ngModel)]="Price" >
             </div>
+            <!-- <div class="input-container" *ngIf="ItemName">
+              <label><b>Comments: </b></label>
+              <input type="text" class="boxCart" matInput placeholder="Add Comments"  [(ngModel)]="item.Comments" >
+            </div> -->
             <button mat-raised-button class="add-button" (click)="addToCart()">Add</button>
             <br>
           </mat-card>        
@@ -47,7 +51,8 @@
                   </div>
                   <div class="input-container">
                     <label for="Quantity"><b>Quantity:</b></label>
-                    <input type="number" matInput class="boxCartItem" for="Quantity" min="1" max="1000"  [value]="Item.Quantity" >
+                    <input type="number" matInput class="boxCartItem" for="Quantity" min="1" max="1000"
+                      [(ngModel)]="Item.Quantity" (change)="updateTotal(Item)">
                   </div>
                   <div class="input-container">
                     <label for="Total"><b>Total:</b></label>
@@ -56,6 +61,10 @@
                   <button mat-raised-button class="btnInfo" (click)="RemoveToCart(listIndex)">
                     <mat-icon>delete</mat-icon>
                   </button>
+                  <div class="comments-container">
+                    <label for="Comments"><b>Comments:</b></label>
+                    <input type="text" class="boxCart" matInput placeholder="Add Comments" [(ngModel)]="Item.Comments">
+                  </div>
                 </div>
               </div>
             </mat-card-content>

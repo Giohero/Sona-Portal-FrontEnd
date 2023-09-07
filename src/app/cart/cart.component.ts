@@ -19,7 +19,7 @@ export class CartComponent {
   ItemName = "";
   Quantity = 0;
   Price = "";
-  Cart: DocumentLines[] | undefined;
+  Cart: (DocumentLines & {Comments: string})[] =[];
   elementCart:any;
   OrderReview: Order | undefined;
   customer:any;
@@ -73,6 +73,7 @@ export class CartComponent {
           TaxCode: "EX",
           UnitPrice: this.Price,
           LineTotal: parseFloat(this.Price) * this.Quantity,
+          Comments: ""
         })
 
         this.cleanSearching()
@@ -89,6 +90,11 @@ export class CartComponent {
 
     
   }
+
+  updateTotal(item: DocumentLines) {
+    item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity;
+  }
+
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action,  {
