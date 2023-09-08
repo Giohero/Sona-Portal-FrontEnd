@@ -39,6 +39,7 @@ import { OrderReviewComponent } from './order-review/order-review.component';
 import { CartComponent } from './cart/cart.component';
 import { SnackbarsComponent } from './snackbars/snackbars.component';
 import { OrderIndexComponent } from './order-index/order-index.component';
+import { OrderEditComponent } from './order-edit/order-edit.component';
 
 
 
@@ -52,7 +53,8 @@ import { OrderIndexComponent } from './order-index/order-index.component';
     DialogAddcustomComponent,
     OrderReviewComponent,
     SnackbarsComponent,
-    OrderIndexComponent
+    OrderIndexComponent,
+    OrderEditComponent
     //CartComponent
     //FilterPipe
     // SidenavComponent,

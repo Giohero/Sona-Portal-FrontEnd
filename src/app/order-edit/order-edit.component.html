@@ -1,0 +1,72 @@
+<div class="background">
+    <div>
+      <div class="container" fxLayout="column" fxLayoutGap="20px">
+        <br>
+        <h2>Order Details</h2>
+  
+        <!-- Verificar si order está definido antes de mostrarlo -->
+        <ng-container *ngIf="order">
+          <!-- Primer Card -->
+          <mat-card class="mat-card">
+            <mat-card-content>
+              <h2 class="h2Mat">Order Information <mat-icon>description</mat-icon></h2>
+              <div class="grid-container">
+                <div class="label-container">
+                  <label class="label">Card Code:</label>
+                  <input type="text" class="boxCustom" [(ngModel)]="order.CardCode" disabled="true">
+                </div>
+                <div class="label-container">
+                  <label class="label">Doc Date:</label>
+                  <input type="text" class="boxCustom" [(ngModel)]="order.DocDate" disabled="true">
+                </div>
+                <div class="label-container">
+                  <label class="label">Doc Due Date:</label>
+                  <input type="text" class="boxCustom editable-input" matInput placeholder="Doc Due Date" [(ngModel)]="order.DocDueDate">
+                </div>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+            </mat-card-actions>
+          </mat-card>
+          <br>
+  
+          <!-- Tarjetas para elementos de DocumentLines -->
+          <ng-container *ngFor="let item of order.DocumentLines; let i = index">
+            <mat-card class="mat-card">
+              <mat-card-content>
+                <h2 class="h2Mat">Item Information <mat-icon>shopping_cart</mat-icon></h2>
+                <div class="grid-container">
+                  <div class="label-container">
+                    <label class="label">Item Code:</label>
+                    <input type="text" class="boxCustom" [(ngModel)]="item.ItemCode" disabled="true">
+                  </div>
+                  <div class="label-container">
+                    <label class="label">Item Description:</label>
+                    <input type="text" class="boxCustom" [(ngModel)]="item.ItemName" disabled="true">
+                  </div>
+                  <div class="label-container">
+                    <label class="label">Unit Price:</label>
+                    <input type="text" class="boxCustom" matInput placeholder="Unit Price" [(ngModel)]="item.UnitPrice" disabled="true">
+                  </div>
+                  <div class="label-container">
+                    <label class="label">Quantity:</label>
+                    <input type="text" class="boxCustom editable-input" matInput placeholder="Quantity" [(ngModel)]="item.Quantity">
+                  </div>
+                  <div class="label-container">
+                    <label class="label">UDF Comments:</label>
+                    <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.U_Comments">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+              </mat-card-actions>
+            </mat-card>
+            <br>
+          </ng-container>
+  
+          <!-- Resto de tu contenido -->
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  

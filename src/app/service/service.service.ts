@@ -50,4 +50,8 @@ export class ServiceService {
   PostOrder(Order: Order):Observable<INResponse> {
     return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'CreateSalesOrder', Order)
   }
+  UpdateOrder(Order: Order):Observable<INResponse> {
+    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'UpdateHeaderOrder', Order)
+  }
+  
 }

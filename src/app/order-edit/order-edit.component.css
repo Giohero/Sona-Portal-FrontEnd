@@ -1,0 +1,173 @@
+/* Estilos generales */
+.mat-list-item {
+    margin: 20px;
+    background-color: rgba(232, 255, 255, 0.5);
+    border-radius: 10%;
+    padding: 5px;
+  }
+  
+  .background {
+    background-image: url('src/assets/images/Camping.jpg'); /* Asegúrate de que la ruta de la imagen sea correcta */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    width: 100%;
+    min-height: 100%;
+    max-height: 400%;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    color: rgb(255, 255, 255);
+  }
+  
+  /* Títulos */
+  .h2Mat {
+    text-align: left;
+    color: darkcyan;
+  }
+  
+  /* Cuadros de texto y etiquetas */
+  .label-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1px;
+  }
+  
+  .label {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    color: #e77155;
+  }
+  
+  .boxCustom {
+    height: 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .editable-input {
+    background-color: #ffffff; /* Cambiar el color de fondo para indicar que es editable */
+  }
+  
+  /* Botones */
+  .custom-button {
+    width: auto;
+    margin-top: 10px;
+    width: 250px;
+    background-color: #e77155;
+  }
+  
+  .edit-custom-button {
+    width: auto;
+    margin-top: 10px;
+    width: 10px;
+    background-color: #e77155;
+  }
+  
+  .info-item {
+    color: black;
+  }
+  
+  .content-wrapper {
+    padding: 20px; /* Ajusta el espaciado interno de la tarjeta */
+    min-height: 300px; /* Ajusta la altura mínima de la tarjeta según tus necesidades */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .option1-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .small-button {
+    margin-right: 10px; /* Ajusta el margen según tu preferencia */
+  }
+  
+  .mat-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  /* Tarjetas */
+  .mat-card {
+    border-top: 8px solid darkcyan;
+    background-color: rgba(254, 254, 254, 0.9);
+    padding: 20px;
+  }
+  
+  .side-cards {
+    flex: 1;
+    border-top: 8px solid darkcyan;
+    background-color: rgba(254, 254, 254, 0.9);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Rejilla */
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    display: grid;
+  }
+  
+  .grid-container-date {
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    display: grid;
+  }
+  
+  /* Estilos responsivos */
+  /* Pantallas más pequeñas */
+  @media screen and (max-width: 768px) {
+    .container {
+      grid-template-columns: 1fr;
+    }
+  
+    .grid-container {
+      grid-template-columns: 1fr;
+      grid-gap: 20px; /* Aumentar el espacio entre elementos */
+    }
+  
+    .label-container {
+      margin-bottom: 20px; /* Aumentar el espacio entre grupos de etiquetas */
+    }
+  
+    .custom-button {
+      font-size: 0.8em; /* Reducir el tamaño de los botones */
+    }
+  
+    .label {
+      font-size: 1em; /* Reducir el tamaño de las etiquetas */
+    }
+  
+    .boxCustom {
+      height: 30px; /* Reducir la altura de los campos de entrada */
+      padding: 8px; /* Reducir el espacio interno */
+    }
+  }
+  
+  /* Pantallas aún más pequeñas (por ejemplo, smartphones en posición vertical) */
+  @media screen and (max-width: 480px) {
+    .boxCustom {
+      height: 25px; /* Reducir aún más la altura de los campos de entrada */
+      padding: 6px; /* Reducir el espacio interno */
+    }
+  
+    .background {
+      width: 100%;
+      height: 100%;
+    }
+  
+    .mobile-button {
+      margin-top: 10px; /* Agregar espacio en el botón */
+    }
+  }
+  
