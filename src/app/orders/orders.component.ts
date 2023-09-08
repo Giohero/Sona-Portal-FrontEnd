@@ -4,8 +4,10 @@ import { ServiceService } from '../service/service.service';
 import { BPAddresses, BusinessPartner } from '../models/customer';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DocumentLines } from '../models/car';
+import { SnackbarsComponent } from '../snackbars/snackbars.component';
 
 @Component({
   selector: 'app-orders',
@@ -32,8 +34,21 @@ export class OrdersComponent {
   showEditInputs = true;
   AddressShip: any;
   AddressBill: any;
+  Cart: DocumentLines[] | undefined;
+  customerBack: any;
 
-  constructor(private orderService: ServiceService,private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar) {}
+  constructor(private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar) 
+  {
+    this.route.queryParams.subscribe(params => {
+      let datosComoTexto = params['customer'];
+      this.customerBack = JSON.parse(datosComoTexto);
+      console.log(this.customerBack)
+      datosComoTexto = params['cart'];
+      this.Cart = JSON.parse(datosComoTexto);
+    //console.log(this.CustomerData);
+    });
+
+  }
 
   ngOnInit(): void {
 
@@ -42,27 +57,49 @@ export class OrdersComponent {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         this.ListCustomers = JSON.parse(retData.response!);
-
-      
+        
+        console.log(this.customerBack)
+        if(this.customerBack != undefined)
+        {
+          this.searchText = this.customerBack.CardName
+          this.onSelectCustomer(this.customerBack.CardName)
+        }
+          
       } else {
-
-        console.log(retData.response);
-
-        console.log('Error');
-
+        this.openSnackBar(retData.response!, "error", "Error", "red");
       }
 
     });
 
+    
+
   }
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action,  {
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 5000,
-      panelClass: ['custom-snackbar'], 
-    });
+  openSnackBar(message: string, icon: string, type: string, color: string) {
+    // this._snackBar.open(message, action,  {
+    //   horizontalPosition: 'center',
+    //   verticalPosition: 'top',
+    //   duration: 5000,
+    //   panelClass: ['custom-snackbar'], 
+    // });
+
+    const dialogRef = this.dialog.open(SnackbarsComponent, {
+      hasBackdrop: false,
+      width: '300px',
+      position: {
+        top: '10px',   // Ajusta la posición vertical según sea necesario
+        right: '20px', // Ajusta la posición horizontal según sea necesario
+      },
+      data: { 
+        message: message,
+        icon: icon,
+        type: type,
+        color: color
+      },
+    })
+    setTimeout(() => {
+      dialogRef.close();
+    }, 5000); 
   }
 
 
@@ -70,23 +107,25 @@ export class OrdersComponent {
   { 
     var customer ={
       CardCode: this.idcustomer,
+      CardName: this.searchText,
       Notes: this.notes,
       Email: this.email,
       ShipType: this.shippingType,
-      Addresses:  this.CurrentSellsItem?.BPAddresses
+      Addresses:  this.CurrentSellsItem?.BPAddresses.filter(x => x.AddressType != 'bo_BillTo')
     }
 
     if(this.idcustomer)
     {
-      this.myRouter.navigate(['dashboard/cart'], {queryParams: {customer: JSON.stringify(customer)}});
+      this.myRouter.navigate(['dashboard/cart'], {queryParams: {customer: JSON.stringify(customer), cart: JSON.stringify(this.Cart) }});
     }
     else
     {
-      this.openSnackBar("Error: You Need Add a Customer", "");
+      this.openSnackBar("You Need Add a Customer", "error", "Error", "red");
     }
   }
 
   onSelectCustomer(selectedData:any){
+    //console.log(this.customerBack.CardName)
     this.CurrentSellsItem = this.ListCustomers.find(x => x.CardName === selectedData);
     console.log(this.CurrentSellsItem);
     this.inputSearchCutomer = true;
@@ -143,14 +182,14 @@ export class OrdersComponent {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
       {
         //console.log("Customer created")
-        this.openSnackBar('Customer Created! ', '')
+        this.openSnackBar("", "check_circle", "Customer Created!", "green");
         this.inputSearchCutomer = true;
         this.showAddButton = false;
 
       }
       else
       {
-        this.openSnackBar('Error: ' + retData.response, '')
+        this.openSnackBar(retData.response!, "error", "Error", "red");
       }
   });
   }
@@ -173,11 +212,11 @@ export class OrdersComponent {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
       {
         //console.log("Customer created")
-        this.openSnackBar('Customer Updated! ', '')
+        this.openSnackBar("", "check_circle", "Customer Updated!", "green");
       }
       else
       {
-        this.openSnackBar('Error: ' + retData.response, '')
+        this.openSnackBar(retData.response!, "error", "Error", "red");
         this.notes = this.notes ?? "";
         this.shippingType = this.shippingType ?? "";
         this.phone1 = this.phone1 ?? "";
@@ -222,27 +261,31 @@ export class OrdersComponent {
           City : result?.City ?? "",
           State : result?.State ?? "",
           Street : result?.Street ?? "",
-          ZipCode : result?.ZipCode ?? ""
+          ZipCode : result?.ZipCode ?? "",
+          RowNum : GetBill?.RowNum
         }
 
         var CustomerAdd={
           CardCode: this.idcustomer,
+          CardType: 'C',
           BPAddresses: [
             this.AddressBill
           ]
         }
+
+        console.log(CustomerAdd)
 
         this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
           console.log(CustomerAdd);
           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
           {
             //console.log("Address Updated")
-            this.openSnackBar('Address Updated! ', '')
+            this.openSnackBar("", "check_circle", "Address Updated!", "green");
             this.billingAddress = this.AddressBill!.AddressName +' '+ this.AddressBill!.Street  +' '+ this.AddressBill!.City +' '+ this.AddressBill!.State +' '+ this.AddressBill!.Country +' '+ this.AddressBill!.ZipCode;
           }
           else
           {
-            this.openSnackBar('Error: ' + retData.response, '')
+            this.openSnackBar(retData.response!, "error", "Error", "red");
             //console.log(retData.response)
           }
         });
@@ -282,11 +325,13 @@ export class OrdersComponent {
           City : result?.City ?? "",
           State : result?.State ?? "",
           Street : result?.Street ?? "",
-          ZipCode : result?.ZipCode ?? ""
+          ZipCode : result?.ZipCode ?? "",
+          RowNum : GetShip?.RowNum
         }
 
         var CustomerAdd={
           CardCode: this.idcustomer,
+          CardType: 'C',
           BPAddresses: [
             this.AddressBill
           ]
@@ -297,12 +342,12 @@ export class OrdersComponent {
           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
           {
             //console.log("Address Updated")
-            this.openSnackBar('Address Updated! ', '')
+            this.openSnackBar("", "check_circle", "Address Updated!", "green");
             this.shippingAddress = this.AddressShip!.AddressName +' '+ this.AddressShip!.Street  +' '+ this.AddressShip!.City +' '+ this.AddressShip!.State +' '+ this.AddressShip!.Country +' '+ this.AddressShip!.ZipCode;  
           }
           else
           {
-            this.openSnackBar('Error: ' + retData.response, '')
+            this.openSnackBar(retData.response!, "error", "Error", "red");
             //console.log(retData.response)
           }
         });

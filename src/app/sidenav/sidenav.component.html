@@ -25,6 +25,10 @@
             Orders
             <mat-icon class="icon right-icon">arrow_right</mat-icon>
             <mat-menu #menu="matMenu" xPosition="before">
+              <button mat-menu-item mat-menu-item routerLink="/dashboard/order-index">
+                <mat-icon style="color: #ab3548;">view_module</mat-icon>
+                Orders
+              </button>
               <button mat-menu-item mat-menu-item routerLink="/dashboard/orders">
                 <mat-icon style="color: #ab3548;">note_add</mat-icon>
                 Start New Order

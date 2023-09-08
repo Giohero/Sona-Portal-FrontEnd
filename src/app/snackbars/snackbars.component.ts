@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { window } from '../models/snackbar';
 
 @Component({
   selector: 'app-snackbars',
@@ -6,5 +8,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./snackbars.component.css']
 })
 export class SnackbarsComponent {
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: window)
+  {
+
+  }
 
 }

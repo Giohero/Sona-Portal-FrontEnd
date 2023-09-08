@@ -7,6 +7,7 @@ import { CostumersComponent } from '../costumers/costumers.component';
 import { OrdersComponent } from '../orders/orders.component';
 import { OrderReviewComponent } from '../order-review/order-review.component';
 import { CartComponent } from '../cart/cart.component';
+import { OrderIndexComponent } from '../order-index/order-index.component';
 const routes: Routes = [
   { path: '', component: DashboardComponent, children: [
     { path: '', component: HomeComponent,},
@@ -14,7 +15,8 @@ const routes: Routes = [
     { path: 'costumers', component: CostumersComponent, },
     { path: 'orders', component: OrdersComponent, },
     { path: 'order-review', component: OrderReviewComponent },
-    {path: 'cart', component: CartComponent, },
+    { path: 'cart', component: CartComponent, },
+    { path: 'order-index', component: OrderIndexComponent}
     ]}
 ];
 

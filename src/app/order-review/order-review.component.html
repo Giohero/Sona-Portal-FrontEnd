@@ -1,10 +1,9 @@
 <div class="background">
-    <div class="container-wrapper">
+    <div>
       <div class="container" fxLayout="column" fxLayoutGap="20px">
         <br>
         <h2>Order Review</h2>
-        
-        <!-- Tarjeta 1 -->
+
         <mat-card class="mat-card">
           <mat-card-content>
             <h2 class="h2Mat">Customer <mat-icon>supervisor_account</mat-icon></h2>
@@ -28,19 +27,48 @@
             </div>
           </mat-card-content>
           <mat-card-actions>
-            <!-- Botones Save & Edit -->
-            <!-- <button mat-raised-button color="primary">
-              <mat-icon>save</mat-icon> Save
-            </button>
-            <button mat-raised-button color="primary">
-              <mat-icon>edit</mat-icon> Edit
-            </button> -->
           </mat-card-actions>
         </mat-card>
         <br>
-        
-        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="20px">
-          <!-- Tarjeta 2 -->
+
+        <mat-card class="mat-card">
+          <mat-card-content>
+            <h2 class="h2Mat">Dates <mat-icon>date_range</mat-icon></h2>
+            <div class="grid-container-date">
+              <div class="label-container" disabled>
+                <label class="label">Posting Date:</label>
+                <mat-form-field class="example-full-width">
+                  <input matInput [matDatepicker]="postingDate" [formControl]="tax">
+                  <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
+                  <mat-datepicker #postingDate></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="label-container">
+                <label class="label">Tax Date:</label>
+                <mat-form-field class="example-full-width">
+                    <input matInput [matDatepicker]="taxDate" [formControl]="tax">
+                    <mat-datepicker-toggle matIconSuffix [for]="taxDate"></mat-datepicker-toggle>
+                    <mat-datepicker #taxDate></mat-datepicker>
+                  </mat-form-field>
+              </div>
+              <div class="label-container">
+                <label class="label">Delivery Date:</label>
+                <mat-form-field class="example-full-width">
+                <mat-label>Choose a date</mat-label>
+                  <input matInput [min]="minDate" [matDatepicker]="deliveryDate" [formControl]="delivery">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matIconSuffix [for]="deliveryDate"></mat-datepicker-toggle>
+                  <mat-datepicker #deliveryDate></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+          </mat-card-actions>
+        </mat-card>
+        <br>
+
+        <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="20px">
           <mat-card class="side-cards">
             <mat-card-header>
               <h2 class="h2Mat">Address Selection <mat-icon>business</mat-icon></h2>
@@ -51,47 +79,43 @@
                 <div  fxLayout="row" >
                   <mat-radio-button [value]="listIndex" ></mat-radio-button>
                   <div class="option-details" >
-                    <!-- <p><b>{{typeAddress(adr.AddressType)}}</b></p> -->
                     <p><b>{{adr.AddressName}}</b></p>
                     <p>{{adr.AddressName2}}</p>
                     <p>{{adr.Street}} {{adr.ZipCode}}</p>
                     <p>{{adr.Block}}</p>
                     <p>{{adr.City}}</p>
                     <p>{{adr.Country}} {{adr.State}}</p>
-                    <!-- <button mat-icon-button color="primary" class="small-button">
-                      <mat-icon>edit</mat-icon>
-                    </button> -->
                   </div>
                 </div>
               </mat-radio-group>
               </div>
             </mat-card-content>
           </mat-card>
-          
+
           <mat-card fxFlex="50%" class="side-cards">
             <mat-card-content>
               <h2 class="h2Mat">Order check <mat-icon>done_all</mat-icon></h2>
               <mat-card-content>
                 <mat-list>
-                  <mat-list-item  *ngFor="let item of OrderReview!.DocumentLine; let listIndex=index;">
-                    <div matListItemTitle><mat-icon>check_circle_outline</mat-icon> {{listIndex}}</div>
+                  <mat-list-item  *ngFor="let item of OrderReview!.DocumentLines; let listIndex=index;">
+                    <div matListItemTitle><mat-icon>check_circle_outline</mat-icon><b>{{listIndex+1}}</b></div>
                     <div matListItemTitle>{{item.ItemCode}}</div>
                     <div class="info-item"  matListItemLine><b>{{item.ItemName}}</b></div>
                     <div class="info-item" matListItemLine>Quantity: {{item.Quantity}}</div>
                     <div class="info-item" matListItemLine>Total: ${{item.LineTotal}}</div>
+                    <div class="info-item" matListItemLine>Comments: {{item.U_Comments}}</div>
                   </mat-list-item>
                   <mat-divider></mat-divider>
                 </mat-list>
               </mat-card-content>
             </mat-card-content>
           </mat-card>
-        </div>
 
-        <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
+          <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
             <a mat-raised-button color="primary" class="mobile-button" (click)="backWindow()">Back</a>
             <a mat-raised-button color="primary" class="mobile-button" (click)="createOrder(option)" >Create Order</a>
+          </div>
         </div>
       </div>
-    </div>
+    </div> 
 </div>
-  

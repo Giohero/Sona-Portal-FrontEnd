@@ -1,0 +1,23 @@
+<div class="background">
+    <div class="container">
+        <br>
+        <h2>Orders</h2> 
+        <div>
+            <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
+                <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;" >
+                    <mat-card class="Cart" >
+                        <mat-card-header>
+                        <h1>{{Order.DocNum}}</h1>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="input-container">
+                            <label for="ItemName"><b>Posting Date:</b></label>
+                            <input type="text" matInput class="boxCartItemName" for="ItemName"  id="ItemName" readonly [value]="Order.DocDueDate">
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div> 
+            </div> 
+        </div>
+    </div>
+</div>

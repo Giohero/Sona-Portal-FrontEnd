@@ -43,6 +43,8 @@ export interface BPAddresses {
     State: string;
     TaxCode: string;
     AddressType: string;
+    BPCode: string;
+    RowNum: string;
 }
 
 export interface ContactEmployees {

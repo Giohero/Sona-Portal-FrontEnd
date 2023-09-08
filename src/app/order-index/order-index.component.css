@@ -1,0 +1,38 @@
+.background {
+    /* background-image: url('src/assets/images/BussinesVector.jpeg'); */
+    background-image: url('src/assets/images/Camping.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    width: 100%;
+    min-height: 100%;
+  }
+
+  .orderSection{
+    display: flex; /* Usa flexbox en el contenido que deseas centrar */
+        flex-direction: column; /* Centra verticalmente los elementos en una columna */
+        align-items: center; /* Centra horizontalmente los elementos */
+        text-align: center;
+  }
+
+  .Cart{
+    flex: 1;
+    margin-bottom: 10px;
+    width: calc(25% - 15px); /* Esto ajusta el ancho para tener un margen de 15px entre las tarjetas */
+    box-sizing: border-box; 
+  }
+
+  .container {
+    color:rgb(255, 255, 255);
+    padding:10px;
+  }
+
+  .input-container{
+    color: black;
+  }
+
+  .orders{
+    color: black;
+    display: flex;
+    flex-wrap: wrap;
+  }

@@ -18,6 +18,14 @@ export class ServiceService {
   myapiurl = "api/"
 
   constructor(private myhttp: HttpClient) { }
+
+  getOrders(): Observable<INResponse> {
+    
+    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'GetSalesOrder')
+  }
+  getOrderByDocNum(DocNum:string): Observable<INResponse> {
+    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'GetSpecificSalesOrder', DocNum)
+  }
   getCustomer(): Observable<INResponse> {
     
     return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'SearchBusinessPartners')

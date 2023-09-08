@@ -63,7 +63,7 @@
                   </button>
                   <div class="comments-container">
                     <label for="Comments"><b>Comments:</b></label>
-                    <input type="text" class="boxCart" matInput placeholder="Add Comments" [(ngModel)]="Item.Comments">
+                    <input type="text" class="boxCart" matInput placeholder="Add Comments" [(ngModel)]="Item.U_Comments">
                   </div>
                 </div>
               </div>
@@ -73,7 +73,7 @@
       </mat-card-content> 
       <br>   
       <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
-        <a mat-raised-button color="primary" class="mobile-button"  href="http://localhost:4200/dashboard/orders">Back</a>
+        <a mat-raised-button color="primary" class="mobile-button"  (click)="backWindow()">Back</a>
         <a mat-raised-button color="primary" class="mobile-button" (click)="nextWindow()">Review Order</a>
       </div>
     </mat-card>

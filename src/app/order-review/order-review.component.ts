@@ -6,13 +6,17 @@ import { DialogAddressComponent } from '../dialog-address/dialog-address.compone
 import { ActivatedRoute, Router } from '@angular/router';
 import { Order } from '../models/car';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormControl } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { SnackbarsComponent } from '../snackbars/snackbars.component';
 
 
 
 @Component({
   selector: 'app-order-review',
   templateUrl: './order-review.component.html',
-  styleUrls: ['./order-review.component.css']
+  styleUrls: ['./order-review.component.css'],
+  providers: [DatePipe]
 })
 export class OrderReviewComponent {
 
@@ -35,22 +39,32 @@ export class OrderReviewComponent {
   OrderReview: Order | undefined;
   CustomerData: any;
   option!:number;
+  minDate?: Date;
+  maxDate?: Date;
+  tax!: FormControl;
+  delivery!: FormControl;
 
-  constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute, private _snackBar: MatSnackBar) {
+  constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute, private _snackBar: MatSnackBar, private pipe: DatePipe) {
     this.route.queryParams.subscribe(params => {
       let datosComoTexto = params['orderR'];
       this.OrderReview = JSON.parse(datosComoTexto);
       datosComoTexto = params['customer'];
       this.CustomerData = JSON.parse(datosComoTexto);
-    console.log(this.CustomerData);
+    //console.log(this.CustomerData);
     });
 
+    // const AddressTotal = this.CustomerData!.BPAddresses;
+    // this.CustomerData!.BPAddresses = AddressTotal;
 
     this.cardcode = this.CustomerData.CardCode;
     this.notes = this.CustomerData.notes;
     this.email = this.CustomerData.Email;
     this.shippingType = this.CustomerData.ShipType;
     this.selectedOption = 'option1'; 
+    const currentYear = new Date();
+    this.minDate = new Date(currentYear);
+    this.tax = new FormControl({value: new Date(), disabled: true});
+    this.delivery = new FormControl(new Date());
   }
 
   ngOnInit(): void {
@@ -64,9 +78,7 @@ export class OrderReviewComponent {
       
       } else {
 
-        console.log(retData.response);
-
-        console.log('Error');
+        this.openSnackBar(retData.response!, "error", "Error", "red");
 
       }
 
@@ -74,13 +86,31 @@ export class OrderReviewComponent {
 
   }
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action,  {
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 5000,
-      panelClass: ['custom-snackbar'], 
-    });
+  openSnackBar(message: string, icon: string, type: string, color: string) {
+    // this._snackBar.open(message, action,  {
+    //   horizontalPosition: 'center',
+    //   verticalPosition: 'top',
+    //   duration: 5000,
+    //   panelClass: ['custom-snackbar'], 
+    // });
+
+    const dialogRef = this.dialog.open(SnackbarsComponent, {
+      hasBackdrop: false,
+      width: '300px',
+      position: {
+        top: '10px',   // Ajusta la posición vertical según sea necesario
+        right: '20px', // Ajusta la posición horizontal según sea necesario
+      },
+      data: { 
+        message: message,
+        icon: icon,
+        type: type,
+        color: color
+      },
+    })
+    setTimeout(() => {
+      dialogRef.close();
+    }, 5000); 
   }
 
   typeAddress(type:string)
@@ -115,7 +145,7 @@ export class OrderReviewComponent {
 
   backWindow()
   {
-    this.myRouter.navigate(['dashboard/cart'], {queryParams: {customer: JSON.stringify(this.CustomerData)}});
+    this.myRouter.navigate(['dashboard/cart'], {queryParams: {customer: JSON.stringify(this.CustomerData), cart: JSON.stringify(this.OrderReview?.DocumentLines)}});
   }
 
   changeCustomer()
@@ -136,7 +166,7 @@ export class OrderReviewComponent {
   
   onSelectCustomer(selectedData:any){
     this.CurrentSellsItem = this.ListCustomers.find(x => x.CardName === selectedData);
-    console.log(this.CurrentSellsItem);
+    //console.log(this.CurrentSellsItem);
     this.inputSearchCutomer = true;
     this.showAddButton = false;
     var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
@@ -153,26 +183,48 @@ export class OrderReviewComponent {
 
   createOrder(option1:number){
 
-    //console.log(option1);
     const selectedAddress = this.CustomerData.Addresses[this.option];
     //console.log(selectedAddress);
 
-    //Agregar la direccion en la Orden
-    //this.OrderReview?.AddressExtension?.BillToCity = selectedAddress.
+    if(selectedAddress)
+    {
+      const dateToday = this.pipe.transform(this.tax.value, 'yyyy-MM-dd');
+      const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
+      this.OrderReview!.DocDate = dateToday?.toString();
+      this.OrderReview!.DocDueDate = dateToday?.toString();
+      this.OrderReview!.TaxDate = dateDelivery?.toString();
+      //console.log(this.OrderReview);
 
-    this.orderService.PostCustomer(this.OrderReview).subscribe(retData => {
-      console.log(this.OrderReview);
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
-      {
-        //console.log("Order created")
-        this.openSnackBar('Order created', '');
-      }
-      else
-      {
-        this.openSnackBar('Error: '+ retData.response, '');
-        //console.log(retData.response)
-      }
-    });
+      //Agregar la direccion en la Orden
+      this.OrderReview!.AddressExtension = {}
+      this.OrderReview!.AddressExtension!.ShipToStreet = selectedAddress.AddressName;
+      this.OrderReview!.AddressExtension!.ShipToStreetNo = selectedAddress.Street;
+      this.OrderReview!.AddressExtension!.ShipToAddress2 = selectedAddress.AddressName2;
+      this.OrderReview!.AddressExtension!.ShipToBlock = selectedAddress.Block;
+      this.OrderReview!.AddressExtension!.ShipToCountry = selectedAddress.Country;
+      this.OrderReview!.AddressExtension!.ShipToState = selectedAddress.State;
+      this.OrderReview!.AddressExtension!.ShipToCity = selectedAddress.City;
+      this.OrderReview!.AddressExtension!.ShipToZipCode = selectedAddress.ZipCode;
+      //console.log(this.OrderReview);
+
+      this.orderService.PostOrder(this.OrderReview!).subscribe(retData => {
+        //console.log(this.OrderReview);
+        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
+        {
+          //console.log("Order created")
+          this.openSnackBar("", "check_circle", "Order Created!", "green");
+        }
+        else
+        {
+          this.openSnackBar(retData.response!, "error", "Error", "red");
+          //console.log(retData.response)
+        }
+      });
+    }
+    else{
+      this.openSnackBar("You must select an Address", "warning", "Warning", "darkorange");
+    }
+
   }
   
 }

@@ -1,1 +1,9 @@
-<p>snackbars works!</p>
+<div fxLayout="row" fxLayoutGap="5px" class="container">
+    <div fxFlex="15%" class="column1" [style.background]="data.color">
+        <mat-icon class="design">{{data.icon}}</mat-icon>
+    </div>
+    <div fxFlex="75%" class="column2">
+        <h2><b>{{data.type}}</b></h2>
+        <h4>{{data.message}}</h4>
+    </div>
+</div>

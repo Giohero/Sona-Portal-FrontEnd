@@ -1,0 +1,37 @@
+.container {
+    /* background-color: #fff; 
+    border: 3px solid #ff0000; 
+    background-color: rgb(59, 59, 59);*/
+  }
+
+.design{
+    font-size: 30px;
+    padding: 0px;
+    vertical-align: middle; 
+    line-height: 1;
+    width: 30px;
+    height: 30px;
+    color: white;
+  }
+
+.column1{
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}
+
+.column2{
+    justify-content: center; 
+    align-items: center; 
+    margin: 5px;
+    
+}
+
+h2 {
+    margin-bottom: 5px;
+}
+
+h3 {
+margin-top: 0;
+margin-bottom: 5px;
+}

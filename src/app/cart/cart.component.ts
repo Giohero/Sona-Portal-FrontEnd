@@ -4,6 +4,8 @@ import { ServiceService } from '../service/service.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentLines, Order } from '../models/car';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarsComponent } from '../snackbars/snackbars.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-cart',
@@ -19,26 +21,38 @@ export class CartComponent {
   ItemName = "";
   Quantity = 0;
   Price = "";
-  Cart: (DocumentLines & {Comments: string})[] =[];
+  //Cart: (DocumentLines & {Comments: string})[] =[];
+  Cart: (DocumentLines)[] =[];
   elementCart:any;
   OrderReview: Order | undefined;
   customer:any;
 
-  constructor(private orderService: ServiceService, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router) {
+  constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router) {
     this.route.queryParams.subscribe(params => {
-      const datosComoTexto = params['customer'];
-      const dataOrder = JSON.parse(datosComoTexto);
+      let datosComoTexto = params['customer'];
+      let dataOrder = JSON.parse(datosComoTexto);
       this.customer = dataOrder;
-      
-      console.log(this.customer);
+
+      datosComoTexto = params['cart'];
+      dataOrder = JSON.parse(datosComoTexto);
+      //console.log(dataOrder)
+      if(dataOrder != undefined)
+      {
+        this.Cart = []
+        this.Cart = dataOrder;
+      }
+      else
+        this.Cart = []
+      //console.log(this.customer);
     });
+    
     
     // this.routeParams = this.route.snapshot.paramMap;
     // this.customer = this.routeParams.get('customer');
   }
 
   ngOnInit(): void {
-    this.Cart = []
+    
     //console.log(this.Cart)
     this.elementCart = "info-card image-card";
     this.orderService.getItems().subscribe((retData) => {
@@ -49,11 +63,17 @@ export class CartComponent {
         //console.log(this.ListItems)
       } else {
 
-        this.openSnackBar("Error: " + retData.response, "")
+        this.openSnackBar(retData.response!, "error", "Error", "red");
 
       }
 
     });
+
+    if(this.Cart.length > 0)
+    {
+      const element = document.getElementById('Cart');
+        element!.classList.remove('image-card');
+    }
 
   }
 
@@ -62,7 +82,7 @@ export class CartComponent {
     {
       if(this.Quantity > 0)
       {
-        console.log(this.Cart?.length)
+        //console.log(this.Cart?.length)
         const element = document.getElementById('Cart');
         element!.classList.remove('image-card');
 
@@ -73,19 +93,19 @@ export class CartComponent {
           TaxCode: "EX",
           UnitPrice: this.Price,
           LineTotal: parseFloat(this.Price) * this.Quantity,
-          Comments: ""
+          U_Comments: ""
         })
 
         this.cleanSearching()
       }
       else
       {
-        this.openSnackBar("You must add Quantity more than zero", "")
+        this.openSnackBar("You must add Quantity more than zero", "warning", "Warning", "darkorange");
       }
     }
     else
     {
-      this.openSnackBar("You must select an Item", "")
+      this.openSnackBar("You must select an Item", "error", "Error", "red");
     }
 
     
@@ -96,13 +116,31 @@ export class CartComponent {
   }
 
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action,  {
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 5000,
-      panelClass: ['custom-snackbar'], 
-    });
+  openSnackBar(message: string, icon: string, type: string, color: string) {
+    // this._snackBar.open(message, action,  {
+    //   horizontalPosition: 'center',
+    //   verticalPosition: 'top',
+    //   duration: 5000,
+    //   panelClass: ['custom-snackbar'], 
+    // });
+
+    const dialogRef = this.dialog.open(SnackbarsComponent, {
+      hasBackdrop: false,
+      width: '300px',
+      position: {
+        top: '10px',   // Ajusta la posición vertical según sea necesario
+        right: '20px', // Ajusta la posición horizontal según sea necesario
+      },
+      data: { 
+        message: message,
+        icon: icon,
+        type: type,
+        color: color
+      },
+    })
+    setTimeout(() => {
+      dialogRef.close();
+    }, 5000); 
   }
 
   RemoveToCart(index: number){
@@ -148,7 +186,9 @@ export class CartComponent {
   {
     this.OrderReview = new Order();
      this.OrderReview!.CardCode = this.customer.CardCode;
-     this.OrderReview!.DocumentLine = this.Cart;
+     //this.OrderReview!.DocumentLines = [];
+     //console.log(this.Cart)
+     this.OrderReview!.DocumentLines = this.Cart;
     if(this.Cart!.length != 0)
     {
       this.myRouter.navigate(['dashboard/order-review'], {queryParams: { orderR: JSON.stringify(this.OrderReview), customer:JSON.stringify(this.customer)}});
@@ -156,12 +196,12 @@ export class CartComponent {
     }
     else
     {
-      this.openSnackBar("Error: You Need Add Items to Cart", "");
+      this.openSnackBar("You Need Add Items to Cart", "error", "Error", "red");
     }
   }
 
   backWindow()
   {
-    this.myRouter.navigate(['dashboard/cart'], {queryParams: {customer: JSON.stringify(this.customer)}});
+    this.myRouter.navigate(['dashboard/orders'], {queryParams: {customer: JSON.stringify(this.customer), cart: JSON.stringify(this.Cart)}});
   }
 }

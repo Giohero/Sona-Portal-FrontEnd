@@ -5,14 +5,16 @@ export interface DocumentLines {
     TaxCode: string;
     UnitPrice: string;
     LineTotal: number;
+    U_Comments: string;
 }
 
 export class Order {
     CardCode?: string | null;
     DocDueDate?: string;
+    DocNum?: string;
     DocDate?: string;
     TaxDate?: string;
-    DocumentLine?: DocumentLines[] | undefined;
+    DocumentLines?: DocumentLines[] | undefined;
     AddressExtension?: AddressExtension | undefined;
 }
 
