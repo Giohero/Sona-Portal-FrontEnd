@@ -68,7 +68,7 @@
         </mat-card>
         <br>
 
-        <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="20px">
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="20px">
           <mat-card class="side-cards">
             <mat-card-header>
               <h2 class="h2Mat">Address Selection <mat-icon>business</mat-icon></h2>
@@ -110,12 +110,12 @@
               </mat-card-content>
             </mat-card-content>
           </mat-card>
-
-          <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
-            <a mat-raised-button color="primary" class="mobile-button" (click)="backWindow()">Back</a>
-            <a mat-raised-button color="primary" class="mobile-button" (click)="createOrder(option)" >Create Order</a>
-          </div>
         </div>
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
+          <a mat-raised-button color="primary" class="mobile-button" (click)="backWindow()">Back</a>
+          <a mat-raised-button color="primary" class="mobile-button" (click)="createOrder(option)" >Create Order</a>
+        </div>
+        <br>
       </div>
     </div> 
 </div>

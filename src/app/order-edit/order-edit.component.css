@@ -5,6 +5,10 @@
     border-radius: 10%;
     padding: 5px;
   }
+
+a{
+  margin-right: 20px;
+}
   
   .background {
     background-image: url('src/assets/images/Camping.jpg'); /* Asegúrate de que la ruta de la imagen sea correcta */

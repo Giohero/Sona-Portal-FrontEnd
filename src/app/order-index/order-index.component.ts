@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ServiceService } from '../service/service.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { Order } from '../models/car';
+import { Order } from '../models/order';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 
 @Component({
@@ -13,8 +13,9 @@ import { SnackbarsComponent } from '../snackbars/snackbars.component';
 export class OrderIndexComponent {
 
 ListOrders: Order[] | undefined;
+isLoading=true;
 
-  constructor(private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog)
+  constructor(private orderService: ServiceService, private myRouter: Router, private route: ActivatedRoute, private dialog: MatDialog)
   {}
 
   ngOnInit(): void {
@@ -24,13 +25,18 @@ ListOrders: Order[] | undefined;
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         this.ListOrders = JSON.parse(retData.response!);
-        console.log(this.ListOrders)
-          
+        //console.log(this.ListOrders)
       } else {
         this.openSnackBar(retData.response!, "error", "Error", "red");
       }
 
+      this.isLoading = false
     });
+  }
+
+  selectMatCard(order:Order)
+  {
+    this.myRouter.navigate(['dashboard/order-edit'], {queryParams: {order: JSON.stringify(order)}});
   }
 
   openSnackBar(message: string, icon: string, type: string, color: string) {

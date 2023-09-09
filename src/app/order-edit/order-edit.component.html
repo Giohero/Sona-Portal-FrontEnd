@@ -2,8 +2,10 @@
     <div>
       <div class="container" fxLayout="column" fxLayoutGap="20px">
         <br>
-        <h2>Order Details</h2>
-  
+        <div fxLayout="row" >
+          <a mat-raised-button color="primary" class="mobile-button" href="dashboard/order-index"><mat-icon>keyboard_arrow_left</mat-icon></a>
+          <h2>Order Details</h2>
+        </div>
         <!-- Verificar si order está definido antes de mostrarlo -->
         <ng-container *ngIf="order">
           <!-- Primer Card -->
@@ -42,7 +44,7 @@
                   </div>
                   <div class="label-container">
                     <label class="label">Item Description:</label>
-                    <input type="text" class="boxCustom" [(ngModel)]="item.ItemName" disabled="true">
+                    <input type="text" class="boxCustom" [(ngModel)]="item.ItemDescription" disabled="true">
                   </div>
                   <div class="label-container">
                     <label class="label">Unit Price:</label>

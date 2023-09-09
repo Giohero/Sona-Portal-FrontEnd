@@ -5,19 +5,31 @@
         <div>
             <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
                 <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;" >
-                    <mat-card class="Cart" >
+                    <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
                         <mat-card-header>
-                        <h1>{{Order.DocNum}}</h1>
+                                <div style="flex: 1; ">
+                                    <h1>{{Order.DocNum}}</h1>
+                                </div>
+                                <div  style="flex: 1; "fxLayoutAlign="center center">
+                                    {{Order.DocDueDate.slice(0, 10)}}
+                                    <br>
+                                    Total: ${{Order.DocTotal}}
+                                </div>
                         </mat-card-header>
                         <mat-card-content>
-                            <div class="input-container">
-                            <label for="ItemName"><b>Posting Date:</b></label>
-                            <input type="text" matInput class="boxCartItemName" for="ItemName"  id="ItemName" readonly [value]="Order.DocDueDate">
-                            </div>
+                            <br>
+                            <label>{{Order.NumAtCard}}</label> 
+                            <br>
+                            <label>{{Order.CardCode}} - {{Order.CardName}}</label> 
                         </mat-card-content>
                     </mat-card>
                 </div> 
             </div> 
+            <br><br>
+            <div *ngIf="isLoading" fxLayoutAlign="center center" class=" custom-spinner">
+                <!-- <mat-spinner class="custom-spinner" [diameter]="120"></mat-spinner> -->
+                <div class="loader"></div>
+            </div>
         </div>
     </div>
 </div>

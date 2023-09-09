@@ -36,6 +36,7 @@ export class OrdersComponent {
   AddressBill: any;
   Cart: DocumentLines[] | undefined;
   customerBack: any;
+  isLoading=true;
 
   constructor(private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar) 
   {
@@ -140,6 +141,7 @@ export class OrdersComponent {
     this.email = this.CurrentSellsItem?.EmailAddress;
     this.taxId = this.CurrentSellsItem?.FederalTaxId;
     this.idcustomer = this.CurrentSellsItem!.CardCode;
+    this.isLoading=false
   }
 
   changeCustomer()
@@ -228,6 +230,12 @@ export class OrdersComponent {
 
   this.showEditInputs = true;
   this.saveUpdates = false;
+  }
+
+  Cancel()
+  {
+    this.showEditInputs = true;
+    this.saveUpdates = false;
   }
 
   EditInputs()

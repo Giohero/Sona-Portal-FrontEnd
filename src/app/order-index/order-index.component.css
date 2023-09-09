@@ -9,22 +9,29 @@
   }
 
   .orderSection{
-    display: flex; /* Usa flexbox en el contenido que deseas centrar */
-        flex-direction: column; /* Centra verticalmente los elementos en una columna */
-        align-items: center; /* Centra horizontalmente los elementos */
+    display: flex; 
+        flex-direction: column; 
+        align-items: center; 
         text-align: center;
   }
 
   .Cart{
     flex: 1;
     margin-bottom: 10px;
-    width: calc(25% - 15px); /* Esto ajusta el ancho para tener un margen de 15px entre las tarjetas */
+    width: calc(25% - 15px); 
     box-sizing: border-box; 
+    width: 100px;
+  }
+
+  .Cart:hover {
+    transform: scale(1.05); 
+    transition: transform 0.3s ease; 
   }
 
   .container {
     color:rgb(255, 255, 255);
     padding:10px;
+    height: 100%;
   }
 
   .input-container{
@@ -36,3 +43,44 @@
     display: flex;
     flex-wrap: wrap;
   }
+
+  mat-card {
+    border-top: 8px solid darkcyan;
+    background-color: rgba(254, 254, 254, 0.85);
+  }
+
+  h1{
+    color: darkcyan;
+  }
+
+  h2{
+    margin-left: 30px;
+  }
+
+  .custom-spinner{
+    top: 100px;
+    
+  }
+
+  .loader {
+    border: 16px solid #ffffff;
+    border-radius: 50%;
+    border-top: 16px solid #397eac;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 1.5s linear infinite; /* Safari */
+    animation: spin 1.5s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+ 

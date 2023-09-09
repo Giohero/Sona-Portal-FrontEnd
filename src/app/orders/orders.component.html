@@ -36,16 +36,27 @@
             <label class="label">Billing Address:</label>
             <input type="text" class="boxCustom"  matInput placeholder="Billing Address" disabled="true"
             [(ngModel)]="billingAddress">
-            <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer"(click)="UpdateBillingAddress()"><mat-icon class="icon">edit_square</mat-icon>
-            </button>
+            <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px" >
+              <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer"><mat-icon class="icon" fxFlex="33%">add_box</mat-icon>
+              </button>
+              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer"(click)="UpdateBillingAddress()"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
+              </button>
+              <button mat-raised-button class="list-custom-button" *ngIf="inputSearchCutomer"><mat-icon class="icon" fxFlex="33%"> list_alt</mat-icon>
+              </button>
+            </div>
           </div>
           <div class="label-container">
             <label class="label">Shipping Address:</label>
             <input type="text" class="boxCustom" matInput placeholder="Shipping Address" disabled="true"
             [(ngModel)]="shippingAddress">
-            <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer"(click)="UpdateShippingAddress()"><mat-icon class="icon
-              ">edit_square</mat-icon>
-            </button>
+            
+            <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px" >
+              <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer"><mat-icon class="icon">add_box</mat-icon></button>
+              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer"(click)="UpdateBillingAddress()"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
+              </button>
+              <button mat-raised-button class="list-custom-button" *ngIf="inputSearchCutomer"><mat-icon class="icon" fxFlex="33%"> list_alt</mat-icon>
+              </button>
+            </div>
           </div>
           <div class="label-container">
             <label class="label">Phone 1:</label>
@@ -68,8 +79,9 @@
             [(ngModel)]="taxId">
           </div>
           <div class="btns">
-            <button mat-raised-button color="warn" class="actions" *ngIf="saveUpdates" (click)="UpdateCustomer()" ><mat-icon>save</mat-icon></button>
-            <button mat-raised-button color="warn" class="actions" *ngIf="inputSearchCutomer" (click)="EditInputs()"  [disabled]="showEditInputs == false"><mat-icon>edit</mat-icon></button>
+            <button mat-raised-button mat-warn-dark class="actions" *ngIf="saveUpdates" (click)="UpdateCustomer()" ><mat-icon>save</mat-icon></button>
+            <button mat-raised-button color="warn" class="actions" *ngIf="saveUpdates" (click)="Cancel()" ><mat-icon>clear</mat-icon></button>
+            <button mat-raised-button mat-warn-dark class="actions" *ngIf="inputSearchCutomer" (click)="EditInputs()"  [disabled]="showEditInputs == false"><mat-icon>edit</mat-icon></button>
           </div>
         </div>
       </mat-card-content>
@@ -80,3 +92,7 @@
     </div>
   </div>
 </div>
+
+<!-- <div *ngIf="isLoading" fxLayoutAlign="center center">
+  <mat-spinner class="custom-spinner" [diameter]="120"></mat-spinner>
+</div> -->

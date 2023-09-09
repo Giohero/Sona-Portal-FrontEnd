@@ -36,7 +36,21 @@
   width: 100%;
   margin-top: 10px;
   color: #ffffff;
-  background-color: #e77155;
+  background-color: darkcyan;
+}
+
+.add-custom-button {
+  width: 100%;
+  margin-top: 10px;
+  color: #ffffff;
+  background-color: darkcyan;
+}
+
+.list-custom-button {
+  width: 100%;
+  margin-top: 10px;
+  color: #ffffff;
+  background-color: darkcyan;
 }
 
 .custom-snackbar {
