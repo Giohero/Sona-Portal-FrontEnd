@@ -14,7 +14,7 @@ export class OrderIndexComponent {
 
 ListOrders: Order[] | undefined;
 isLoading=true;
-
+searchOrder: number | undefined;
   constructor(private orderService: ServiceService, private myRouter: Router, private route: ActivatedRoute, private dialog: MatDialog)
   {}
 
@@ -32,6 +32,16 @@ isLoading=true;
 
       this.isLoading = false
     });
+  }
+
+  searchingOrder(){
+    if(this.searchOrder){
+      var OrderFound = this.ListOrders?.find(x => x.DocNum == this.searchOrder )
+      this.ListOrders = [];
+      this.ListOrders.push(OrderFound!); 
+    }
+    else
+    this.openSnackBar("You should put Document Order", 'error', 'Error', 'red');
   }
 
   selectMatCard(order:Order)
