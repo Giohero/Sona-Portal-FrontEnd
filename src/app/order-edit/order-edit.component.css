@@ -32,12 +32,17 @@ a{
     text-align: left;
     color: darkcyan;
   }
+  .h3Mat {
+    text-align: left;
+    color: #e77155;
+  }
   
   /* Cuadros de texto y etiquetas */
   .label-container {
     display: flex;
     flex-direction: column;
     margin-top: 1px;
+    color: red;
   }
   
   .label {
@@ -116,18 +121,56 @@ a{
   }
   
   /* Rejilla */
-  .grid-container {
+  /* .grid-container {
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 10px;
     display: grid;
   }
-  
+   */
   .grid-container-date {
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
     display: grid;
   }
+  .item-container {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px; /* Ajusta el margen entre los campos de los items */
+    flex: 1; /* Ajusta el ancho de cada campo para que se ajuste en una sola fila */
+  }
+  .grid-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan a la siguiente línea si no caben en una sola fila */
+    align-items: center; /* Alinea los elementos verticalmente en el centro */
+  }
   
+  .label-container {
+    flex: 1; /* Hace que cada campo ocupe la misma cantidad de espacio en la fila */
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px; /* Ajusta el margen entre los campos de los items */
+  }
+
+.label-total {
+  display: flex;
+  justify-content: flex-end; /* Alinea la etiqueta a la derecha */
+  margin-top: 20px; /* Ajusta el margen superior según sea necesario */
+  color: black;
+}
+.button-container {
+  display: flex;
+  justify-content: flex-end; 
+  margin-top: flex; 
+  margin-left: flex; 
+}
+
+.add-button {
+  background-color: #4caf50; /* Color de fondo del botón */
+  color: white; /* Color del texto del botón */
+}
+
+/* ... (otros estilos) */
+
   /* Estilos responsivos */
   /* Pantallas más pequeñas */
   @media screen and (max-width: 768px) {
