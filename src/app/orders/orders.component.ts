@@ -131,10 +131,19 @@ export class OrdersComponent {
     console.log(this.CurrentSellsItem);
     this.inputSearchCutomer = true;
     this.showAddButton = false;
-    var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
-    var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
-    this.billingAddress = GetBill?.AddressName! +' '+ GetBill?.Street +' '+ GetBill?.City +' '+ GetBill?.State+' '+ GetBill?.Country +' '+ GetBill?.ZipCode ;
-    this.shippingAddress = GetShip?.AddressName! +' '+ GetShip?.Street +' '+ GetShip?.City +' '+ GetShip?.State +' '+ GetShip?.Country +' '+ GetShip?.ZipCode; 
+    if(this.CurrentSellsItem!.BPAddresses.length > 0)
+    {
+      var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
+      var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
+      this.billingAddress = GetBill?.AddressName! +' '+ GetBill?.Street +' '+ GetBill?.City +' '+ GetBill?.State+' '+ GetBill?.Country +' '+ GetBill?.ZipCode ;
+      this.shippingAddress = GetShip?.AddressName! +' '+ GetShip?.Street +' '+ GetShip?.City +' '+ GetShip?.State +' '+ GetShip?.Country +' '+ GetShip?.ZipCode; 
+    }
+    else
+    {
+      this.billingAddress = '';
+      this.shippingAddress = '';
+    }
+
     this.notes = this.CurrentSellsItem?.Notes;
     this.shippingType = this.CurrentSellsItem?.ShippingType;
     this.phone1 = this.CurrentSellsItem?.Phone1;
@@ -142,6 +151,7 @@ export class OrdersComponent {
     this.taxId = this.CurrentSellsItem?.FederalTaxId;
     this.idcustomer = this.CurrentSellsItem!.CardCode;
     this.isLoading=false
+    
   }
 
   changeCustomer()
@@ -157,6 +167,7 @@ export class OrdersComponent {
     this.email = '';
     this.taxId = '';
     this.CurrentSellsItem = undefined;
+    this.idcustomer= '';
     
   //   this.orderService.UpdateCustomer(Customer).subscribe(retData => {
   //     console.log(Customer);
@@ -252,7 +263,12 @@ export class OrdersComponent {
       autoFocus: false,
       maxHeight: '90vh', //you can adjust the value as per your view
       maxWidth: '140vh',
-      data: GetBill,
+      data: { 
+        viewEdit: true,
+        viewAdd: false,
+        viewList: false,
+        addresses: GetBill!
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -307,9 +323,8 @@ export class OrdersComponent {
 
   }
 
-
-
   UpdateShippingAddress(){
+
     var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
     const dialogRef = this.dialog.open(DialogAddressComponent, {
       height: 'auto',
@@ -317,7 +332,12 @@ export class OrdersComponent {
       autoFocus: false,
       maxHeight: '90vh', //you can adjust the value as per your view
       maxWidth: '140vh',
-      data: GetShip,
+      data: { 
+        viewEdit: true,
+        viewAdd: false,
+        viewList: false,
+        addresses: GetShip!
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -360,7 +380,159 @@ export class OrdersComponent {
           }
         });
       }
-      
      });
   }
+
+  AddShippingAddress(){
+    //var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
+    const dialogRef = this.dialog.open(DialogAddressComponent, {
+      height: 'auto',
+      width: '90%',
+      autoFocus: false,
+      maxHeight: '90vh', //you can adjust the value as per your view
+      maxWidth: '140vh',
+      data: { 
+        viewEdit: false,
+        viewAdd: true,
+        viewList: false,
+        addresses: undefined!,
+        addressesList: undefined
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
+      if(result != undefined)
+      {
+        this.AddressShip = {
+          AddressName : result!.AddressName ?? "",
+          AddressName2 : result.AddressName2 ?? "",
+          AddressType : 'bo_ShipTo',
+          Block : result?.Block ?? "",
+          Country : result?.Country ?? "",
+          City : result?.City ?? "",
+          State : result?.State ?? "",
+          Street : result?.Street ?? "",
+          ZipCode : result?.ZipCode ?? "",
+        }
+
+        var CustomerAdd={
+          CardCode: this.idcustomer,
+          CardType: 'C',
+          BPAddresses: [
+            this.AddressBill
+          ]
+        }
+
+        this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
+          console.log(CustomerAdd);
+          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
+          {
+            //console.log("Address Updated")
+            this.openSnackBar("", "check_circle", "Address Added!", "green");
+            this.shippingAddress = this.AddressShip!.AddressName +' '+ this.AddressShip!.Street  +' '+ this.AddressShip!.City +' '+ this.AddressShip!.State +' '+ this.AddressShip!.Country +' '+ this.AddressShip!.ZipCode;  
+          }
+          else
+          {
+            this.openSnackBar(retData.response!, "error", "Error", "red");
+            //console.log(retData.response)
+          }
+        });
+      }
+     });
+  }
+
+  AddBillingAddress(){
+    //var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
+    const dialogRef = this.dialog.open(DialogAddressComponent, {
+      height: 'auto',
+      width: '90%',
+      autoFocus: false,
+      maxHeight: '90vh', //you can adjust the value as per your view
+      maxWidth: '140vh',
+      data: { 
+        viewEdit: false,
+        viewAdd: true,
+        viewList: false,
+        addresses: undefined,
+        addressesList: undefined
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+     
+      if(result != undefined)
+      {
+
+        this.AddressBill = {
+          AddressName : result!.AddressName ?? " ",
+          AddressName2 : result.AddressName2 ?? " ",
+          AddressType : 'bo_BillTo',
+          Block : result?.Block ?? "",
+          Country : result?.Country ?? "",
+          City : result?.City ?? "",
+          State : result?.State ?? "",
+          Street : result?.Street ?? "",
+          ZipCode : result?.ZipCode ?? "",
+        }
+
+        var CustomerAdd={
+          CardCode: this.idcustomer,
+          CardType: 'C',
+          BPAddresses: [
+            this.AddressBill
+          ]
+        }
+
+        console.log(CustomerAdd)
+
+        this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
+          console.log(CustomerAdd);
+          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
+          {
+            //console.log("Address Updated")
+            this.openSnackBar("", "check_circle", "Address Add!", "green");
+            this.billingAddress = this.AddressBill!.AddressName +' '+ this.AddressBill!.Street  +' '+ this.AddressBill!.City +' '+ this.AddressBill!.State +' '+ this.AddressBill!.Country +' '+ this.AddressBill!.ZipCode;
+          }
+          else
+          {
+            this.openSnackBar(retData.response!, "error", "Error", "red");
+            //console.log(retData.response)
+          }
+        });
+      }
+        //console.log(this.AddressBill);
+    });
+  }
+
+  CheckList(type:string)
+  {
+    const dialogRef = this.dialog.open(DialogAddressComponent, {
+      height: 'auto',
+      width: '90%',
+      autoFocus: false,
+      maxHeight: '90vh', //you can adjust the value as per your view
+      maxWidth: '140vh',
+      data: { 
+        viewEdit: false,
+        viewAdd: false,
+        viewList: true,
+        addresses: undefined,
+        addressesList: this.CurrentSellsItem?.BPAddresses.filter(x => x.AddressType == type)
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+     
+      if(result != undefined)
+      {
+        console.log(result)
+        if(type == "bo_BillTo")
+          this.billingAddress = result?.AddressName! +' '+ result?.Street +' '+ result?.City +' '+ result?.State+' '+ result?.Country +' '+ result?.ZipCode ;
+        else
+        this.shippingAddress = result?.AddressName! +' '+ result?.Street +' '+ result?.City +' '+ result?.State +' '+ result?.Country +' '+ result?.ZipCode; 
+      }
+    });
+  }
+  
 }

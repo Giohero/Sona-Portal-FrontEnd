@@ -7,6 +7,9 @@ mat-list-item{
   padding: 5px;
 }
 
+h3{
+  text-align: right;
+}
   
   .background {
     /* background-image: url('src/assets/images/BussinesVector.jpeg'); */

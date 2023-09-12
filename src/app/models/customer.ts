@@ -58,3 +58,11 @@ export interface ContactEmployees {
     Address: string;
     LastName: string;
 }
+
+export class DialogAddress {
+    viewEdit?: boolean;
+    viewAdd?: boolean;
+    viewList?: boolean;
+    addresses!: BPAddresses;
+    addressesList?: BPAddresses[];
+}

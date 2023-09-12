@@ -4,7 +4,7 @@ import { BusinessPartner } from '../models/customer';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Order } from '../models/car';
+import { DocumentLines, Order } from '../models/car';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
@@ -43,6 +43,7 @@ export class OrderReviewComponent {
   maxDate?: Date;
   tax!: FormControl;
   delivery!: FormControl;
+  sumLines?: number;
 
   constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute, private _snackBar: MatSnackBar, private pipe: DatePipe) {
     this.route.queryParams.subscribe(params => {
@@ -56,6 +57,7 @@ export class OrderReviewComponent {
     // const AddressTotal = this.CustomerData!.BPAddresses;
     // this.CustomerData!.BPAddresses = AddressTotal;
 
+    this.sumLines = this.OrderReview!.DocumentLines!.reduce((acumulador:number, elemento:any) => acumulador + elemento.LineTotal, 0);
     this.cardcode = this.CustomerData.CardCode;
     this.notes = this.CustomerData.notes;
     this.email = this.CustomerData.Email;
@@ -211,8 +213,10 @@ export class OrderReviewComponent {
         //console.log(this.OrderReview);
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
         {
-          //console.log("Order created")
-          this.openSnackBar("", "check_circle", "Order Created!", "green");
+           var OrderCreate: Order;
+           OrderCreate = JSON.parse(retData.response!);
+          this.openSnackBar("DocNum: "+ OrderCreate.DocNum, "check_circle", "Order Created!", "green");
+          this.myRouter.navigate(['dashboard/order-index'])
         }
         else
         {

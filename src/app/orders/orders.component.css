@@ -39,6 +39,11 @@
   background-color: darkcyan;
 }
 
+.edit-custom-button:disabled{
+  background-color: grey;
+  opacity: .5;
+}
+
 .add-custom-button {
   width: 100%;
   margin-top: 10px;

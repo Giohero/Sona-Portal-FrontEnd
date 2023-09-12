@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BPAddresses } from '../models/customer';
+import { BPAddresses, DialogAddress } from '../models/customer';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SAPStates } from '../models/SAPStates';
 import { ServiceService } from '../service/service.service';
@@ -14,13 +14,21 @@ import { ServiceService } from '../service/service.service';
 export class DialogAddressComponent {
   AddressForm!: FormGroup;
   StateList!: SAPStates | undefined;
+  selection: any;
+  displayedColumns= ["select", "AddressName", "AddressName2", "Street", "Block" ,"ZipCode", "City", "State" ]
+  option!:number;
 
 constructor(public dialogRef: MatDialogRef<DialogAddressComponent>,
-  @Inject(MAT_DIALOG_DATA) public dataReq:  BPAddresses,private MyFb: FormBuilder,private orderService: ServiceService)
+  @Inject(MAT_DIALOG_DATA) public dataReq:  DialogAddress,private MyFb: FormBuilder,private orderService: ServiceService)
   {
-    
+    console.log('por aqui')
+    console.log(dataReq)
   }
   
+  toggleSelection(row: any) {
+    this.selection = row;
+  }
+
   close(): void {
     this.dialogRef.close();
   }
@@ -63,13 +71,16 @@ constructor(public dialogRef: MatDialogRef<DialogAddressComponent>,
   }
 
   addToForm(){
-    this.AddressForm.patchValue({AddressName: this.dataReq?.AddressName});
-    this.AddressForm.patchValue({AddressName2: this.dataReq?.AddressName2});
-    this.AddressForm.patchValue({Street: this.dataReq?.Street});
-    this.AddressForm.patchValue({Block: this.dataReq?.Block});
-    this.AddressForm.patchValue({City: this.dataReq?.City});
-    this.AddressForm.patchValue({State: this.dataReq?.State});
-    this.AddressForm.patchValue({ZipCode: this.dataReq?.ZipCode});
+    if(this.dataReq.addresses != undefined)
+    {
+      this.AddressForm.patchValue({AddressName: this.dataReq?.addresses.AddressName});
+      this.AddressForm.patchValue({AddressName2: this.dataReq?.addresses.AddressName2});
+      this.AddressForm.patchValue({Street: this.dataReq?.addresses.Street});
+      this.AddressForm.patchValue({Block: this.dataReq?.addresses.Block});
+      this.AddressForm.patchValue({City: this.dataReq?.addresses.City});
+      this.AddressForm.patchValue({State: this.dataReq?.addresses.State});
+      this.AddressForm.patchValue({ZipCode: this.dataReq?.addresses.ZipCode});
+    }
   }
 
   updateAddress(){

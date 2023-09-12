@@ -1,4 +1,4 @@
-<mat-card class="modal-content">
+<mat-card *ngIf="dataReq.viewEdit == true" class="modal-content">
   <mat-card-header class="modal-header">
     <mat-card-title class="modal-title">Edit Address</mat-card-title>
   </mat-card-header>
@@ -44,5 +44,122 @@
         <button mat-raised-button color="warn"  (click)="close()">Cancel</button>
       </div>
     </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="dataReq.viewAdd == true"  class="modal-content">
+  <mat-card-header class="modal-header">
+    <mat-card-title class="modal-title">Edit Address</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="AddressForm" (ngSubmit)="updateAddress()" class="form-grid">
+      <div class="form-column">
+        <div class="form-group">
+          <mat-label for="AddressName"><b>Address Name*</b></mat-label>
+          <input matInput formControlName="AddressName" id="AddressName">
+        </div>
+        <div class="form-group">
+          <mat-label for="Street"><b>Street Address, PO Box*</b></mat-label>
+          <input matInput formControlName="Street" id="Street">
+        </div>
+        <div class="form-group">
+          <mat-label for="City"><b>City/Town*</b></mat-label>
+          <input matInput formControlName="City" id="City">
+        </div>
+        <div class="form-group">
+          <mat-label for="ZipCode"><b>Zip Code*</b></mat-label>
+          <input matInput formControlName="ZipCode" id="ZipCode">
+        </div>
+      </div>
+      <div class="form-column">
+        <div class="form-group">
+          <mat-label for="AddressName2"><b>Address Name 2</b></mat-label>
+          <input matInput formControlName="AddressName2" id="AddressName2">
+        </div>
+        <div class="form-group">
+          <mat-label for="Block"><b>Apartment/Unit (Optional)</b></mat-label>
+          <input matInput formControlName="Block" id="Block">
+        </div>
+        <div class="form-group">
+          <mat-label for="State"><b>State*</b></mat-label>
+          <mat-select formControlName="State" class="custom-select" aria-label="Default select example">
+            <mat-option selected>Select an option from the list</mat-option>
+            <mat-option *ngFor="let item of this.StateList?.value" [value]="item.Code">{{ item.Name }}</mat-option>
+          </mat-select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button mat-raised-button color="primary" [mat-dialog-close]="AddressForm.value">Save</button>
+        <button mat-raised-button color="warn"  (click)="close()">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="dataReq.viewList == true"  class="modal-content">
+  <mat-card-header class="modal-header">
+    <mat-card-title class="modal-title">List Addresses</mat-card-title>
+    <mat-card-subtitle class="modal-title">Choose One</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+        <table mat-table [dataSource]="dataReq.addressesList!" class="mat-elevation-z8">
+          <mat-radio-group [(ngModel)]="option">
+            <ng-container matColumnDef="select">
+              <th mat-header-cell *matHeaderCellDef> </th>
+              <td mat-cell *matCellDef="let row">
+                <!-- Cambia mat-checkbox por mat-radio-button -->
+                <!-- <mat-radio-button
+                  (click)="$event.stopPropagation()"
+                  (change)="$event ? selection.toggle(row) : null"
+                  [checked]="selection.isSelected(row)"
+                  [value]="row">
+                </mat-radio-button> -->
+                <mat-radio-button 
+                (click)="$event.stopPropagation()"
+                [value]="row"></mat-radio-button>
+              </td>
+            </ng-container>
+          <th mat-header-cell *matHeaderCellDef>
+            <div *ngIf="selection.hasValue()">Selected Item</div>
+          </th>
+          <ng-container matColumnDef="AddressName">
+            <th mat-header-cell *matHeaderCellDef><b>Address Name</b></th>
+            <td mat-cell *matCellDef="let element"> {{element.AddressName}} </td>
+          </ng-container>
+          <ng-container matColumnDef="AddressName2">
+            <th mat-header-cell *matHeaderCellDef><b>Address Name 2</b></th>
+            <td mat-cell *matCellDef="let element"> {{element.AddressName2}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Street">
+            <th mat-header-cell *matHeaderCellDef><b>Street Address, PO Box</b> </th>
+            <td mat-cell *matCellDef="let element"> {{element.Street}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Block">
+            <th mat-header-cell *matHeaderCellDef><b>Apartment/Unit</b></th>
+            <td mat-cell *matCellDef="let element"> {{element.Block}} </td>
+          </ng-container>
+          <ng-container matColumnDef="ZipCode">
+            <th mat-header-cell *matHeaderCellDef><b>Zip Code</b></th>
+            <td mat-cell *matCellDef="let element"> {{element.ZipCode}} </td>
+          </ng-container>
+          <ng-container matColumnDef="City">
+            <th mat-header-cell *matHeaderCellDef><b>City/Town</b></th>
+            <td mat-cell *matCellDef="let element"> {{element.City}} </td>
+          </ng-container>
+          <ng-container matColumnDef="State">
+            <th mat-header-cell *matHeaderCellDef><b>State</b></th>
+            <td mat-cell *matCellDef="let element"> {{element.State}} </td>
+          </ng-container>
+        
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+              (click)="selection.toggle(row)">
+          </tr>
+        </mat-radio-group>
+        </table>
+      <div class="form-actions">
+        <button mat-raised-button color="primary" [mat-dialog-close]="option">Choose</button>
+        <button mat-raised-button color="warn"  (click)="close()">Cancel</button>
+      </div>
   </mat-card-content>
 </mat-card>

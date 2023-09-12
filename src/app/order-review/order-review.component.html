@@ -95,7 +95,6 @@
           <mat-card fxFlex="50%" class="side-cards">
             <mat-card-content>
               <h2 class="h2Mat">Order check <mat-icon>done_all</mat-icon></h2>
-              <mat-card-content>
                 <mat-list>
                   <mat-list-item  *ngFor="let item of OrderReview!.DocumentLines; let listIndex=index;">
                     <div matListItemTitle><mat-icon>check_circle_outline</mat-icon><b>{{listIndex+1}}</b></div>
@@ -106,8 +105,8 @@
                     <div class="info-item" matListItemLine>Comments: {{item.U_Comments}}</div>
                   </mat-list-item>
                   <mat-divider></mat-divider>
+                  <h3 class="h2Mat" style="text-align: right;">Total: {{sumLines}}</h3>
                 </mat-list>
-              </mat-card-content>
             </mat-card-content>
           </mat-card>
         </div>
