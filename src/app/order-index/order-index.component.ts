@@ -36,18 +36,17 @@ searchOrder: number | undefined;
 
   reload()
   {
-    this.orderService.getOrders().subscribe((retData) => {
-
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-
-        this.ListOrders = JSON.parse(retData.response!);
-        //console.log(this.ListOrders)
-      } else {
-        this.openSnackBar(retData.response!, "error", "Error", "red");
-      }
-
-      this.isLoading = false
-    });
+    this.isLoading = true; 
+    setTimeout(() => {
+      this.orderService.getOrders().subscribe((retData) => {
+        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+          this.ListOrders = JSON.parse(retData.response!);
+        } else {
+          this.openSnackBar(retData.response!, "error", "Error", "red");
+        }
+        this.isLoading = false; 
+      });
+    }, 2000);
   }
 
   searchingOrder(){

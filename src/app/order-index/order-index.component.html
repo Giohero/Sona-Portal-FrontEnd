@@ -6,8 +6,16 @@
             <div class="labelSearch">
                 <!-- <label class="labelS">Search: </label> -->
                 <input matInput placeholder="Document Order" type="text" class="searchOrder" [(ngModel)]="searchOrder">
-                <button class="iconsearch" (click)="searchingOrder()"><mat-icon>search</mat-icon>Search</button>
-              </div>  
+                <button class="iconsearch" (click)="searchingOrder()"><mat-icon>search</mat-icon>Search</button>  
+                <button class="iconsearch" (click)="reload()">
+                    <mat-icon>refresh</mat-icon>
+                    <div *ngIf="isLoading" class="progress-bar">
+                      <div class="progress"></div>
+                    </div>
+                  </button>                  
+              </div>
+              <!-- <div class="iconRefresh">
+              </div> -->
             <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
                 <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;" >
                     <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">

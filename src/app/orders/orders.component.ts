@@ -521,6 +521,9 @@ export class OrdersComponent {
         addressesList: this.CurrentSellsItem?.BPAddresses.filter(x => x.AddressType == type)
       },
     });
+      // DeleteList(){
+        
+      // }
 
     dialogRef.afterClosed().subscribe(result => {
      

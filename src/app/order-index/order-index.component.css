@@ -103,6 +103,12 @@ h2 {
 .iconsearch  mat-icon{
   margin-right: 5px;
 }
+/* .iconRefresh{
+
+}
+.iconRefresh mat-icon{
+  margin-right: 5px;
+} */
 /* Media query para dispositivos móviles */
 @media (max-width: 767px) {
   .Cart {
