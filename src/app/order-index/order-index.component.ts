@@ -34,6 +34,22 @@ searchOrder: number | undefined;
     });
   }
 
+  reload()
+  {
+    this.orderService.getOrders().subscribe((retData) => {
+
+      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+
+        this.ListOrders = JSON.parse(retData.response!);
+        //console.log(this.ListOrders)
+      } else {
+        this.openSnackBar(retData.response!, "error", "Error", "red");
+      }
+
+      this.isLoading = false
+    });
+  }
+
   searchingOrder(){
     if(this.searchOrder){
       var OrderFound = this.ListOrders?.find(x => x.DocNum == this.searchOrder )
