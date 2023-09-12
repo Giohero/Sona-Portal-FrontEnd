@@ -1,42 +1,61 @@
 <div class="background">
-    <div>
-      <div class="container" fxLayout="column" fxLayoutGap="20px">
+  <div>
+    <div class="container" fxLayout="column" fxLayoutGap="20px">
+      <br>
+      <div fxLayout="row">
+        <a mat-raised-button color="primary" class="mobile-button" href="dashboard/order-index">
+          <mat-icon>keyboard_arrow_left</mat-icon>
+        </a>
+        <h2>Order Details</h2>
+      </div>
+      <ng-container *ngIf="order">
+        <!-- First Card -->
+        <mat-card class="mat-card">
+          <mat-card-content>
+            <h2 class="h2Mat">Order Information <mat-icon>description</mat-icon></h2>
+            <div class="grid-container">
+              <div class="label-container">
+                <label class="label">Card Code:</label>
+                <input type="text" class="boxCustom" [(ngModel)]="order.CardCode" disabled="true">
+              </div>
+              <div class="label-container">
+                <label class="label">Card Name:</label>
+                <input type="text" class="boxCustom" [(ngModel)]="order.CardName" disabled="true">
+              </div>
+              <div class="label-container">
+                <label class="label">Posting date:</label>
+                <mat-form-field class="example-full-width">
+                  <input matInput [matDatepicker]="postingDate" [formControl]="post">
+                  <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
+                  <mat-datepicker #postingDate></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="label-container">
+                <label class="label">Delivery Date:</label>
+                <mat-form-field>
+                  <mat-label>Choose a date</mat-label>
+                    <input matInput [matDatepicker]="deliveryDate" [formControl]="delivery">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="deliveryDate"></mat-datepicker-toggle>
+                    <mat-datepicker #deliveryDate></mat-datepicker>
+                  </mat-form-field>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions></mat-card-actions>
+        </mat-card>
         <br>
-        <div fxLayout="row" >
-          <a mat-raised-button color="primary" class="mobile-button" href="dashboard/order-index"><mat-icon>keyboard_arrow_left</mat-icon></a>
-          <h2>Order Details</h2>
-        </div>
+        <!-- Tarjetas para elementos de DocumentLines -->
         <!-- Verificar si order está definido antes de mostrarlo -->
         <ng-container *ngIf="order">
-          <!-- Primer Card -->
+          <!-- Tarjeta para mostrar todos los elementos de DocumentLines -->
           <mat-card class="mat-card">
             <mat-card-content>
-              <h2 class="h2Mat">Order Information <mat-icon>description</mat-icon></h2>
-              <div class="grid-container">
-                <div class="label-container">
-                  <label class="label">Card Code:</label>
-                  <input type="text" class="boxCustom" [(ngModel)]="order.CardCode" disabled="true">
-                </div>
-                <div class="label-container">
-                  <label class="label">Doc Date:</label>
-                  <input type="text" class="boxCustom" [(ngModel)]="order.DocDate" disabled="true">
-                </div>
-                <div class="label-container">
-                  <label class="label">Doc Due Date:</label>
-                  <input type="text" class="boxCustom editable-input" matInput placeholder="Doc Due Date" [(ngModel)]="order.DocDueDate">
-                </div>
-              </div>
-            </mat-card-content>
-            <mat-card-actions>
-            </mat-card-actions>
-          </mat-card>
-          <br>
-  
-          <!-- Tarjetas para elementos de DocumentLines -->
-          <ng-container *ngFor="let item of order.DocumentLines; let i = index">
-            <mat-card class="mat-card">
-              <mat-card-content>
-                <h2 class="h2Mat">Item Information <mat-icon>shopping_cart</mat-icon></h2>
+              <h2 class="h2Mat">Item list <mat-icon>shopping_cart</mat-icon></h2>
+              <!-- Utiliza ngFor para recorrer todos los elementos de DocumentLines -->
+              <div *ngFor="let item of order.DocumentLines; let i = index">
+                <br>
+                <h3 class="h3Mat"><b>Item #{{ i + 1 }}</b></h3>
                 <div class="grid-container">
                   <div class="label-container">
                     <label class="label">Item Code:</label>
@@ -58,17 +77,29 @@
                     <label class="label">UDF Comments:</label>
                     <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.U_Comments">
                   </div>
+                  <div class="label-container">
+                    <button mat-icon-button (click)="removeItem(i)">
+                      <mat-icon >delete</mat-icon>
+                    </button>
+                  </div>
                 </div>
-              </mat-card-content>
-              <mat-card-actions>
-              </mat-card-actions>
-            </mat-card>
+              </div>
+            </mat-card-content>
+            <!-- Agrega la etiqueta "Total" fuera de la tarjeta de contenido y alineada a la derecha -->
+            <div class="label-total">
+              <label><b>Total:</b></label>
+            </div>
+            <!-- Botón de agregar en la esquina superior derecha -->
             <br>
-          </ng-container>
-  
-          <!-- Resto de tu contenido -->
+            <div class="button-container">
+              <button mat-raised-button color="primary" class="add-button">
+                <mat-icon>add</mat-icon> Add Item
+              </button>
+            </div>
+            <mat-card-actions></mat-card-actions>
+          </mat-card>
         </ng-container>
-      </div>
+      </ng-container>
     </div>
   </div>
-  
+</div>
