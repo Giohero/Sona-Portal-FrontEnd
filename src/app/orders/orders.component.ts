@@ -38,7 +38,8 @@ export class OrdersComponent {
   Cart: DocumentLines[] | undefined;
   customerBack: any;
   isLoading=true;
-  row=0;
+  rowShip=0;
+  rowBill=0;
 
   constructor(private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService) 
   {
@@ -136,6 +137,11 @@ export class OrdersComponent {
     {
       var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
       var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
+      this.rowBill = parseFloat(GetBill!.RowNum)
+      this.rowShip = parseFloat(GetShip!.RowNum)
+
+      //console.log(this.rowBill)
+      //console.log(this.rowShip)
 
       if(GetBill != undefined)
       {
@@ -268,8 +274,11 @@ export class OrdersComponent {
     this.saveUpdates = true;
   }
 
-  UpdateAddress(type:string){
-    var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == type && x.RowNum == this.row.toString());
+  UpdateAddress(type:string, row:number){
+    //console.log(this.CurrentSellsItem?.BPAddresses)
+    //console.log(type)
+    //console.log(row)
+    var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.RowNum == row.toString());
     const dialogRef = this.dialog.open(DialogAddressComponent, {
       height: 'auto',
       width: '90%',
@@ -326,7 +335,7 @@ export class OrdersComponent {
             else
               this.billingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;
 
-            const indexAddress = this.CurrentSellsItem!.BPAddresses!.findIndex(x => x.AddressType == type && x.RowNum == this.row.toString());
+            const indexAddress = this.CurrentSellsItem!.BPAddresses!.findIndex(x => x.AddressType == type && x.RowNum == row.toString());
             this.CurrentSellsItem!.BPAddresses[indexAddress] = CustomerAdd.BPAddresses[0];
             
             }
@@ -401,12 +410,12 @@ export class OrdersComponent {
             this.openSnackBar("", "check_circle", "Address Add!", "green");
             if(type == 'bo_ShipTo')
             this.shippingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;  
-          else
-            this.billingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;
+            else
+              this.billingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;
 
             // console.log(AddressReq)
             // this.CurrentSellsItem?.BPAddresses.push(this.Address)
-            this.UpdateList(this.idcustomer)
+            this.UpdateList(this.idcustomer, type)
           }
           else
           {
@@ -419,15 +428,26 @@ export class OrdersComponent {
     });
   }
 
-  UpdateList(cardcode:string)
+  UpdateList(cardcode:string, type: string)
   {
     this.orderService.getCustomer().subscribe((retData) => {
 
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         this.ListCustomers = JSON.parse(retData.response!);
+        //console.log(this.CurrentSellsItem!.BPAddresses)
+        //console.log(this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses)
+        const addressNew = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses.filter(x => !this.CurrentSellsItem!.BPAddresses.some(y => x.RowNum === y.RowNum));
+        //console.log(addressNew)
+
+        if(type == 'bo_ShipTo')
+          this.rowShip = parseFloat(addressNew[0].RowNum)
+        else
+          this.rowBill = parseFloat(addressNew[0].RowNum)
+
+        //console.log(this.rowBill)
+        //console.log(this.rowShip)
         this.CurrentSellsItem!.BPAddresses = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses
-          
       } else {
         this.openSnackBar(retData.response!, "error", "Error", "red");
       }
@@ -455,37 +475,48 @@ export class OrdersComponent {
      
       if(result != undefined)
       {
-        this.row = parseFloat(result.RowNum);
         //console.log(this.row)
         if(type == "bo_BillTo")
+        {
+          this.rowBill = parseFloat(result.RowNum);
           this.billingAddress = result?.AddressName! +' '+ result?.Street +' '+ result?.City +' '+ result?.State+' '+ result?.Country +' '+ result?.ZipCode ;
+        }
         else
-        this.shippingAddress = result?.AddressName! +' '+ result?.Street +' '+ result?.City +' '+ result?.State +' '+ result?.Country +' '+ result?.ZipCode; 
+        {
+          this.rowShip = parseFloat(result.RowNum);
+          this.shippingAddress = result?.AddressName! +' '+ result?.Street +' '+ result?.City +' '+ result?.State +' '+ result?.Country +' '+ result?.ZipCode; 
+        }
+        
       }
     });
   }
 
-  DeleteAddress(type:string)
+  DeleteAddress(type:string, row:number)
   {
-    const BPAddresses = this.CurrentSellsItem!.BPAddresses.filter(x => x.RowNum !== this.row.toString())
+    const BPAddresses = this.CurrentSellsItem!.BPAddresses.filter(x => x.RowNum !== row.toString())
 
     var Customer = {
       BPAddresses
     }
-    console.log(Customer);
+    //console.log(Customer);
 
     this.orderService.DeleteAddresBP(Customer).subscribe((retData) => {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         //this.ListCustomers = JSON.parse(retData.response!);
-        this.CurrentSellsItem!.BPAddresses = this.CurrentSellsItem!.BPAddresses.filter(x => x.RowNum !== this.row.toString())
-        this.row = 0
+        this.CurrentSellsItem!.BPAddresses = this.CurrentSellsItem!.BPAddresses.filter(x => x.RowNum !== row.toString())
 
         if(type == 'bo_ShipTo')
-            this.shippingAddress = this.CurrentSellsItem!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsItem!.BPAddresses[0]!.City +' '+ this.CurrentSellsItem!.BPAddresses[0]!.State +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Country +' '+ this.CurrentSellsItem!.BPAddresses[0]!.ZipCode;  
+        {
+          this.rowShip = parseFloat(this.CurrentSellsItem!.BPAddresses.find(x => x.AddressType == 'bo_ShipTo')!.RowNum);
+          this.shippingAddress = this.CurrentSellsItem!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsItem!.BPAddresses[0]!.City +' '+ this.CurrentSellsItem!.BPAddresses[0]!.State +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Country +' '+ this.CurrentSellsItem!.BPAddresses[0]!.ZipCode;  
+        }
         else
-            this.billingAddress = this.CurrentSellsItem!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsItem!.BPAddresses[0]!.City +' '+ this.CurrentSellsItem!.BPAddresses[0]!.State +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Country +' '+ this.CurrentSellsItem!.BPAddresses[0]!.ZipCode;
-
+        {
+          this.rowBill = parseFloat(this.CurrentSellsItem!.BPAddresses.find(x => x.AddressType == 'bo_BillTo')!.RowNum);
+          this.billingAddress = this.CurrentSellsItem!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsItem!.BPAddresses[0]!.City +' '+ this.CurrentSellsItem!.BPAddresses[0]!.State +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Country +' '+ this.CurrentSellsItem!.BPAddresses[0]!.ZipCode;
+        }
+            
         this.openSnackBar("", "check_circle", "Address Deleted!", "green");
           
       } else {

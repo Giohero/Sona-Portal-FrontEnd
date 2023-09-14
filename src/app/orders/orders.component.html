@@ -39,11 +39,11 @@
             <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px" >
               <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_BillTo')"><mat-icon class="icon" fxFlex="33%">add_box</mat-icon>
               </button>
-              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_BillTo')" [disabled]="billingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
+              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_BillTo', rowBill)" [disabled]="billingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
               </button>
               <button mat-raised-button class="list-custom-button" *ngIf="inputSearchCutomer" (click)="CheckList('bo_BillTo')"><mat-icon class="icon" fxFlex="33%"> list_alt</mat-icon>
               </button>
-              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_BillTo')" [disabled]="billingAddress === ''"><mat-icon class="icon" fxFlex="33%">delete</mat-icon>
+              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_BillTo', rowBill)" [disabled]="billingAddress === ''"><mat-icon class="icon" fxFlex="33%">delete</mat-icon>
               </button>
             </div>
           </div>
@@ -54,11 +54,11 @@
             
             <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px" >
               <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_ShipTo')"><mat-icon class="icon">add_box</mat-icon></button>
-              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_ShipTo')" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
+              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
               </button>
               <button mat-raised-button class="list-custom-button" *ngIf="inputSearchCutomer" (click)="CheckList('bo_ShipTo')"><mat-icon class="icon" fxFlex="33%"> list_alt</mat-icon>
               </button>
-              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_ShipTo')" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">delete</mat-icon></button>
+              <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">delete</mat-icon></button>
             </div>
           </div>
           <div class="label-container">
