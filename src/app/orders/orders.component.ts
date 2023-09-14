@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DocumentLines } from '../models/car';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
+import { DataSharingService } from '../service/data-sharing.service';
 
 @Component({
   selector: 'app-orders',
@@ -33,21 +34,24 @@ export class OrdersComponent {
   showAddButton = true;
   showEditInputs = true;
   AddressShip: any;
-  AddressBill: any;
+  Address: any;
   Cart: DocumentLines[] | undefined;
   customerBack: any;
   isLoading=true;
+  row=0;
 
-  constructor(private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar) 
+  constructor(private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService) 
   {
-    this.route.queryParams.subscribe(params => {
-      let datosComoTexto = params['customer'];
-      this.customerBack = JSON.parse(datosComoTexto);
-      console.log(this.customerBack)
-      datosComoTexto = params['cart'];
-      this.Cart = JSON.parse(datosComoTexto);
-    //console.log(this.CustomerData);
-    });
+    this.customerBack = this.dataSharing.getCustomerData();
+    this.Cart = this.dataSharing.getCartData();
+
+    // this.route.queryParams.subscribe(params => {
+    //   let datosComoTexto = params['customer'];
+    //   this.customerBack = JSON.parse(datosComoTexto);
+    //   console.log(this.customerBack)
+    //   datosComoTexto = params['cart'];
+    //   this.Cart = JSON.parse(datosComoTexto);
+    // });
 
   }
 
@@ -59,7 +63,7 @@ export class OrdersComponent {
 
         this.ListCustomers = JSON.parse(retData.response!);
         
-        console.log(this.customerBack)
+        //console.log(this.customerBack)
         if(this.customerBack != undefined)
         {
           this.searchText = this.customerBack.CardName
@@ -77,13 +81,6 @@ export class OrdersComponent {
   }
 
   openSnackBar(message: string, icon: string, type: string, color: string) {
-    // this._snackBar.open(message, action,  {
-    //   horizontalPosition: 'center',
-    //   verticalPosition: 'top',
-    //   duration: 5000,
-    //   panelClass: ['custom-snackbar'], 
-    // });
-
     const dialogRef = this.dialog.open(SnackbarsComponent, {
       hasBackdrop: false,
       width: '300px',
@@ -117,7 +114,11 @@ export class OrdersComponent {
 
     if(this.idcustomer)
     {
-      this.myRouter.navigate(['dashboard/cart'], {queryParams: {customer: JSON.stringify(customer), cart: JSON.stringify(this.Cart) }});
+      this.dataSharing.setCartData(this.Cart);
+      this.dataSharing.setCustomerData(customer);
+
+      //console.log(customer)
+      this.myRouter.navigate(['dashboard/cart']);
     }
     else
     {
@@ -128,15 +129,36 @@ export class OrdersComponent {
   onSelectCustomer(selectedData:any){
     //console.log(this.customerBack.CardName)
     this.CurrentSellsItem = this.ListCustomers.find(x => x.CardName === selectedData);
-    console.log(this.CurrentSellsItem);
+    //console.log(this.CurrentSellsItem);
     this.inputSearchCutomer = true;
     this.showAddButton = false;
     if(this.CurrentSellsItem!.BPAddresses.length > 0)
     {
       var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
       var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
-      this.billingAddress = GetBill?.AddressName! +' '+ GetBill?.Street +' '+ GetBill?.City +' '+ GetBill?.State+' '+ GetBill?.Country +' '+ GetBill?.ZipCode ;
-      this.shippingAddress = GetShip?.AddressName! +' '+ GetShip?.Street +' '+ GetShip?.City +' '+ GetShip?.State +' '+ GetShip?.Country +' '+ GetShip?.ZipCode; 
+
+      if(GetBill != undefined)
+      {
+        this.billingAddress = 
+        (GetBill?.AddressName ?? '') +
+        (GetBill?.Street ? ' ' + GetBill.Street : '') +
+        (GetBill?.City ? ' ' + GetBill.City : '') +
+        (GetBill?.State ? ' ' + GetBill.State : '') +
+        (GetBill?.Country ? ' ' + GetBill.Country : '') +
+        (GetBill?.ZipCode ? ' ' + GetBill.ZipCode : '');
+      }
+      
+      
+      if(GetShip != undefined)
+      {
+        this.shippingAddress =
+        (GetShip?.AddressName ?? '') +
+        (GetShip?.Street ? ' ' + GetShip.Street : '') +
+        (GetShip?.City ? ' ' + GetShip.City : '') +
+        (GetShip?.State ? ' ' + GetShip.State : '') +
+        (GetShip?.Country ? ' ' + GetShip.Country : '') +
+        (GetShip?.ZipCode ? ' ' + GetShip.ZipCode : '');
+      }
     }
     else
     {
@@ -168,18 +190,9 @@ export class OrdersComponent {
     this.taxId = '';
     this.CurrentSellsItem = undefined;
     this.idcustomer= '';
+    this.showEditInputs = true;
+    this.saveUpdates = false;
     
-  //   this.orderService.UpdateCustomer(Customer).subscribe(retData => {
-  //     console.log(Customer);
-  //     if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
-  //     {
-  //       console.log("Customer created")
-  //     }
-  //     else
-  //     {
-  //       console.log(retData.response)
-  //     }
-  // });
   }
 
   CreateCustomer()
@@ -191,7 +204,7 @@ export class OrdersComponent {
     };
     
     this.orderService.PostCustomer(Customer).subscribe(retData => {
-      console.log(Customer);
+      //console.log(Customer);
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
       {
         //console.log("Customer created")
@@ -221,7 +234,7 @@ export class OrdersComponent {
     };
 
     this.orderService.UpdateCustomer(Customer).subscribe(retData => {
-      console.log(Customer);
+      //console.log(Customer);
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
       {
         //console.log("Customer created")
@@ -255,8 +268,8 @@ export class OrdersComponent {
     this.saveUpdates = true;
   }
 
-  UpdateBillingAddress(){
-    var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
+  UpdateAddress(type:string){
+    var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == type && x.RowNum == this.row.toString());
     const dialogRef = this.dialog.open(DialogAddressComponent, {
       height: 'auto',
       width: '90%',
@@ -276,37 +289,47 @@ export class OrdersComponent {
       if(result != undefined)
       {
 
-        this.AddressBill = {
-          AddressName : result!.AddressName ?? " ",
-          AddressName2 : result.AddressName2 ?? " ",
-          AddressType : 'bo_BillTo',
-          Block : result?.Block ?? "",
-          Country : result?.Country ?? "",
-          City : result?.City ?? "",
-          State : result?.State ?? "",
-          Street : result?.Street ?? "",
-          ZipCode : result?.ZipCode ?? "",
-          RowNum : GetBill?.RowNum
+        this.Address = {
+          AddressName : result!.AddressName || " ",
+          AddressName2 : result.AddressName2 || " ",
+          AddressType : type,
+          Block : result?.Block || "",
+          Country : GetBill!.Country || "",
+          City : result?.City || "",
+          State : result?.State || "",
+          Street : result?.Street || "",
+          ZipCode : result?.ZipCode || "",
+          RowNum : GetBill?.RowNum,
+          BPCode: this.idcustomer
         }
 
         var CustomerAdd={
           CardCode: this.idcustomer,
           CardType: 'C',
+          CardName: this.searchText,
           BPAddresses: [
-            this.AddressBill
+            this.Address
           ]
         }
 
-        console.log(CustomerAdd)
+        //console.log(CustomerAdd)
 
         this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
-          console.log(CustomerAdd);
+          //console.log(CustomerAdd);
           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
           {
             //console.log("Address Updated")
             this.openSnackBar("", "check_circle", "Address Updated!", "green");
-            this.billingAddress = this.AddressBill!.AddressName +' '+ this.AddressBill!.Street  +' '+ this.AddressBill!.City +' '+ this.AddressBill!.State +' '+ this.AddressBill!.Country +' '+ this.AddressBill!.ZipCode;
-          }
+            
+            if(type == 'bo_ShipTo')
+              this.shippingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;  
+            else
+              this.billingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;
+
+            const indexAddress = this.CurrentSellsItem!.BPAddresses!.findIndex(x => x.AddressType == type && x.RowNum == this.row.toString());
+            this.CurrentSellsItem!.BPAddresses[indexAddress] = CustomerAdd.BPAddresses[0];
+            
+            }
           else
           {
             this.openSnackBar(retData.response!, "error", "Error", "red");
@@ -323,126 +346,7 @@ export class OrdersComponent {
 
   }
 
-  UpdateShippingAddress(){
-
-    var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
-    const dialogRef = this.dialog.open(DialogAddressComponent, {
-      height: 'auto',
-      width: '90%',
-      autoFocus: false,
-      maxHeight: '90vh', //you can adjust the value as per your view
-      maxWidth: '140vh',
-      data: { 
-        viewEdit: true,
-        viewAdd: false,
-        viewList: false,
-        addresses: GetShip!
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      // console.log(result);
-      if(result != undefined)
-      {
-        this.AddressShip = {
-          AddressName : result!.AddressName ?? "",
-          AddressName2 : result.AddressName2 ?? "",
-          AddressType : 'bo_ShipTo',
-          Block : result?.Block ?? "",
-          Country : result?.Country ?? "",
-          City : result?.City ?? "",
-          State : result?.State ?? "",
-          Street : result?.Street ?? "",
-          ZipCode : result?.ZipCode ?? "",
-          RowNum : GetShip?.RowNum
-        }
-
-        var CustomerAdd={
-          CardCode: this.idcustomer,
-          CardType: 'C',
-          BPAddresses: [
-            this.AddressBill
-          ]
-        }
-
-        this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
-          console.log(CustomerAdd);
-          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
-          {
-            //console.log("Address Updated")
-            this.openSnackBar("", "check_circle", "Address Updated!", "green");
-            this.shippingAddress = this.AddressShip!.AddressName +' '+ this.AddressShip!.Street  +' '+ this.AddressShip!.City +' '+ this.AddressShip!.State +' '+ this.AddressShip!.Country +' '+ this.AddressShip!.ZipCode;  
-          }
-          else
-          {
-            this.openSnackBar(retData.response!, "error", "Error", "red");
-            //console.log(retData.response)
-          }
-        });
-      }
-     });
-  }
-
-  AddShippingAddress(){
-    //var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
-    const dialogRef = this.dialog.open(DialogAddressComponent, {
-      height: 'auto',
-      width: '90%',
-      autoFocus: false,
-      maxHeight: '90vh', //you can adjust the value as per your view
-      maxWidth: '140vh',
-      data: { 
-        viewEdit: false,
-        viewAdd: true,
-        viewList: false,
-        addresses: undefined!,
-        addressesList: undefined
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      // console.log(result);
-      if(result != undefined)
-      {
-        this.AddressShip = {
-          AddressName : result!.AddressName ?? "",
-          AddressName2 : result.AddressName2 ?? "",
-          AddressType : 'bo_ShipTo',
-          Block : result?.Block ?? "",
-          Country : result?.Country ?? "",
-          City : result?.City ?? "",
-          State : result?.State ?? "",
-          Street : result?.Street ?? "",
-          ZipCode : result?.ZipCode ?? "",
-        }
-
-        var CustomerAdd={
-          CardCode: this.idcustomer,
-          CardType: 'C',
-          BPAddresses: [
-            this.AddressBill
-          ]
-        }
-
-        this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
-          console.log(CustomerAdd);
-          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
-          {
-            //console.log("Address Updated")
-            this.openSnackBar("", "check_circle", "Address Added!", "green");
-            this.shippingAddress = this.AddressShip!.AddressName +' '+ this.AddressShip!.Street  +' '+ this.AddressShip!.City +' '+ this.AddressShip!.State +' '+ this.AddressShip!.Country +' '+ this.AddressShip!.ZipCode;  
-          }
-          else
-          {
-            this.openSnackBar(retData.response!, "error", "Error", "red");
-            //console.log(retData.response)
-          }
-        });
-      }
-     });
-  }
-
-  AddBillingAddress(){
+  AddAddress(type:string){
     //var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
     const dialogRef = this.dialog.open(DialogAddressComponent, {
       height: 'auto',
@@ -463,13 +367,15 @@ export class OrdersComponent {
      
       if(result != undefined)
       {
+        this.Address = {};
 
-        this.AddressBill = {
+        this.Address = {
           AddressName : result!.AddressName ?? " ",
           AddressName2 : result.AddressName2 ?? " ",
-          AddressType : 'bo_BillTo',
+          AddressType : type,
           Block : result?.Block ?? "",
-          Country : result?.Country ?? "",
+          //Country : result?.Country ?? "",
+          Country: 'US',
           City : result?.City ?? "",
           State : result?.State ?? "",
           Street : result?.Street ?? "",
@@ -478,21 +384,29 @@ export class OrdersComponent {
 
         var CustomerAdd={
           CardCode: this.idcustomer,
+          CardName: this.searchText,
           CardType: 'C',
           BPAddresses: [
-            this.AddressBill
+            this.Address
           ]
         }
 
-        console.log(CustomerAdd)
+        //console.log(CustomerAdd)
 
         this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
-          console.log(CustomerAdd);
+          //console.log(CustomerAdd);
           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
           {
-            //console.log("Address Updated")
+
             this.openSnackBar("", "check_circle", "Address Add!", "green");
-            this.billingAddress = this.AddressBill!.AddressName +' '+ this.AddressBill!.Street  +' '+ this.AddressBill!.City +' '+ this.AddressBill!.State +' '+ this.AddressBill!.Country +' '+ this.AddressBill!.ZipCode;
+            if(type == 'bo_ShipTo')
+            this.shippingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;  
+          else
+            this.billingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;
+
+            // console.log(AddressReq)
+            // this.CurrentSellsItem?.BPAddresses.push(this.Address)
+            this.UpdateList(this.idcustomer)
           }
           else
           {
@@ -502,6 +416,22 @@ export class OrdersComponent {
         });
       }
         //console.log(this.AddressBill);
+    });
+  }
+
+  UpdateList(cardcode:string)
+  {
+    this.orderService.getCustomer().subscribe((retData) => {
+
+      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+
+        this.ListCustomers = JSON.parse(retData.response!);
+        this.CurrentSellsItem!.BPAddresses = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses
+          
+      } else {
+        this.openSnackBar(retData.response!, "error", "Error", "red");
+      }
+
     });
   }
 
@@ -521,20 +451,47 @@ export class OrdersComponent {
         addressesList: this.CurrentSellsItem?.BPAddresses.filter(x => x.AddressType == type)
       },
     });
-      // DeleteList(){
-        
-      // }
-
     dialogRef.afterClosed().subscribe(result => {
      
       if(result != undefined)
       {
-        console.log(result)
+        this.row = parseFloat(result.RowNum);
+        //console.log(this.row)
         if(type == "bo_BillTo")
           this.billingAddress = result?.AddressName! +' '+ result?.Street +' '+ result?.City +' '+ result?.State+' '+ result?.Country +' '+ result?.ZipCode ;
         else
         this.shippingAddress = result?.AddressName! +' '+ result?.Street +' '+ result?.City +' '+ result?.State +' '+ result?.Country +' '+ result?.ZipCode; 
       }
+    });
+  }
+
+  DeleteAddress(type:string)
+  {
+    const BPAddresses = this.CurrentSellsItem!.BPAddresses.filter(x => x.RowNum !== this.row.toString())
+
+    var Customer = {
+      BPAddresses
+    }
+    console.log(Customer);
+
+    this.orderService.DeleteAddresBP(Customer).subscribe((retData) => {
+      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+
+        //this.ListCustomers = JSON.parse(retData.response!);
+        this.CurrentSellsItem!.BPAddresses = this.CurrentSellsItem!.BPAddresses.filter(x => x.RowNum !== this.row.toString())
+        this.row = 0
+
+        if(type == 'bo_ShipTo')
+            this.shippingAddress = this.CurrentSellsItem!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsItem!.BPAddresses[0]!.City +' '+ this.CurrentSellsItem!.BPAddresses[0]!.State +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Country +' '+ this.CurrentSellsItem!.BPAddresses[0]!.ZipCode;  
+        else
+            this.billingAddress = this.CurrentSellsItem!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsItem!.BPAddresses[0]!.City +' '+ this.CurrentSellsItem!.BPAddresses[0]!.State +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Country +' '+ this.CurrentSellsItem!.BPAddresses[0]!.ZipCode;
+
+        this.openSnackBar("", "check_circle", "Address Deleted!", "green");
+          
+      } else {
+        this.openSnackBar(retData.response!, "error", "Error", "red");
+      }
+
     });
   }
   

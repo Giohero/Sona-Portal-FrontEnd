@@ -3,8 +3,8 @@
     <div class="container" fxLayout="column" fxLayoutGap="20px">
       <br>
       <div fxLayout="row">
-        <a mat-raised-button color="primary" class="mobile-button" href="dashboard/order-index">
-          <mat-icon>keyboard_arrow_left</mat-icon>
+        <a mat-raised-button class="mobile-button" href="dashboard/order-index">
+          <mat-icon>keyboard_arrow_left</mat-icon> Back
         </a>
         <h2>Order Details</h2>
       </div>
@@ -51,7 +51,12 @@
           <!-- Tarjeta para mostrar todos los elementos de DocumentLines -->
           <mat-card class="mat-card">
             <mat-card-content>
+              <div class="button-container">
               <h2 class="h2Mat">Item list <mat-icon>shopping_cart</mat-icon></h2>
+                <button mat-raised-button color="primary" class="add-button">
+                  <mat-icon>add</mat-icon> Add Item
+                </button>
+              </div>
               <!-- Utiliza ngFor para recorrer todos los elementos de DocumentLines -->
               <div *ngFor="let item of order.DocumentLines; let i = index">
                 <br>
@@ -85,20 +90,16 @@
                 </div>
               </div>
             </mat-card-content>
-            <!-- Agrega la etiqueta "Total" fuera de la tarjeta de contenido y alineada a la derecha -->
             <div class="label-total">
-              <label><b>Total:</b></label>
+              <label><b>Total: ${{order.DocTotal}}</b></label>
             </div>
-            <!-- Botón de agregar en la esquina superior derecha -->
             <br>
-            <div class="button-container">
-              <button mat-raised-button color="primary" class="add-button">
-                <mat-icon>add</mat-icon> Add Item
-              </button>
-            </div>
-            <mat-card-actions></mat-card-actions>
           </mat-card>
+          <div class="label-total">
+            <button mat-raised-button class="mobile-button save" [disabled]="this.order.DocumentLines === this.orderOld!.DocumentLines"><mat-icon>save</mat-icon> Update</button>
+          </div>
         </ng-container>
+        <br><br>
       </ng-container>
     </div>
   </div>

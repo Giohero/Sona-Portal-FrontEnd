@@ -159,14 +159,31 @@ a{
 }
 .button-container {
   display: flex;
-  justify-content: flex-end; 
   margin-top: flex; 
   margin-left: flex; 
+  justify-content: space-between;
 }
 
 .add-button {
   background-color: #4caf50; /* Color de fondo del botón */
   color: white; /* Color del texto del botón */
+}
+
+.mobile-button {
+  background-color: #397eac;
+  color: white;
+}
+
+
+.save{
+  width: 120px;
+  margin-right: 10px ;
+}
+
+.save:disabled{
+  width: 120px;
+  background-color: grey;
+  opacity: .5;
 }
 
 /* ... (otros estilos) */

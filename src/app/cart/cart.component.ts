@@ -6,6 +6,7 @@ import { DocumentLines, Order } from '../models/car';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { MatDialog } from '@angular/material/dialog';
+import { DataSharingService } from '../service/data-sharing.service';
 
 @Component({
   selector: 'app-cart',
@@ -16,39 +17,19 @@ export class CartComponent {
 
   ListItems!: Value[] ;
   searchText = '';
-  //routeParams;
   CurrentSellsItem: Value | undefined;
   ItemName = "";
   Quantity = 0;
   Price = "";
-  //Cart: (DocumentLines & {Comments: string})[] =[];
-  Cart: (DocumentLines)[] =[];
+  Cart: DocumentLines[] | undefined;
   elementCart:any;
   OrderReview: Order | undefined;
   customer:any;
 
-  constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router) {
-    this.route.queryParams.subscribe(params => {
-      let datosComoTexto = params['customer'];
-      let dataOrder = JSON.parse(datosComoTexto);
-      this.customer = dataOrder;
-
-      datosComoTexto = params['cart'];
-      dataOrder = JSON.parse(datosComoTexto);
-      //console.log(dataOrder)
-      if(dataOrder != undefined)
-      {
-        this.Cart = []
-        this.Cart = dataOrder;
-      }
-      else
-        this.Cart = []
-      //console.log(this.customer);
-    });
-    
-    
-    // this.routeParams = this.route.snapshot.paramMap;
-    // this.customer = this.routeParams.get('customer');
+  constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService) {    
+    this.Cart = dataSharing.getCartData();
+    if(this.Cart == undefined)
+      this.Cart = []
   }
 
   ngOnInit(): void {
@@ -69,7 +50,8 @@ export class CartComponent {
 
     });
 
-    if(this.Cart.length > 0)
+    
+    if(this.Cart!.length > 0)
     {
       const element = document.getElementById('Cart');
         element!.classList.remove('image-card');
@@ -78,6 +60,7 @@ export class CartComponent {
   }
 
   addToCart(){
+    
     if(this.ItemName != "")
     {
       if(this.Quantity > 0)
@@ -112,7 +95,8 @@ export class CartComponent {
   }
 
   updateTotal(item: DocumentLines) {
-    item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity;
+    if(item.UnitPrice)
+      item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity;
   }
 
 
@@ -168,30 +152,25 @@ export class CartComponent {
     //console.log('pasa por aqui');
     if (selectedData != undefined)
     {
-      // this.itemIndex.patchValue({ItemName: this.CurrentSellsItem?.ItemName});
-      //this.itemIndex.patchValue({ItemCode: selectedData.ItemCode});
       this.CurrentSellsItem = this.ListItems.find(x => x.ItemCode === selectedData);
       this.ItemName = this.CurrentSellsItem!.ItemName;
       //console.log(this.CurrentSellsItem?.ItemPrices)
       this.Price = this.CurrentSellsItem!.ItemPrices[0].Price.toString();
-      // //Item.get('ItemCode')?.setValue(selectedData.ItemCode);
-      // Item.get('ItemDescription')?.setValue(this.CurrentSellsItem?.ItemName);
-      // Item.get('Quantity')?.setValue(1);
-      // Item.get('TaxCode')?.setValue('EX');
-      // this.addButton = false;
     }
   }
 
   nextWindow()
   {
     this.OrderReview = new Order();
+    this.customer = this.dataSharing.getCustomerData();
      this.OrderReview!.CardCode = this.customer.CardCode;
-     //this.OrderReview!.DocumentLines = [];
-     //console.log(this.Cart)
      this.OrderReview!.DocumentLines = this.Cart;
     if(this.Cart!.length != 0)
     {
-      this.myRouter.navigate(['dashboard/order-review'], {queryParams: { orderR: JSON.stringify(this.OrderReview), customer:JSON.stringify(this.customer)}});
+      this.dataSharing.setCartData(this.Cart);
+      this.dataSharing.setOrderReview(this.OrderReview)
+
+      this.myRouter.navigate(['dashboard/order-review']);
       //this.router.navigate(['dashboard/allocation/info/'+index.DocNum], { queryParams: { dataOrder: OrderText } });
     }
     else
@@ -202,6 +181,7 @@ export class CartComponent {
 
   backWindow()
   {
-    this.myRouter.navigate(['dashboard/orders'], {queryParams: {customer: JSON.stringify(this.customer), cart: JSON.stringify(this.Cart)}});
+    this.dataSharing.setCartData(this.Cart);
+    this.myRouter.navigate(['dashboard/orders']);
   }
 }

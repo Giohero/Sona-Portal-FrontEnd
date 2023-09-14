@@ -3,8 +3,8 @@ export interface DocumentLines {
     ItemName: string;
     Quantity: number;
     TaxCode: string;
-    UnitPrice: string;
-    LineTotal: number;
+    UnitPrice?: string;
+    LineTotal?: number;
     U_Comments: string;
 }
 

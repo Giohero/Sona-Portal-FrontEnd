@@ -21,8 +21,8 @@ export class DialogAddressComponent {
 constructor(public dialogRef: MatDialogRef<DialogAddressComponent>,
   @Inject(MAT_DIALOG_DATA) public dataReq:  DialogAddress,private MyFb: FormBuilder,private orderService: ServiceService)
   {
-    console.log('por aqui')
-    console.log(dataReq)
+    //console.log('por aqui')
+    //console.log(dataReq)
   }
   
   toggleSelection(row: any) {

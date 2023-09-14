@@ -64,5 +64,6 @@ export class DialogAddress {
     viewAdd?: boolean;
     viewList?: boolean;
     addresses!: BPAddresses;
+    //row?: number;
     addressesList?: BPAddresses[];
 }

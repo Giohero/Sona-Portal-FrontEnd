@@ -102,6 +102,7 @@
     <mat-card-subtitle class="modal-title">Choose One</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
+    <div *ngIf="dataReq.addressesList!.length > 0">
         <table mat-table [dataSource]="dataReq.addressesList!" class="mat-elevation-z8">
           <mat-radio-group [(ngModel)]="option">
             <ng-container matColumnDef="select">
@@ -159,8 +160,12 @@
           </tr>
         </mat-radio-group>
         </table>
-      <div class="form-actions">
-        <button mat-raised-button color="primary" [mat-dialog-close]="option">Choose</button>
+      </div>
+      <div *ngIf="dataReq.addressesList!.length === 0">
+        <h3>No addresses available</h3>
+      </div>
+      <div  class="form-actions">
+        <button *ngIf="dataReq.addressesList!.length > 0" mat-raised-button color="primary" [mat-dialog-close]="option">Choose</button>
         <button mat-raised-button color="warn"  (click)="close()">Cancel</button>
       </div>
   </mat-card-content>

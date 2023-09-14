@@ -20,22 +20,22 @@ export class ServiceService {
   constructor(private myhttp: HttpClient) { }
 
   getOrders(): Observable<INResponse> {
-    
     return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'GetSalesOrder')
   }
+
   getOrderByDocNum(DocNum:string): Observable<INResponse> {
     return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'GetSpecificSalesOrder', DocNum)
   }
+
   getCustomer(): Observable<INResponse> {
-    
     return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'SearchBusinessPartners')
   }
-  getItems(): Observable<INResponse> {
 
+  getItems(): Observable<INResponse> {
     return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'RetrieveItems')
   }
-  getStates(): Observable<INResponse> {
 
+  getStates(): Observable<INResponse> {
     return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'RetrieveSAPStates')
   }
 
@@ -50,8 +50,13 @@ export class ServiceService {
   PostOrder(Order: Order):Observable<INResponse> {
     return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'CreateSalesOrder', Order)
   }
+
   UpdateOrder(Order: Order):Observable<INResponse> {
     return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'UpdateHeaderOrder', Order)
+  }
+
+  DeleteAddresBP(Customer:any):Observable<INResponse> {
+    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'DeleteAddressBP', Customer)
   }
   
 }
