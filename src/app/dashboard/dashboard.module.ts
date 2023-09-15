@@ -11,6 +11,15 @@ import { HomeComponent } from '../home/home.component';
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FilterPipe } from '../service/filter.pipe';
 import { CartComponent } from '../cart/cart.component';
+import { OrderIndexComponent } from '../order-index/order-index.component';
+import { OrderEditComponent } from '../order-edit/order-edit.component';
+import { FilterPipeCustomer } from '../service/filterCustomers.pipe';
+import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
+import { DialogAddcustomComponent } from '../dialog-addcustom/dialog-addcustom.component';
+import { SnackbarsComponent } from '../snackbars/snackbars.component';
+import { OrderReviewComponent } from '../order-review/order-review.component';
+import { OrdersComponent } from '../orders/orders.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -21,7 +30,15 @@ import { CartComponent } from '../cart/cart.component';
     CostumersComponent,
     HomeComponent,
     FilterPipe,
-    CartComponent
+    CartComponent,
+    OrderIndexComponent,
+    OrderEditComponent,
+    FilterPipeCustomer,
+    DialogAddressComponent,
+    DialogAddcustomComponent,
+    OrderReviewComponent,
+    SnackbarsComponent,
+    OrdersComponent
   ],
   imports: [
     CommonModule,

@@ -1,6 +1,6 @@
 export interface DocumentLines {
     ItemCode: string;
-    ItemName: string;
+    ItemName?: string;
     Quantity: number;
     TaxCode: string;
     UnitPrice?: string;
@@ -12,6 +12,7 @@ export class Order {
     CardCode?: string | null;
     DocDueDate?: string;
     DocNum?: string;
+    DocEntry?:string;
     DocDate?: string;
     TaxDate?: string;
     DocumentLines?: DocumentLines[] | undefined;

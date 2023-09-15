@@ -28,6 +28,7 @@ import {FlexLayoutModule } from '@angular/flex-layout';
 import {MatCardModule} from '@angular/material/card';
 import { FilterPipe } from '../service/filter.pipe';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -59,7 +60,10 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     MatSnackBarModule,
     FlexLayoutModule,
     MatCardModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatIconModule,
+    MatListModule,
+    MatButtonModule,
   ],
 
  exports: [
@@ -88,7 +92,11 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     MatSnackBarModule,
     FlexLayoutModule,
     MatCardModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatIconModule,
+    MatListModule,
+    MatButtonModule,
+    MatRadioModule
  ]
 })
 

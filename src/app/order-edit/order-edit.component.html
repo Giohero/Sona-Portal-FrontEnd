@@ -2,11 +2,19 @@
   <div>
     <div class="container" fxLayout="column" fxLayoutGap="20px">
       <br>
-      <div fxLayout="row">
-        <a mat-raised-button class="mobile-button" href="dashboard/order-index">
-          <mat-icon>keyboard_arrow_left</mat-icon> Back
-        </a>
-        <h2>Order Details</h2>
+      <!-- <div class="label-total">
+        </div> -->
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="divH2">
+          <h2 class="h2Order"><b>Order {{order!.DocNum}}</b></h2>
+          <span class="status" [style.background]="colorStatus">{{status(order!.DocumentStatus)}}</span>   
+        </div>
+        <div>
+          <a mat-raised-button class="mobile-button" href="dashboard/order-index">
+            <mat-icon style="transform: rotate(180deg);">play_arrow</mat-icon> Back
+          </a>
+          <button mat-raised-button class="mobile-button save" (click)="updateOrder()"><mat-icon>save</mat-icon> Update</button> 
+        </div>
       </div>
       <ng-container *ngIf="order">
         <!-- First Card -->
@@ -53,7 +61,7 @@
             <mat-card-content>
               <div class="button-container">
               <h2 class="h2Mat">Item list <mat-icon>shopping_cart</mat-icon></h2>
-                <button mat-raised-button color="primary" class="add-button">
+                <button mat-raised-button color="primary" class="add-button" (click)="addItem()">
                   <mat-icon>add</mat-icon> Add Item
                 </button>
               </div>
@@ -62,9 +70,20 @@
                 <br>
                 <h3 class="h3Mat"><b>Item #{{ i + 1 }}</b></h3>
                 <div class="grid-container">
-                  <div class="label-container">
+                  <!-- <div class="label-container">
                     <label class="label">Item Code:</label>
-                    <input type="text" class="boxCustom" [(ngModel)]="item.ItemCode" disabled="true">
+                    <input type="text" class="boxCustom" [(ngModel)]="item.ItemCode" [disabled]="item.ItemCode !== ''">
+                  </div> -->
+                  <div class="label-container">
+                    <label class="label"><b>Item Code:</b></label>
+                    <input type="text" class="boxCustom" id="search-text" aria-describedby="search-text" 
+                    [(ngModel)]="item.ItemCode" placeholder="Enter text to search" 
+                    autofocus [matAutocomplete]="auto" [disabled]="item.ItemDescription !== ''">
+                    <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectItem($event.option.value, item)">
+                      <mat-option *ngFor="let c of ListItems| appFilter: item.ItemCode"  value="{{c.ItemCode}}">
+                        {{c.ItemCode}} - {{c.ItemName}}
+                      </mat-option>
+                    </mat-autocomplete>
                   </div>
                   <div class="label-container">
                     <label class="label">Item Description:</label>
@@ -76,7 +95,11 @@
                   </div>
                   <div class="label-container">
                     <label class="label">Quantity:</label>
-                    <input type="text" class="boxCustom editable-input" matInput placeholder="Quantity" [(ngModel)]="item.Quantity">
+                    <input  type="number"  class="boxCustom editable-input" matInput placeholder="Quantity" min="1"  [(ngModel)]="item.Quantity" (change)="changeQuantity(item)" >
+                  </div>
+                  <div class="label-container">
+                    <label class="label">Line Total:</label>
+                    <input  type="number"  class="boxCustom" matInput placeholder="LineTotal" [(ngModel)]="item.LineTotal" disabled="true">
                   </div>
                   <div class="label-container">
                     <label class="label">UDF Comments:</label>
@@ -91,13 +114,11 @@
               </div>
             </mat-card-content>
             <div class="label-total">
-              <label><b>Total: ${{order.DocTotal}}</b></label>
+              <label><b>Total: ${{totalOrder()}}</b></label>
             </div>
             <br>
           </mat-card>
-          <div class="label-total">
-            <button mat-raised-button class="mobile-button save" [disabled]="this.order.DocumentLines === this.orderOld!.DocumentLines"><mat-icon>save</mat-icon> Update</button>
-          </div>
+         
         </ng-container>
         <br><br>
       </ng-container>

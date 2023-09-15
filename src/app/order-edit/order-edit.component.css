@@ -9,6 +9,31 @@
 a{
   margin-right: 20px;
 }
+
+.h2Order{
+  background-color: darkcyan;
+  color: white;
+  border-radius: 10px; 
+  padding: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-right: 5px;
+}
+
+.divH2{
+  display: flex;
+  align-items: top;
+}
+
+.status{
+  color: white;
+  border-radius: 10px; 
+  padding: 10px;
+  height: 10px;
+  text-align: center;
+  align-items: center;
+  line-height: 10px;
+}
   
   .background {
     background-image: url('src/assets/images/Camping.jpg'); /* Asegúrate de que la ruta de la imagen sea correcta */
