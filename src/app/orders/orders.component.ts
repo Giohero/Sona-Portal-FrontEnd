@@ -74,19 +74,20 @@ export class OrdersComponent {
   ngOnInit(): void {
     //this.ShowEdit = "none"
 
-    if(this.title == "New Order")
-    {
-      const element = document.getElementById('NextB');
-      element!.classList.add('right-button');
-    }
+    // if(this.title == "New Order")
+    // {
+    //   const element = document.getElementById('NextB');
+    //   element!.classList.add('right-button');
+    // }
 
+    console.log('pasa por aquis')
     this.orderService.getCustomer().subscribe((retData) => {
 
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         this.ListCustomers = JSON.parse(retData.response!);
         
-        //console.log(this.customerBack)
+         console.log(this.ListCustomers)
         if(this.customerBack != undefined)
         {
           this.searchText = this.customerBack.CardName

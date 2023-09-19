@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DataSharingService } from '../service/data-sharing.service';
+import Dexie from 'dexie';
 
 @Component({
   selector: 'app-cart',
@@ -22,14 +23,24 @@ export class CartComponent {
   Quantity = 0;
   Price = "";
   Cart: DocumentLines[] | undefined;
+  CartOld: DocumentLines[] | undefined;
   elementCart:any;
   OrderReview: Order | undefined;
   customer:any;
+  private Db?: Dexie;
+  OrderIndexDB?:any;
 
   constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService) {    
     this.Cart = dataSharing.getCartData();
     if(this.Cart == undefined)
       this.Cart = []
+    else
+      this.CartOld = JSON.parse(JSON.stringify(this.Cart));
+
+    this.Db = new Dexie('order');
+    this.Db.version(1).stores({
+      orders: '++id, DocNum, CardCode, DocumentLines',
+    });
   }
 
   ngOnInit(): void {
@@ -49,7 +60,6 @@ export class CartComponent {
       }
 
     });
-
     
     if(this.Cart!.length > 0)
     {
@@ -57,6 +67,32 @@ export class CartComponent {
         element!.classList.remove('image-card');
     }
 
+  }
+
+  async addToDB(data: Order): Promise<void> {
+    //const DocNum = data.DocNum;
+    const CardCode = data.CardCode;
+    const DocumentLines = data.DocumentLines;
+
+    try {
+      const orderId = await this.Db!.table('orders').add({ CardCode, DocumentLines });
+      const retrievedOrder = await this.Db!.table('orders').get(orderId);
+      this.OrderIndexDB = retrievedOrder;
+      console.log(retrievedOrder);
+
+    } catch (error) {
+      console.error('Error al añadir datos a la tabla1:', error);
+    }
+  }
+
+  async editToDB(id: number, DocNum: string, CardCode: string, DocumentLines: DocumentLines[]): Promise<void> {
+    try {
+      await  this.Db!.table('orders').put({ id, DocNum, CardCode, DocumentLines });
+      console.log("Se editó el registro con ID" +id+" en la tabla1.");
+
+    } catch (error) {
+      console.error('Error al editar datos en la tabla1:', error);
+    }
   }
 
   addToCart(){
@@ -79,7 +115,23 @@ export class CartComponent {
           U_Comments: ""
         })
 
+        //this.editToDB(6, "12345", )
+
         this.cleanSearching()
+
+        if(this.Cart!.length === 1)
+        {
+          this.OrderReview = new Order();
+          this.customer = this.dataSharing.getCustomerData();
+          this.OrderReview!.CardCode = this.customer.CardCode;
+          this.OrderReview!.DocumentLines = this.Cart;
+          this.addToDB(this.OrderReview)
+          console.log('Add in the Index DB')
+        }
+        else
+        {
+          this.editToDB(this.OrderIndexDB.id, '1234', this.customer.CardCode, this.Cart!)
+        }
       }
       else
       {
@@ -106,12 +158,6 @@ export class CartComponent {
 
 
   openSnackBar(message: string, icon: string, type: string, color: string) {
-    // this._snackBar.open(message, action,  {
-    //   horizontalPosition: 'center',
-    //   verticalPosition: 'top',
-    //   duration: 5000,
-    //   panelClass: ['custom-snackbar'], 
-    // });
 
     const dialogRef = this.dialog.open(SnackbarsComponent, {
       hasBackdrop: false,
@@ -188,5 +234,13 @@ export class CartComponent {
   {
     this.dataSharing.setCartData(this.Cart);
     this.myRouter.navigate(['dashboard/order-customer/new-order']);
+  }
+
+  set informacion(nuevaInformacion: DocumentLines[]) {
+    if (nuevaInformacion !== this.CartOld) {
+      //this.Cart = nuevaInformacion;
+      // Realiza acciones en respuesta al cambio de información
+      console.log('La información ha cambiado:', nuevaInformacion);
+    }
   }
 }

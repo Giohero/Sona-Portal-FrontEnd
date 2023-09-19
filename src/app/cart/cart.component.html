@@ -56,7 +56,7 @@
                   </div>
                   <div class="input-container">
                     <label for="Total"><b>Total:</b></label>
-                    <input type="number" matInput class="boxCartItem" for="Price" min="1" max="1000" readonly [value]="Item.LineTotal | number:'1.2-2'">
+                    <input type="number" matInput class="boxCartItem" for="Price" min="1" readonly  [value]="Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'">
                   </div>
                   <button mat-raised-button class="btnInfo" (click)="RemoveToCart(listIndex)">
                     <mat-icon>delete</mat-icon>
