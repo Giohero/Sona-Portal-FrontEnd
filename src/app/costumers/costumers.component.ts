@@ -14,6 +14,8 @@ import { DataSharingService } from '../service/data-sharing.service';
 export class CostumersComponent {
   customerData : BusinessPartner[] = [];
   /*agregamos*/
+  isLoading: boolean = false;
+  searchCustomer: string = ''; 
   customers: any[] = [];
   constructor(private customerService: ServiceService, private myRouter: Router, private dataSharing: DataSharingService) { }
   ngOnInit(): void { this.loadCustomerData(); }
@@ -48,3 +50,23 @@ export class CostumersComponent {
     else { console.log('Error fetching customer data'); } }, (error) => 
     { console.error('Error fetching customer data:', error); } );}
 }
+// searchingCustomer() {
+//   this.isLoading = true; 
+
+//   this.customerService.searchCustomers(this.searchCustomer).subscribe(
+//     (response: INResponse) => {
+//       if (parseInt(response.statusCode!) >= 200 && parseInt(response.statusCode!) < 300) {
+//         // Procesa los datos de clientes aquí
+//         this.customers = response.data as BusinessPartner[];
+//       } else {
+//         console.log('Error fetching customer data:');
+//       }
+//       this.isLoading = false; 
+//     },
+//     (error) => {
+//       console.error('Error fetching customer data:', error);
+//       this.isLoading = false; 
+//     }
+//   );
+// }
+
