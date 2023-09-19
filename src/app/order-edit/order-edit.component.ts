@@ -80,12 +80,20 @@ export class OrderEditComponent implements OnInit {
   {
     if(status === 'bost_Close')
     {
-      this.colorStatus = "#e15567";
+      this.colorStatus = "2px solid #e15567";
       return 'Closed'
     }
     else
-      this.colorStatus = "green";
+      this.colorStatus = "2px solid green";
       return 'Open'
+  }
+
+  statusCircle(status:string)
+  {
+    if(status === 'bost_Close')
+      return 'red'
+    else
+      return 'green'
   }
 
   changeQuantity(item: DocumentLines)

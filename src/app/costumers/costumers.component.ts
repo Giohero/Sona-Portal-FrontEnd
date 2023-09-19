@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core'; //add OnInit
 import { ServiceService } from '../service/service.service'; // Ruta del servicio
 import { INResponse } from '../models/INResponse';
-import { Customer } from '../models/customer';
+import { BusinessPartner, Customer } from '../models/customer';
+import { Router } from '@angular/router';
+import { DataSharingService } from '../service/data-sharing.service';
 
 @Component({
   selector: 'app-costumers',
@@ -10,10 +12,10 @@ import { Customer } from '../models/customer';
 })
 // component and constructor to do use an api
 export class CostumersComponent {
-  customerData : Customer[] = [];
+  customerData : BusinessPartner[] = [];
   /*agregamos*/
   customers: any[] = [];
-  constructor(private customerService: ServiceService ) { }
+  constructor(private customerService: ServiceService, private myRouter: Router, private dataSharing: DataSharingService) { }
   ngOnInit(): void { this.loadCustomerData(); }
   
   columnsToDisplay = ['selectedCustomer', 'item', 'orderTotal', 'actions'];
@@ -24,7 +26,9 @@ export class CostumersComponent {
 
   editCustomer(customer: any) {
     // Logic to change the costumer selected
-    console.log('Editar cliente:', customer);
+    //console.log('Editar cliente:', customer);
+    this.dataSharing.setCustomerData(customer);
+    this.myRouter.navigate(['dashboard/order-customer/edit']);
   }
 
   showMoreInfo(customer: any) {

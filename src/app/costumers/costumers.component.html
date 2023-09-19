@@ -2,20 +2,20 @@
   <!-- Column: Show selected customer -->
   <ng-container matColumnDef="selectedCustomer">
     <mat-header-cell *matHeaderCellDef>Id Costumer</mat-header-cell>
-    <mat-cell *matCellDef="let customerData">{{ customerData.IdCustomer }}</mat-cell>
+    <mat-cell *matCellDef="let customerData">{{ customerData.CardCode }}</mat-cell>
   </ng-container>
 
   
   <!-- Column: Show a few items, item code, description, price -->
   <ng-container matColumnDef="item">
     <mat-header-cell *matHeaderCellDef>description</mat-header-cell>
-    <mat-cell *matCellDef="let customer">{{ customer.description}}</mat-cell>
+    <mat-cell *matCellDef="let customer">{{ customer.CardName}}</mat-cell>
   </ng-container>
 
   <!-- Column: Show order total -->
   <ng-container matColumnDef="orderTotal">
     <mat-header-cell *matHeaderCellDef>Order total</mat-header-cell>
-    <mat-cell *matCellDef="let customer">{{ customer.orderTotal }}</mat-cell>
+    <mat-cell *matCellDef="let customer">{{ customer.Phone1 }}</mat-cell>
   </ng-container>
 
   <!-- Column: Buttons (import order, change, more info, remove) -->

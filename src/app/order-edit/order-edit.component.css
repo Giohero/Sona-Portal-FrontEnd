@@ -20,6 +20,14 @@ a{
   margin-right: 5px;
 }
 
+.circle {
+  width:  15px; /* Ajusta el tamaño del círculo según tus preferencias */
+  height: 15px; /* El ancho y alto deben ser iguales para obtener un círculo */
+  /*background-color: rgb(255, 2, 2);  Cambia el color del círculo según tus preferencias */
+  border-radius: 50%; /* Esto hace que el elemento tenga forma de círculo */
+  display: inline-block;
+}
+
 .divH2{
   display: flex;
   align-items: top;
@@ -30,9 +38,18 @@ a{
   border-radius: 10px; 
   padding: 10px;
   height: 10px;
+  line-height: 10px;
+  display: inline-block;
   text-align: center;
   align-items: center;
-  line-height: 10px;
+  vertical-align: middle;
+}
+
+.status-text {
+  display: inline-block;
+  vertical-align: middle; /* Centra verticalmente el contenido */
+  margin-top: -7px; 
+  margin-left: 5px;
 }
   
   .background {

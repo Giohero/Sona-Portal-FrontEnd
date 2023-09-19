@@ -40,8 +40,10 @@ export class OrdersComponent {
   isLoading=true;
   rowShip=0;
   rowBill=0;
+  ShowEdit = false;
+  title=""
 
-  constructor(private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService) 
+  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService) 
   {
     this.customerBack = this.dataSharing.getCustomerData();
     this.Cart = this.dataSharing.getCartData();
@@ -54,9 +56,29 @@ export class OrdersComponent {
     //   this.Cart = JSON.parse(datosComoTexto);
     // });
 
+    const routeParams = this.route.snapshot.paramMap;
+    const pageUrl = routeParams.get('type');
+
+    if(pageUrl === 'new-order')
+    {
+      this.title = "New Order";
+      this.ShowEdit = false
+    }
+    else  
+    {
+      this.title = "Edit Customer";
+      this.ShowEdit = true
+    }
   }
 
   ngOnInit(): void {
+    //this.ShowEdit = "none"
+
+    if(this.title == "New Order")
+    {
+      const element = document.getElementById('NextB');
+      element!.classList.add('right-button');
+    }
 
     this.orderService.getCustomer().subscribe((retData) => {
 
@@ -125,6 +147,11 @@ export class OrdersComponent {
     {
       this.openSnackBar("You Need Add a Customer", "error", "Error", "red");
     }
+  }
+
+  backWindow()
+  {
+    this.myRouter.navigate(['dashboard/costumers']);
   }
 
   onSelectCustomer(selectedData:any){

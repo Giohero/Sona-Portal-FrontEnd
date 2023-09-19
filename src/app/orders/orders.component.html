@@ -5,22 +5,22 @@
   </div>
   <div class="container">
     <br>
-    <h2>New Order</h2> 
+    <h2>{{title}}</h2> 
     <mat-card class="mat-card"> 
       <mat-card-content>
         <h2 class="h2Mat">Customer</h2>
         <div class="grid-container">
           <div class="label-containerC">
             <label class="label">Id Customer: </label>
-            <input type="text" class="boxCustom" id="idcustomer" aria-describedby="Id Customer" [(ngModel)]="idcustomer" [disabled]="inputSearchCutomer">
+            <input type="text" class="boxCustom" id="idcustomer" aria-describedby="Id Customer" [(ngModel)]="idcustomer" [disabled]="inputSearchCutomer || (ShowEdit === false)" >
           </div>            
           <div class="label-container">
             <label class="label">Customer Name:</label>
             <input type="text" class="boxCustom" id="search-text" aria-describedby="search-text" 
             [(ngModel)]="searchText" placeholder="Enter text to search" 
             autofocus [matAutocomplete]="auto" [disabled]="inputSearchCutomer">
-            <button mat-raised-button class="custom-button" [disabled]="searchText.length == 0" *ngIf="showAddButton" (click)="CreateCustomer()">Add New Customer</button>
-            <button mat-raised-button class="custom-button" *ngIf="inputSearchCutomer" (click)="changeCustomer()">Change Customer</button>
+            <button mat-raised-button class="custom-button" [disabled]="searchText.length == 0" *ngIf="showAddButton && ShowEdit" (click)="CreateCustomer()">Add New Customer</button>
+            <button mat-raised-button class="custom-button" *ngIf="inputSearchCutomer && (ShowEdit === false)" (click)="changeCustomer()">Change Customer</button>
             <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectCustomer($event.option.value)">
               <mat-option *ngFor="let c of ListCustomers| appFilterC: searchText"  value="{{c.CardName}}"  class="optionList" >
                 {{c.CardCode}} - {{c.CardName}}
@@ -36,7 +36,7 @@
             <label class="label">Billing Address:</label>
             <input type="text" class="boxCustom"  matInput placeholder="Billing Address" disabled="true"
             [(ngModel)]="billingAddress">
-            <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px" >
+            <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px" *ngIf="ShowEdit">
               <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_BillTo')"><mat-icon class="icon" fxFlex="33%">add_box</mat-icon>
               </button>
               <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_BillTo', rowBill)" [disabled]="billingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
@@ -52,7 +52,7 @@
             <input type="text" class="boxCustom" matInput placeholder="Shipping Address" disabled="true"
             [(ngModel)]="shippingAddress">
             
-            <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px" >
+            <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px" *ngIf="ShowEdit">
               <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_ShipTo')"><mat-icon class="icon">add_box</mat-icon></button>
               <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
               </button>
@@ -81,7 +81,7 @@
             <input type="text" class="boxCustom" matInput placeholder="Tax" [disabled]="showEditInputs"
             [(ngModel)]="taxId">
           </div>
-          <div class="btns">
+          <div class="btns" *ngIf="ShowEdit">
             <button mat-raised-button mat-warn-dark class="actions" *ngIf="saveUpdates" (click)="UpdateCustomer()" ><mat-icon>save</mat-icon></button>
             <button mat-raised-button color="warn" class="actions" *ngIf="saveUpdates" (click)="Cancel()" ><mat-icon>clear</mat-icon></button>
             <button mat-raised-button mat-warn-dark class="actions" *ngIf="inputSearchCutomer" (click)="EditInputs()"  [disabled]="showEditInputs == false"><mat-icon>edit</mat-icon></button>
@@ -90,8 +90,9 @@
       </mat-card-content>
     </mat-card>
     <br>
-    <div class="cartnext">
-      <button mat-raised-button color="primary" (click)=" nextWindow()" class="right-button">Next</button>
+    <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
+      <button mat-raised-button color="primary" (click)="backWindow()" *ngIf="ShowEdit">Back</button>
+      <button mat-raised-button color="primary" (click)="nextWindow()" *ngIf="!ShowEdit" id="NextB">Next</button>
     </div>
   </div>
 </div>

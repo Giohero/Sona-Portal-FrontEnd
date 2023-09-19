@@ -99,6 +99,11 @@ export class CartComponent {
       item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity;
   }
 
+  subTotal()
+  {
+    return this.Cart!.reduce((acum:number, elemento:any) => acum + elemento.LineTotal, 0);
+  }
+
 
   openSnackBar(message: string, icon: string, type: string, color: string) {
     // this._snackBar.open(message, action,  {
@@ -182,6 +187,6 @@ export class CartComponent {
   backWindow()
   {
     this.dataSharing.setCartData(this.Cart);
-    this.myRouter.navigate(['dashboard/orders']);
+    this.myRouter.navigate(['dashboard/order-customer/new-order']);
   }
 }

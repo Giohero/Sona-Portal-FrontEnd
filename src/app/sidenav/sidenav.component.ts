@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import{MediaMatcher} from '@angular/cdk/layout';
 import { MsalService } from '@azure/msal-angular';
 import { Router } from '@angular/router';
+import { DataSharingService } from '../service/data-sharing.service';
 
 /**Changes import acivatedRoute*/
 // import { ActivatedRoute } from '@angular/router';
@@ -37,7 +38,7 @@ export class SidenavComponent {
 
   private _mobileQueryListener: () => void;
 /**add private route inside constructor */
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher, private msalService: MsalService,private myRouter: Router) {
+  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher, private msalService: MsalService,private myRouter: Router, private dataSharing: DataSharingService) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -53,5 +54,11 @@ export class SidenavComponent {
       this.msalService.logout();
       this.myRouter.navigate(['']);
     }
+  }
+
+  goToNewOrder()
+  {
+    this.dataSharing.setCustomerData(null);
+    this.myRouter.navigate(['dashboard/order-customer/new-order']);
   }
 }

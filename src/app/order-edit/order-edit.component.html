@@ -7,7 +7,10 @@
       <div fxLayout="row" fxLayoutAlign="space-between center">
         <div class="divH2">
           <h2 class="h2Order"><b>Order {{order!.DocNum}}</b></h2>
-          <span class="status" [style.background]="colorStatus">{{status(order!.DocumentStatus)}}</span>   
+          <span class="status" [style.border]="colorStatus">
+            <div class="circle" [style.background-color]="statusCircle(order!.DocumentStatus)"></div> 
+            <span class="status-text">{{status(order!.DocumentStatus)}}</span>
+          </span>   
         </div>
         <div>
           <a mat-raised-button class="mobile-button" href="dashboard/order-index">

@@ -8,7 +8,7 @@
       <mat-card-content class="main-content">
         <div class="cards-container">
           <mat-card class="main-card">
-            <div class="input-container">
+            <div class="input-containerAdd">
               <label class="label"><b>Search by name:</b></label>
               <input type="text" class="boxCart" id="search-text" aria-describedby="search-text" 
               [(ngModel)]="searchText" placeholder="Enter text to search" 
@@ -19,15 +19,15 @@
                 </mat-option>
               </mat-autocomplete>
             </div>
-            <div class="input-container">
+            <div class="input-containerAdd">
               <label><b>Item:</b></label>
               <input type="text" class="boxCart" matInput placeholder="Item" disabled="true" [(ngModel)]="ItemName">
             </div>
-            <div class="input-container" *ngIf="ItemName">
+            <div class="input-containerAdd" *ngIf="ItemName">
               <label><b>Quantity:</b></label>
               <input type="number" class="boxCart" matInput placeholder="Quantity" disabled="false" [(ngModel)]="Quantity" >
             </div>
-            <div class="input-container" *ngIf="ItemName">
+            <div class="input-containerAdd" *ngIf="ItemName">
               <label><b>Price:</b></label>
               <input type="number" class="boxCart" matInput placeholder="Price" disabled="true" [(ngModel)]="Price" >
             </div>
@@ -68,6 +68,9 @@
                 </div>
               </div>
             </mat-card-content>
+            <mat-divider></mat-divider>
+            <div style="margin: 10px; text-align: right;">Total: ${{subTotal()}}</div>
+              
           </mat-card>
         </div>
       </mat-card-content> 
