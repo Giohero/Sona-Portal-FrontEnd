@@ -109,6 +109,13 @@ h2 {
 .iconRefresh mat-icon{
   margin-right: 5px;
 } */
+.centered {
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: darkcyan;
+}
 /* Media query para dispositivos móviles */
 @media (max-width: 767px) {
   .Cart {

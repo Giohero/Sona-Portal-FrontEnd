@@ -1,5 +1,6 @@
 <div class="background">
     <div class="container">
+        <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" fxLayoutAlign="center center" class="centered"></mat-progress-spinner>
         <br>
         <h2>Orders</h2> 
         <div>
@@ -22,6 +23,7 @@
                         <mat-card-header>
                                 <div style="flex: 1; ">
                                     <h1>{{Order.DocNum}}</h1>
+                                    <mat-icon>cloud_done</mat-icon>  
                                 </div>
                                 <div  style="flex: 1; "fxLayoutAlign="center center">
                                     {{Order.DocDueDate.slice(0, 10)}}
@@ -39,10 +41,9 @@
                 </div> 
             </div> 
             <br><br>
-            <div *ngIf="isLoading" fxLayoutAlign="center center" class=" custom-spinner">
-                <!-- <mat-spinner class="custom-spinner" [diameter]="120"></mat-spinner> -->
+            <!-- <div *ngIf="isLoading" fxLayoutAlign="center center" class=" custom-spinner">
                 <div class="loader"></div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

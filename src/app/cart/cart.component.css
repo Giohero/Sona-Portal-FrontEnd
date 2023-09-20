@@ -137,9 +137,14 @@
 }
 
 .comments-container {
-  grid-column: span 4; 
+  /* grid-column: span 4; 
   margin-top: 10px; 
+  color: #e77155; */
+  grid-column: span 4;
+  margin-top: 10px;
   color: #e77155;
+  display: flex;
+  align-items: center;
 }
 
 .input-cart{
@@ -219,6 +224,13 @@
 .left-button {
   width: 45%;
   margin-top: 5px;
+}
+.iconC{
+  margin-left: 10px;
+  color:rgb(44, 150, 115);
+}
+.mdivider{
+  width: 198%;
 }
 /* Estilos responsivos */
 @media screen and (max-width: 1024px) {
@@ -349,5 +361,8 @@
     /* margin-right: 100%; */
     align-items: flex-start;
     width: 100%;
+  }
+  .mdivider {
+    width: 300%;
   }
 }
