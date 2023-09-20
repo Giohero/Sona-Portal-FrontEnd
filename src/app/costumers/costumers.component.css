@@ -111,7 +111,13 @@ h2 {
   font-size: 30px;
   margin-right: 20px;
 }
-
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: darkcyan;
+}
 @media (max-width: 767px) {
   .Customer {
     width: calc(50% - 15px);

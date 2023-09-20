@@ -1,42 +1,36 @@
 <div class="background">
   <div class="container">
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
     <br>
     <h2>Customers</h2>
-    <div>
-      <!-- <div class="SearchProg">
-        <input matInput placeholder="Customer Name" type="text" class="searchCustomer" [(ngModel)]="searchCustomer">
-        <button class="iconsearch" (click)="searchingCustomer()"><mat-icon>search</mat-icon>Search</button>
-        <button class="iconsearch" (click)="reload()"><mat-icon>refresh</mat-icon></button>
-      </div> -->
-      <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="customerSection">
-        <div class="customers" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let customer of customerData; let customerIndex=index;">
-          <mat-card class="Customer" style="display: flex;">
-            <mat-card-header>
-              <div style="flex: 1;">
-                <mat-icon class="user-icon">person</mat-icon>
-              </div>
-            </mat-card-header>
-            <mat-card-content class="customer-data">
-                <br>
-              <label>{{ customer.CardCode }}</label>
-              <br>
-              <label>{{ customer.CardName }}</label>
-              <br>
-              <label>{{ customer.Phone1 }}</label>
-              <br>
-              <mat-card-actions class="customer-actions">
-                <button mat-icon-button (click)="editCustomer(customer)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button (click)="removeCustomer(customer)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </mat-card-actions>
-            </mat-card-content>
-          </mat-card>
-        </div>
+    <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="customerSection">
+      <div class="customers" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let customer of customerData; let customerIndex=index;">
+        <mat-card class="Customer" style="display: flex;">
+          <mat-card-header>
+            <div style="flex: 1;">
+              <mat-icon class="user-icon">person</mat-icon>
+            </div>
+          </mat-card-header>
+          <mat-card-content class="customer-data">
+            <br>
+            <label>{{ customer.CardCode }}</label>
+            <br>
+            <label>{{ customer.CardName }}</label>
+            <br>
+            <label>{{ customer.Phone1 }}</label>
+            <br>
+            <mat-card-actions class="customer-actions">
+              <button mat-icon-button (click)="editCustomer(customer)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="removeCustomer(customer)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card-content>
+        </mat-card>
       </div>
-      <br><br>
     </div>
+    <br><br>
   </div>
 </div>
