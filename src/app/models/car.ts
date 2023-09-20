@@ -1,11 +1,11 @@
-export interface DocumentLines {
-    ItemCode: string;
+export class DocumentLines {
+    ItemCode?: string;
     ItemName?: string;
-    Quantity: number;
-    TaxCode: string;
+    Quantity?: number;
+    TaxCode?: string;
     UnitPrice?: string;
     LineTotal?: number;
-    U_Comments: string;
+    U_Comments?: string;
 }
 
 export class Order {
@@ -46,4 +46,8 @@ export class AddressExtension{
     BillToAddress3?: string;
     DocEntry?: 0;
   }
+
+function action(target: DocumentLines, propertyKey: "actualizarInformacion", descriptor: TypedPropertyDescriptor<(nuevaInformacion: string) => void>): void | TypedPropertyDescriptor<(nuevaInformacion: string) => void> {
+    throw new Error("Function not implemented.");
+}
   

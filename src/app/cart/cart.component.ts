@@ -8,6 +8,7 @@ import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DataSharingService } from '../service/data-sharing.service';
 import Dexie from 'dexie';
+import { IndexDbService } from '../service/index-db.service';
 
 @Component({
   selector: 'app-cart',
@@ -22,6 +23,7 @@ export class CartComponent {
   ItemName = "";
   Quantity = 0;
   Price = "";
+  //Cart = new DocumentLinesList(onListChange);
   Cart: DocumentLines[] | undefined;
   CartOld: DocumentLines[] | undefined;
   elementCart:any;
@@ -30,21 +32,24 @@ export class CartComponent {
   private Db?: Dexie;
   OrderIndexDB?:any;
 
-  constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService) {    
-    this.Cart = dataSharing.getCartData();
-    if(this.Cart == undefined)
-      this.Cart = []
-    else
-      this.CartOld = JSON.parse(JSON.stringify(this.Cart));
+constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService, private indexDB: IndexDbService) {    
+  this.Cart = dataSharing.getCartData();
+  this.OrderIndexDB = dataSharing.getOrderIndexDB();
 
-    this.Db = new Dexie('order');
-    this.Db.version(1).stores({
-      orders: '++id, DocNum, CardCode, DocumentLines',
-    });
-  }
+  // if(this.Cart === undefined)
+  //     this.getDataIndex();
+  if(this.Cart == undefined)
+    this.Cart = []
+  else
+    this.CartOld = JSON.parse(JSON.stringify(this.Cart));
+
+  // this.Db = new Dexie('order');
+  // this.Db.version(1).stores({
+  //   orders: '++id, DocNum, CardCode, DocumentLines',
+  // });
+}
 
   ngOnInit(): void {
-    
     //console.log(this.Cart)
     this.elementCart = "info-card image-card";
     this.orderService.getItems().subscribe((retData) => {
@@ -61,7 +66,7 @@ export class CartComponent {
 
     });
     
-    if(this.Cart!.length > 0)
+    if(this.Cart!.length! > 0)
     {
       const element = document.getElementById('Cart');
         element!.classList.remove('image-card');
@@ -69,29 +74,49 @@ export class CartComponent {
 
   }
 
-  async addToDB(data: Order): Promise<void> {
-    //const DocNum = data.DocNum;
-    const CardCode = data.CardCode;
-    const DocumentLines = data.DocumentLines;
+  // async addToDB(data: Order): Promise<void> {
+  //   //const DocNum = data.DocNum;
+  //   const CardCode = data.CardCode;
+  //   const DocumentLines = data.DocumentLines;
 
-    try {
-      const orderId = await this.Db!.table('orders').add({ CardCode, DocumentLines });
-      const retrievedOrder = await this.Db!.table('orders').get(orderId);
-      this.OrderIndexDB = retrievedOrder;
-      console.log(retrievedOrder);
+  //   try {
+  //     const orderId = await this.Db!.table('orders').add({ CardCode, DocumentLines });
+  //     const retrievedOrder = await this.Db!.table('orders').get(orderId);
+  //     this.OrderIndexDB = retrievedOrder;
+  //     console.log(retrievedOrder);
 
-    } catch (error) {
-      console.error('Error al añadir datos a la tabla1:', error);
-    }
-  }
+  //   } catch (error) {
+  //     console.error('Error al añadir datos a la tabla1:', error);
+  //   }
+  // }
 
-  async editToDB(id: number, DocNum: string, CardCode: string, DocumentLines: DocumentLines[]): Promise<void> {
-    try {
-      await  this.Db!.table('orders').put({ id, DocNum, CardCode, DocumentLines });
-      console.log("Se editó el registro con ID" +id+" en la tabla1.");
+  // async editToDB(id: number, DocNum: string, CardCode: string, DocumentLines: DocumentLines[]): Promise<void> {
+  //   try {
+  //     await  this.Db!.table('orders').put({ id, DocNum, CardCode, DocumentLines });
+  //     console.log("Se editó el registro con ID" +id+" en la tabla1.");
 
-    } catch (error) {
-      console.error('Error al editar datos en la tabla1:', error);
+  //   } catch (error) {
+  //     console.error('Error al editar datos en la tabla1:', error);
+  //   }
+  // }
+
+  async getDataIndex(){
+    const orderComplete = await this.indexDB.getLastOneDB();
+    // console.log("pasa aqui")
+    // console.log(orderComplete)
+
+    if (window.confirm("You have an Order. \nDo you would continue editing this Order?")) {
+      this.Cart = orderComplete.DocumentLines;
+      this.dataSharing.setOrderCReview(orderComplete);
+      this.dataSharing.setOrderIndexDB(orderComplete);
+      this.dataSharing.setOrderReview(orderComplete);
+      this.dataSharing.setCustomerData(orderComplete.CardCode)
+      //console.log(this.Cart)
+
+      const element = document.getElementById('Cart');
+      element!.classList.remove('image-card');
+    } else {
+      this.Cart == undefined;
     }
   }
 
@@ -101,11 +126,10 @@ export class CartComponent {
     {
       if(this.Quantity > 0)
       {
-        //console.log(this.Cart?.length)
         const element = document.getElementById('Cart');
         element!.classList.remove('image-card');
-
-        this.Cart?.push({
+        
+        const newDocumentLine: DocumentLines = {
           ItemCode: this.searchText,
           ItemName: this.ItemName,
           Quantity: this.Quantity,
@@ -113,25 +137,12 @@ export class CartComponent {
           UnitPrice: this.Price,
           LineTotal: parseFloat(this.Price) * this.Quantity,
           U_Comments: ""
-        })
-
-        //this.editToDB(6, "12345", )
+        };
+        
+        this.Cart?.push(newDocumentLine);
+        this.changeOrder(this.Cart!);
 
         this.cleanSearching()
-
-        if(this.Cart!.length === 1)
-        {
-          this.OrderReview = new Order();
-          this.customer = this.dataSharing.getCustomerData();
-          this.OrderReview!.CardCode = this.customer.CardCode;
-          this.OrderReview!.DocumentLines = this.Cart;
-          this.addToDB(this.OrderReview)
-          console.log('Add in the Index DB')
-        }
-        else
-        {
-          this.editToDB(this.OrderIndexDB.id, '1234', this.customer.CardCode, this.Cart!)
-        }
       }
       else
       {
@@ -146,13 +157,24 @@ export class CartComponent {
     
   }
 
-  updateTotal(item: DocumentLines) {
+  updateTotal(index:number,item: DocumentLines) {
     if(item.UnitPrice)
-      item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity;
+    {
+      //this.Cart.updateItem(index, item);
+      this.changeOrder(this.Cart!);
+      item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity!;
+    }
+      
+  }
+
+  updateComment(item: DocumentLines) {
+      this.changeOrder(this.Cart!);
+      
   }
 
   subTotal()
   {
+    //return this.Cart.getSumLineTotals();
     return this.Cart!.reduce((acum:number, elemento:any) => acum + elemento.LineTotal, 0);
   }
 
@@ -180,6 +202,8 @@ export class CartComponent {
 
   RemoveToCart(index: number){
     this.Cart!.splice(index, 1);
+    //this.Cart.removeItem(index);
+    this.changeOrder(this.Cart!);
     this.cleanSearching();
 
     if(this.Cart!.length === 0)
@@ -212,14 +236,14 @@ export class CartComponent {
 
   nextWindow()
   {
-    this.OrderReview = new Order();
-    this.customer = this.dataSharing.getCustomerData();
-     this.OrderReview!.CardCode = this.customer.CardCode;
-     this.OrderReview!.DocumentLines = this.Cart;
+    // this.OrderReview = new Order();
+    // this.customer = this.dataSharing.getCustomerData();
+    //  this.OrderReview!.CardCode = this.customer.CardCode;
+    //this.OrderReview!.DocumentLines = this.Cart!;
     if(this.Cart!.length != 0)
     {
-      this.dataSharing.setCartData(this.Cart);
-      this.dataSharing.setOrderReview(this.OrderReview)
+      //this.dataSharing.setCartData(this.Cart);
+      //this.dataSharing.setOrderReview(this.OrderReview)
 
       this.myRouter.navigate(['dashboard/order-review']);
       //this.router.navigate(['dashboard/allocation/info/'+index.DocNum], { queryParams: { dataOrder: OrderText } });
@@ -236,11 +260,41 @@ export class CartComponent {
     this.myRouter.navigate(['dashboard/order-customer/new-order']);
   }
 
-  set informacion(nuevaInformacion: DocumentLines[]) {
-    if (nuevaInformacion !== this.CartOld) {
-      //this.Cart = nuevaInformacion;
-      // Realiza acciones en respuesta al cambio de información
-      console.log('La información ha cambiado:', nuevaInformacion);
+  async changeOrder(order:DocumentLines[])
+  {
+    if(order !== this.CartOld)
+    {
+      this.OrderReview = new Order();
+      this.customer = this.dataSharing.getCustomerData();
+      this.OrderReview!.CardCode = this.customer.CardCode;
+      this.OrderReview!.DocumentLines = this.Cart;
+
+      this.dataSharing.setCartData(this.Cart);
+      //console.log(this.OrderIndexDB)
+      if(this.Cart!.length! === 1 && this.OrderIndexDB === undefined)
+      {
+        this.OrderIndexDB = await this.indexDB.addToDB(this.OrderReview)
+        console.log(this.OrderIndexDB)
+        console.log(this.OrderIndexDB.id)
+        //Agregar el webworker
+        //console.log('Add in the Index DB')
+      }
+      else
+      {
+        //console.log(this.OrderIndexDB)
+        //console.log(this.OrderIndexDB.id)
+        //Cuando pase el webworker, agregue el docnum
+        this.OrderReview!.DocumentLines = this.Cart;
+        this.indexDB.editToDB(this.OrderIndexDB.id,'1234', this.OrderReview, this.customer.CardCode, this.Cart!)
+      }
+
+      this.dataSharing.setOrderReview(this.OrderReview)
+      this.dataSharing.setCartData(this.Cart);
+      this.dataSharing.setOrderIndexDB(this.OrderIndexDB)
+
+      //console.log(order)
     }
   }
 }
+
+

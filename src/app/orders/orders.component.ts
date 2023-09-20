@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DocumentLines } from '../models/car';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
+import { IndexDbService } from '../service/index-db.service';
 
 @Component({
   selector: 'app-orders',
@@ -43,18 +44,13 @@ export class OrdersComponent {
   ShowEdit = false;
   title=""
 
-  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService) 
+  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService) 
   {
     this.customerBack = this.dataSharing.getCustomerData();
     this.Cart = this.dataSharing.getCartData();
 
-    // this.route.queryParams.subscribe(params => {
-    //   let datosComoTexto = params['customer'];
-    //   this.customerBack = JSON.parse(datosComoTexto);
-    //   console.log(this.customerBack)
-    //   datosComoTexto = params['cart'];
-    //   this.Cart = JSON.parse(datosComoTexto);
-    // });
+    // if(this.customerBack === undefined)
+    //   this.getDataIndex();
 
     const routeParams = this.route.snapshot.paramMap;
     const pageUrl = routeParams.get('type');
@@ -69,29 +65,48 @@ export class OrdersComponent {
       this.title = "Edit Customer";
       this.ShowEdit = true
     }
+
+  }
+
+  async getDataIndex(){
+    const orderComplete = await this.indexDB.getLastOneDB();
+    // console.log("pasa aqui")
+    // console.log(orderComplete)
+
+    if (window.confirm("You have an Order. \nDo you would continue editing this Order?")) {
+      this.customerBack = orderComplete.CardCode;
+      this.Cart = orderComplete.DocumentLines;
+      this.dataSharing.setOrderCReview(orderComplete);
+      this.dataSharing.setOrderIndexDB(orderComplete);
+      this.dataSharing.setOrderReview(orderComplete);
+      //console.log(this.Cart)
+    } else {
+      this.customerBack == undefined;
+    }
   }
 
   ngOnInit(): void {
     //this.ShowEdit = "none"
-
-    // if(this.title == "New Order")
-    // {
-    //   const element = document.getElementById('NextB');
-    //   element!.classList.add('right-button');
-    // }
-
-    console.log('pasa por aquis')
+    
     this.orderService.getCustomer().subscribe((retData) => {
 
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         this.ListCustomers = JSON.parse(retData.response!);
-        
-         console.log(this.ListCustomers)
+        //console.log(this.ListCustomers)
         if(this.customerBack != undefined)
         {
-          this.searchText = this.customerBack.CardName
-          this.onSelectCustomer(this.customerBack.CardName)
+          if(this.customerBack.CardName === undefined)
+          {
+            this.onSelectCustomer(this.customerBack)
+            //this.searchText = this.customerBack.CardName
+          }
+          else
+          {
+            this.searchText = this.customerBack.CardName
+            this.onSelectCustomer(this.customerBack.CardName)
+          }
+          
         }
           
       } else {
@@ -100,6 +115,17 @@ export class OrdersComponent {
 
     });
 
+    const element = document.getElementById('NextB');
+    //console.log(this.title)
+    if(this.title == "New Order")
+    {
+      setTimeout(() => {
+        const element = document.getElementById('NextB');
+        if (element) {
+          element.classList.add('right-button');
+        }
+      }, 100);
+    }
     
 
   }
@@ -157,7 +183,7 @@ export class OrdersComponent {
 
   onSelectCustomer(selectedData:any){
     //console.log(this.customerBack.CardName)
-    this.CurrentSellsItem = this.ListCustomers.find(x => x.CardName === selectedData);
+    this.CurrentSellsItem = this.ListCustomers.find(x => x.CardName === selectedData || x.CardCode === selectedData);
     //console.log(this.CurrentSellsItem);
     this.inputSearchCutomer = true;
     this.showAddButton = false;
@@ -200,6 +226,7 @@ export class OrdersComponent {
       this.shippingAddress = '';
     }
 
+    this.searchText = this.CurrentSellsItem!.CardName;
     this.notes = this.CurrentSellsItem?.Notes;
     this.shippingType = this.CurrentSellsItem?.ShippingType;
     this.phone1 = this.CurrentSellsItem?.Phone1;

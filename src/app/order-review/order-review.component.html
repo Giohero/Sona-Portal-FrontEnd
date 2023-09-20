@@ -55,7 +55,7 @@
                 <label class="label">Delivery Date:</label>
                 <mat-form-field class="example-full-width">
                 <mat-label>Choose a date</mat-label>
-                  <input matInput [min]="minDate" [matDatepicker]="deliveryDate" [formControl]="delivery">
+                  <input matInput [min]="minDate" [matDatepicker]="deliveryDate" [formControl]="delivery" (dateChange)="changeOrder()">
                   <mat-hint>MM/DD/YYYY</mat-hint>
                   <mat-datepicker-toggle matIconSuffix [for]="deliveryDate"></mat-datepicker-toggle>
                   <mat-datepicker #deliveryDate></mat-datepicker>
@@ -75,7 +75,7 @@
             </mat-card-header>
             <mat-card-content class="content-wrapper">
               <div class="radio-button-container" *ngFor="let adr of CustomerData.Addresses; let listIndex=index;">
-                <mat-radio-group [(ngModel)]="option">
+                <mat-radio-group [(ngModel)]="option" (change)="changeOrder()">
                 <div  fxLayout="row" >
                   <mat-radio-button [value]="listIndex" ></mat-radio-button>
                   <div class="option-details" >
@@ -112,7 +112,7 @@
         </div>
         <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
           <a mat-raised-button color="primary" class="mobile-button" (click)="backWindow()">Back</a>
-          <a mat-raised-button color="primary" class="mobile-button" (click)="createOrder(option)" >Create Order</a>
+          <a mat-raised-button color="primary" class="mobile-button" (click)="createOrder()" >Create Order</a>
         </div>
         <br>
       </div>

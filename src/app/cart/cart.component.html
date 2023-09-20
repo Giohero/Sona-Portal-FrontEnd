@@ -52,7 +52,7 @@
                   <div class="input-container">
                     <label for="Quantity"><b>Quantity:</b></label>
                     <input type="number" matInput class="boxCartItem" for="Quantity" min="1" max="1000"
-                      [(ngModel)]="Item.Quantity" (change)="updateTotal(Item)">
+                      [(ngModel)]="Item.Quantity" (change)="updateTotal(listIndex,Item)">
                   </div>
                   <div class="input-container">
                     <label for="Total"><b>Total:</b></label>
@@ -63,7 +63,8 @@
                   </button>
                   <div class="comments-container">
                     <label for="Comments"><b>Comments:</b></label>
-                    <input type="text" class="boxCart" matInput placeholder="Add Comments" [(ngModel)]="Item.U_Comments">
+                    <input type="text" class="boxCart" matInput placeholder="Add Comments" [(ngModel)]="Item.U_Comments"
+                    (change)="updateComment(Item)">
                   </div>
                 </div>
               </div>

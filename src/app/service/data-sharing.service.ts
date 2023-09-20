@@ -10,6 +10,7 @@ export class DataSharingService {
   customerData: any;
   //cartData:[] | undefined;
   //cartData: (DocumentLines)[] =[];
+  OrderIndexDB?:any;
   cartData?: DocumentLines[];
   OrderData?: Order;
   orderCData?: OrdeComplete;
@@ -33,7 +34,9 @@ export class DataSharingService {
   }
 
   setOrderReview(order: any) {
+    //console.log('Order review')
     this.OrderData = order;
+    //console.log(this.OrderData)
   }
 
   getOrderReview() {
@@ -41,10 +44,20 @@ export class DataSharingService {
   }
 
   setOrderCReview(order: any) {
+    //console.log('OrderCReview')
     this.orderCData = order;
+    //console.log(this.orderCData)
   }
 
   getOrderCReview() {
     return this.orderCData;
+  }
+
+  setOrderIndexDB(order: any) {
+    this.OrderIndexDB = order;
+  }
+
+  getOrderIndexDB() {
+    return this.OrderIndexDB;
   }
 }
