@@ -9,6 +9,8 @@ import { Value } from '../models/items';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Order as OrderPost, DocumentLines as DocLinePost } from '../models/car';
+import { webWorker } from '../app.component';
+import { IndexDbService } from '../service/index-db.service';
 
 @Component({
   selector: 'app-order-edit',
@@ -24,15 +26,27 @@ export class OrderEditComponent implements OnInit {
   selectedItemIndex: number | null = null;
   ListItems!: Value[];
   colorStatus=""
+  OrderIndexDB?:any;
 
-  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog,) {
+  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService,) {
     this.order = dataSharing.getOrderCReview();
+    this.OrderIndexDB = dataSharing.getOrderIndexDB();
 
     if(this.order != undefined)
+    {
+      console.log(this.order)
       this.orderOld = JSON.parse(JSON.stringify(this.order));
-    
-    this.post = new FormControl({value: new Date(), disabled: true});
-    this.delivery = new FormControl(new Date());
+      this.post = new FormControl({value: new Date(this.order.DocDate), disabled: true});
+      console.log(this.post)
+      this.delivery = new FormControl(new Date(this.order.DocDueDate));
+      console.log(this.delivery)
+    }
+    else
+    {
+      this.post = new FormControl({value: new Date(), disabled: true});
+      this.delivery = new FormControl(new Date());
+    }
+      
   }
 
   ngOnInit(): void {
@@ -101,6 +115,7 @@ export class OrderEditComponent implements OnInit {
     var itemOld = this.orderOld?.DocumentLines.find((x:any) => x.ItemCode === item.ItemCode);
     var unitPriceOld = parseFloat(itemOld!.LineTotal) / itemOld!.Quantity;
 
+    console.log(unitPriceOld)
     if(item.UnitPrice === unitPriceOld.toString())
     {
       var totalItem =  parseFloat(item.UnitPrice) * item.Quantity;
@@ -121,6 +136,8 @@ export class OrderEditComponent implements OnInit {
       else
         item.LineTotal = itemOld.LineTotal
     }
+
+    this.updateOrder()
     
   }
 
@@ -157,51 +174,113 @@ export class OrderEditComponent implements OnInit {
       var itemDelete = this.order.DocumentLines[index];
       this.order.DocTotal -= parseFloat(itemDelete.LineTotal);
       this.order.DocumentLines.splice(index, 1);
+      this.updateOrder()
     }
   }
 
-  updateOrder()
+  // updateOrder()
+  // {
+  //   console.log(this.order)
+
+  //   var DocumentLinesP: DocLinePost[];
+  //   DocumentLinesP = [];
+    
+  //   this.order?.DocumentLines.forEach(element => {
+  //     DocumentLinesP.push({
+  //       ItemCode: element.ItemCode,
+  //       Quantity: element.Quantity,
+  //       TaxCode: 'EX',
+  //       U_Comments: element.U_Comments
+  //     })
+
+  //     //delete DocumentLinesP[0].ItemName;
+  //   });
+
+  //   const docDueDate = this.pipe.transform(this.order?.DocDueDate, 'yyyy-MM-dd');
+  //   const docDate = this.pipe.transform(this.order?.DocDate, 'yyyy-MM-dd');
+  //   //const taxDate = this.pipe.transform(this.order?.TaxDate, 'yyyy-MM-dd');
+    
+  //   var OrderPost: OrderPost = {
+  //     DocDueDate: docDueDate?.toString(),
+  //     DocDate:docDate?.toString(),
+  //     TaxDate: docDate?.toString(),
+  //     AddressExtension: this.order?.AddressExtension,
+  //     DocEntry: this.order?.DocEntry.toString(),
+  //     DocNum: this.order?.DocNum.toString(),
+  //     DocumentLines: DocumentLinesP!,
+  //     CardCode: this.order?.CardCode
+  //   }
+
+  //   console.log(OrderPost)
+  //   this.orderService.UpdateOrder(OrderPost).subscribe((retData) => {
+  //     if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+  //       this.openSnackBar(retData.response!, "check_circle", "Order Updated!", "green");
+  //     } else {
+  //       this.openSnackBar(retData.response!, "error", "Error", "red");
+  //     }
+  //   });
+  // }
+
+  async updateOrder()
   {
-    console.log(this.order)
+    //console.log(this.order)
 
-    var DocumentLinesP: DocLinePost[];
-    DocumentLinesP = [];
-    
-    this.order?.DocumentLines.forEach(element => {
-      DocumentLinesP.push({
-        ItemCode: element.ItemCode,
-        Quantity: element.Quantity,
-        TaxCode: 'EX',
-        U_Comments: element.U_Comments
-      })
+    if(this.order !== this.orderOld)
+    {
+      var DocumentLinesP: DocLinePost[];
+      DocumentLinesP = [];
+      
+      this.order?.DocumentLines.forEach(element => {
+        DocumentLinesP.push({
+          ItemCode: element.ItemCode,
+          Quantity: element.Quantity,
+          TaxCode: 'EX',
+          U_Comments: element.U_Comments
+        })
+      });
 
-      //delete DocumentLinesP[0].ItemName;
-    });
-
-    const docDueDate = this.pipe.transform(this.order?.DocDueDate, 'yyyy-MM-dd');
-    const docDate = this.pipe.transform(this.order?.DocDate, 'yyyy-MM-dd');
-    //const taxDate = this.pipe.transform(this.order?.TaxDate, 'yyyy-MM-dd');
-    
-    var OrderPost: OrderPost = {
-      DocDueDate: docDueDate?.toString(),
-      DocDate:docDate?.toString(),
-      TaxDate: docDate?.toString(),
-      AddressExtension: this.order?.AddressExtension,
-      DocEntry: this.order?.DocEntry.toString(),
-      DocNum: this.order?.DocNum.toString(),
-      DocumentLines: DocumentLinesP!,
-      CardCode: this.order?.CardCode
-    }
-
-    console.log(OrderPost)
-    this.orderService.UpdateOrder(OrderPost).subscribe((retData) => {
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-        this.openSnackBar(retData.response!, "check_circle", "Order Updated!", "green");
-      } else {
-        this.openSnackBar(retData.response!, "error", "Error", "red");
+      const docDueDate = this.pipe.transform(this.order?.DocDueDate, 'yyyy-MM-dd');
+      const docDate = this.pipe.transform(this.order?.DocDate, 'yyyy-MM-dd');
+      //const taxDate = this.pipe.transform(this.order?.TaxDate, 'yyyy-MM-dd');
+      
+      var OrderPost: OrderPost = {
+        DocDueDate: docDueDate?.toString(),
+        DocDate:docDate?.toString(),
+        TaxDate: docDate?.toString(),
+        AddressExtension: this.order?.AddressExtension,
+        DocEntry: this.order?.DocEntry.toString(),
+        DocNum: this.order?.DocNum.toString(),
+        DocumentLines: DocumentLinesP!,
+        CardCode: this.order?.CardCode
       }
-    });
+
+      const result = webWorker('editOrder',OrderPost).then((data) => {
+        //console.log('Valor devuelto por el Web Worker edit:', data);
+        if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+        {
+          // const orderEdit: Order = JSON.parse(data.response);
+          // console.log(orderEdit)
+          //this.DocNumPublish = orderPublish!.DocNum;
+        }
+        else
+          console.error('Error:', data.response)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+      
+
+      //this.indexDB.editToDB(this.OrderIndexDB.id,OrderPost!.DocNum!.toString(), OrderPost, OrderPost.CardCode!, DocumentLinesP)
+
+      this.dataSharing.setOrderReview(OrderPost)
+      this.dataSharing.setCartData(DocumentLinesP);
+      //this.dataSharing.setOrderIndexDB(OrderPost)
+    }
   }
+
+  
+
+  
 
 }
 

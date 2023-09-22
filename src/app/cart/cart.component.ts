@@ -9,11 +9,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { DataSharingService } from '../service/data-sharing.service';
 import Dexie from 'dexie';
 import { IndexDbService } from '../service/index-db.service';
+import { AppComponent, webWorker } from '../app.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.css']
+  styleUrls: ['./cart.component.css'],
+  providers: [DatePipe]
 })
 export class CartComponent {
 
@@ -31,8 +34,10 @@ export class CartComponent {
   customer:any;
   private Db?: Dexie;
   OrderIndexDB?:any;
+  DocNumPublish? = '';
+  DocEntryPublish? = '';
 
-constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService, private indexDB: IndexDbService) {    
+constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService, private indexDB: IndexDbService, private pipe: DatePipe) {    
   this.Cart = dataSharing.getCartData();
   this.OrderIndexDB = dataSharing.getOrderIndexDB();
 
@@ -260,11 +265,29 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
     this.myRouter.navigate(['dashboard/order-customer/new-order']);
   }
 
+  getDocNum()
+  {
+    if(this.DocNumPublish != '')
+    {
+      this.OrderReview!.DocNum = this.DocNumPublish;
+      this.OrderReview!.DocEntry = this.DocEntryPublish;
+    return this.DocNumPublish;
+    }
+    else
+      return '...';
+  }
+
   async changeOrder(order:DocumentLines[])
   {
     if(order !== this.CartOld)
     {
       this.OrderReview = new Order();
+      const today = new Date();
+      const dateDelivery = this.pipe.transform(today, 'yyyy-MM-dd');
+      //console.log(dateDelivery)
+      this.OrderReview!.DocDate = dateDelivery?.toString();
+      this.OrderReview!.DocDueDate = dateDelivery?.toString();
+      this.OrderReview!.TaxDate = dateDelivery?.toString();
       this.customer = this.dataSharing.getCustomerData();
       this.OrderReview!.CardCode = this.customer.CardCode;
       this.OrderReview!.DocumentLines = this.Cart;
@@ -273,19 +296,73 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
       //console.log(this.OrderIndexDB)
       if(this.Cart!.length! === 1 && this.OrderIndexDB === undefined)
       {
+        webWorker('postOrder',this.OrderReview).then((data) => {
+          //console.log('Valor devuelto por el Web Worker:', data);
+          if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+          {
+            const orderPublish: Order = JSON.parse(data.response);
+            this.DocNumPublish = orderPublish!.DocNum;
+            this.DocEntryPublish = orderPublish!.DocEntry
+
+            this.OrderReview!.DocNum = this.DocNumPublish;
+            this.OrderReview!.DocEntry = this.DocEntryPublish;
+
+            this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+          }
+          else
+            console.error('Error:', data.response)
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
         this.OrderIndexDB = await this.indexDB.addToDB(this.OrderReview)
         console.log(this.OrderIndexDB)
         console.log(this.OrderIndexDB.id)
-        //Agregar el webworker
-        //console.log('Add in the Index DB')
       }
       else
       {
+        this.OrderReview.DocNum = this.DocNumPublish;
+        this.OrderReview.DocEntry = this.DocEntryPublish;
+        this.OrderReview!.DocumentLines = this.Cart;
+
+        var DocumentLinesP: DocumentLines[];
+        DocumentLinesP = [];
+        
+        this.OrderReview!.DocumentLines!.forEach(element => {
+          DocumentLinesP.push({
+            ItemCode: element.ItemCode,
+            Quantity: element.Quantity,
+            TaxCode: 'EX',
+            U_Comments: element.U_Comments
+          })
+        });
+
+        this.OrderReview!.DocumentLines = DocumentLinesP;
+
+        console.log( this.OrderReview!.DocumentLines!)
+        webWorker('editOrder',this.OrderReview).then((data) => {
+          //console.log('Valor devuelto por el Web Worker edit:', data);
+          if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+          {
+            // const orderEdit: Order = JSON.parse(data.response);
+            // console.log(orderEdit)
+            //this.DocNumPublish = orderPublish!.DocNum;
+
+          }
+          else
+            console.error('Error:', data.response)
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+        
         //console.log(this.OrderIndexDB)
         //console.log(this.OrderIndexDB.id)
         //Cuando pase el webworker, agregue el docnum
-        this.OrderReview!.DocumentLines = this.Cart;
-        this.indexDB.editToDB(this.OrderIndexDB.id,'1234', this.OrderReview, this.customer.CardCode, this.Cart!)
+        //console.log(this.DocNumPublish)
+        //webWorker('postOrder',this.OrderReview)
+        this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview.DocNum!.toString(), this.OrderReview, this.customer.CardCode, this.Cart!)
       }
 
       this.dataSharing.setOrderReview(this.OrderReview)

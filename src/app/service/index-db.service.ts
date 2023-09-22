@@ -18,7 +18,7 @@ export class IndexDbService {
   }
 
   //async editToDB(id: number, DocNum: string = '12345', DocDate: string = '0001-01-01', DocDueDate: string = '0001-01-01', TaxDate: string = '0001-01-01', CardCode: string, DocumentLines: DocumentLines[], AddressExtension: AddressExtension = {}): Promise<void> {
-  async editToDB(id: number, DocNum: string = '12345', OrderComplete: Order, CardCode: string, DocumentLines: DocumentLines[]): Promise<void> {
+  async editToDB(id: number, DocNum: string, OrderComplete: Order, CardCode: string, DocumentLines: DocumentLines[]): Promise<void> {
     try {
       const DocDate = OrderComplete.DocDate;
       const DocDueDate = OrderComplete.DocDueDate;
@@ -38,9 +38,10 @@ export class IndexDbService {
     //const DocNum = data.DocNum;
     const CardCode = data.CardCode;
     const DocumentLines = data.DocumentLines;
+    const DocNum = data.DocNum
 
     try {
-      const orderId = await this.Db!.table('orders').add({ CardCode, DocumentLines });
+      const orderId = await this.Db!.table('orders').add({ DocNum, CardCode, DocumentLines });
       const retrievedOrder = await this.Db!.table('orders').get(orderId);
       //console.log(retrievedOrder);
       return retrievedOrder;

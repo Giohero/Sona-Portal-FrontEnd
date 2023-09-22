@@ -4,7 +4,7 @@ import { BusinessPartner } from '../models/customer';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DocumentLines, Order } from '../models/car';
+import { AddressExtension, DocumentLines, Order } from '../models/car';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
@@ -12,6 +12,7 @@ import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { data } from 'jquery';
 import { IndexDbService } from '../service/index-db.service';
+import { webWorker } from '../app.component';
 
 
 
@@ -239,6 +240,7 @@ export class OrderReviewComponent {
   async changeOrder()
   {
     const selectedAddress = this.CustomerData.Addresses[this.option];
+    console.log(selectedAddress)
     const dateToday = this.pipe.transform(this.tax.value, 'yyyy-MM-dd');
     const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
     this.OrderReview!.DocDate = dateToday?.toString();
@@ -247,20 +249,45 @@ export class OrderReviewComponent {
 
     if(selectedAddress)
     {
+      var AddressSelect: AddressExtension = {
+        ShipToStreet: selectedAddress.AddressName,
+        ShipToStreetNo: selectedAddress.Street,
+        ShipToBlock: selectedAddress.Block,
+        ShipToZipCode: selectedAddress.ZipCode,
+        ShipToCity: selectedAddress.City,
+        ShipToCountry: selectedAddress.Country,
+        ShipToState: selectedAddress.State
+      }
+
+
       this.OrderReview!.AddressExtension = {}
-      this.OrderReview!.AddressExtension! = selectedAddress;
+      this.OrderReview!.AddressExtension! = AddressSelect;
     }
 
     if(this.OrderReview !== this.OrderReviewOld)
     {
       console.log(this.OrderReview)
-      this.indexDB.editToDB(this.OrderIndexDB.id, '1234', this.OrderReview!, this.OrderReview!.CardCode!, this.OrderReview!.DocumentLines!)
+      webWorker('editOrder',this.OrderReview!).then((data) => {
+        //console.log('Valor devuelto por el Web Worker edit:', data);
+        if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+        {
+          // const orderEdit: Order = JSON.parse(data.response);
+          // console.log(orderEdit)
+          //this.DocNumPublish = orderPublish!.DocNum;
 
+        }
+        else
+          console.error('Error:', data.response)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+
+      this.indexDB.editToDB(this.OrderIndexDB.id, this.OrderReview?.DocNum!, this.OrderReview!, this.OrderReview!.CardCode!, this.OrderReview!.DocumentLines!)
       this.dataSharing.setOrderReview(this.OrderReview)
       //this.dataSharing.setCartData(this.Cart);
       this.dataSharing.setOrderIndexDB(this.OrderIndexDB)
-
-      //console.log(order)
     }
   }
   
