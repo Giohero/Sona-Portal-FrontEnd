@@ -26,6 +26,7 @@ searchOrder: number | undefined;
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         this.ListOrders = JSON.parse(retData.response!);
+        this.ListOrders!.sort((a, b) => b.DocNum - a.DocNum);
         //console.log(this.ListOrders)
       } else {
         this.openSnackBar(retData.response!, "error", "Error", "red");

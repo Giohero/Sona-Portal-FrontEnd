@@ -50,11 +50,13 @@ export class OrderReviewComponent {
   tax!: FormControl;
   delivery!: FormControl;
   sumLines?: number;
+  Cart!: DocumentLines[];
 
   constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute, private _snackBar: MatSnackBar, private pipe: DatePipe, private dataSharing:DataSharingService, private indexDB:IndexDbService) {
     this.OrderReview = dataSharing.getOrderReview();
     this.CustomerData = dataSharing.getCustomerData();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
+    this.Cart = dataSharing.getCartData()!;
     
     if(this.OrderReview != undefined)
     {
@@ -109,7 +111,8 @@ export class OrderReviewComponent {
 
   fillDataOrder()
   {
-    this.sumLines = this.OrderReview!.DocumentLines!.reduce((acumulador:number, elemento:any) => acumulador + elemento.LineTotal, 0);
+    //console.log(this.OrderReview!.DocumentLines!)
+    this.sumLines = this.Cart!.reduce((acumulador:number, elemento:any) => acumulador + elemento.LineTotal, 0);
     this.cardcode = this.CustomerData.CardCode;
     this.notes = this.CustomerData.notes;
     this.email = this.CustomerData.Email;
@@ -137,7 +140,7 @@ export class OrderReviewComponent {
   backWindow()
   {
     this.dataSharing.setCustomerData(this.CustomerData);
-    this.dataSharing.setCartData(this.OrderReview?.DocumentLines)
+    this.dataSharing.setCartData(this.Cart)
     this.dataSharing.setOrderReview(this.OrderReview);
     this.dataSharing.setOrderIndexDB(this.OrderIndexDB)
     this.myRouter.navigate(['dashboard/cart']);
@@ -193,43 +196,8 @@ export class OrderReviewComponent {
 
     if(selectedAddress)
     {
-      const dateToday = this.pipe.transform(this.tax.value, 'yyyy-MM-dd');
-      const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
-      this.OrderReview!.DocDate = dateToday?.toString();
-      this.OrderReview!.DocDueDate = dateToday?.toString();
-      this.OrderReview!.TaxDate = dateDelivery?.toString();
-      //console.log(this.OrderReview);
-
-      this.OrderReview!.AddressExtension = {}
-      this.OrderReview!.AddressExtension! = selectedAddress;
-
-      // if (this.OrderReview && this.OrderReview.DocumentLines) 
-      // {
-      //   for (let i = 0; i < this.OrderReview.DocumentLines.length; i++) {
-      //     delete this.OrderReview.DocumentLines[i].LineTotal;
-      //   }
-      //   for (let i = 0; i < this.OrderReview.DocumentLines.length; i++) {
-      //     delete this.OrderReview.DocumentLines[i].UnitPrice;
-      //   }
-      // }
-      
-      console.log(this.OrderReview);
-
-      // this.orderService.PostOrder(this.OrderReview!).subscribe(retData => {
-      //   //console.log(this.OrderReview);
-      //   if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
-      //   {
-      //      var OrderCreate: Order;
-      //      OrderCreate = JSON.parse(retData.response!);
-      //     this.openSnackBar("DocNum: "+ OrderCreate.DocNum, "check_circle", "Order Created!", "green");
-      //     this.myRouter.navigate(['dashboard/order-index'])
-      //   }
-      //   else
-      //   {
-      //     this.openSnackBar(retData.response!, "error", "Error", "red");
-      //     //console.log(retData.response)
-      //   }
-      // });
+      this.openSnackBar("DocNum: "+ this.OrderReview!.DocNum, "check_circle", "Order Completed!", "green");
+      this.myRouter.navigate(['dashboard/order-index'])
     }
     else{
       this.openSnackBar("You must select an Address", "warning", "Warning", "darkorange");
@@ -244,8 +212,8 @@ export class OrderReviewComponent {
     const dateToday = this.pipe.transform(this.tax.value, 'yyyy-MM-dd');
     const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
     this.OrderReview!.DocDate = dateToday?.toString();
-    this.OrderReview!.DocDueDate = dateToday?.toString();
-    this.OrderReview!.TaxDate = dateDelivery?.toString();
+    this.OrderReview!.DocDueDate = dateDelivery?.toString();
+    this.OrderReview!.TaxDate = dateToday?.toString();
 
     if(selectedAddress)
     {

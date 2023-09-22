@@ -6,6 +6,7 @@ export class DocumentLines {
     UnitPrice?: string;
     LineTotal?: number;
     U_Comments?: string;
+    Icon?:string;
 }
 
 export class Order {

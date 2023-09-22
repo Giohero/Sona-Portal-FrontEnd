@@ -142,11 +142,12 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
           TaxCode: "EX",
           UnitPrice: this.Price,
           LineTotal: parseFloat(this.Price) * this.Quantity,
-          U_Comments: ""
+          U_Comments: "",
+          Icon: 'cloud_queue'
         };
         
         this.Cart?.push(newDocumentLine);
-        this.changeOrder(this.Cart!);
+        this.changeOrder(this.Cart!.length - 1, this.Cart!);
 
         this.cleanSearching()
       }
@@ -167,14 +168,14 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
     if(item.UnitPrice)
     {
       //this.Cart.updateItem(index, item);
-      this.changeOrder(this.Cart!);
+      this.changeOrder(index, this.Cart!);
       item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity!;
     }
       
   }
 
-  updateComment(item: DocumentLines) {
-      this.changeOrder(this.Cart!);
+  updateComment(index: number) {
+      this.changeOrder(index,this.Cart!);
       
   }
 
@@ -209,7 +210,7 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
   RemoveToCart(index: number){
     this.Cart!.splice(index, 1);
     //this.Cart.removeItem(index);
-    this.changeOrder(this.Cart!);
+    this.changeOrder(index,this.Cart!);
     this.cleanSearching();
 
     if(this.Cart!.length === 0)
@@ -248,9 +249,13 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
     //this.OrderReview!.DocumentLines = this.Cart!;
     if(this.Cart!.length != 0)
     {
-      //this.dataSharing.setCartData(this.Cart);
-      //this.dataSharing.setOrderReview(this.OrderReview)
+      this.dataSharing.setCartData(this.Cart);
+      if(this.OrderReview === undefined)
+        this.OrderReview = this.dataSharing.getOrderReview()
+      else
+        this.dataSharing.setOrderReview(this.OrderReview)
 
+      console.log(this.OrderReview)
       this.myRouter.navigate(['dashboard/order-review']);
       //this.router.navigate(['dashboard/allocation/info/'+index.DocNum], { queryParams: { dataOrder: OrderText } });
     }
@@ -278,11 +283,14 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
       return '...';
   }
 
-  async changeOrder(order:DocumentLines[])
+  async changeOrder(index:number | undefined,order:DocumentLines[])
   {
     if(order !== this.CartOld)
     {
-      this.actualicon = 'cloud_queue'
+      //this.actualicon = 'cloud_queue'
+      if(index != undefined)
+        order[index].Icon = 'cloud_queue'
+
       this.OrderReview = new Order();
       const today = new Date();
       const dateDelivery = this.pipe.transform(today, 'yyyy-MM-dd');
@@ -310,15 +318,18 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
             this.OrderReview!.DocEntry = this.DocEntryPublish;
 
             this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
-            this.actualicon = 'cloud_done';
+            //this.actualicon = 'cloud_done';
+            this.Cart![0].Icon= 'cloud_done';
           }
           else{
-            this.actualicon = 'cloud_off';
+            //this.actualicon = 'cloud_off';
+            this.Cart![0].Icon = 'cloud_off';
             console.error('Error:', data.response)
           }
         })
         .catch((error) => {
-          this.actualicon = 'cloud_off';
+          //this.actualicon = 'cloud_off';
+          this.Cart![0].Icon = 'cloud_off';
           console.error('Error:', error);
         });
 
@@ -354,16 +365,22 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
             // const orderEdit: Order = JSON.parse(data.response);
             // console.log(orderEdit)
             //this.DocNumPublish = orderPublish!.DocNum;
-            this.actualicon = 'cloud_done';
-
+            //this.actualicon = 'cloud_done';
+            if(index != undefined)
+              order[index].Icon = 'cloud_done';
+            this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
           }
           else{
-            this.actualicon = 'cloud_off';
+            if(index != undefined)
+              order[index].Icon = 'cloud_off';
+            //this.actualicon = 'cloud_off';
             console.error('Error:', data.response)
           }
         })
         .catch((error) => {
-          this.actualicon = 'cloud_off';
+          //this.actualicon = 'cloud_off';
+          if(index != undefined)
+            order[index].Icon = 'cloud_off';
           console.error('Error:', error);
         });
         
@@ -372,7 +389,9 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
         //Cuando pase el webworker, agregue el docnum
         //console.log(this.DocNumPublish)
         //webWorker('postOrder',this.OrderReview)
-        this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview.DocNum!.toString(), this.OrderReview, this.customer.CardCode, this.Cart!)
+        this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+          
+        
       }
 
       this.dataSharing.setOrderReview(this.OrderReview)

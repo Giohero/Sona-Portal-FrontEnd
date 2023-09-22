@@ -3,7 +3,7 @@
       <div class="container" fxLayout="column" fxLayoutGap="20px">
         <br>
         <h2>Order Review</h2>
-
+        <h3>{{this.OrderReview!.DocNum}}</h3>
         <mat-card class="mat-card">
           <mat-card-content>
             <h2 class="h2Mat">Customer <mat-icon>supervisor_account</mat-icon></h2>
@@ -96,7 +96,7 @@
             <mat-card-content>
               <h2 class="h2Mat">Order check <mat-icon>done_all</mat-icon></h2>
                 <mat-list>
-                  <mat-list-item  *ngFor="let item of OrderReview!.DocumentLines; let listIndex=index;">
+                  <mat-list-item  *ngFor="let item of Cart; let listIndex=index;">
                     <div matListItemTitle><mat-icon>check_circle_outline</mat-icon><b>{{listIndex+1}}</b></div>
                     <div matListItemTitle>{{item.ItemCode}}</div>
                     <div class="info-item"  matListItemLine><b>{{item.ItemName}}</b></div>
@@ -112,7 +112,7 @@
         </div>
         <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
           <a mat-raised-button color="primary" class="mobile-button" (click)="backWindow()">Back</a>
-          <a mat-raised-button color="primary" class="mobile-button" (click)="createOrder()" >Create Order</a>
+          <a mat-raised-button color="primary" class="mobile-button" (click)="createOrder()" >Finish Order</a>
         </div>
         <br>
       </div>

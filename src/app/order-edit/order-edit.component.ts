@@ -34,12 +34,17 @@ export class OrderEditComponent implements OnInit {
 
     if(this.order != undefined)
     {
-      console.log(this.order)
+      //console.log(this.order)
       this.orderOld = JSON.parse(JSON.stringify(this.order));
-      this.post = new FormControl({value: new Date(this.order.DocDate), disabled: true});
-      console.log(this.post)
-      this.delivery = new FormControl(new Date(this.order.DocDueDate));
-      console.log(this.delivery)
+      
+      const DocDate = new Date(this.order.DocDate);
+      DocDate.setMinutes(DocDate.getMinutes() + DocDate.getTimezoneOffset());
+      this.post = new FormControl({value: DocDate, disabled: true});
+      //console.log(this.orderOld)
+      const DocDueDate = new Date(this.order.DocDueDate);
+      DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
+      this.delivery = new FormControl(DocDueDate);
+      //console.log(this.delivery)
     }
     else
     {
@@ -113,29 +118,40 @@ export class OrderEditComponent implements OnInit {
   changeQuantity(item: DocumentLines)
   {
     var itemOld = this.orderOld?.DocumentLines.find((x:any) => x.ItemCode === item.ItemCode);
-    var unitPriceOld = parseFloat(itemOld!.LineTotal) / itemOld!.Quantity;
-
-    console.log(unitPriceOld)
-    if(item.UnitPrice === unitPriceOld.toString())
+    if(itemOld == undefined)
     {
       var totalItem =  parseFloat(item.UnitPrice) * item.Quantity;
+      console.log(totalItem)
       item.LineTotal = totalItem.toString()
     }
     else
     {
-      var diference = Math.abs(itemOld!.Quantity - item.Quantity);
-      //console.log(itemOld!.Quantity)
-      //console.log(item.Quantity)
-      //console.log(this.orderOld)
-      var totalUpdate = (parseFloat(item.UnitPrice) * diference);
-      //console.log(totalUpdate)
-      if(itemOld!.Quantity > item.Quantity)
-        item.LineTotal = (parseFloat(itemOld.LineTotal) - totalUpdate).toString();
-      else if(itemOld!.Quantity < item.Quantity)
-        item.LineTotal = (parseFloat(itemOld.LineTotal) + totalUpdate).toString();
+      var unitPriceOld = parseFloat(itemOld!.LineTotal) / itemOld!.Quantity;
+
+      console.log(unitPriceOld)
+      if(item.UnitPrice === unitPriceOld.toString())
+      {
+        var totalItem =  parseFloat(item.UnitPrice) * item.Quantity;
+        console.log(totalItem)
+        item.LineTotal = totalItem.toString()
+      }
       else
-        item.LineTotal = itemOld.LineTotal
+      {
+        var diference = Math.abs(itemOld!.Quantity - item.Quantity);
+        //console.log(itemOld!.Quantity)
+        //console.log(item.Quantity)
+        //console.log(this.orderOld)
+        var totalUpdate = (parseFloat(item.UnitPrice) * diference);
+        //console.log(totalUpdate)
+        if(itemOld!.Quantity > item.Quantity)
+          item.LineTotal = (parseFloat(itemOld.LineTotal) - totalUpdate).toString();
+        else if(itemOld!.Quantity < item.Quantity)
+          item.LineTotal = (parseFloat(itemOld.LineTotal) + totalUpdate).toString();
+        else
+          item.LineTotal = itemOld.LineTotal
     }
+    }
+    
 
     this.updateOrder()
     
@@ -239,8 +255,11 @@ export class OrderEditComponent implements OnInit {
         })
       });
 
-      const docDueDate = this.pipe.transform(this.order?.DocDueDate, 'yyyy-MM-dd');
-      const docDate = this.pipe.transform(this.order?.DocDate, 'yyyy-MM-dd');
+      // const docDueDate = this.pipe.transform(this.order?.DocDueDate, 'yyyy-MM-dd');
+      // const docDate = this.pipe.transform(this.order?.DocDate, 'yyyy-MM-dd');
+
+      const docDueDate = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
+      const docDate =  this.pipe.transform(this.post.value, 'yyyy-MM-dd');
       //const taxDate = this.pipe.transform(this.order?.TaxDate, 'yyyy-MM-dd');
       
       var OrderPost: OrderPost = {
@@ -253,6 +272,8 @@ export class OrderEditComponent implements OnInit {
         DocumentLines: DocumentLinesP!,
         CardCode: this.order?.CardCode
       }
+
+      console.log(OrderPost)
 
       const result = webWorker('editOrder',OrderPost).then((data) => {
         //console.log('Valor devuelto por el Web Worker edit:', data);
