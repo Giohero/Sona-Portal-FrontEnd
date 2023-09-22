@@ -66,7 +66,7 @@
                     <label for="Comments"><b>Comments:</b></label>
                     <input type="text" class="boxCart" matInput placeholder="Add Comments" [(ngModel)]="Item.U_Comments"
                     (change)="updateComment(Item)">
-                    <mat-icon  class="iconC">cloud_upload</mat-icon>
+                    <mat-icon  class="iconC">{{actualicon}}</mat-icon>
                   </div>
                   <mat-divider class="mdivider"></mat-divider>
                 </div>

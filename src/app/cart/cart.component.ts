@@ -36,7 +36,8 @@ export class CartComponent {
   OrderIndexDB?:any;
   DocNumPublish? = '';
   DocEntryPublish? = '';
-
+  actualicon : string ='cloud_queue';
+  
 constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService, private indexDB: IndexDbService, private pipe: DatePipe) {    
   this.Cart = dataSharing.getCartData();
   this.OrderIndexDB = dataSharing.getOrderIndexDB();
@@ -281,6 +282,7 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
   {
     if(order !== this.CartOld)
     {
+      this.actualicon = 'cloud_queue'
       this.OrderReview = new Order();
       const today = new Date();
       const dateDelivery = this.pipe.transform(today, 'yyyy-MM-dd');
@@ -308,11 +310,15 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
             this.OrderReview!.DocEntry = this.DocEntryPublish;
 
             this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+            this.actualicon = 'cloud_done';
           }
-          else
+          else{
+            this.actualicon = 'cloud_off';
             console.error('Error:', data.response)
+          }
         })
         .catch((error) => {
+          this.actualicon = 'cloud_off';
           console.error('Error:', error);
         });
 
@@ -348,12 +354,16 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
             // const orderEdit: Order = JSON.parse(data.response);
             // console.log(orderEdit)
             //this.DocNumPublish = orderPublish!.DocNum;
+            this.actualicon = 'cloud_done';
 
           }
-          else
+          else{
+            this.actualicon = 'cloud_off';
             console.error('Error:', data.response)
+          }
         })
         .catch((error) => {
+          this.actualicon = 'cloud_off';
           console.error('Error:', error);
         });
         
