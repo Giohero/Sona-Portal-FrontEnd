@@ -59,16 +59,32 @@
 }
 
 .custom-snackbar {
-    background-color: #ff231b; /* Cambia esto al color que desees */
-    color: #ffffff; /* Cambia esto al color del texto deseado */
+    background-color: #ff231b; 
+    color: #ffffff; 
     height: 50px;
     text-align: center;
     font-family: Georgia, 'Times New Roman', Times, serif;
     size: 15px;
 }
-
-.mat-card {
+.mat-card2 {
   border-top: 8px solid darkcyan;
+  background-color: rgba(254, 254, 254, 0.9);
+  padding: 20px;
+  margin-top: 20px;
+}
+.grid-container {
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 10px;
+  display: grid;
+}
+
+.grid-container-date {
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  display: grid;
+}
+.mat-card {
+  /* border-top: 8px solid darkcyan; */
   background-color: rgba(254, 254, 254, 0.9);
   padding: 20px;
 }
@@ -79,7 +95,10 @@
   display: grid;
   color:rgb(255, 255, 255);
 }
-
+.expansion{
+  border-top: 8px solid darkcyan;
+  opacity: 0.9;
+}
 .background {
   background-repeat: no-repeat;
   position: inherit;
