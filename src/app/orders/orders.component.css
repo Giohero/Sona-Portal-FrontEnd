@@ -148,28 +148,26 @@ body {
   justify-content: flex-end;
 }
 .right-button {
-  margin-left: auto;   /* cambiar el botón de next a la derecha*/
+  margin-left: auto;   
 }
 
-/* Estilos responsivos */
-/* Pantallas más pequeñas */
+/* Estilos responsivos para pantallas más pequeñas */
 @media screen and (max-width: 768px) {
-  .container {
+  .grid-container,
+  .grid-container-date {
     grid-template-columns: 1fr; /* Cambiar a una sola columna */
-  }
-
-  .grid-container {
-    grid-template-columns: 1fr;
-    grid-gap: 20px; 
+    grid-gap: 20px;
   }
 
   .label-container,
   .label-containerC {
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
   }
 
   .custom-button,
-  .edit-custom-button {
+  .edit-custom-button,
+  .add-custom-button,
+  .list-custom-button {
     width: auto; 
     margin: 10px 0; 
   }
@@ -185,7 +183,5 @@ body {
 
   .cartnext {
     margin-left: 0; 
-    
   }
-  
 }
