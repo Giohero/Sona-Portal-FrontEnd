@@ -14,11 +14,24 @@ import { DataSharingService } from '../service/data-sharing.service';
   styleUrls: ['./sidenav.component.css']
 })
 /**Add OnInit */
-export class SidenavComponent {
-
+export class SidenavComponent{
   showToolbarOptions = false; // Agrega esta propiedad
   mobileQuery: MediaQueryList;
+  menu: any;
+  isSidebarExpanded: boolean = false;
+  isOrdersMenuExpanded: boolean = false;
 
+  expandSidebar() {
+    this.isSidebarExpanded = true;
+  }
+
+  collapseSidebar() {
+    this.isSidebarExpanded = false;
+  }
+
+  toggleOrdersMenu() {
+    this.isOrdersMenuExpanded = !this.isOrdersMenuExpanded;
+  }
   // fillerNav = Array.from({length: 50}, (_, i) => `Nav Item ${i + 1}`);
   fillerNav=[
     {name: "Home", route:"Home", icon:"home"},

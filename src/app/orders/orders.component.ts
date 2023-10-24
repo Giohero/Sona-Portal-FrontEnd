@@ -10,11 +10,15 @@ import { DocumentLines } from '../models/car';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
+import { FormControl } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.css']
+  styleUrls: ['./orders.component.css'],
+  providers: [DatePipe]
 })
 
 export class OrdersComponent {
@@ -43,11 +47,23 @@ export class OrdersComponent {
   rowBill=0;
   ShowEdit = false;
   title=""
+  minDate?: Date;
+  maxDate?: Date;
+  tax!: FormControl;
+  delivery!: FormControl;
 
-  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService) 
+  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe) 
   {
+    const currentYear = new Date();
+    this.minDate = new Date(currentYear);
+    this.tax = new FormControl({ value: new Date(), disabled: true });
+    this.delivery = new FormControl(new Date());
+
+
     this.customerBack = this.dataSharing.getCustomerData();
     this.Cart = this.dataSharing.getCartData();
+    
+    
 
     // if(this.customerBack === undefined)
     //   this.getDataIndex();
@@ -65,9 +81,9 @@ export class OrdersComponent {
       this.title = "Edit Customer";
       this.ShowEdit = true
     }
-
+    
   }
-
+  
   async getDataIndex(){
     const orderComplete = await this.indexDB.getLastOneDB();
     // console.log("pasa aqui")
@@ -129,7 +145,7 @@ export class OrdersComponent {
     
 
   }
-
+  
   openSnackBar(message: string, icon: string, type: string, color: string) {
     const dialogRef = this.dialog.open(SnackbarsComponent, {
       hasBackdrop: false,
@@ -509,7 +525,6 @@ export class OrdersComponent {
 
     });
   }
-
   CheckList(type:string)
   {
     const dialogRef = this.dialog.open(DialogAddressComponent, {

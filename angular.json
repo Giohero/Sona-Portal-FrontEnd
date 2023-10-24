@@ -26,9 +26,18 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.css"
+              "src/styles.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
+<<<<<<< HEAD
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/popper.js/dist/umd/popper.min.js",
+              "./node_modules/bootstrap/dist/js/bootstrap.min.js"              
+            ],
+=======
             "scripts": [],
+>>>>>>> 5e996bf653074553c49bc505fbd6b0d0a2c86fdf
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {

@@ -1,11 +1,10 @@
 <div class="dashboard-card">
   <div class="dashboard">
-    <mat-card class="search-card">
+    <!-- <mat-card class="search-card">
       <mat-form-field>
         <input matInput placeholder="Search..." />
       </mat-form-field>
-    </mat-card>
-
+    </mat-card> -->
     <mat-card class="home-card">
       <mat-card-header>
         <mat-card-title>Welcome To Sona</mat-card-title>
@@ -26,33 +25,146 @@
     </mat-card>
 
     <mat-card class="data-card">
-      <h2>New Users</h2>
-      <!-- Contenido de nuevos usuarios -->
-    </mat-card>
-  
-    <mat-card class="data-card">
       <h2>Sales</h2>
-      <!-- Contenido de ventas -->
+      <div class="row">
+        <!-- column -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div>
+                            <h5 class="card-title">Sales Overview</h5>
+                            <h6 class="card-subtitle">Check the monthly sales </h6>
+                        </div>
+                        <div class="ml-auto">
+                            <select class="form-select">
+                                <option>January</option>
+                                <option value="1">February</option>
+                                <option value="2" selected="">March</option>
+                                <option value="3">April</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-info">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>NAME</th>
+                                <th>DATE</th>
+                                <th>PRICE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">1</td>
+                                <td class="txt-oflo">Elite admin</td>
+                                <td class="txt-oflo">April 18, 2017</td>
+                                <td><span class="text-success">$24</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">2</td>
+                                <td class="txt-oflo">Real Homes WP Theme</td>
+                                <td class="txt-oflo">April 19, 2017</td>
+                                <td><span class="text-info">$1250</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">3</td>
+                                <td class="txt-oflo">Ample Admin</td>
+                                <td class="txt-oflo">April 19, 2017</td>
+                                <td><span class="text-info">$1250</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">4</td>
+                                <td class="txt-oflo">Medical Pro WP Theme</td>
+                                <td class="txt-oflo">April 20, 2017</td>
+                                <td><span class="text-danger">-$24</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">5</td>
+                                <td class="txt-oflo">Hosting press html</td>
+                                <td class="txt-oflo">April 21, 2017</td>
+                                <td><span class="text-success">$24</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">6</td>
+                                <td class="txt-oflo">Digital Agency PSD</td>
+                                <td class="txt-oflo">April 23, 2017</td>
+                                <td><span class="text-danger">-$14</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">7</td>
+                                <td class="txt-oflo">Helping Hands WP Theme</td>
+                                <td class="txt-oflo">April 22, 2017</td>
+                                <td><span class="text-success">$64</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">8</td>
+                                <td class="txt-oflo">Helping Hands WP Theme</td>
+                                <td class="txt-oflo">April 22, 2017</td>
+                                <td><span class="text-success">$64</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">9</td>
+                                <td class="txt-oflo">Ample Admin</td>
+                                <td class="txt-oflo">April 19, 2017</td>
+                                <td><span class="text-info">$1250</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
     </mat-card>
+    <!-- <mat-card class="data-card">
+      <h2>Sales</h2>
+    </mat-card> -->
+  
+    <!-- <mat-card class="data-card">
+      <h2>Performance</h2>
+    </mat-card> -->
+  
+    <!-- <mat-card class="chart-card">
+      <h2>Sales of the month</h2>
+    </mat-card> -->
   
     <mat-card class="data-card">
-      <h2>Performance</h2>
-      <!-- Contenido de performance -->
-    </mat-card>
-  
-    <mat-card class="chart-card">
-      <h2>Sales of the month</h2>
-      <!-- Gráfica de ventas del mes -->
-    </mat-card>
-  
-    <mat-card class="chart-card">
       <h2>Total orders</h2>
-      <!-- Gráfica de total de órdenes -->
+      <table class="table table-primary">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td colspan="2">Larry the Bird</td>
+            <td>@twitter</td>
+          </tr>
+        </tbody>
+      </table>
     </mat-card>
-  
-    <mat-card class="table-card">
+    <!-- <mat-card class="table-card">
       <h2>Visits</h2>
-      <!-- Tabla de visitas y visitantes -->
-    </mat-card>
+    </mat-card> -->
   </div>  
 </div>
+
