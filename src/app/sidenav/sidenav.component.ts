@@ -1,11 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import{MediaMatcher} from '@angular/cdk/layout';
+import { MediaMatcher } from '@angular/cdk/layout';
 import { MsalService } from '@azure/msal-angular';
 import { Router } from '@angular/router';
 import { DataSharingService } from '../service/data-sharing.service';
-
-/**Changes import acivatedRoute*/
-// import { ActivatedRoute } from '@angular/router';
+import { AfterViewInit, ElementRef } from '@angular/core';
 
 
 @Component({
@@ -13,34 +11,30 @@ import { DataSharingService } from '../service/data-sharing.service';
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.css']
 })
-/**Add OnInit */
-export class SidenavComponent{
-  showToolbarOptions = false; // Agrega esta propiedad
+export class SidenavComponent implements OnInit {
+  showToolbarOptions = false; 
   mobileQuery: MediaQueryList;
-  menu: any;
-  isSidebarExpanded: boolean = false;
-  isOrdersMenuExpanded: boolean = false;
+  isSidebarClosed: boolean = true;
+
+  toggleSidebar() {
+    this.isSidebarClosed = !this.isSidebarClosed;
+  }
 
   expandSidebar() {
-    this.isSidebarExpanded = true;
+    this.isSidebarClosed = false;
   }
 
   collapseSidebar() {
-    this.isSidebarExpanded = false;
+    this.isSidebarClosed = true;
   }
-
-  toggleOrdersMenu() {
-    this.isOrdersMenuExpanded = !this.isOrdersMenuExpanded;
-  }
-  // fillerNav = Array.from({length: 50}, (_, i) => `Nav Item ${i + 1}`);
-  fillerNav=[
-    {name: "Home", route:"Home", icon:"home"},
-    {name: "Costumers", route:"Costumers", icon:"person"},
-    {name: "Items", route:"Items", icon:"blur_linear"},
-  ]
+  fillerNav = [
+    { name: "Home", route: "Home", icon: "home" },
+    { name: "Costumers", route: "Costumers", icon: "person" },
+    { name: "Items", route: "Items", icon: "blur_linear" },
+  ];
 
   fillerContent = Array.from(
-    {length: 50},
+    { length: 50 },
     () =>
       `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
@@ -50,27 +44,35 @@ export class SidenavComponent{
   );
 
   private _mobileQueryListener: () => void;
-/**add private route inside constructor */
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher, private msalService: MsalService,private myRouter: Router, private dataSharing: DataSharingService) {
+
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private media: MediaMatcher,
+    private msalService: MsalService,
+    private myRouter: Router,
+    private dataSharing: DataSharingService,
+    private elementRef: ElementRef
+  ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
-    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
-/**add changes conditional if  */
-   shouldRun = true;
 
+  ngOnInit() {
+    // Código de inicialización aquí
+  }
 
-   logout() {
+  shouldRun = true;
+
+  logout() {
     //if is Active Directory or local
-    if (this.msalService.instance.getActiveAccount() != null) 
-    {
+    if (this.msalService.instance.getActiveAccount() != null) {
       this.msalService.logout();
       this.myRouter.navigate(['']);
     }
   }
 
-  goToNewOrder()
-  {
+  goToNewOrder() {
     this.dataSharing.setCustomerData(null);
     this.myRouter.navigate(['dashboard/order-customer/new-order']);
   }

@@ -1,46 +1,90 @@
-<div class="sidebar-container" [class.expanded]="isSidebarExpanded" (mouseover)="expandSidebar()" (mouseleave)="collapseSidebar()">
-    <img src="../../assets/images/SonaLogo.png" style="width: 50px;height:50px;margin: 0px;"> 
-    <!-- <h1 class="example-app-name">Sona</h1> -->
-    <div class="spacer"></div>
-  <!-- Íconos del Sidebar -->
-  <div class="sidebar-icons" *ngIf="!isSidebarExpanded">
-    <a mat-button routerLink="/dashboard">
-      <mat-icon class="icon">home</mat-icon>
-    </a>
-    <a mat-button routerLink="/dashboard/costumers">
-      <mat-icon class="icon">person</mat-icon>
-    </a>
-    <button mat-button (click)="toggleOrdersMenu()">
-      <mat-icon class="icon">description</mat-icon>
-    </button>
-  </div>
-  
-  <!-- Menú Expandido -->
-  <div *ngIf="isSidebarExpanded" class="sidebar">
-    <h1 class="example-app-name">Sona</h1>
-    <a mat-button routerLink="/dashboard">
-      <mat-icon class="icon">home</mat-icon>
-      Home
-    </a>
-    <a mat-button routerLink="/dashboard/costumers">
-      <mat-icon class="icon">person</mat-icon>
-      Customers
-    </a>
-    <button mat-button (click)="toggleOrdersMenu()">
-      <mat-icon class="icon">description</mat-icon>
-      Orders
-      <mat-icon class="arrow-icon">{{ isOrdersMenuExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </button>
-    <div *ngIf="isOrdersMenuExpanded" class="submenu">
-      <a mat-button routerLink="/dashboard/order-index">
-        <mat-icon class="icon">view_module</mat-icon>
-        Orders
-      </a>
-      <a mat-button routerLink="/dashboard/items">
-        <mat-icon class="icon">blur_linear</mat-icon>
-        Items
-      </a>
+<div class="sidebar close" [ngClass]="{'close': isSidebarClosed}" (mouseenter)="expandSidebar()" (mouseleave)="collapseSidebar()">
+    <div class="logo">
+      <img src="/assets/images/SonaLogo.png" style="width: 50px; height:50px; margin: 15px;"/>
+      <!-- <i class="bi bi-list"></i> -->
+      <span class="logo-name">Sona</span>
     </div>
-  </div>
+    <!-- <div>
+      <i (click)="toggleSidebar()" class="bi bi-list"></i>
+    </div> -->
+    <ul class="nav-list">
+      <li>
+        <a href="/dashboard">
+          <i class="bi bi-house"></i>
+          <span class="link-name">home</span>
+        </a>
+
+        <ul class="sub-menu blank">
+          <li><a href="/dashboard" class="link-name">Home</a></li>
+          <!-- <a mat-list-item routerLink="/dashboard">
+            <mat-icon class="icon">home</mat-icon>
+            Home
+          </a> -->
+        </ul>
+      </li>
+
+      <li>
+        <div class="icon-link">
+          <a href="/dashboard/order-index">
+            <i class="bi bi-border-bottom"></i>
+            <span class="link-name">Orders</span>
+          </a>
+          <i class="fas fa-caret-down arrow"></i>
+        </div>
+
+        <ul class="sub-menu">
+          <li><a href="/dashboard/order-index" class="link-name">Orders</a></li>
+          <li><a mat-menu-item mat-menu-item (click)="goToNewOrder()">Start New Order</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="icon-link">
+          <a href="/dashboard/costumers">
+            <i class="bi bi-person-square"></i>
+            <span class="link-name">Customers</span>
+          </a>
+          <i class="fas fa-caret-down arrow"></i>
+        </div>
+
+        <ul class="sub-menu">
+          <li><a href="/dashboard/costumers" class="link-name">Customers</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="/dashboard/items">
+          <i class="bi bi-diagram-3"></i>
+          <span class="link-name">items</span>
+        </a>
+
+        <ul class="sub-menu blank">
+          <li><a href="/dashboard/items" class="link-name">Items</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <a (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+          <span class="link-name">logout</span>
+        </a>
+
+        <ul class="sub-menu blank">
+          <li><a href="/dashboard/items" class="link-name">Logout</a></li>
+        </ul>
+      </li>
+    
+      <li>
+        <div class="profile-details">
+          <div class="profile-content">
+            <img src="/assets/images/SonaLogo.png"alt="" />
+          </div>
+
+          <div class="name-job">
+          </div>
+          <i class="fas fa-right-to-bracket"></i>
+        </div>
+      </li>
+    </ul>
 </div>
 <router-outlet></router-outlet>
