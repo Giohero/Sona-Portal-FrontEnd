@@ -1,6 +1,5 @@
-/* Estilos originales para tamaños de pantalla grandes */
 .background {
-  background-image: url('src/assets/images/Camping.jpg');
+  background-color: #fffff6;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
@@ -8,30 +7,90 @@
   min-height: 100%;
 }
 
+.LabelCardCode {
+  font-family: 'Roboto Mono', sans-serif;
+  font-size: 20px;
+  flex: 1;
+  font-weight:bold; 
+}
+
+.LabelCardName{
+text-align: right;
+}
 .customerSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+  text-align: right;
+  font-size: 17px;
 }
-
-.customer-actions {
+.customer-actions{
   align-items: center;
   display: flex;
-  margin-left: 60px;
-  margin-right: 10px; 
+  
+  
+  
 }
+ 
+.custom-icon-container {
+  display: flex;
+  justify-content: space-between;
+  text-align: right;
+}
+.custom-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;  
+  height: 60px;  
+  background-color: #a62934;  
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  color: white;  
+  font-size: 18px;  
+  border-radius: 50%;  
+  font-weight:bold ;  
+  
+ 
+} 
+/* .custom-icon {  
+  background-color: #a62934;  
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  width: 30px; 
+  height: 30px; 
+  background-color: #a62934; 
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  color: white;  
+  font-size: 18px; 
+  border-radius: 50%; 
+  font-weight: bold; 
+  margin-right: 5px; 
+     
+  
+ 
+} */
 
+.custom-icon::before {
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%;
+}
 .Customer {
   flex: 1;
-  margin-bottom: 10px;
+  margin-bottom: 23px;
   width: calc(25% - 15px);
   box-sizing: border-box;
   width: 100px;
+  margin-right: 15px;
+  
 }
 
 .Customer:hover {
-  transform: scale(1.05);
+  transform: scale(1.15);
   transition: transform 0.3s ease;
 }
 
@@ -52,8 +111,11 @@
 }
 
 mat-card {
-  border-top: 8px solid darkcyan;
-  background-color: rgba(254, 254, 254, 0.85);
+  border-top: 10px solid #0F97A6;
+  background-color: rgba(254, 254, 254, 1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 10px;
+  
 }
 
 h1 {
@@ -62,6 +124,7 @@ h1 {
 
 h2 {
   margin-left: 30px;
+  color: black;
 }
 
 .custom-spinner {
@@ -111,12 +174,10 @@ h2 {
 .iconsearch mat-icon {
   margin-right: 5px;
 }
-
-.user-icon {
+.user-icon{
   font-size: 30px;
-  margin-right: 20px;
+  
 }
-
 .centered {
   position: fixed;
   top: 50%;
@@ -124,21 +185,6 @@ h2 {
   transform: translate(-50%, -50%);
   color: darkcyan;
 }
-
-
-/* Estilos responsivos para pantallas medianas */
-@media (max-width: 1023px) {
-  .Customer {
-    width: calc(50% - 15px);
-    margin-right: 15px;
-  }
-
-  .Customer:nth-child(2n) {
-    margin-right: 0;
-  }
-}
-
-/* Estilos responsivos para pantallas pequeñas */
 @media (max-width: 767px) {
   .Customer {
     width: calc(50% - 15px);
@@ -148,9 +194,10 @@ h2 {
   .Customer:nth-child(2n) {
     margin-right: 0;
   }
-  
-  .customer-actions{
-    font-size: 20px;
-    max-width: 100%;
+
+  .labelSearch {
+    margin-left: 0;
   }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
 }

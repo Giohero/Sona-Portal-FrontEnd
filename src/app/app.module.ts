@@ -8,6 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 /**Components */
 import { SidenavComponent } from './sidenav/sidenav.component';
@@ -66,6 +67,7 @@ import { OrderEditComponent } from './order-edit/order-edit.component';
     HttpClientModule,
     SharedModule,
     MatExpansionModule,
+    MatPaginatorModule,
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
       { path: 'dashboard', component: DashboardComponent, canActivate:[MsalGuard]}]),

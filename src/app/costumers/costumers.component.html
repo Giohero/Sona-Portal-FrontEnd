@@ -3,30 +3,39 @@
     <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
     <br>
     <h2>Customers</h2>
+    <div fxLayout="row" fxLayoutAlign="end center">
+      <button mat-raised-button color="primary" (click)="AddNewCustomer()">Add New Customer</button>
+      <div style="width: 1.5rem;"></div>
+      <button mat-raised-button color="primary" (click)="Filters()">Filters</button>
+      <div style="width: 10.8rem;"></div>
+    </div>
+    <br>
     <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="customerSection">
-      <div class="customers" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let customer of customerData; let customerIndex=index;">
-        <mat-card class="Customer" style="display: flex;">
+      <div class="customers" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let customer of filteredCustomerData.slice(currentPage * pageSize, (currentPage + 1) * pageSize); let customerIndex = index"></div>
+      <div class="customers" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let customer of customerData.slice(currentPage * pageSize, (currentPage + 1) * pageSize); let customerIndex = index">
+        <mat-card class="Customer" style="display: flex;" (click)="editCustomer(customer)">        
           <mat-card-header>
-            <div style="flex: 1;">
-              <mat-icon class="user-icon">person</mat-icon>
-            </div>
+              <div style="flex: 1;" ><div class="custom-icon user-icon">{{ customer.CardName.charAt(0) }} </div></div>
+              <div class="LabelCardCode" style="display: flex; align-items: center;"fxLayoutAlign="center center" >{{ customer.CardCode }}</div>
           </mat-card-header>
-          <mat-card-content class="customer-data">
+          <mat-card-content class="customer-data">      
+            <br>          
+            <div class="LabelCardName ">
+              <label>{{ customer.CardName }}</label>
+              <br>
+              <label>{{ customer.Phone1 }}</label>
+              <br>
+            </div>
             <br>
-            <label>{{ customer.CardCode }}</label>
             <br>
-            <label>{{ customer.CardName }}</label>
-            <br>
-            <label>{{ customer.Phone1 }}</label>
-            <br>
-            <mat-card-actions class="customer-actions">
+            <!-- <mat-card-actions class="customer-actions">
               <button mat-icon-button (click)="editCustomer(customer)">
                 <mat-icon>edit</mat-icon>
               </button>
               <button mat-icon-button (click)="removeCustomer(customer)">
                 <mat-icon>delete</mat-icon>
               </button>
-            </mat-card-actions>
+            </mat-card-actions> -->
           </mat-card-content>
         </mat-card>
       </div>
@@ -34,3 +43,9 @@
     <br><br>
   </div>
 </div>
+<mat-paginator
+  [length]="customerData.length"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="onPageChange($event)"
+></mat-paginator>

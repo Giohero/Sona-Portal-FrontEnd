@@ -12,6 +12,7 @@ import { DataSharingService } from '../service/data-sharing.service';
 })
 export class CostumersComponent implements OnInit {
   customerData: BusinessPartner[] = [];
+  filteredCustomerData: BusinessPartner[] = [];
   isLoading = false;
 
   constructor(
@@ -23,6 +24,24 @@ export class CostumersComponent implements OnInit {
   ngOnInit(): void {
     this.loadCustomerData();
   }
+
+  AddNewCustomer(){
+    
+  }
+
+  Filters(){
+    this.filteredCustomerData = this.customerData.filter(customer => customer.CardName.startsWith('A'));
+  }
+
+  pageSize = 10; 
+  pageSizeOptions: number[] = [5, 10, 20,30]; 
+  currentPage = 0; 
+
+
+onPageChange(event: any): void {
+  this.currentPage = event.pageIndex;
+  this.pageSize = event.pageSize;
+}
 
   editCustomer(customer: any) {
     this.dataSharing.setCustomerData(customer);
@@ -39,6 +58,7 @@ export class CostumersComponent implements OnInit {
       (retData: INResponse) => {
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
           this.customerData = JSON.parse(retData.response!);
+          this.customerData.sort((a, b) => a.CardName.localeCompare(b.CardName)); // Ordenar alfabéticamente
           console.log(this.customerData);
         } else {
           console.log('Error fetching customer data');
