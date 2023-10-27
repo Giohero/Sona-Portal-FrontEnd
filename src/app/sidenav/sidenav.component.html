@@ -11,7 +11,7 @@
       <li>
         <a href="/dashboard">
           <i class="bi bi-house"></i>
-          <span class="link-name">home</span>
+          <span class="link-name">Home</span>
         </a>
 
         <ul class="sub-menu blank">
@@ -21,22 +21,38 @@
             Home
           </a> -->
         </ul>
-      </li>
-
-      <li>
+      </li>     
+      <!-- <li>
         <div class="icon-link">
           <a href="/dashboard/order-index">
             <i class="bi bi-border-bottom"></i>
             <span class="link-name">Orders</span>
           </a>
-          <i class="fas fa-caret-down arrow"></i>
+          <div>
+            <mat-menu #ordersMenu="matMenu">
+              <a mat-menu-item routerLink="/dashboard/order-index">Orders</a>
+              <a mat-menu-item (click)="goToNewOrder()">Start New Order</a>
+            </mat-menu>
+          </div>
         </div>
-
-        <ul class="sub-menu">
-          <li><a href="/dashboard/order-index" class="link-name">Orders</a></li>
-          <li><a mat-menu-item mat-menu-item (click)="goToNewOrder()">Start New Order</a></li>
-        </ul>
-      </li>
+      </li> -->
+           
+      <li>
+        <a mat-icon-button [matMenuTriggerFor]="ordersMenu" class="menu-link">
+          <div class="icon-container">
+            <i class="bi bi-border-bottom"></i>
+            <span class="link-name"><span class="text">Orders</span></span>
+          </div>
+        </a>
+        <mat-menu #ordersMenu="matMenu">
+          <a mat-menu-item routerLink="/dashboard/order-index">
+            <i class="bi bi-border-bottom"></i> Orders
+          </a>
+          <a mat-menu-item (click)="goToNewOrder()">
+            <i class="bi bi-border-bottom"></i> Start New Order
+          </a>
+        </mat-menu>
+      </li>      
 
       <li>
         <div class="icon-link">
@@ -44,33 +60,34 @@
             <i class="bi bi-person-square"></i>
             <span class="link-name">Customers</span>
           </a>
-          <i class="fas fa-caret-down arrow"></i>
+          <!-- <i class="fas fa-caret-down arrow"></i> -->
         </div>
+        <!-- app.component.html -->
 
-        <ul class="sub-menu">
+        <!-- <ul class="sub-menu">
           <li><a href="/dashboard/costumers" class="link-name">Customers</a></li>
         </ul>
-      </li>
-
+      </li> -->
+      
       <li>
         <a href="/dashboard/items">
           <i class="bi bi-diagram-3"></i>
-          <span class="link-name">items</span>
+          <span class="link-name">Items</span>
         </a>
 
         <ul class="sub-menu blank">
           <li><a href="/dashboard/items" class="link-name">Items</a></li>
         </ul>
       </li>
-
+      
       <li>
         <a (click)="logout()">
           <i class="bi bi-box-arrow-right"></i>
-          <span class="link-name">logout</span>
+          <span (click)="logout()" class="link-name">Logout</span>
         </a>
 
         <ul class="sub-menu blank">
-          <li><a href="/dashboard/items" class="link-name">Logout</a></li>
+          <li><a (click)="logout()" class="link-name">Logout</a></li>
         </ul>
       </li>
     

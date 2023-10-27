@@ -4,6 +4,7 @@ import { MsalService } from '@azure/msal-angular';
 import { Router } from '@angular/router';
 import { DataSharingService } from '../service/data-sharing.service';
 import { AfterViewInit, ElementRef } from '@angular/core';
+import { Renderer2 } from '@angular/core';
 
 
 @Component({
@@ -15,6 +16,11 @@ export class SidenavComponent implements OnInit {
   showToolbarOptions = false; 
   mobileQuery: MediaQueryList;
   isSidebarClosed: boolean = true;
+  isSubMenuOpen: boolean = false;
+  showSubMenu: boolean = false;
+  isOrdersMenuExpanded: boolean = false;
+  isSidebarExpanded = false;
+  isDropdownOpen = false;
 
   toggleSidebar() {
     this.isSidebarClosed = !this.isSidebarClosed;
@@ -27,6 +33,14 @@ export class SidenavComponent implements OnInit {
   collapseSidebar() {
     this.isSidebarClosed = true;
   }
+  toggleSubMenu() {
+    // this.showSubMenu = !this.showSubMenu;
+    // event.preventDefault();
+  }
+  toggleOrdersMenu(): void {
+    this.isOrdersMenuExpanded = !this.isOrdersMenuExpanded;
+  }
+  
   fillerNav = [
     { name: "Home", route: "Home", icon: "home" },
     { name: "Costumers", route: "Costumers", icon: "person" },
@@ -51,7 +65,8 @@ export class SidenavComponent implements OnInit {
     private msalService: MsalService,
     private myRouter: Router,
     private dataSharing: DataSharingService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private renderer: Renderer2
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
@@ -59,7 +74,7 @@ export class SidenavComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Código de inicialización aquí
+    
   }
 
   shouldRun = true;
