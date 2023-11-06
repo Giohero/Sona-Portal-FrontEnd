@@ -1,54 +1,46 @@
 <div class="background">
-    <div class="container">
-        <!-- <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" fxLayoutAlign="center center" class="centered"></mat-progress-spinner> -->
-        <div class="position-relative">
-            <div class="spinner-border text-secondary position-absolute top-50 start-50" role="status" *ngIf="isLoading">
-                <span class="visually-hidden">Loading...</span>
-              </div>
+  <div class="container">
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
+    <br>
+    <h2>Orders</h2>
+    <div class="labelSearch">
+      <input matInput placeholder="Document Order" type="text" class="searchOrder" [(ngModel)]="searchOrder">
+      <button class="iconsearch" (click)="searchingOrder()"><mat-icon>search</mat-icon>Search</button>
+      <button class="iconsearch" (click)="reload()">
+        <mat-icon>refresh</mat-icon>
+        <div *ngIf="isLoading" class="progress-bar">
+          <div class="progress"></div>
         </div>
-        <br>
-        <h2>Orders</h2> 
-        <div>
-            <div class="labelSearch" >
-                <!-- <label class="labelS">Search: </label> -->
-                <input matInput placeholder="Document Order" type="text" class="searchOrder" [(ngModel)]="searchOrder">
-                <button class="iconsearch" (click)="searchingOrder()"><mat-icon>search</mat-icon>Search</button>  
-                <button class="iconsearch" (click)="reload()">
-                    <mat-icon>refresh</mat-icon>
-                    <div *ngIf="isLoading" class="progress-bar">
-                      <div class="progress"></div>
-                    </div>
-                </button>                  
-              </div>
-              <!-- <div class="iconRefresh">
-              </div> -->
-            <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
-                <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;" >
-                    <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
-                        <mat-card-header>
-                                <div style="flex: 1; ">
-                                    <h1>{{Order.DocNum}}</h1>
-                                    <mat-icon>cloud_done</mat-icon>  
-                                </div>
-                                <div  style="flex: 1; "fxLayoutAlign="center center">
-                                    {{Order.DocDueDate.slice(0, 10)}}
-                                    <br>
-                                    Total: ${{Order.DocTotal}}
-                                </div>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <br>
-                            <label>{{Order.NumAtCard}}</label> 
-                            <br>
-                            <label>{{Order.CardCode}} - {{Order.CardName}}</label> 
-                        </mat-card-content>
-                    </mat-card>
-                </div> 
-            </div> 
-            <br><br>
-            <!-- <div *ngIf="isLoading" fxLayoutAlign="center center" class=" custom-spinner">
-                <div class="loader"></div>
-            </div> -->
-        </div>
+      </button>
     </div>
+    <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
+      <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex = index;">
+        <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
+          <mat-card-header>
+            <div class="doc-num-container">
+              <h1 class="doc-num">{{ Order.DocNum }}</h1>
+            </div>
+            <div class="card-info">
+              <div class="label-card">
+                <mat-icon class="label-icon">date_range</mat-icon>
+                {{ Order.DocDueDate.slice(0, 10) }}
+              </div>
+              <br>
+              <div class="label-card">
+                <mat-icon class="label-icon">local_offer</mat-icon>
+                Total: ${{ Order.DocTotal }}
+              </div>
+            </div>
+          </mat-card-header>
+          <mat-card-content class="left-align">
+            <br>
+            <label>{{ Order.NumAtCard }}</label>
+            <br>
+            <label>{{ Order.CardCode }} - {{ Order.CardName }}</label>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <br><br>
+  </div>
 </div>

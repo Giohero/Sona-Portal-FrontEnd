@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Value } from '../models/items';
 import { ServiceService } from '../service/service.service';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @Component({
   selector: 'app-home',
@@ -10,6 +11,7 @@ import { ServiceService } from '../service/service.service';
 export class HomeComponent {
   ListItems!: Value[] ;
   searchText = '';
+  isSidebarExpanded: boolean = false;
 
   constructor(private orderService: ServiceService) {}
 

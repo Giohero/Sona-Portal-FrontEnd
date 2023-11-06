@@ -9,6 +9,7 @@ import {MatListModule} from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import {MatTabsModule} from '@angular/material/tabs';
 
 /**Components */
 import { SidenavComponent } from './sidenav/sidenav.component';
@@ -68,6 +69,7 @@ import { OrderEditComponent } from './order-edit/order-edit.component';
     SharedModule,
     MatExpansionModule,
     MatPaginatorModule,
+    MatTabsModule,
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
       { path: 'dashboard', component: DashboardComponent, canActivate:[MsalGuard]}]),

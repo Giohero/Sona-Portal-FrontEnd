@@ -1,30 +1,66 @@
-/* Estilos generales */
 .background {
-  background-image: url('src/assets/images/Camping.jpg');
+  background-color: #fffff6;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
   width: 100%;
   min-height: 100%;
 }
+.doc-num-container {
+  background-color: #a62934; /* Background color */
+  padding: 5px 10px; 
+  border-radius: 5px; 
+  margin-right: 10px; 
+  align-items: center; 
+  display: table;
+}
+
+.doc-num {
+  color: white; /* Font color */
+  display: table-cell; 
+  vertical-align: middle;
+}
+.left-align {
+  text-align: left;
+  font-weight: bold;
+}
+.card-info {
+  text-align: left;
+}
+
+.label-card {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+.label-icon {
+  font-size: 24px;
+  color: #FF5722; /* Puedes cambiar el color a tu preferencia */
+}
+/* Otros estilos que puedas necesitar */
+
+
 
 .orderSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+  text-align: right; /* Cambiado a "right" para coincidir con el estilo de Customers */
+  font-size: 17px; /* Ajustado el tamaño de fuente */
 }
 
 .Cart {
-  flex: 1;
-  margin-bottom: 10px;
-  width: calc(25% - 15px);
-  box-sizing: border-box;
-  width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  min-height: 250px; /* Ajusta la altura deseada */
 }
 
 .Cart:hover {
-  transform: scale(1.05);
+  transform: scale(1.15); /* Cambiado el valor de escala al mismo que en Customers */
   transition: transform 0.3s ease;
 }
 
@@ -45,8 +81,10 @@
 }
 
 mat-card {
-  border-top: 8px solid darkcyan;
-  background-color: rgba(254, 254, 254, 0.85);
+  border-top: 10px solid darkcyan; /* Cambiado el color del borde superior */
+  background-color: rgba(254, 254, 254, 1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 10px;
 }
 
 h1 {
@@ -55,10 +93,12 @@ h1 {
 
 h2 {
   margin-left: 30px;
+  color: black; /* Cambiado el color del título */
 }
 
 .custom-spinner {
   top: 100px;
+  color: darkcyan; /* Cambiado el color del texto */
 }
 
 .loader {
@@ -77,8 +117,8 @@ h2 {
   padding: 10px;
   border-radius: 5px;
   margin-left: 110px;
-  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
+
 .searchOrder {
   padding: 5px;
   border: 1px solid #ccc;
@@ -100,15 +140,11 @@ h2 {
   display: flex;
   background-color: darkcyan;
 }
-.iconsearch  mat-icon{
-  margin-right: 5px;
-}
-/* .iconRefresh{
 
-}
-.iconRefresh mat-icon{
+.iconsearch mat-icon {
   margin-right: 5px;
-} */
+}
+
 .centered {
   position: fixed;
   top: 60%;
@@ -116,21 +152,24 @@ h2 {
   transform: translate(-50%, -50%);
   color: darkcyan;
 }
+
 /* Media query para dispositivos móviles */
 @media (max-width: 767px) {
   .Cart {
-      width: calc(50% - 15px);
-      margin-right: 15px; 
+    width: calc(50% - 15px);
+    margin-right: 15px;
   }
-  
+
   .Cart:nth-child(2n) {
-      margin-right: 0;
+    margin-right: 0;
   }
-  
+
   .labelSearch {
-      margin-left: 0;
+    margin-left: 0;
   }
 }
+
 /* Media query para iPads */
 @media (min-width: 768px) and (max-width: 1023px) {
+  /* Agrega estilos específicos si es necesario para iPads */
 }

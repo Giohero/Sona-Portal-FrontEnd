@@ -16,15 +16,15 @@ export class SidenavComponent implements OnInit {
   showToolbarOptions = false; 
   mobileQuery: MediaQueryList;
   isSidebarClosed: boolean = true;
-  isSubMenuOpen: boolean = false;
-  showSubMenu: boolean = false;
-  isOrdersMenuExpanded: boolean = false;
-  isSidebarExpanded = false;
-  isDropdownOpen = false;
+  // isSubMenuOpen: boolean = false;
+  // showSubMenu: boolean = false;
+  // isOrdersMenuExpanded: boolean = false;
+  // isSidebarExpanded: boolean = false;
+  // isDropdownOpen = false;
 
-  toggleSidebar() {
-    this.isSidebarClosed = !this.isSidebarClosed;
-  }
+  // toggleSidebar() {
+  //   this.isSidebarExpanded = !this.isSidebarExpanded;
+  // }
 
   expandSidebar() {
     this.isSidebarClosed = false;
@@ -37,9 +37,9 @@ export class SidenavComponent implements OnInit {
     // this.showSubMenu = !this.showSubMenu;
     // event.preventDefault();
   }
-  toggleOrdersMenu(): void {
-    this.isOrdersMenuExpanded = !this.isOrdersMenuExpanded;
-  }
+  // toggleOrdersMenu(): void {
+  //   this.isOrdersMenuExpanded = !this.isOrdersMenuExpanded;
+  // }
   
   fillerNav = [
     { name: "Home", route: "Home", icon: "home" },
