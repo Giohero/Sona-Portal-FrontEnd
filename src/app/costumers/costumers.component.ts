@@ -29,8 +29,14 @@ export class CostumersComponent implements OnInit {
     
   }
 
-  Filters(){
-    this.filteredCustomerData = this.customerData.filter(customer => customer.CardName.startsWith('A'));
+  Filters() {
+    this.sortCustomersAlphabetically();
+  }
+
+  sortCustomersAlphabetically() {
+    this.customerData.sort((a, b) => {
+      return a.CardName.localeCompare(b.CardName);
+    });
   }
 
   pageSize = 10; 
@@ -58,7 +64,7 @@ onPageChange(event: any): void {
       (retData: INResponse) => {
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
           this.customerData = JSON.parse(retData.response!);
-          this.customerData.sort((a, b) => a.CardName.localeCompare(b.CardName)); // Ordenar alfabéticamente
+          
           console.log(this.customerData);
         } else {
           console.log('Error fetching customer data');

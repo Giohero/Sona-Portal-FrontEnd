@@ -13,10 +13,10 @@
           </span>   
         </div>
         <div>
-          <a mat-raised-button class="mobile-button" href="dashboard/order-index">
+          <a mat-raised-button color="primary" mat-raised-button class="mobile-button" href="dashboard/order-index">
             <mat-icon style="transform: rotate(180deg);">play_arrow</mat-icon> Back
           </a>
-          <button mat-raised-button class="mobile-button save" (click)="updateOrder()"><mat-icon>save</mat-icon> Update</button> 
+          <button mat-raised-button color="primary" mat-raised-button class="mobile-button save" (click)="updateOrder()"><mat-icon>save</mat-icon> Update</button> 
         </div>
       </div>
       <ng-container *ngIf="order">
@@ -59,7 +59,35 @@
         <!-- Tarjetas para elementos de DocumentLines -->
         <!-- Verificar si order está definido antes de mostrarlo -->
         <ng-container *ngIf="order">
-          <!-- Tarjeta para mostrar todos los elementos de DocumentLines -->
+          <!-- Tarjetas para mostrar todos los elementos de DocumentLines,Address y Itemslist -->
+          <ng-container *ngIf="order">
+            <!-- Nuevo mat-card con contenido diferente -->
+            <mat-card class="mat-card">
+              <mat-card-content>
+                <h2 class="h2Mat">Address Selection<mat-icon>location_on</mat-icon></h2>
+                <div class="grid-container">
+                  <!-- Contenido diferente aquí -->
+                  <div class="label-container">
+                    <label class="label">Address:</label>
+                    <input type="text" class="boxCustom" placeholder="Address">
+                  </div>
+                  <div class="label-container">
+                    <label class="label">Country:</label>
+                    <input type="text" class="boxCustom" placeholder="Country">
+                  </div>
+                  <div class="label-container">
+                    <label class="label">City:</label>
+                    <input type="text" class="boxCustom" placeholder="City">
+                  </div>
+                  <div class="label-container">
+                    <label class="label">ZipCode:</label>
+                    <input type="text" class="boxCustom" placeholder="ZipCode">
+                  </div>
+                  <!-- Agrega el contenido adicional que necesites -->
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </ng-container>
           <mat-card class="mat-card">
             <mat-card-content>
               <div class="button-container">

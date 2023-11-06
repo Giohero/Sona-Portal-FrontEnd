@@ -11,7 +11,7 @@ a{
 }
 
 .h2Order{
-  background-color: darkcyan;
+  background-color: #a62934;
   color: white;
   border-radius: 10px; 
   padding: 10px;
@@ -21,12 +21,13 @@ a{
 }
 
 .circle {
-  width:  15px; /* Ajusta el tamaño del círculo según tus preferencias */
-  height: 15px; /* El ancho y alto deben ser iguales para obtener un círculo */
-  /*background-color: rgb(255, 2, 2);  Cambia el color del círculo según tus preferencias */
-  border-radius: 50%; /* Esto hace que el elemento tenga forma de círculo */
+  width: 15px;
+  height: 15px;
+  background-color: green; /* Cambia el color del círculo según tus preferencias */
+  border-radius: 50%;
   display: inline-block;
 }
+
 
 .divH2{
   display: flex;
@@ -34,26 +35,22 @@ a{
 }
 
 .status{
-  color: white;
+  color: #0d0d0d;
   border-radius: 10px; 
   padding: 10px;
   height: 10px;
-  line-height: 10px;
-  display: inline-block;
-  text-align: center;
-  align-items: center;
-  vertical-align: middle;
+  display: flex; /* Usa flexbox para centrar vertical y horizontalmente */
+  align-items: center; /* Centra verticalmente el contenido */
+  justify-content: center; /* Centra horizontalmente el contenido */
 }
 
 .status-text {
-  display: inline-block;
-  vertical-align: middle; /* Centra verticalmente el contenido */
-  margin-top: -7px; 
-  margin-left: 5px;
+  margin-left: 5px; /* Ajusta el margen izquierdo según tus preferencias */
 }
   
   .background {
-    background-image: url('src/assets/images/Camping.jpg'); /* Asegúrate de que la ruta de la imagen sea correcta */
+    /* background-image: url('src/assets/images/Camping.jpg');  */
+    background-color: #fffff6;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
@@ -72,7 +69,7 @@ a{
   /* Títulos */
   .h2Mat {
     text-align: left;
-    color: darkcyan;
+    color: #0F97A6;
   }
   .h3Mat {
     text-align: left;
@@ -94,8 +91,8 @@ a{
   }
   
   .boxCustom {
-    height: 20px;
-    border-radius: 10px;
+    height: 45px;
+    border-radius: 11px;
     border: 1px solid #ccc;
     padding: 10px;
   }
@@ -148,7 +145,7 @@ a{
   
   /* Tarjetas */
   .mat-card {
-    border-top: 8px solid darkcyan;
+    border-top: 10px solid #0F97A6;
     background-color: rgba(254, 254, 254, 0.9);
     padding: 20px;
   }
