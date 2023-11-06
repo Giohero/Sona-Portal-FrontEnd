@@ -21,6 +21,8 @@ import { OrderReviewComponent } from '../order-review/order-review.component';
 import { OrdersComponent } from '../orders/orders.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
+import {MatTabsModule} from '@angular/material/tabs';
+
 
 
 
@@ -40,13 +42,14 @@ import { MatMenuModule } from '@angular/material/menu';
     DialogAddcustomComponent,
     OrderReviewComponent,
     SnackbarsComponent,
-    OrdersComponent
+    OrdersComponent,
   ],
   imports: [
     CommonModule,
     SharedModule,
     DashboardRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    MatTabsModule,
   ]
 })
 export class DashboardModule { }

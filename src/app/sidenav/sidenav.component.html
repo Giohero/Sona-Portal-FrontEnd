@@ -104,4 +104,8 @@
       </li>
     </ul>
 </div>
-<router-outlet></router-outlet>
+<div class="sidebar-overlay" [ngClass]="{'active': !isSidebarClosed}" (click)="collapseSidebar()"></div>
+<main class="main-content" [ngClass]="{'expanded': !isSidebarClosed}">
+  <router-outlet></router-outlet>
+</main>
+

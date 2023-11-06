@@ -9,6 +9,7 @@ import { OrderReviewComponent } from '../order-review/order-review.component';
 import { CartComponent } from '../cart/cart.component';
 import { OrderIndexComponent } from '../order-index/order-index.component';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
+
 const routes: Routes = [
   { path: '', component: DashboardComponent, children: [
     { path: '', component: HomeComponent,},

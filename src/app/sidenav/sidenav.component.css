@@ -11,11 +11,15 @@
   top: 0;
   left: 0;
   height: 100%;
-  width: 260px;
+  width: 230px;
   background-color: #ab3548;
   z-index: 100;
   transition: all 0.5s ease;
   border-radius: 20px;
+}
+.main-content {
+  margin-left: 78px; /* pantalla acomodada */
+  z-index: 1; 
 }
 
 .sidebar.close {
@@ -191,7 +195,7 @@
 .profile-details {
   position: fixed;
   bottom: 0;
-  width: 260px;
+  width: 230px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -295,6 +299,21 @@
   align-items: center;
   display:flex;
 }
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); 
+  backdrop-filter: blur(10px); 
+  z-index: 99; 
+  display: none; 
+}
+.sidebar-overlay.active {
+  display: block;
+}
+
 @media (max-width: 400px) {
   .sidebar.close .nav-list li .sub-menu {
     display: none;

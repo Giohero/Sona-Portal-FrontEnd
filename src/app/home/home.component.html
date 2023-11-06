@@ -1,170 +1,97 @@
-<div class="dashboard-card">
-  <div class="dashboard">
-    <!-- <mat-card class="search-card">
-      <mat-form-field>
-        <input matInput placeholder="Search..." />
-      </mat-form-field>
-    </mat-card> -->
-    <mat-card class="home-card">
-      <mat-card-header>
-        <mat-card-title>Welcome To Sona</mat-card-title>
-        <mat-card-subtitle>
-          Our thanks to you
-        </mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>
-          Sona Enterprises would like to take this chance to thank you for your interest 
-          in our products and company. We promise to try our best to provide you with the 
-          best service at even better prices! We would like to express our sincere appreciation 
-          to our returning customers for your continued patronage of our business. 
-          Thanks to customers like you, we are celebrating over 30 years of business. 
-          Here's to many years of doing business with you!
-        </p>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="data-card">
-      <h2>Sales</h2>
-      <div class="row">
-        <!-- column -->
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex">
-                        <div>
-                            <h5 class="card-title">Sales Overview</h5>
-                            <h6 class="card-subtitle">Check the monthly sales </h6>
-                        </div>
-                        <div class="ml-auto">
-                            <select class="form-select">
-                                <option>January</option>
-                                <option value="1">February</option>
-                                <option value="2" selected="">March</option>
-                                <option value="3">April</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-info">
-                        <thead>
-                            <tr>
-                                <th class="text-center">#</th>
-                                <th>NAME</th>
-                                <th>DATE</th>
-                                <th>PRICE</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-center">1</td>
-                                <td class="txt-oflo">Elite admin</td>
-                                <td class="txt-oflo">April 18, 2017</td>
-                                <td><span class="text-success">$24</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">2</td>
-                                <td class="txt-oflo">Real Homes WP Theme</td>
-                                <td class="txt-oflo">April 19, 2017</td>
-                                <td><span class="text-info">$1250</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">3</td>
-                                <td class="txt-oflo">Ample Admin</td>
-                                <td class="txt-oflo">April 19, 2017</td>
-                                <td><span class="text-info">$1250</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">4</td>
-                                <td class="txt-oflo">Medical Pro WP Theme</td>
-                                <td class="txt-oflo">April 20, 2017</td>
-                                <td><span class="text-danger">-$24</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">5</td>
-                                <td class="txt-oflo">Hosting press html</td>
-                                <td class="txt-oflo">April 21, 2017</td>
-                                <td><span class="text-success">$24</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">6</td>
-                                <td class="txt-oflo">Digital Agency PSD</td>
-                                <td class="txt-oflo">April 23, 2017</td>
-                                <td><span class="text-danger">-$14</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">7</td>
-                                <td class="txt-oflo">Helping Hands WP Theme</td>
-                                <td class="txt-oflo">April 22, 2017</td>
-                                <td><span class="text-success">$64</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">8</td>
-                                <td class="txt-oflo">Helping Hands WP Theme</td>
-                                <td class="txt-oflo">April 22, 2017</td>
-                                <td><span class="text-success">$64</span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">9</td>
-                                <td class="txt-oflo">Ample Admin</td>
-                                <td class="txt-oflo">April 19, 2017</td>
-                                <td><span class="text-info">$1250</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<mat-tab-group animationDuration="2000ms">
+  <mat-tab label="Welcome">
+    <div class="container mt-5">
+      <div class="jumbotron text-center">
+        <h1 class="display-4">Welcome to Sona!</h1>
+        <p class="lead">OUR THANKS TO YOU <br>
+          Sona Enterprises would like to take this chance to thank you for your interest in our products and company. 
+          We promise to try our best to provide you with the best service at even better prices! We would like to express our sincere appreciation to our returning customers for your continued patronage of our business. 
+          Thanks to customers like you, we are celebrating over 30 years of business. Here's to many years of doing business with you!</p>
+      </div>
+      <!-- Pics Carousel -->
+      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active text-center">
+            <img src="/assets/images/Sona1.png" class="d-block mx-auto" alt="Imagen 1">
+          </div>
+          <div class="carousel-item text-center">
+            <img src="/assets/images/Sona2.jpg" class="d-block mx-auto img-little" alt="Imagen 2">
+          </div>
+          <div class="carousel-item text-center">
+            <img src="/assets/images/Sona4.jpg" class="d-block mx-auto img-little" alt="Imagen 3">
+          </div>
         </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+      <!-- Tarjetas social media -->
+      <div class="row mt-5">
+        <div class="col-lg-4 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Facebook</h5>
+              <p class="card-text">Follow us on Facebook!</p>
+              <a href="https://www.facebook.com/officialsonaenterprises/" class="btn btn-primary">Go to Facebook</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Twitter</h5>
+              <p class="card-text">News in real time...</p>
+              <a href="#" class="btn btn-primary">Go to Twitter</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Instagram</h5>
+              <p class="card-text">Videos and photos on Instagram</p>
+              <a href="#" class="btn btn-primary">Go to Instagram</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>    
+  </mat-tab>
+  <mat-tab label="About us">
+    <div class="container mt-5">
+      <div>
+        <h1 class="text-center display-4">About us</h1>
+        <p class="text-center fs-5">
+          Established in 1989, Sona Enterprises is a family-run operation that started in a garage and is now located in Santa Fe Springs, California. Sudhir and Sadhana Mundhra built the company on the ideals of competitive pricing, value items, and excellent customer service. Ideals are still closely followed today. Every day as a family and a company we strive to improve our efficiency, become more environmentally responsible, and improve the experience for our customers.
+        </p>
+      </div>
     </div>
-    </mat-card>
-    <!-- <mat-card class="data-card">
-      <h2>Sales</h2>
-    </mat-card> -->
-  
-    <!-- <mat-card class="data-card">
-      <h2>Performance</h2>
-    </mat-card> -->
-  
-    <!-- <mat-card class="chart-card">
-      <h2>Sales of the month</h2>
-    </mat-card> -->
-  
-    <mat-card class="data-card">
-      <h2>Total orders</h2>
-      <table class="table table-primary">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
-        </tbody>
-      </table>
-    </mat-card>
-    <!-- <mat-card class="table-card">
-      <h2>Visits</h2>
-    </mat-card> -->
-  </div>  
-</div>
-
+    <!-- Pics Carousel -->
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active text-center">
+          <img src="/assets/images/SE1.png" class="d-block mx-auto" alt="Imagen 1">
+        </div>
+        <div class="carousel-item text-center">
+          <img src="/assets/images/Sona2.jpg" class="d-block mx-auto img-little" alt="Imagen 2">
+        </div>
+        <div class="carousel-item text-center">
+          <img src="/assets/images/Sona4.jpg" class="d-block mx-auto img-little" alt="Imagen 3">
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </mat-tab>
+</mat-tab-group>
