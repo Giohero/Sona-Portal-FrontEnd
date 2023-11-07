@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Value } from '../models/items';
 import { ServiceService } from '../service/service.service';
 import {MatTabsModule} from '@angular/material/tabs';
+import { Color, ScaleType } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,126 @@ export class HomeComponent {
   searchText = '';
   isSidebarExpanded: boolean = false;
 
-  constructor(private orderService: ServiceService) {}
+  // options
+  showXAxis = false;
+  showYAxis = true;
+  gradient = false;
+  showLegend = false;
+
+  showLegendBar = true;
+  showXAxisLabel = true;
+  xAxisLabel = 'Country';
+  showYAxisLabel = false;
+  yAxisLabel = 'Population';
+
+  colorSchemeBar = {
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+  };
+  //single: any[] = [];
+  //multi: any[] = [];
+
+  single = [
+    {
+      "name": "Germany",
+      "value": 8940000
+    },
+    {
+      "name": "USA",
+      "value": 5000000
+    },
+    {
+      "name": "France",
+      "value": 7200000
+    }
+  ];
+
+  singleBar = [
+    {
+      "name": "Germany",
+      "value": 8940000
+    },
+    {
+      "name": "USA",
+      "value": 5000000
+    },
+    {
+      "name": "France",
+      "value": 7200000
+    }
+  ];
+  
+  multi = [
+    {
+      "name": "Germany",
+      "series": [
+        {
+          "name": "2010",
+          "value": 7300000
+        },
+        {
+          "name": "2011",
+          "value": 8940000
+        }
+      ]
+    },
+  
+    {
+      "name": "USA",
+      "series": [
+        {
+          "name": "2010",
+          "value": 7870000
+        },
+        {
+          "name": "2011",
+          "value": 8270000
+        }
+      ]
+    },
+  
+    {
+      "name": "France",
+      "series": [
+        {
+          "name": "2010",
+          "value": 5000002
+        },
+        {
+          "name": "2011",
+          "value": 5800000
+        }
+      ]
+    }
+  ];
+
+  // colorScheme = {
+  //   domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+  // };
+
+  colorScheme: Color = {
+    name: 'Custom Palette',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+  };
+  
+
+  constructor(private orderService: ServiceService) {
+    const single1 = this.single;
+    const multi1 = this.multi;
+    Object.assign(this, {single1, multi1}) 
+  }
+
+
+  // pie
+  showLabels = true;
+  explodeSlices = false;
+  doughnut = false;
+  
+
+  onSelect(event: Event) {
+    console.log(event);
+  }
 
   ngOnInit(): void {
 

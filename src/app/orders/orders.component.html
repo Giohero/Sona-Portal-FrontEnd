@@ -1,7 +1,50 @@
 <div class="background">
   <h2 class="title">{{title}}</h2> 
   <br>
-<div class="container" fxLayout="column" fxLayoutGap="20px">
+
+  <div fxLayout="row-reverse" fxLayout.xs="column">
+    <div class="label-container" disabled fxFlex="33" fxLayoutAlign="end">
+      <mat-form-field class="example-full-width">
+        <mat-label class="label">Posting Date:</mat-label>
+        <input matInput [matDatepicker]="postingDate" [formControl]="tax">
+        <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
+        <mat-datepicker #postingDate></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="label-container" fxFlex="33" fxLayoutAlign="end">
+      <mat-form-field class="example-full-width">
+          <mat-label class="label">Tax Date:</mat-label>
+          <input matInput [matDatepicker]="taxDate" [formControl]="tax">
+          <mat-datepicker-toggle matIconSuffix [for]="taxDate"></mat-datepicker-toggle>
+          <mat-datepicker #taxDate></mat-datepicker>
+        </mat-form-field>
+    </div>
+    <div class="label-container" fxFlex="33" fxLayoutAlign="end">
+      <mat-form-field class="example-full-width">
+        <mat-label class="label">Delivery Date:</mat-label>
+        <input matInput [min]="minDate" [matDatepicker]="deliveryDate" [formControl]="delivery">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="deliveryDate"></mat-datepicker-toggle>
+        <mat-datepicker #deliveryDate></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab label="Customer">Content 1</mat-tab>
+    <mat-tab label="Cart">Content 2</mat-tab>
+
+    
+  </mat-tab-group>
+  
+  
+  <!-- <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
+    <mat-tab label="First">Content 1</mat-tab>
+    <mat-tab label="Second">Content 2</mat-tab>
+    <mat-tab label="Third">Content 3</mat-tab>
+  </mat-tab-group> -->
+
+<!-- <div class="container" fxLayout="column" fxLayoutGap="20px">
   <mat-card class="mat-card2">
     <mat-card-content>
       <h2 class="h2Mat">Dates <mat-icon>date_range</mat-icon></h2>
@@ -137,7 +180,7 @@
       </div>
     </mat-expansion-panel>
 </mat-accordion>
-</div>
+</div> -->
 </div>
 <!-- <div *ngIf="isLoading" fxLayoutAlign="center center">
   <mat-spinner class="custom-spinner" [diameter]="120"></mat-spinner>

@@ -5,6 +5,16 @@ body {
   background-color: #ede8de;
 }
 
+.carousel-control-prev-icon{
+  color: #333;
+  background-color: #333;
+}
+
+.carousel-control-next-icon{
+  color: #333;
+  background-color: #333;
+}
+
 .dashboard-card {
   display: flex;
   justify-content: center;

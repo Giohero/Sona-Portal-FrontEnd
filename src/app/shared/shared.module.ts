@@ -29,6 +29,8 @@ import {MatCardModule} from '@angular/material/card';
 import { FilterPipe } from '../service/filter.pipe';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 
 @NgModule({
@@ -64,6 +66,7 @@ import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
     MatIconModule,
     MatListModule,
     MatButtonModule,
+    NgxChartsModule
   ],
 
  exports: [
@@ -96,7 +99,8 @@ import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
     MatIconModule,
     MatListModule,
     MatButtonModule,
-    MatRadioModule
+    MatRadioModule,
+    NgxChartsModule
  ]
 })
 

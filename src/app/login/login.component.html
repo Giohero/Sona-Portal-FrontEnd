@@ -1,51 +1,57 @@
-<div >
+<div class="image">
+  <div class="login">
+    <div class="margin">
+      <div class="mat-card-wrapper">
+        <mat-card class="mat-card-white">
+          <!-- Contenido para la parte blanca -->
+          <mat-card-title>
+            <a href="https://www.facebook.com/officialsonaenterprises/" class="imageLogo"></a>
+          </mat-card-title>
 
-  <div class="image">
-    <a href="https://www.facebook.com/officialsonaenterprises/" class="imageLogo"><span ></span></a>
-  </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="username" placeholder="example@sona.com" >
+            <mat-icon matSuffix class="icon">email</mat-icon>
+          </mat-form-field>
 
-  <br>
-  <div  class="login">
-   <div class="margin">
-    
-    <mat-card>
-      <mat-card-title>LOGIN</mat-card-title>
-      <br>
-      <div class="input">
-        <mat-icon class="icon">person</mat-icon>
-        <mat-form-field class="">
-            <input matInput placeholder="Username" formControlName="username" class="">
-        </mat-form-field>
-      </div>
-
-      <div class="input">
-        <mat-icon class="icon">keygen</mat-icon>
-        <mat-form-field class="">
-            <mat-label>Enter your password</mat-label>
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
             <input matInput [type]="hide ? 'password' : 'text'" class="" placeholder="Password"  formControlName="password">
             <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide" >
-                <mat-icon class="icon" style="font-size: 22px; margin-bottom: 15px;">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                <mat-icon class="icon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
-        </mat-form-field>
-      </div>
+          </mat-form-field>
 
-      <br>
-      <button mat-button class="button">
-        <span style="color: white;">Login</span> 
-      </button>
-    </mat-card>
-    <br>
-    <br>
-    <br>
-    <mat-card>
-      <mat-card-subtitle>or Connect with Social Media</mat-card-subtitle>
-      <br>
-      <button mat-button class="button" (click)="login()">
-        <span style="color: white;">Sign in with Microsoft</span>
-        <img src="/assets/images/microsoft.png"  style="height: 20px;width: 20px;">
-      </button>
-      </mat-card>
-      
+          <button mat-button class="button">
+            <span style="color: white;">Login</span> 
+          </button>
+
+          <br>
+
+          <div class="line-container">
+            <hr class="line">
+            <span class="line-text">Or continue with</span>
+            <hr class="line">
+          </div>
+
+          <br>
+
+          <button mat-button class="buttonSocial" (click)="login()">
+            <img src="/assets/images/microsoft.png"  style="height: 20px;width: 20px;">
+          </button>
+
+          
+          <br>
+
+        </mat-card>
+        <mat-card class="mat-card-transparent">
+          <p>Sona
+          <br><br><br>
+          Enterprise</p> 
+        </mat-card>
+      </div>
       
   </div>
-</div>
+
+  </div>
+
