@@ -10,30 +10,23 @@ import {MatTabsModule} from '@angular/material/tabs';
 })
 export class HomeComponent {
   ListItems!: Value[] ;
+  
   searchText = '';
   isSidebarExpanded: boolean = false;
+  ordersData: { name: any; value: any; }[] | undefined;
+  lastThreeMonths: any;
 
   constructor(private orderService: ServiceService) {}
 
   ngOnInit(): void {
-
     this.orderService.getItems().subscribe((retData) => {
-
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-
         this.ListItems = JSON.parse(retData.response!);
-
-      
       } else {
-
         console.log(retData.response);
-
         console.log('Error');
-
       }
-
     });
-
   }
 
   onSelectMaterial(selectedData: any){
@@ -50,6 +43,44 @@ export class HomeComponent {
       // Item.get('TaxCode')?.setValue('EX');
       // this.addButton = false;
     }
+  }
+
+  getOrderLogDataComparation(): void {
+    this.orderService.getOrderLogDataComparation().subscribe(
+      (retData) => {
+        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+          const orderCountCurrentMonth = retData.orderCountCurrentMonth;
+          const orderCountPreviousMonth = retData.orderCountLastMonth;
+          const orderCountTwoMonthsAgo = retData.orderCountTwoMonthsAgo;
+          const orderCountThreeMonthsAgo = retData.orderCountThreeMonthsAgo;
+
+          this.ordersData = [
+            {
+              name: this.lastThreeMonths[3],
+              value: orderCountCurrentMonth
+            },
+            {
+              name: this.lastThreeMonths[2], 
+              value: orderCountPreviousMonth 
+            },
+            {
+              name: this.lastThreeMonths[1], 
+              value: orderCountTwoMonthsAgo 
+            },
+            {
+              name: this.lastThreeMonths[0],
+              value: orderCountThreeMonthsAgo
+            }
+          ];
+          console.log("data" + this.ordersData);
+        } else {
+          console.error('Failed to retrieve order log data:', retData.statusCode);
+        }
+      },
+      (error) => {
+        console.error('Failed to retrieve order log data:', error);
+      }
+    );
   }
 
 }

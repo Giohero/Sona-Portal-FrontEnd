@@ -58,5 +58,7 @@ export class ServiceService {
   DeleteAddresBP(Customer:any):Observable<INResponse> {
     return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'DeleteAddressBP', Customer)
   }
-  
+  getOrderLogDataComparation(): Observable<INResponse> {
+    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'OrderLogDataComparation')
+  }
 }
