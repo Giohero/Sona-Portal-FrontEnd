@@ -35,7 +35,7 @@
         <div class="col-lg-4 mb-4">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Facebook</h5>
+              <h5 class="card-title">Orders</h5>
               <ngx-charts-pie-chart
                 [view]=" [400, 200]"
                 [scheme]="colorScheme"
@@ -46,17 +46,17 @@
                 [doughnut]="doughnut"
                 (select)="onSelect($event)">
               </ngx-charts-pie-chart>
-              <p class="card-text">Follow us on Facebook!</p>
-              <a href="https://www.facebook.com/officialsonaenterprises/" class="btn btn-primary">Go to Facebook</a>
+              <!-- <p class="card-text">Follow us on Facebook!</p>
+              <a href="https://www.facebook.com/officialsonaenterprises/" class="btn btn-primary">Go to Facebook</a> -->
             </div>
           </div>
         </div>
-        <div class="col-lg-4 mb-4">
+        <div class="col-lg-7 mb-5">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Twitter</h5>
+              <h5 class="card-title">Orders</h5>
               <ngx-charts-bar-vertical
-                [view]="[700, 400]"
+                [view]="[700, 200]"
                 [scheme]="colorScheme"
                 [results]="singleBar"
                 [gradient]="gradient"
@@ -69,8 +69,8 @@
                 [yAxisLabel]="yAxisLabel"
                 (select)="onSelect($event)">
               </ngx-charts-bar-vertical>
-              <p class="card-text">News in real time...</p>
-              <a href="#" class="btn btn-primary">Go to Twitter</a>
+              <!-- <p class="card-text">News in real time...</p>
+              <a href="#" class="btn btn-primary">Go to Twitter</a> -->
             </div>
           </div>
         </div>

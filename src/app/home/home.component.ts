@@ -16,6 +16,9 @@ export class HomeComponent {
   isSidebarExpanded: boolean = false;
   ordersData: { name: any; value: any; }[] | undefined;
   lastThreeMonths: any;
+  single:any;
+  multi:any;
+  singleBar:any;
 
   // options
   showXAxis = false;
@@ -35,79 +38,7 @@ export class HomeComponent {
   //single: any[] = [];
   //multi: any[] = [];
 
-  single = [
-    {
-      "name": "Germany",
-      "value": 8940000
-    },
-    {
-      "name": "USA",
-      "value": 5000000
-    },
-    {
-      "name": "France",
-      "value": 7200000
-    }
-  ];
-
-  singleBar = [
-    {
-      "name": "Germany",
-      "value": 8940000
-    },
-    {
-      "name": "USA",
-      "value": 5000000
-    },
-    {
-      "name": "France",
-      "value": 7200000
-    }
-  ];
   
-  multi = [
-    {
-      "name": "Germany",
-      "series": [
-        {
-          "name": "2010",
-          "value": 7300000
-        },
-        {
-          "name": "2011",
-          "value": 8940000
-        }
-      ]
-    },
-  
-    {
-      "name": "USA",
-      "series": [
-        {
-          "name": "2010",
-          "value": 7870000
-        },
-        {
-          "name": "2011",
-          "value": 8270000
-        }
-      ]
-    },
-  
-    {
-      "name": "France",
-      "series": [
-        {
-          "name": "2010",
-          "value": 5000002
-        },
-        {
-          "name": "2011",
-          "value": 5800000
-        }
-      ]
-    }
-  ];
 
   // colorScheme = {
   //   domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
@@ -142,6 +73,8 @@ export class HomeComponent {
     this.orderService.getItems().subscribe((retData) => {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
         this.ListItems = JSON.parse(retData.response!);
+        // Llama a getOrderLogDataComparation aquí después de obtener los items
+        this.getOrderLogDataComparation();
       } else {
         console.log(retData.response);
         console.log('Error');
@@ -173,26 +106,31 @@ export class HomeComponent {
           const orderCountPreviousMonth = retData.orderCountLastMonth;
           const orderCountTwoMonthsAgo = retData.orderCountTwoMonthsAgo;
           const orderCountThreeMonthsAgo = retData.orderCountThreeMonthsAgo;
-
+  
           this.ordersData = [
             {
-              name: this.lastThreeMonths[3],
+              name: 'Current Month',
               value: orderCountCurrentMonth
             },
             {
-              name: this.lastThreeMonths[2], 
+              name: 'Last Month', 
               value: orderCountPreviousMonth 
             },
             {
-              name: this.lastThreeMonths[1], 
+              name: 'Two Months Ago', 
               value: orderCountTwoMonthsAgo 
             },
             {
-              name: this.lastThreeMonths[0],
+              name: 'Three Months Ago',
               value: orderCountThreeMonthsAgo
             }
           ];
-          console.log("data" + this.ordersData);
+  
+          // Ahora, puedes asignar estos valores a tus gráficos ngx-charts
+          this.single = this.ordersData.map(item => ({ name: item.name, value: item.value }));
+          this.singleBar = this.ordersData.map(item => ({ name: item.name, value: item.value }));
+  
+          console.log("data", this.ordersData);
         } else {
           console.error('Failed to retrieve order log data:', retData.statusCode);
         }
@@ -202,5 +140,6 @@ export class HomeComponent {
       }
     );
   }
+  
 
 }

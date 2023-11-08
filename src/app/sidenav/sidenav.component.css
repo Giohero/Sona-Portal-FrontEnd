@@ -15,7 +15,7 @@
   background-color: #ab3548;
   z-index: 100;
   transition: all 0.5s ease;
-  border-radius: 20px;
+  border-radius: 0px 20px 20px 20px; 
 }
 .main-content {
   margin-left: 78px; /* pantalla acomodada */
@@ -202,6 +202,7 @@
   background-color: #1d1b31;
   padding: 12px 0;
   transition: all 0.5s ease;
+  border-radius: 0px 0 20px 0px; 
 }
 
 .sidebar.close .profile-details {
