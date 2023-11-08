@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { DataSharingService } from '../service/data-sharing.service';
 import { AfterViewInit, ElementRef } from '@angular/core';
 import { Renderer2 } from '@angular/core';
+import { AccountInfo } from '@azure/msal-browser';
 
 
 @Component({
@@ -16,6 +17,7 @@ export class SidenavComponent implements OnInit {
   showToolbarOptions = false; 
   mobileQuery: MediaQueryList;
   isSidebarClosed: boolean = true;
+  currentUserEmail: string | null = null;
   // isSubMenuOpen: boolean = false;
   // showSubMenu: boolean = false;
   // isOrdersMenuExpanded: boolean = false;
@@ -66,7 +68,7 @@ export class SidenavComponent implements OnInit {
     private myRouter: Router,
     private dataSharing: DataSharingService,
     private elementRef: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
@@ -74,11 +76,18 @@ export class SidenavComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+    this.loadCurrentUserEmail();
   }
 
   shouldRun = true;
 
+  loadCurrentUserEmail() {
+    const activeAccount: AccountInfo | null = this.msalService.instance.getActiveAccount();
+    if (activeAccount) {
+      this.currentUserEmail = activeAccount.username;
+    }
+  }
+  
   logout() {
     //if is Active Directory or local
     if (this.msalService.instance.getActiveAccount() != null) {

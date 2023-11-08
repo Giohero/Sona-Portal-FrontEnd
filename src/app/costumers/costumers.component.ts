@@ -29,7 +29,7 @@ export class CostumersComponent implements OnInit {
     
   }
 
-  Filters() {
+  Sort() {
     this.sortCustomersAlphabetically();
   }
 
