@@ -1,34 +1,174 @@
-mat-card{
-    background-color: rgba(52, 52, 52, 0.5); 
+/* mat-card{
+    background: rgb(255, 255, 255); 
     text-align: center;
     align-items: center;
     padding: 20px;
+    color: transparent;
+}
+
+::ng-deep mat-card-title{
+    color: rgba(255, 255, 255, 0) !important; 
 }
 
 mat-card-title, mat-card-subtitle{
-    color: white;
+    color:  rgba(229, 16, 16, 0.5);;
 }
 
 mat-label{
     color: #ab3548;
+} */
+
+mat-label{
+    color: #397eac;
+}
+
+::ng-deep .custom-form-field .mat-mdc-text-field-wrapper .mdc-text-field .mdc-text-field--outlined{
+    outline-color: transparent;
+    color: #ab3548;
+    background-color: #ab3548;
+    border-color: #ab3548;
+    border:2px solid red;
+}
+
+.line-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+  }
+  
+  .line {
+    width: 40%; 
+    border: none;
+    border-top: 2px solid #ab3548; 
+    margin: 0;
+  }
+  
+  .line-text {
+    margin: 2px; 
+    width: 50%;
+  }
+
+/* ::ng-deep.mdc-notched-outline__notch {
+  border-top: 2px solid red !important;
+  border-bottom: 2px solid red !important;
+}
+
+::ng-deep.mdc-notched-outline--notched {
+    ::ng-deep.mdc-notched-outline__notch {
+       border-top: none !important;
+       border-bottom: 2px solid red !important;
+    }
+}
+
+::ng-deep.mdc-notched-outline__leading {
+  border: 2px solid red !important;
+  border-right: none !important;
+}
+
+
+::ng-deep.mdc-notched-outline__trailing {
+  border: 2px solid red !important;
+  border-left: none !important;
+} */
+
+input{
+    display: flex;
+    min-width: 0; 
+    width: fit-content; 
+    box-sizing: border-box; 
+    align-items: center;
+    width: 260px;
+}
+
+.mat-card-wrapper {
+    display: flex;
+    border: 4px solid #ffffff;
+    border-radius: 10px;
+    margin: 20px;
+}
+  
+  
+.mat-card-wrapper mat-card {
+    flex: 1; 
+}
+
+.mat-card-white {
+  /* background-color: #fff;  */
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 70%; 
+  z-index: 1; 
+  color: #397eac;
+  min-width: 0; 
+  width: fit-content; 
+  box-sizing: border-box; 
+  margin: 10px;
+  padding: 10px;
+  align-items: center;
+}
+  
+.mat-card-transparent {
+  background: transparent; 
+  margin: 10px;
+  position: relative;
+  overflow: hidden;
+  /* background-image:url('https://th.bing.com/th/id/R.69a12d91d7f37e71e8fdaf1bc5050892?rik=En2NJ2EinKf1LA&pid=ImgRaw&r=0'); */
+  /* background-image:url('https://th.bing.com/th/id/R.b757728b7926da652ee03e993538e68a?rik=VFva67pAhyqpOw&pid=ImgRaw&r=0'); */
+  width: 50%;
+  overflow: hidden;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.mat-card-transparent p {
+  position: absolute;
+  word-wrap: break-word;
+  bottom: 0;
+  right: 0;
+  color: rgb(230, 228, 228);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 80px;
+  text-align: right;
+  letter-spacing: 2px;
+  margin: 0;
+  padding-right: 0px;
+  white-space: normal;
+  padding-bottom: 20px;
+  padding-top: 20px;
+  border: 4px solid #ffffff;
+  border-radius: 20px;
+}
+  
+.buttonSocial{
+    border:2px solid #f2884B;
+    text-align: center;
+    width: 150px;
+    border-radius: 20px;
 }
 
 .button{
-    background-color: #ab3548;
+    background-color: #a62934;
     text-align: center;
     width: 350px;
+    border-radius: 20px;
+    font-size: medium;
+}
+
+.button:hover, .buttonSocial:hover, .imageLogo:hover{
+    box-shadow: 0px 4px 4px -2px rgba(0, 0, 0, 0.5);
 }
 
 .margin{
     margin:50px;
     text-align: center;
     filter: contrast(70%);
+    color: transparent;
 }
 
-input, mat-form-field{
+mat-form-field{
     text-align: left;
     background-color: transparent;
-    width: 300px;
+    width: 330px;
     margin: 3px;
 }
 
@@ -38,11 +178,7 @@ input:focus {
   }
 
 .icon{
-    width: 30px;
-    margin: 5px;
-    align-items: center;
-    color: #ab3548;
-    font-size: 30px;
+    color: #397eac;
 }
 
 .image 
@@ -52,46 +188,88 @@ input:focus {
   height: 100%;
   background-repeat: no-repeat;
   position: fixed;
-  background-image:url('https://www.sail.ca/blog/app/uploads/2021/09/fall-camping-tent-1200x628px.jpg');
+  align-items: center;
+  color: transparent;
+  background-image:url('https://th.bing.com/th/id/R.b757728b7926da652ee03e993538e68a?rik=VFva67pAhyqpOw&pid=ImgRaw&r=0'); 
+  /* background-image:url('https://th.bing.com/th/id/R.69a12d91d7f37e71e8fdaf1bc5050892?rik=En2NJ2EinKf1LA&pid=ImgRaw&r=0'); */
 }
 
 .imageLogo 
 {
   background-size: cover;
-  align-items: center;
-  width: 350px;
+  width: 200px;
+  height: 200px;
   top: 10%;
   left: 10%;
-  height: 350px;
   background-repeat: no-repeat;
   position: inherit;
   background-image:url('src/assets/images/SonaLogo.png');
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
+  border-radius: 100%;
 }
-
-.image::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.2); /* Color del fondo borroso */
-    backdrop-filter: blur(8px); /* Ajusta la cantidad de desenfoque aquí */
-    z-index: -1;
-  }
 
 .login{
     background-size: cover;
-    width: 47%;
+    width: 80%;
     height: 50%;
-    left: 45%;
     padding: 1px;
     border-radius: 10px;
     position: relative;
+    display: contents;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;
     /* background-image:url('https://w0.peakpx.com/wallpaper/847/51/HD-wallpaper-texture-boards-wood-fence.jpg'); */
     /* background-image:url('https://static.vecteezy.com/system/resources/previews/001/376/845/original/wood-table-top-with-blurred-background-free-photo.jpg'); */
 }
 
+@media only screen and (max-width: 768px) {
+    /* Aquí añades los estilos específicos para iPad mini */
+    /* Por ejemplo: */
+    body {
+      font-size: 14px; /* Cambiar el tamaño de la fuente para adaptarse al dispositivo */
+    }
+
+    .mat-card-wrapper {
+        /* flex-direction: column; */
+    }
+
+    .mat-card-transparent p {
+      position: absolute;
+      word-wrap: break-word;
+      bottom: 0;
+      right: 0;
+      color: rgb(230, 228, 228);
+      background: transparent;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 30px;
+      text-align: right;
+      letter-spacing: 2px;
+      margin: 0;
+      padding-right: 0px;
+      white-space: normal;
+      padding-bottom: 20px; /* Espacio alrededor del texto */
+      writing-mode: vertical-rl; /* Texto de arriba abajo */
+      text-align: left;
+      text-orientation: upright;
+    }
+
+    .mat-card-white {
+      /* background-color: #fff;  */
+      background-color: rgba(255, 255, 255, 0.9);
+      width: 80%; 
+      z-index: 1; 
+      color: #397eac;
+      min-width: 0; 
+      width: fit-content; 
+      box-sizing: border-box; 
+      margin: 10px;
+      padding: 10px;
+      align-items: center;
+    }
+
+    .mat-card-transparent {
+     
+    }
+  }

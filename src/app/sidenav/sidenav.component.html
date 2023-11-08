@@ -1,42 +1,19 @@
-<div class="sidebar close" [ngClass]="{'close': isSidebarClosed}" (mouseenter)="expandSidebar()" (mouseleave)="collapseSidebar()">
-    <div class="logo">
-      <img src="/assets/images/SonaLogo.png" style="width: 50px; height:50px; margin: 15px;"/>
-      <!-- <i class="bi bi-list"></i> -->
-      <span class="logo-name">Sona</span>
-    </div>
-    <!-- <div>
-      <i (click)="toggleSidebar()" class="bi bi-list"></i>
-    </div> -->
+<aside class="sidebar close" [ngClass]="{'close': isSidebarClosed}" (mouseenter)="expandSidebar()" (mouseleave)="collapseSidebar()">
+  <div class="logo">
+    <img src="/assets/images/SonaLogo.png" alt="Sona Logo" style="width: 50px; height:50px; margin: 15px;"/>
+    <span class="logo-name">Sona</span>
+  </div>
+  <nav>
     <ul class="nav-list">
       <li>
         <a href="/dashboard">
           <i class="bi bi-house"></i>
           <span class="link-name">Home</span>
         </a>
-
         <ul class="sub-menu blank">
           <li><a href="/dashboard" class="link-name">Home</a></li>
-          <!-- <a mat-list-item routerLink="/dashboard">
-            <mat-icon class="icon">home</mat-icon>
-            Home
-          </a> -->
         </ul>
-      </li>     
-      <!-- <li>
-        <div class="icon-link">
-          <a href="/dashboard/order-index">
-            <i class="bi bi-border-bottom"></i>
-            <span class="link-name">Orders</span>
-          </a>
-          <div>
-            <mat-menu #ordersMenu="matMenu">
-              <a mat-menu-item routerLink="/dashboard/order-index">Orders</a>
-              <a mat-menu-item (click)="goToNewOrder()">Start New Order</a>
-            </mat-menu>
-          </div>
-        </div>
-      </li> -->
-           
+      </li>
       <li>
         <a mat-icon-button [matMenuTriggerFor]="ordersMenu" class="menu-link">
           <div class="icon-container">
@@ -52,60 +29,45 @@
             <i class="bi bi-border-bottom"></i> Start New Order
           </a>
         </mat-menu>
-      </li>      
-
+      </li>
       <li>
         <div class="icon-link">
           <a href="/dashboard/costumers">
             <i class="bi bi-person-square"></i>
             <span class="link-name">Customers</span>
           </a>
-          <!-- <i class="fas fa-caret-down arrow"></i> -->
         </div>
-        <!-- app.component.html -->
-
-        <!-- <ul class="sub-menu">
-          <li><a href="/dashboard/costumers" class="link-name">Customers</a></li>
-        </ul>
-      </li> -->
-      
+      </li>
       <li>
         <a href="/dashboard/items">
           <i class="bi bi-diagram-3"></i>
           <span class="link-name">Items</span>
         </a>
-
         <ul class="sub-menu blank">
           <li><a href="/dashboard/items" class="link-name">Items</a></li>
         </ul>
       </li>
-      
-      <li>
-        <a (click)="logout()">
-          <i class="bi bi-box-arrow-right"></i>
-          <span (click)="logout()" class="link-name">Logout</span>
-        </a>
-
-        <ul class="sub-menu blank">
-          <li><a (click)="logout()" class="link-name">Logout</a></li>
-        </ul>
-      </li>
-    
       <li>
         <div class="profile-details">
           <div class="profile-content">
-            <img src="/assets/images/SonaLogo.png"alt="" />
+            <a (click)="logout()">
+              <img src="/assets/images/IconLogout.png" alt="Logout" class="logout-image" />
+            </a>
+            <div>
+              <span (click)="logout()" class="link-name"></span>
+            </div>
           </div>
-
-          <div class="name-job">
+          <div class="user-info">
+            <div class="user-email" *ngIf="currentUserEmail">
+              {{ currentUserEmail }}
+            </div>
           </div>
-          <i class="fas fa-right-to-bracket"></i>
         </div>
       </li>
     </ul>
-</div>
+  </nav>
+</aside>
 <div class="sidebar-overlay" [ngClass]="{'active': !isSidebarClosed}" (click)="collapseSidebar()"></div>
 <main class="main-content" [ngClass]="{'expanded': !isSidebarClosed}">
   <router-outlet></router-outlet>
 </main>
-

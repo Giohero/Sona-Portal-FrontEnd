@@ -313,6 +313,20 @@
 .sidebar-overlay.active {
   display: block;
 }
+.user-email {
+  color: #fff;
+  margin-left: 5px; /*Ajusten como deseen estos valores*/
+  margin-right: 30px;
+}
+
+.profile-details a {
+  margin-left: 8px; /* Ajusta el valor según la cantidad de espacio que desees */
+}
+
+.logout-image {
+  margin-right: 20px ; /* Ajusta el valor del margen según tus necesidades */
+  cursor: pointer; /* Agrega esta línea para cambiar el cursor a una mano */
+}
 
 @media (max-width: 400px) {
   .sidebar.close .nav-list li .sub-menu {

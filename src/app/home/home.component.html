@@ -2,11 +2,11 @@
   <mat-tab label="Welcome">
     <div class="container mt-5">
       <div class="jumbotron text-center">
-        <h1 class="display-4">Welcome to Sona!</h1>
-        <p class="lead">OUR THANKS TO YOU <br>
+        <h1 >Welcome to Sona!</h1>
+        <!-- <p class="lead">OUR THANKS TO YOU <br>
           Sona Enterprises would like to take this chance to thank you for your interest in our products and company. 
           We promise to try our best to provide you with the best service at even better prices! We would like to express our sincere appreciation to our returning customers for your continued patronage of our business. 
-          Thanks to customers like you, we are celebrating over 30 years of business. Here's to many years of doing business with you!</p>
+          Thanks to customers like you, we are celebrating over 30 years of business. Here's to many years of doing business with you!</p> -->
       </div>
       <!-- Pics Carousel -->
       <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -36,6 +36,16 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Facebook</h5>
+              <ngx-charts-pie-chart
+                [view]=" [400, 200]"
+                [scheme]="colorScheme"
+                [results]="single"
+                [legend]="showLegend"
+                [explodeSlices]="explodeSlices"
+                [labels]="showLabels"
+                [doughnut]="doughnut"
+                (select)="onSelect($event)">
+              </ngx-charts-pie-chart>
               <p class="card-text">Follow us on Facebook!</p>
               <a href="https://www.facebook.com/officialsonaenterprises/" class="btn btn-primary">Go to Facebook</a>
             </div>
@@ -45,12 +55,26 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Twitter</h5>
+              <ngx-charts-bar-vertical
+                [view]="[700, 400]"
+                [scheme]="colorScheme"
+                [results]="singleBar"
+                [gradient]="gradient"
+                [xAxis]="showXAxis"
+                [yAxis]="showYAxis"
+                [legend]="showLegendBar"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel"
+                [xAxisLabel]="xAxisLabel"
+                [yAxisLabel]="yAxisLabel"
+                (select)="onSelect($event)">
+              </ngx-charts-bar-vertical>
               <p class="card-text">News in real time...</p>
               <a href="#" class="btn btn-primary">Go to Twitter</a>
             </div>
           </div>
         </div>
-        <div class="col-lg-4 mb-4">
+        <!-- <div class="col-lg-4 mb-4">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Instagram</h5>
@@ -58,7 +82,7 @@
               <a href="#" class="btn btn-primary">Go to Instagram</a>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>    
   </mat-tab>
