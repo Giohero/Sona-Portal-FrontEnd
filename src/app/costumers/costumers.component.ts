@@ -4,6 +4,10 @@ import { INResponse } from '../models/INResponse';
 import { BusinessPartner, Customer } from '../models/customer';
 import { Router } from '@angular/router';
 import { DataSharingService } from '../service/data-sharing.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarsComponent } from '../snackbars/snackbars.component';
+import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
 
 @Component({
   selector: 'app-costumers',
@@ -14,20 +18,164 @@ export class CostumersComponent implements OnInit {
   customerData: BusinessPartner[] = [];
   filteredCustomerData: BusinessPartner[] = [];
   isLoading = false;
+  ListCustomers!: BusinessPartner[] ;
+  searchText = '';
+  idcustomer = '';
+  ActiveAddButton= true;
+  CurrentSellsItem?: BusinessPartner | undefined;
+  billingAddress?: string | undefined;
+  notes?: string | undefined;
+  shippingAddress?: string | undefined;
+  phone1?: string | undefined;
+  email?: string | undefined;
+  shippingType?: string | undefined;
+  taxId?: string | undefined;
+  inputSearchCutomer = false;
+  saveUpdates = false;
+  showAddButton = true;
+  showEditInputs = true;
+  AddressShip: any;
+  Address: any;
+  customerBack: any;
+  rowShip=0;
+  rowBill=0;
+  ShowEdit = false;
+  title=""
 
   constructor(
     private customerService: ServiceService,
     private myRouter: Router,
-    private dataSharing: DataSharingService
+    private dataSharing: DataSharingService,
+    private orderService: ServiceService,
+    private dialog: MatDialog,
+    private _snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.loadCustomerData();
   }
 
-  AddNewCustomer(){
-    
+  AddNewCustomer(type: string) {
+    //var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
+    const dialogRef = this.dialog.open(DialogAddressComponent, {
+      height: 'auto',
+      width: '90%',
+      autoFocus: false,
+      maxHeight: '90vh', //you can adjust the value as per your view
+      maxWidth: '140vh',
+      data: { 
+        viewEdit: false,
+        viewAdd: true,
+        viewList: false,
+        addresses: undefined,
+        addressesList: undefined
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+     
+      if(result != undefined)
+      {
+        this.Address = {};
+
+        this.Address = {
+          AddressName : result!.AddressName ?? " ",
+          AddressName2 : result.AddressName2 ?? " ",
+          AddressType : type,
+          Block : result?.Block ?? "",
+          //Country : result?.Country ?? "",
+          Country: 'US',
+          City : result?.City ?? "",
+          State : result?.State ?? "",
+          Street : result?.Street ?? "",
+          ZipCode : result?.ZipCode ?? "",
+        }
+
+        var CustomerAdd={
+          CardCode: this.idcustomer,
+          CardName: this.searchText,
+          CardType: 'C',
+          BPAddresses: [
+            this.Address
+          ]
+        }
+
+        //console.log(CustomerAdd)
+
+        this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
+          //console.log(CustomerAdd);
+          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)
+          {
+
+            this.openSnackBar("", "check_circle", "Address Add!", "green");
+            if(type == 'bo_ShipTo')
+            this.shippingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;  
+            else
+              this.billingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;
+
+            // console.log(AddressReq)
+            // this.CurrentSellsItem?.BPAddresses.push(this.Address)
+            this.UpdateList(this.idcustomer, type)
+          }
+          else
+          {
+            this.openSnackBar(retData.response!, "error", "Error", "red");
+            //console.log(retData.response)
+          }
+        });
+      }
+        //console.log(this.AddressBill);
+    });
   }
+
+  UpdateList(cardcode:string, type: string)
+  {
+    this.orderService.getCustomer().subscribe((retData) => {
+
+      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+
+        this.ListCustomers = JSON.parse(retData.response!);
+        //console.log(this.CurrentSellsItem!.BPAddresses)
+        //console.log(this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses)
+        const addressNew = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses.filter(x => !this.CurrentSellsItem!.BPAddresses.some(y => x.RowNum === y.RowNum));
+        //console.log(addressNew)
+
+        if(type == 'bo_ShipTo')
+          this.rowShip = parseFloat(addressNew[0].RowNum)
+        else
+          this.rowBill = parseFloat(addressNew[0].RowNum)
+
+        //console.log(this.rowBill)
+        //console.log(this.rowShip)
+        this.CurrentSellsItem!.BPAddresses = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses
+      } else {
+        this.openSnackBar(retData.response!, "error", "Error", "red");
+      }
+
+    });
+  }
+
+  openSnackBar(message: string, icon: string, type: string, color: string) {
+    const dialogRef = this.dialog.open(SnackbarsComponent, {
+      hasBackdrop: false,
+      width: '300px',
+      position: {
+        top: '10px',   // Ajusta la posición vertical según sea necesario
+        right: '20px', // Ajusta la posición horizontal según sea necesario
+      },
+      data: { 
+        message: message,
+        icon: icon,
+        type: type,
+        color: color
+      },
+    })
+    setTimeout(() => {
+      dialogRef.close();
+    }, 5000); 
+  }
+
+ 
 
   Sort() {
     this.sortCustomersAlphabetically();
@@ -40,7 +188,7 @@ export class CostumersComponent implements OnInit {
   }
 
   pageSize = 10; 
-  pageSizeOptions: number[] = [5, 10, 20,30]; 
+  pageSizeOptions: number[] = [10,20,30]; 
   currentPage = 0; 
 
 
@@ -49,9 +197,12 @@ onPageChange(event: any): void {
   this.pageSize = event.pageSize;
 }
 
+
+
   editCustomer(customer: any) {
     this.dataSharing.setCustomerData(customer);
-    this.myRouter.navigate(['dashboard/order-customer/edit']);
+    console.log(customer)
+    this.myRouter.navigate(['dashboard/customers-edit']);
   }
 
   removeCustomer(customer: any) {
