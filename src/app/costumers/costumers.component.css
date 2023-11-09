@@ -197,8 +197,8 @@ button {
  button:hover {
   background-position: right center;
   background-size: 200% auto;
-  -webkit-animation: pulse 3s infinite;
-  animation: pulse512 3.5s infinite;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse512 2.5s infinite;
   background: linear-gradient(30deg, #be0c1b, #3a86ff);
  }
  

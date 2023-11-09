@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DocumentLines, Order } from '../models/order';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { DataSharingService } from '../service/data-sharing.service';
@@ -28,7 +28,7 @@ export class OrderEditComponent implements OnInit {
   colorStatus=""
   OrderIndexDB?:any;
 
-  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService,) {
+  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService,private myRouter: Router) {
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
 
@@ -300,8 +300,10 @@ export class OrderEditComponent implements OnInit {
   }
 
   
-
+  backWindow()
+  {
+    this.myRouter.navigate(['dashboard/order-index']);
+  }
   
-
 }
 

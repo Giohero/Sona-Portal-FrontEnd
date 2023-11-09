@@ -13,10 +13,12 @@
           </span>   
         </div>
         <div>
-          <a mat-raised-button color="primary" mat-raised-button class="mobile-button" href="dashboard/order-index">
-            <mat-icon style="transform: rotate(180deg);">play_arrow</mat-icon> Back
-          </a>
-          <button mat-raised-button color="primary" mat-raised-button class="mobile-button save" (click)="updateOrder()"><mat-icon>save</mat-icon> Update</button> 
+          <button mat-raised-button color="primary" (click)="backWindow()">
+            <mat-icon>arrow_back</mat-icon> Back
+          </button>    
+          <button mat-raised-button color="primary" class="mobile-button save" (click)="updateOrder()">
+            <mat-icon>save</mat-icon> Update
+          </button>
         </div>
       </div>
       <ng-container *ngIf="order">
