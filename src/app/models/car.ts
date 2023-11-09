@@ -7,15 +7,17 @@ export class DocumentLines {
     LineTotal?: number;
     U_Comments?: string;
     Icon?:string;
+    LineNum?:number;
 }
 
 export class Order {
     CardCode?: string | null;
     DocDueDate?: string;
-    DocNum?: string;
+    DocNum?: number;
     DocEntry?:string;
     DocDate?: string;
     TaxDate?: string;
+    NumAtCard?: string;
     DocumentLines?: DocumentLines[] | undefined;
     AddressExtension?: AddressExtension | undefined;
 }

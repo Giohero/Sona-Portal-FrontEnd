@@ -268,7 +268,7 @@ export class OrderEditComponent implements OnInit {
         TaxDate: docDate?.toString(),
         AddressExtension: this.order?.AddressExtension,
         DocEntry: this.order?.DocEntry.toString(),
-        DocNum: this.order?.DocNum.toString(),
+        DocNum: this.order?.DocNum,
         DocumentLines: DocumentLinesP!,
         CardCode: this.order?.CardCode
       }
