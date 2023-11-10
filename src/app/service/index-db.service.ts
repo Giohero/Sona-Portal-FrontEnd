@@ -110,6 +110,24 @@ export class IndexDbService {
     }
   }
 
+  async getLastOneIndexCompleteDB(): Promise<any> {
+    try {
+      //Verificar si existe un docnum, para que se vaya con la siguiente
+      const allOrders = await this.Db!.table('orders').toArray();
+      if (allOrders.length > 0) {
+        const lastRecord = allOrders[allOrders.length - 1];
+
+        console.log(lastRecord)
+        return lastRecord;
+      }
+      else
+        return null;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  }
+
   async getAllIndexWDocNumDB(): Promise<any> {
     try {
       // Verificar si existe un docnum, para que se vaya con la siguiente
