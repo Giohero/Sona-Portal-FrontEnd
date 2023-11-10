@@ -221,6 +221,11 @@ export class OrdersComponent {
         this.DocEntryPublish = newDocEntry.toString();
       });
 
+      this.dataSharing.statusWifi$.subscribe((newWifi) => {
+        console.log('llego el cambio a '+newWifi)
+        this.isOnline = newWifi;
+      });
+
     });
 
     // if(this.Cart!.length! > 0)
@@ -841,10 +846,13 @@ export class OrdersComponent {
         this.OrderReviewCopy.User = this.obtainUser();
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
         
-        if(this.isOnline == true && this.Cart!.length > 0)
+        if(this.isOnline == true)
+        {
+          if(this.Cart!.length > 0)
           this.updateOrderCloud('publish', undefined, this.Cart!)
-        else
-          this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
+          else
+            this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
+        }
       }
       else
       {
@@ -857,10 +865,13 @@ export class OrdersComponent {
         console.log(this.OrderIndexDB)
 
         //console.log('deberia de editarlo a SAP y Cosmos')
-        if(this.isOnline == true && this.Cart!.length > 0)
+        if(this.isOnline == true)
+        {
+          if(this.Cart!.length > 0)
           this.updateOrderCloud('', undefined, this.Cart!)
-        else
-          editToCosmosDB(this.OrderReviewCopy)
+          else
+            editToCosmosDB(this.OrderReviewCopy)
+        }
       }
     }
     else if(order !== this.CartOld)
@@ -886,11 +897,13 @@ export class OrdersComponent {
         this.OrderReviewCopy.User = this.obtainUser();
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
 
-        if(this.isOnline == true && this.idcustomer !== '')
+        if(this.isOnline == true)
+        {
+          if(this.idcustomer !== '')
           this.updateOrderCloud('publish', index, order!);
-        else
-          this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
-        
+          else
+            this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
+        }
         ////there was the procces to publish order in cosmos and SAP
 
         // this.OrderReviewCopy = this.OrderReview;
@@ -934,11 +947,13 @@ export class OrdersComponent {
         //this.transactionService.editOrderLog(this.OrderReview,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
         
         ////there was the procces to publish order in cosmos and SAP
-        if(this.isOnline == true && this.idcustomer !== '')
+        if(this.isOnline == true )
+        {
+          if(this.idcustomer !== '')
           this.updateOrderCloud('', index, order!);
-        else
-          editToCosmosDB(this.OrderReviewCopy)
-          
+          else
+            editToCosmosDB(this.OrderReviewCopy)
+        }
         //console.log(this.OrderIndexDB)
         //console.log(this.OrderIndexDB.id)
         //Cuando pase el webworker, agregue el docnum

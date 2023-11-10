@@ -113,6 +113,12 @@ export class OrderEditComponent implements OnInit {
     this.dataSharing.TransactionIndexDB$.subscribe((newTransIndex) => {
       this.TransactionIndexDB = newTransIndex;
     });
+
+    this.dataSharing.statusWifi$.subscribe((newWifi) => {
+      console.log('llego el cambio a '+newWifi)
+      this.isOnline = newWifi;
+    });
+
   }
 
   openSnackBar(message: string, icon: string, type: string, color: string) {
