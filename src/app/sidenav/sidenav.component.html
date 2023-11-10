@@ -57,7 +57,7 @@
               <span (click)="logout()" class="link-name"></span>
             </div>
           </div>
-          <div class="user-info">
+          <div class="user-info" *ngIf="!isSidebarClosed">
             <div class="user-email" *ngIf="currentUserEmail">
               {{ currentUserEmail }}
             </div>
