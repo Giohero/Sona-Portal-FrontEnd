@@ -10,7 +10,15 @@
   background-color: #a62934; /* Background color */
   padding: 5px 10px; 
   border-radius: 5px; 
-  margin-right: 10px; 
+  margin-right: 1px; 
+  align-items: center; 
+  display: table;
+}
+.doc-num-container-drafts{
+  background-color: #1e74f7; /* Background color */
+  padding: 5px 10px; 
+  border-radius: 5px; 
+  margin-right: 1px; 
   align-items: center; 
   display: table;
 }
@@ -19,9 +27,10 @@
   color: white; /* Font color */
   display: table-cell; 
   vertical-align: middle;
+  font-size: 18px;
 }
 .left-align {
-  text-align: left;
+  text-align: center;
   font-weight: bold;
 }
 .card-info {
@@ -33,11 +42,44 @@
   align-items: center;
   font-weight: bold;
 }
+.filter-button{
+  font-size: 12px; /* Puedes ajustar el tamaño según tus preferencias */
+  padding: 5px 10px; /* Ajusta el relleno (padding) según tus preferencias */
+}
 
 .label-icon {
   font-size: 24px;
   color: #FF5722; /* Puedes cambiar el color a tu preferencia */
 }
+.cloudid-icon{
+  font-size: 24px;
+  color: #1e74f7; /* Puedes cambiar el color a tu preferencia */
+}
+/* Agrega estas reglas CSS para posicionar el icono de la nube */
+.mat-card-header {
+  position: relative;
+}
+
+.cloudid-icon {
+  position: absolute;
+  top: 5px; /* Ajusta la posición vertical según sea necesario */
+  right: 5px; /* Ajusta la posición horizontal según sea necesario */
+}
+
+/* Estilos adicionales para el resto de la tarjeta */
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+.doc-num-container {
+  margin-right: 10px;
+}
+
+.cloud-icon-container {
+  margin-top: 5px;
+}
+
 /* Otros estilos que puedas necesitar */
 
 
@@ -57,6 +99,8 @@
   justify-content: center;
   padding: 10px;
   min-height: 250px; /* Ajusta la altura deseada */
+  width: 400px;
+  height: 300px;
 }
 
 .Cart:hover {
@@ -123,8 +167,11 @@ h2 {
   padding: 10px;
   border-radius: 5px;
   margin-left: 110px;
+  margin-bottom: 10px;
 }
-
+.filter-buttons, .iconsearch {
+  margin-right: 10px; /* Ajusta el espacio entre los botones de filtrado y los botones de búsqueda/recarga */
+}
 .searchOrder {
   padding: 5px;
   border: 1px solid #ccc;
@@ -211,5 +258,52 @@ button {
 
 /* Media query para iPads */
 @media (min-width: 768px) and (max-width: 1023px) {
-  /* Agrega estilos específicos si es necesario para iPads */
+  /* Estilos específicos para iPads */
+
+  .Cart {
+    width: calc(95% - 1px);
+    margin: 10px;
+    padding: 8px;
+    min-height: 200px; /* Ajusta la altura deseada */
+  }
+
+  .Cart:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+  }
+
+  .labelSearch {
+    margin-left: 0;
+  }
+
+  .orderSection {
+    font-size: 15px; /* Ajusta el tamaño de fuente */
+  }
+
+  .mat-card {
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    margin-left: 15px;
+  }
+
+  .filter-button {
+    font-size: 10px; /* Ajusta el tamaño según tus preferencias */
+    padding: 3px 8px; /* Ajusta el relleno según tus preferencias */
+  }
+
+  .searchOrder {
+    font-size: 12px;
+    height: 30px;
+    width: 60%;
+  }
+  .label-icon {
+    font-size: 14px;
+    color: #FF5722; /* Puedes cambiar el color a tu preferencia */
+  }
+
+  /* Puedes ajustar más estilos según sea necesario para iPads */
 }
+
+

@@ -42,6 +42,16 @@ export class OrderIndexComponent {
     });
 
   }
+  showRealOrdersFlag: boolean = true; // Bandera para mostrar órdenes normales o de borrador
+
+  // Métodos
+  showRealOrders() {
+    this.showRealOrdersFlag = true;
+  }
+
+  showDraftOrders() {
+    this.showRealOrdersFlag = false;
+  }
 
   ngOnInit(): void {
 

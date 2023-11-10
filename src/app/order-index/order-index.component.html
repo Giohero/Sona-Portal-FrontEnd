@@ -12,13 +12,20 @@
           <div class="progress"></div>
         </div>
       </button>
+
+      <!-- Botones para filtrar entre órdenes normales y de borrador -->
+      <div class="filter-buttons">
+        <button class="filter-button" (click)="showRealOrders()">Orders SAP</button>
+        <button class="filter-button" (click)="showDraftOrders()">Draft Orders</button>
+      </div>
     </div>
 
     <!-- Sección para órdenes normales -->
-    <div *ngIf="!isLoading && ListOrders.length > 0">
+    <div *ngIf="!isLoading && showRealOrdersFlag && ListOrders.length > 0">
       <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
         <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;">
           <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
+            <!-- Contenido de la tarjeta para órdenes normales -->
             <mat-card-header>
               <div class="doc-num-container">
                 <h1 class="doc-num">{{ Order.DocNum }}</h1>
@@ -47,18 +54,19 @@
     </div>
 
     <!-- Sección para órdenes de borrador -->
-    <div *ngIf="!isLoading && ListOrdersDrafts.length > 0">
+    <div *ngIf="!isLoading && !showRealOrdersFlag && ListOrdersDrafts.length > 0">
       <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
         <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrdersDrafts; let listIndex=index;">
           <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
+            <!-- Contenido de la tarjeta para órdenes de borrador -->
             <mat-card-header>
-              <div class="doc-num-container">
+              <div class="doc-num-container-drafts">
                 <h1 class="doc-num">{{ Order.id }}</h1>
               </div>
               <div class="card-info">
                 <div class="label-card">
-                  <mat-icon class="label-icon">cloud_off</mat-icon>
-                  {{ Order.DocDueDate }} <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
+                  <mat-icon class="cloudid-icon">cloud_off</mat-icon>
+                  <!-- {{ Order.DocDueDate }}  -->
                 </div>
                 <br>
                 <!-- Coloca aquí las propiedades adecuadas de las órdenes de borrador -->
@@ -66,14 +74,14 @@
             </mat-card-header>
             <mat-card-content class="left-align">
               <br>
-              <label>{{ Order.TaxDate }}</label> <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
+              <label>{{ Order.DocDueDate }}</label> <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
               <br>
               <label>{{ Order.CardCode }}</label> <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
             </mat-card-content>
           </mat-card>
         </div>
       </div>
+      <br><br>
     </div>
-    <br><br>
   </div>
 </div>
