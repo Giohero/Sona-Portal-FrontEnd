@@ -16,6 +16,7 @@ import { DialogAddressComponent } from '../dialog-address/dialog-address.compone
 })
 export class CostumersComponent implements OnInit {
   customerData: BusinessPartner[] = [];
+  isAscending: boolean = true;
   filteredCustomerData: BusinessPartner[] = [];
   isLoading = false;
   ListCustomers!: BusinessPartner[] ;
@@ -176,14 +177,21 @@ export class CostumersComponent implements OnInit {
   }
 
  
+  toggleSort() {
+    // Cambia el orden actual
+    this.isAscending = !this.isAscending;
+    this.sortCustomersAlphabetically();
+    this.customerData = [...this.customerData];
+  }
 
   Sort() {
     this.sortCustomersAlphabetically();
   }
 
   sortCustomersAlphabetically() {
-    this.customerData.sort((a, b) => {
-      return a.CardName.localeCompare(b.CardName);
+    this.customerData = this.customerData.slice().sort((a, b) => {
+      const orderFactor = this.isAscending ? 1 : -1;
+      return orderFactor * a.CardName.localeCompare(b.CardName);
     });
   }
 
