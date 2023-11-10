@@ -769,7 +769,7 @@ export class OrdersComponent {
   RemoveToCart(index: number){
     this.Cart!.splice(index, 1);
     ////////this.Cart.removeItem(index);
-    this.changeOrder(index,this.Cart!, '');
+    this.changeOrder(undefined,this.Cart!, '');
     this.cleanSearching();
 
     if(this.Cart!.length === 0)

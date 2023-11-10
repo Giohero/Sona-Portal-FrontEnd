@@ -5,6 +5,9 @@ import { IndexDbService } from '../service/index-db.service';
 import { DataSharingService } from '../service/data-sharing.service';
 import { TransactionlogService } from '../service/transactionlog.service';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
+import { EditToCosmosDB, getFromCosmosDBByIndexId } from '../service/cosmosdb.service';
+import { webWorker } from '../app.component';
+import { Order } from '../models/order';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,28 +27,44 @@ export class DashboardComponent {
 
       this.openSnackBar('You\'re online.', "wifi", "Connected!", "green");
       
-      var orderIndex = dataSharing.getOrderIndexDB();
-      var orderIndexLastVersion = orderIndex.transaction_order[orderIndex.transaction_order.length - 1].order;
       console.log('Este es el de Index que trajimos del servicio')
-      console.log(orderIndex)
-      if(orderIndex ===  null)
-         orderIndex = this.OrderIndexDB;
-      // if(orderIndex == null)
-      // {
-      //   orderIndex = await indexDB.getLastOneDB();
-      //   orderIndexLastVersion = orderIndex.transaction_order[orderIndex.transaction_order.length - 1].order;
-      //   dataSharing.setOrderIndexDB(orderIndex)
-      //   console.log('Este es el de Cosmos')
-      //   console.log(orderIndex)
-      // }
+      console.log(this.OrderIndexDB)
+      var orderIndexLastVersion:any;
 
+      var orderIndex = dataSharing.getOrderIndexDB(); //Obtian in Service
+      console.log(orderIndex)
+       
+      if(orderIndex === undefined)
+         orderIndex = this.OrderIndexDB; //Obtain in parameter 
+      console.log(orderIndex)
       
-      /*if(orderIndex != null)
+      if (JSON.stringify(orderIndex) === JSON.stringify({})) 
+        orderIndex = await indexDB.getLastOneIndexCompleteDB(); //obtain since index db
+      console.log(orderIndex)
+      
+      console.log(orderIndex)
+
+      if(orderIndex != undefined)
+      {
+        dataSharing.setOrderIndexDB(orderIndex)
+        console.log('Este es el de Indedx ultimo')
+        console.log(orderIndex)
+        
+        orderIndexLastVersion = await indexDB.getLastOneDB();
+        console.log(orderIndexLastVersion)
+        if(orderIndexLastVersion === undefined)
+          orderIndexLastVersion = orderIndex;
+      }
+      else
+        this.openSnackBar('Orders updated.', "wifi", "Update!", "green");
+      
+        
+      if(orderIndex != null)
       {
         console.log(orderIndex.id)
         var orderCosmos = await getFromCosmosDBByIndexId(orderIndex.id, 'order_log');
-        // console.log('este es el index')
-        // console.log(orderIndex)
+        console.log('este es el index')
+        console.log(orderIndex)
         console.log('este es el cosmos')
         console.log(orderCosmos)
 
@@ -61,38 +80,23 @@ export class DashboardComponent {
           //orderCosmos.DocNum = orderIndex.DocNum;
           //orderCosmos.DocEntry = orderIndex.DocEntry;
 
-          this.TransactionIndexDB.id = '';
-          transLog.AddTransactionLogDirectToCosmos(this.TransactionIndexDB)
+          console.log(this.TransactionIndexDB)
+          if (JSON.stringify(this.TransactionIndexDB) !== JSON.stringify({})) 
+          {
+            //this.TransactionIndexDB 
+            this.TransactionIndexDB.id = '';
+            transLog.AddTransactionLogDirectToCosmos(this.TransactionIndexDB)
+          }
+          
           indexDB.EditOrderLogDirectToCosmos(orderIndex.id, orderIndex);
           console.log(orderCosmos)
           console.log(orderCopyIndex)
           if(orderCosmos.DocumentLines != null)
           { //falta hacer pruebas con la orden 
-            console.log('Deberia editar la orden ')
-            webWorker("editOrder", orderCosmos).then((data) => {
-              //console.log('Valor devuelto por el Web Worker:', data);
-              if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
-              {
-                //this.Cart![0].Icon= 'cloud_done';
-                //const orderPublish: Order = JSON.parse(data.response);
-                orderIndexLastVersion.DocumentLines.forEach((x:any) => x.Icon = "cloud_done")
-                
-                dataSharing.updateCart(orderIndexLastVersion.DocumentLines);
-                dataSharing.updateIdsOrder(orderCosmos.DocNum, orderCosmos.DocEntry)
-                dataSharing.setCartData(orderIndexLastVersion.DocumentLines);
-                //dataSharing.setOrderReview(orderPublish)
-                // console.log("Pasan los document del cloud")
-                // console.log(orderIndex.DocumentLines)
-
-              }
-              else{
-                this.openSnackBar(data.response!, "error", "Error", "red");
-                //console.error('Error:', data.response)
-              }
-            })
-            .catch((error) => {
-              this.openSnackBar(error!, "error", "Error", "red");
-            });
+            if(orderCosmos.DocNum !== undefined )
+              this.PublishOrderSAP(orderIndexLastVersion,orderCosmos,orderIndex)
+            else
+              this.EditOrderSAP(orderCosmos,orderIndexLastVersion)
           }
         }
         else
@@ -105,56 +109,25 @@ export class DashboardComponent {
           orderCopyIndex.transaction_order = orderCopyIndex.transaction_order;
           orderCopyIndex.id  = await indexDB.EditOrderLogDirectToCosmos( orderCopyIndex.IdIndex,orderCopyIndex);
 
-          this.TransactionIndexDB.id = '';
-          //this.TransactionIndexDB.DocNum checar
-          transLog.AddTransactionLogDirectToCosmos(this.TransactionIndexDB)
+          console.log(this.TransactionIndexDB)
+          if (JSON.stringify(this.TransactionIndexDB) !== JSON.stringify({})) 
+          {
+            this.TransactionIndexDB.id = '';
+            transLog.AddTransactionLogDirectToCosmos(this.TransactionIndexDB)
+          }
           //console.log(orderIndexLastVersion)
           //console.log(orderCopyIndex)
           if(orderCopyIndex.DocumentLines != null)
           { //poner un metodo donde verifique que exista la orden y solo se actualice, sino que se publique
-            console.log('Deberia publicar la orden')
-            webWorker("postOrder", orderIndexLastVersion).then((data) => {
-              //console.log('Valor devuelto por el Web Worker:', data);
-              if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
-              {
-                //this.Cart![0].Icon= 'cloud_done';
-                const orderPublish: Order = JSON.parse(data.response);
-                orderIndexLastVersion.DocumentLines.forEach((x:any) => x.Icon = "cloud_done")
-                
-                console.log(orderPublish.DocEntry)
-                dataSharing.setCartData(orderIndexLastVersion.DocumentLines);
-                dataSharing.updateIdsOrder(orderPublish.DocNum, orderPublish.DocEntry)
-                dataSharing.updateCart(orderIndexLastVersion.DocumentLines);
-                orderCopyIndex.DocNum = orderPublish.DocNum;
-                orderCopyIndex.DocEntry = orderPublish.DocEntry;
-                //orderCopyIndex.id = idCosmos;
-
-                if(orderCopyIndex.id != null || orderCopyIndex.id != undefined)
-                  EditToCosmosDB(orderCopyIndex, 'order_log')
-                //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
-                this.indexDB.editOrderIndex(orderIndex.id,orderCopyIndex!.DocNum!, orderCopyIndex.DocEntry, orderCopyIndex!, orderIndexLastVersion.CardCode, orderIndexLastVersion.DocumentLines, [])
-                orderIndex = dataSharing.getOrderIndexDB();
-                dataSharing.updateIndexOrder(orderIndex)
-                //dataSharing.setOrderReview(orderPublish)
-                // console.log("Pasan los document del cloud")
-                console.log(orderIndex)
-
-              }
-              else{
-                this.openSnackBar(data.response!, "error", "Error", "red");
-                //console.error('Error:', data.response)
-              }
-            })
-            .catch((error) => {
-              this.openSnackBar(error!, "error", "Error", "red");
-            });
+            if(orderCosmos.DocNum !== undefined)
+              this.PublishOrderSAP(orderIndexLastVersion,orderCosmos,orderIndex)
+            else
+              this.EditOrderSAP(orderCosmos,orderIndexLastVersion)
           }
             
           //webWorker("editOrder", orderIndex)
         }
-      }*/
-
-      
+      }
 
   });
 
@@ -195,6 +168,73 @@ export class DashboardComponent {
     setTimeout(() => {
       dialogRef.close();
     }, 5000); 
+  }
+
+  PublishOrderSAP(orderIndexLastVersion:any, orderCopyIndex:any, orderIndex:any){
+    webWorker("postOrder", orderIndexLastVersion).then((data) => {
+      console.log('Deberia publicar la orden')
+      //console.log('Valor devuelto por el Web Worker:', data);
+      if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+      {
+        //this.Cart![0].Icon= 'cloud_done';
+        const orderPublish: Order = JSON.parse(data.response);
+        orderIndexLastVersion.DocumentLines.forEach((x:any) => x.Icon = "cloud_done")
+        
+        console.log(orderPublish.DocEntry)
+        this.dataSharing.setCartData(orderIndexLastVersion.DocumentLines);
+        this.dataSharing.updateIdsOrder(orderPublish.DocNum, orderPublish.DocEntry)
+        this.dataSharing.updateCart(orderIndexLastVersion.DocumentLines);
+        orderCopyIndex.DocNum = orderPublish.DocNum;
+        orderCopyIndex.DocEntry = orderPublish.DocEntry;
+        //orderCopyIndex.id = idCosmos;
+
+        if(orderCopyIndex.id != null || orderCopyIndex.id != undefined)
+          EditToCosmosDB(orderCopyIndex, 'order_log')
+        //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
+        this.indexDB.editOrderIndex(orderIndex.id,orderCopyIndex!.DocNum!, orderCopyIndex.DocEntry, orderCopyIndex!, orderIndexLastVersion.CardCode, orderIndexLastVersion.DocumentLines, [])
+        orderIndex = this.dataSharing.getOrderIndexDB();
+        this.dataSharing.updateIndexOrder(orderIndex)
+        //dataSharing.setOrderReview(orderPublish)
+        // console.log("Pasan los document del cloud")
+        console.log(orderIndex)
+
+      }
+      else{
+        this.openSnackBar(data.response!, "error", "Error", "red");
+        //console.error('Error:', data.response)
+      }
+    })
+    .catch((error) => {
+      this.openSnackBar(error!, "error", "Error", "red");
+    });
+  }
+
+  EditOrderSAP(orderCosmos: any, orderIndexLastVersion:any){
+    webWorker("editOrder", orderCosmos).then((data) => {
+      console.log('Deberia editar la orden ')
+      //console.log('Valor devuelto por el Web Worker:', data);
+      if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+      {
+        //this.Cart![0].Icon= 'cloud_done';
+        //const orderPublish: Order = JSON.parse(data.response);
+        orderIndexLastVersion.DocumentLines.forEach((x:any) => x.Icon = "cloud_done")
+        
+        this.dataSharing.updateCart(orderIndexLastVersion.DocumentLines);
+        this.dataSharing.updateIdsOrder(orderCosmos.DocNum, orderCosmos.DocEntry)
+        this.dataSharing.setCartData(orderIndexLastVersion.DocumentLines);
+        //dataSharing.setOrderReview(orderPublish)
+        // console.log("Pasan los document del cloud")
+        // console.log(orderIndex.DocumentLines)
+
+      }
+      else{
+        this.openSnackBar(data.response!, "error", "Error", "red");
+        //console.error('Error:', data.response)
+      }
+    })
+    .catch((error) => {
+      this.openSnackBar(error!, "error", "Error", "red");
+    });
   }
 
 
