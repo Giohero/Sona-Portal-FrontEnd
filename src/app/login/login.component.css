@@ -127,7 +127,7 @@ input{
   right: 0;
   color: rgb(230, 228, 228);
   font-family: 'Courier New', Courier, monospace;
-  font-size: 80px;
+  font-size: 60px;
   text-align: right;
   letter-spacing: 2px;
   margin: 0;
@@ -159,7 +159,7 @@ input{
 }
 
 .margin{
-    margin:50px;
+    margin:-1px;
     text-align: center;
     filter: contrast(70%);
     color: transparent;
@@ -224,52 +224,66 @@ input:focus {
     /* background-image:url('https://static.vecteezy.com/system/resources/previews/001/376/845/original/wood-table-top-with-blurred-background-free-photo.jpg'); */
 }
 
-@media only screen and (max-width: 768px) {
-    /* Aquí añades los estilos específicos para iPad mini */
-    /* Por ejemplo: */
-    body {
-      font-size: 14px; /* Cambiar el tamaño de la fuente para adaptarse al dispositivo */
-    }
-
-    .mat-card-wrapper {
-        /* flex-direction: column; */
-    }
-
-    .mat-card-transparent p {
-      position: absolute;
-      word-wrap: break-word;
-      bottom: 0;
-      right: 0;
-      color: rgb(230, 228, 228);
-      background: transparent;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 30px;
-      text-align: right;
-      letter-spacing: 2px;
-      margin: 0;
-      padding-right: 0px;
-      white-space: normal;
-      padding-bottom: 20px; /* Espacio alrededor del texto */
-      writing-mode: vertical-rl; /* Texto de arriba abajo */
-      text-align: left;
-      text-orientation: upright;
-    }
-
-    .mat-card-white {
-      /* background-color: #fff;  */
-      background-color: rgba(255, 255, 255, 0.9);
-      width: 80%; 
-      z-index: 1; 
-      color: #397eac;
-      min-width: 0; 
-      width: fit-content; 
-      box-sizing: border-box; 
-      margin: 10px;
-      padding: 10px;
-      align-items: center;
-    }
-
-    .mat-card-transparent {
-     
-    }
+@media only screen and (max-width: 480px) {
+  .mat-card-wrapper {
+    flex-direction: column;
+    padding-left: 20px;
+    position: center;
+    display: flex;
+    width: 90%;
+    max-width: 1200px;
   }
+
+  .mat-card-transparent p {
+    font-size: 20px;
+    padding-bottom: 10px;
+  }
+
+  .mat-card-white {
+    width: 90%;
+  }
+
+  .button,
+  .buttonSocial {
+    width: 80%;
+  }
+
+  mat-form-field {
+    width: calc(100% - 6px); 
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .mat-card-white {
+    width: 90%;
+  }
+
+  .mat-card-transparent p {
+    position: absolute;
+    word-wrap: break-word;
+    bottom: 0;
+    right: 0;
+    color: rgb(230, 228, 228);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 50px;
+    text-align: right;
+    letter-spacing: 2px;
+    margin: 0;
+    padding-right: 0px;
+    white-space: normal;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    border: 4px solid #ffffff;
+    border-radius: 20px;
+  }
+
+  mat-form-field {
+    width: calc(100% - 6px); 
+  }
+
+  .button {
+    width: 80%; 
+    max-width: 300px; 
+  }
+}
+
