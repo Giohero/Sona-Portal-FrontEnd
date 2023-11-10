@@ -92,8 +92,11 @@ export class OrderIndexComponent {
 
   selectMatCard(order:Order)
   {
-    this.dataSharing.setOrderCReview(order)
-    //this.dataSharing.setOrderIndexDB(order)
+    if(order.DocNum === undefined)
+      this.dataSharing.setOrderIndexDB(order)
+    else
+      this.dataSharing.setOrderCReview(order)
+    
     console.log(order)
     this.myRouter.navigate(['dashboard/order-edit']);
   }

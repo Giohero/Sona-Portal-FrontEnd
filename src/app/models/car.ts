@@ -12,6 +12,7 @@ export class DocumentLines {
 
 export class Order {
     CardCode?: string | null;
+    CardName?: string | null;
     DocDueDate?: string;
     DocNum?: number;
     DocEntry?:string;

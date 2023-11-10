@@ -6,13 +6,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DocumentLines } from '../models/car';
+import { AddressExtension, DocumentLines, Order } from '../models/car';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
 import { FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-
+import { webWorker } from '../app.component';
+import { MsalService } from '@azure/msal-angular';
+import { editToCosmosDB, publishToCosmosDB } from '../service/cosmosdb.service';
 
 @Component({
   selector: 'app-orders',
@@ -22,68 +24,98 @@ import { DatePipe } from '@angular/common';
 })
 
 export class OrdersComponent {
+
+  tax!: FormControl;
+  delivery!: FormControl;
+  DocNumPublish? = 0;
+  ShowEdit = false;
+  showEditInputs = true;
+  saveUpdates = false;
+  showAddButton = true;
+  isLoading=true;
+  minDate?: Date;
+  maxDate?: Date;
+  idIndex: number = 0;
+  
+  ////Customer Data///////
   ListCustomers!: BusinessPartner[] ;
-  searchText = '';
   idcustomer = '';
-  ActiveAddButton= true;
-  CurrentSellsItem?: BusinessPartner | undefined;
+  inputSearchCutomer = false;
+  searchText = '';
+  phone1?: string | undefined;
+  email?: string | undefined;
+  AddressData: any;
+  option!:number;
+
+  CurrentSellsBP?: BusinessPartner | undefined;
   billingAddress?: string | undefined;
   notes?: string | undefined;
   shippingAddress?: string | undefined;
-  phone1?: string | undefined;
-  email?: string | undefined;
   shippingType?: string | undefined;
   taxId?: string | undefined;
-  inputSearchCutomer = false;
-  saveUpdates = false;
-  showAddButton = true;
-  showEditInputs = true;
-  AddressShip: any;
   Address: any;
-  Cart: DocumentLines[] | undefined;
   customerBack: any;
-  isLoading=true;
   rowShip=0;
   rowBill=0;
-  ShowEdit = false;
-  title=""
-  minDate?: Date;
-  maxDate?: Date;
-  tax!: FormControl;
-  delivery!: FormControl;
+  
+  /////Cart Data///////
+  CartOld: DocumentLines[] | undefined;
+  elementCart:any;
+  ListItems!: Value[] ;
+  CurrentSellsItem: Value | undefined;
+  searchTextItem = '';
+  ItemName = "";
+  Quantity = 0;
+  Price = "";
+  Cart: DocumentLines[] | undefined;
+  OrderReview: Order = new Order();
+  OrderIndexDB?:any;
+  DocEntryPublish? = '';
+  actualicon : string ='cloud_queue';
+  OrderReviewCopy: any;
+  idCosmos = '';
+  LineNumber=0;
+  isOnline=true;
 
-  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe) 
+  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService) 
   {
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
     this.tax = new FormControl({ value: new Date(), disabled: true });
     this.delivery = new FormControl(new Date());
 
+    //this.customerBack = this.dataSharing.getCustomerData();
+    //this.Cart = this.dataSharing.getCartData();
 
-    this.customerBack = this.dataSharing.getCustomerData();
-    this.Cart = this.dataSharing.getCartData();
-    
-    
+    console.log(this.OrderReview)
+    // const routeParams = this.route.snapshot.paramMap;
+    // const pageUrl = routeParams.get('type');
 
-    // if(this.customerBack === undefined)
-    //   this.getDataIndex();
+    //this.Cart = dataSharing.getCartData();
+    //this.OrderIndexDB = dataSharing.getOrderIndexDB();
+    this.LineNumber=0;
+    // if(this.Cart === undefined)
+    //     this.getDataIndex();
+    if(this.Cart == undefined)
+      this.Cart = []
+    else
+      this.CartOld = JSON.parse(JSON.stringify(this.Cart));
 
-    const routeParams = this.route.snapshot.paramMap;
-    const pageUrl = routeParams.get('type');
 
-    if(pageUrl === 'new-order')
-    {
-      this.title = "New Order";
-      this.ShowEdit = false
-    }
-    else  
-    {
-      this.title = "Edit Customer";
-      this.ShowEdit = true
-    }
+    // if(pageUrl === 'new-order')
+    // {
+    //   this.title = "New Order";
+    //   this.ShowEdit = false
+    // }
+    // else  
+    // {
+    //   this.title = "Edit Customer";
+    //   this.ShowEdit = true
+    // }
     
   }
   
+  ////////////// Methods Undefindeds ////////////
   async getDataIndex(){
     const orderComplete = await this.indexDB.getLastOneDB();
     // console.log("pasa aqui")
@@ -101,9 +133,55 @@ export class OrdersComponent {
     }
   }
 
+  nextWindow()
+  { 
+    var customer ={
+      CardCode: this.idcustomer,
+      CardName: this.searchText,
+      Notes: this.notes,
+      Email: this.email,
+      ShipType: this.shippingType,
+      Addresses:  this.CurrentSellsBP?.BPAddresses.filter(x => x.AddressType != 'bo_BillTo')
+    }
+
+    if(this.idcustomer)
+    {
+      this.dataSharing.setCartData(this.Cart);
+      this.dataSharing.setCustomerData(customer);
+
+      //console.log(customer)
+      this.myRouter.navigate(['dashboard/cart']);
+    }
+    else
+    {
+      this.openSnackBar("You Need Add a Customer", "error", "Error", "red");
+    }
+  }
+
+  backWindow()
+  {
+    this.myRouter.navigate(['dashboard/costumers']);
+  }
+ //////////////////////////////////////////////////
+
+
   ngOnInit(): void {
     //this.ShowEdit = "none"
-    
+    this.elementCart = "info-card image-card";
+    this.orderService.getItems().subscribe((retData) => {
+
+      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+
+        this.ListItems = JSON.parse(retData.response!);
+        //console.log(this.ListItems)
+      } else {
+
+        this.openSnackBar(retData.response!, "error", "Error", "red");
+
+      }
+
+    });
+
     this.orderService.getCustomer().subscribe((retData) => {
 
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
@@ -129,21 +207,39 @@ export class OrdersComponent {
         this.openSnackBar(retData.response!, "error", "Error", "red");
       }
 
+      this.dataSharing.cartData$.subscribe((newCart) => {
+        this.Cart = newCart;
+        //console.log('actualizando carrito')
+        //console.log(this.Cart)
+      });
+  
+      this.dataSharing.docNum$.subscribe((newDocNum) => {
+        this.DocNumPublish = newDocNum;
+      });
+  
+      this.dataSharing.docEntry$.subscribe((newDocEntry) => {
+        this.DocEntryPublish = newDocEntry.toString();
+      });
+
     });
 
-    const element = document.getElementById('NextB');
-    //console.log(this.title)
-    if(this.title == "New Order")
-    {
-      setTimeout(() => {
-        const element = document.getElementById('NextB');
-        if (element) {
-          element.classList.add('right-button');
-        }
-      }, 100);
-    }
-    
+    // if(this.Cart!.length! > 0)
+    // {
+    //   const element = document.getElementById('Cart');
+    //     element!.classList.remove('image-card');
+    // }
 
+    //const element = document.getElementById('NextB');
+    //console.log(this.title)
+    // if(this.title == "New Order")
+    // {
+    //   setTimeout(() => {
+    //     const element = document.getElementById('NextB');
+    //     if (element) {
+    //       element.classList.add('right-button');
+    //     }
+    //   }, 100);
+    // }
   }
   
   openSnackBar(message: string, icon: string, type: string, color: string) {
@@ -166,47 +262,63 @@ export class OrdersComponent {
     }, 5000); 
   }
 
-
-  nextWindow()
-  { 
-    var customer ={
-      CardCode: this.idcustomer,
-      CardName: this.searchText,
-      Notes: this.notes,
-      Email: this.email,
-      ShipType: this.shippingType,
-      Addresses:  this.CurrentSellsItem?.BPAddresses.filter(x => x.AddressType != 'bo_BillTo')
-    }
-
-    if(this.idcustomer)
+  finishOrder(){
+    if(this.DocNumPublish === 0)
     {
-      this.dataSharing.setCartData(this.Cart);
-      this.dataSharing.setCustomerData(customer);
+      this.openSnackBar("Id Index: "+ this.OrderIndexDB.id, "check_circle", "Order Storage Locally", "blue");
+      this.myRouter.navigate(['dashboard/order-index'])
 
-      //console.log(customer)
-      this.myRouter.navigate(['dashboard/cart']);
     }
-    else
-    {
-      this.openSnackBar("You Need Add a Customer", "error", "Error", "red");
+    else{
+      this.openSnackBar("DocNum: "+ this.OrderReview!.DocNum, "check_circle", "Order Completed!", "green");
+      this.myRouter.navigate(['dashboard/order-index'])
     }
   }
 
-  backWindow()
+
+  //////////////// Methods Customer /////////////////////////
+  Cancel()
   {
-    this.myRouter.navigate(['dashboard/costumers']);
+    this.showEditInputs = true;
+    this.saveUpdates = false;
+  }
+
+  EditInputs()
+  {
+    this.showEditInputs = false;
+    this.saveUpdates = true;
+  }
+
+  changeCustomer()
+  {
+    this.inputSearchCutomer = false;
+    this.showAddButton = true;
+    this.billingAddress = '';
+    this.shippingAddress = '';
+    this.searchText = '';
+    this.notes = '';
+    this.shippingType = '';
+    this.phone1 = '';
+    this.email = '';
+    this.taxId = '';
+    this.CurrentSellsItem = undefined;
+    this.idcustomer= '';
+    this.showEditInputs = true;
+    this.saveUpdates = false;
+    this.AddressData = []
   }
 
   onSelectCustomer(selectedData:any){
     //console.log(this.customerBack.CardName)
-    this.CurrentSellsItem = this.ListCustomers.find(x => x.CardName === selectedData || x.CardCode === selectedData);
+    this.CurrentSellsBP = this.ListCustomers.find(x => x.CardName === selectedData || x.CardCode === selectedData);
     //console.log(this.CurrentSellsItem);
     this.inputSearchCutomer = true;
     this.showAddButton = false;
-    if(this.CurrentSellsItem!.BPAddresses.length > 0)
+    if(this.CurrentSellsBP!.BPAddresses.length > 0)
     {
-      var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
-      var GetShip = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
+      var GetBill = this.CurrentSellsBP?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
+      var GetShip = this.CurrentSellsBP?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
+      this.AddressData = this.CurrentSellsBP?.BPAddresses.filter(x => x.AddressType == 'bo_ShipTo');
       this.rowBill = parseFloat(GetBill!.RowNum)
       this.rowShip = parseFloat(GetShip!.RowNum)
 
@@ -242,33 +354,16 @@ export class OrdersComponent {
       this.shippingAddress = '';
     }
 
-    this.searchText = this.CurrentSellsItem!.CardName;
-    this.notes = this.CurrentSellsItem?.Notes;
-    this.shippingType = this.CurrentSellsItem?.ShippingType;
-    this.phone1 = this.CurrentSellsItem?.Phone1;
-    this.email = this.CurrentSellsItem?.EmailAddress;
-    this.taxId = this.CurrentSellsItem?.FederalTaxId;
-    this.idcustomer = this.CurrentSellsItem!.CardCode;
+    this.searchText = this.CurrentSellsBP!.CardName;
+    this.notes = this.CurrentSellsBP?.Notes;
+    this.shippingType = this.CurrentSellsBP?.ShippingType;
+    this.phone1 = this.CurrentSellsBP?.Phone1;
+    this.email = this.CurrentSellsBP?.EmailAddress;
+    this.taxId = this.CurrentSellsBP?.FederalTaxId;
+    this.idcustomer = this.CurrentSellsBP!.CardCode;
     this.isLoading=false
-    
-  }
 
-  changeCustomer()
-  {
-    this.inputSearchCutomer = false;
-    this.showAddButton = true;
-    this.billingAddress = '';
-    this.shippingAddress = '';
-    this.searchText = '';
-    this.notes = '';
-    this.shippingType = '';
-    this.phone1 = '';
-    this.email = '';
-    this.taxId = '';
-    this.CurrentSellsItem = undefined;
-    this.idcustomer= '';
-    this.showEditInputs = true;
-    this.saveUpdates = false;
+    this.changeOrder(undefined, undefined, 'customer')
     
   }
 
@@ -333,23 +428,11 @@ export class OrdersComponent {
   this.saveUpdates = false;
   }
 
-  Cancel()
-  {
-    this.showEditInputs = true;
-    this.saveUpdates = false;
-  }
-
-  EditInputs()
-  {
-    this.showEditInputs = false;
-    this.saveUpdates = true;
-  }
-
   UpdateAddress(type:string, row:number){
     //console.log(this.CurrentSellsItem?.BPAddresses)
     //console.log(type)
     //console.log(row)
-    var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.RowNum == row.toString());
+    var GetBill = this.CurrentSellsBP?.BPAddresses.find(x => x.RowNum == row.toString());
     const dialogRef = this.dialog.open(DialogAddressComponent, {
       height: 'auto',
       width: '90%',
@@ -406,8 +489,8 @@ export class OrdersComponent {
             else
               this.billingAddress = this.Address!.AddressName +' '+ this.Address!.Street  +' '+ this.Address!.City +' '+ this.Address!.State +' '+ this.Address!.Country +' '+ this.Address!.ZipCode;
 
-            const indexAddress = this.CurrentSellsItem!.BPAddresses!.findIndex(x => x.AddressType == type && x.RowNum == row.toString());
-            this.CurrentSellsItem!.BPAddresses[indexAddress] = CustomerAdd.BPAddresses[0];
+            const indexAddress = this.CurrentSellsBP!.BPAddresses!.findIndex(x => x.AddressType == type && x.RowNum == row.toString());
+            this.CurrentSellsBP!.BPAddresses[indexAddress] = CustomerAdd.BPAddresses[0];
             
             }
           else
@@ -508,7 +591,7 @@ export class OrdersComponent {
         this.ListCustomers = JSON.parse(retData.response!);
         //console.log(this.CurrentSellsItem!.BPAddresses)
         //console.log(this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses)
-        const addressNew = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses.filter(x => !this.CurrentSellsItem!.BPAddresses.some(y => x.RowNum === y.RowNum));
+        const addressNew = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses.filter(x => !this.CurrentSellsBP!.BPAddresses.some(y => x.RowNum === y.RowNum));
         //console.log(addressNew)
 
         if(type == 'bo_ShipTo')
@@ -518,13 +601,14 @@ export class OrdersComponent {
 
         //console.log(this.rowBill)
         //console.log(this.rowShip)
-        this.CurrentSellsItem!.BPAddresses = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses
+        this.CurrentSellsBP!.BPAddresses = this.ListCustomers.find(x=> x.CardCode == cardcode)!.BPAddresses
       } else {
         this.openSnackBar(retData.response!, "error", "Error", "red");
       }
 
     });
   }
+
   CheckList(type:string)
   {
     const dialogRef = this.dialog.open(DialogAddressComponent, {
@@ -538,7 +622,7 @@ export class OrdersComponent {
         viewAdd: false,
         viewList: true,
         addresses: undefined,
-        addressesList: this.CurrentSellsItem?.BPAddresses.filter(x => x.AddressType == type)
+        addressesList: this.CurrentSellsBP?.BPAddresses.filter(x => x.AddressType == type)
       },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -563,7 +647,7 @@ export class OrdersComponent {
 
   DeleteAddress(type:string, row:number)
   {
-    const BPAddresses = this.CurrentSellsItem!.BPAddresses.filter(x => x.RowNum !== row.toString())
+    const BPAddresses = this.CurrentSellsBP!.BPAddresses.filter(x => x.RowNum !== row.toString())
 
     var Customer = {
       BPAddresses
@@ -574,17 +658,17 @@ export class OrdersComponent {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         //this.ListCustomers = JSON.parse(retData.response!);
-        this.CurrentSellsItem!.BPAddresses = this.CurrentSellsItem!.BPAddresses.filter(x => x.RowNum !== row.toString())
+        this.CurrentSellsBP!.BPAddresses = this.CurrentSellsBP!.BPAddresses.filter(x => x.RowNum !== row.toString())
 
         if(type == 'bo_ShipTo')
         {
-          this.rowShip = parseFloat(this.CurrentSellsItem!.BPAddresses.find(x => x.AddressType == 'bo_ShipTo')!.RowNum);
-          this.shippingAddress = this.CurrentSellsItem!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsItem!.BPAddresses[0]!.City +' '+ this.CurrentSellsItem!.BPAddresses[0]!.State +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Country +' '+ this.CurrentSellsItem!.BPAddresses[0]!.ZipCode;  
+          this.rowShip = parseFloat(this.CurrentSellsBP!.BPAddresses.find(x => x.AddressType == 'bo_ShipTo')!.RowNum);
+          this.shippingAddress = this.CurrentSellsBP!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsBP!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsBP!.BPAddresses[0]!.City +' '+ this.CurrentSellsBP!.BPAddresses[0]!.State +' '+ this.CurrentSellsBP!.BPAddresses[0]!.Country +' '+ this.CurrentSellsBP!.BPAddresses[0]!.ZipCode;  
         }
         else
         {
-          this.rowBill = parseFloat(this.CurrentSellsItem!.BPAddresses.find(x => x.AddressType == 'bo_BillTo')!.RowNum);
-          this.billingAddress = this.CurrentSellsItem!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsItem!.BPAddresses[0]!.City +' '+ this.CurrentSellsItem!.BPAddresses[0]!.State +' '+ this.CurrentSellsItem!.BPAddresses[0]!.Country +' '+ this.CurrentSellsItem!.BPAddresses[0]!.ZipCode;
+          this.rowBill = parseFloat(this.CurrentSellsBP!.BPAddresses.find(x => x.AddressType == 'bo_BillTo')!.RowNum);
+          this.billingAddress = this.CurrentSellsBP!.BPAddresses[0]!.AddressName +' '+ this.CurrentSellsBP!.BPAddresses[0]!.Street  +' '+ this.CurrentSellsBP!.BPAddresses[0]!.City +' '+ this.CurrentSellsBP!.BPAddresses[0]!.State +' '+ this.CurrentSellsBP!.BPAddresses[0]!.Country +' '+ this.CurrentSellsBP!.BPAddresses[0]!.ZipCode;
         }
             
         this.openSnackBar("", "check_circle", "Address Deleted!", "green");
@@ -596,4 +680,360 @@ export class OrdersComponent {
     });
   }
   
+  ///////////////////////////////////////////////////////////////
+
+  //////////////////////// Methods Cart /////////////////////////
+  cleanSearching()
+  {
+    this.ItemName = "";
+    this.Quantity = 0;
+    this.Price = "";
+    this.searchTextItem = "";
+  }
+
+  subTotal()
+  {
+    //return this.Cart.getSumLineTotals();
+    return this.Cart!.length > 0 ? this.Cart!.reduce((acum: number, elemento: any) => acum + elemento.LineTotal, 0) : 0;
+    //return 0;;
+  }
+
+  updateTotal(index:number,item: DocumentLines) {
+    if(item.UnitPrice)
+    {
+      //this.Cart.updateItem(index, item);
+      this.changeOrder(index, this.Cart!, '');
+      item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity!;
+    }
+      
+  }
+
+  updateComment(index: number) {
+      this.changeOrder(index,this.Cart!,'');
+  }
+
+  addToCart(){
+    if(this.ItemName != "")
+    {
+      if(this.Quantity > 0)
+      {
+        const element = document.getElementById('Cart');
+        element!.classList.remove('image-card');
+        
+        const newDocumentLine: DocumentLines = {
+          ItemCode: this.searchTextItem,
+          ItemName: this.ItemName,
+          Quantity: this.Quantity,
+          TaxCode: "EX",
+          UnitPrice: this.Price,
+          LineTotal: parseFloat(this.Price) * this.Quantity,
+          U_Comments: "",
+          Icon: 'cloud_queue'
+        };
+        
+        this.Cart?.push(newDocumentLine);
+        this.changeOrder(this.Cart!.length - 1, this.Cart!, '');
+
+        this.cleanSearching()
+      }
+      else
+      {
+        this.openSnackBar("You must add Quantity more than zero", "warning", "Warning", "darkorange");
+      }
+    }
+    else
+    {
+      this.openSnackBar("You must select an Item", "error", "Error", "red");
+    }
+
+    
+  }
+
+  onSelectItem(selectedData: any){
+    //console.log(selectedData);
+    //console.log('pasa por aqui');
+    if (selectedData != undefined)
+    {
+      this.CurrentSellsItem = this.ListItems.find(x => x.ItemCode === selectedData);
+      this.ItemName = this.CurrentSellsItem!.ItemName;
+      //console.log(this.CurrentSellsItem?.ItemPrices)
+      this.Price = this.CurrentSellsItem!.ItemPrices[0].Price.toString();
+    }
+  }
+
+  RemoveToCart(index: number){
+    this.Cart!.splice(index, 1);
+    ////////this.Cart.removeItem(index);
+    this.changeOrder(index,this.Cart!, '');
+    this.cleanSearching();
+
+    if(this.Cart!.length === 0)
+    {
+      const miDiv = document.getElementById('Cart');
+      miDiv!.classList.add('image-card');
+    }  
+  }
+
+  /////////////////////////////////////////////////////////////
+
+
+  ////////////////// Sincronize the order in Index DB, Cosmos and SAP ////////////////////
+  obtainUser() {
+    const activeAccount= this.msalService.instance.getActiveAccount();
+    if (activeAccount) {
+      return activeAccount.username;
+    } else {
+      return '';
+    }
+  }
+
+  async changeOrder(index:number | undefined,order:DocumentLines[] | undefined, action : string)
+  {
+    const today = new Date();
+    const dateDefault = this.pipe.transform(today, 'yyyy-MM-dd');
+    this.OrderReview!.DocDate = dateDefault?.toString();
+    this.OrderReview!.TaxDate = dateDefault?.toString();
+
+    if(order === undefined && action)
+    {
+      if(action === 'customer')
+      {
+        this.OrderReview!.CardName = this.searchText;
+        this.OrderReview!.CardCode = this.idcustomer;
+        console.log("Paso en customer")
+      }
+      else if (action === 'delivery')
+      {
+        const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
+        this.OrderReview!.DocDueDate = dateDelivery?.toString();
+        console.log("Paso en delivery")
+      }
+      else if (action === 'address')
+      {
+        const selectedAddress = this.AddressData[this.option];
+        console.log(selectedAddress)
+
+        var AddressSelect: AddressExtension = {
+          ShipToStreet: selectedAddress.AddressName,
+          ShipToStreetNo: selectedAddress.Street,
+          ShipToBlock: selectedAddress.Block,
+          ShipToZipCode: selectedAddress.ZipCode,
+          ShipToCity: selectedAddress.City,
+          ShipToCountry: selectedAddress.Country,
+          ShipToState: selectedAddress.State
+        }
+        
+        this.OrderReview!.AddressExtension = {}
+        this.OrderReview!.AddressExtension! = AddressSelect;
+        console.log("Paso en address")
+      }
+
+      ///Update the index db////
+      if(this.OrderIndexDB === undefined)
+      {
+        console.log('agregamos solo index db y Cosmos')
+        this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, null)
+        this.idIndex = this.OrderIndexDB.id;
+        console.log(this.OrderIndexDB)
+        console.log(this.OrderIndexDB.id)
+
+        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+        
+        if(this.isOnline == true && this.Cart!.length > 0)
+          this.updateOrderCloud('publish', undefined, this.Cart!)
+        else
+          this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
+      }
+      else
+      {
+        console.log('editamos solo index db')
+        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.idcustomer, this.Cart!, [])
+        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
+        this.OrderReviewCopy.id = this.idCosmos;
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+        console.log(this.OrderIndexDB)
+
+        //console.log('deberia de editarlo a SAP y Cosmos')
+        if(this.isOnline == true && this.Cart!.length > 0)
+          this.updateOrderCloud('', undefined, this.Cart!)
+        else
+          editToCosmosDB(this.OrderReviewCopy)
+      }
+    }
+    else if(order !== this.CartOld)
+    {
+      console.log("paso por el carrito")
+      if(this.idcustomer === '')  
+          this.openSnackBar("You must select a customer for make the order in SAP", "warning", "Warning", "darkorange");
+
+      if(index != undefined)
+        order![index].Icon = 'cloud_queue'
+
+      this.OrderReview!.DocumentLines = this.Cart;
+      this.dataSharing.setCartData(this.Cart);
+
+      if(this.Cart!.length! === 1 && this.OrderIndexDB === undefined)
+      {
+        console.log('agregamos index db, SAP y Cosmos')
+        this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, null)
+
+        this.idIndex = this.OrderIndexDB.id;
+        this.OrderReview!.NumAtCard = this.OrderIndexDB.id;
+        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+
+        if(this.isOnline == true && this.idcustomer !== '')
+          this.updateOrderCloud('publish', index, order!);
+        else
+          this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
+        
+        ////there was the procces to publish order in cosmos and SAP
+
+        // this.OrderReviewCopy = this.OrderReview;
+        // this.OrderReviewCopy.id = this.idCosmos;
+        // this.OrderReview!.DocNum = '12345'
+        // editToCosmosDB(this.OrderReviewCopy)
+        // this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+            
+        console.log(this.OrderIndexDB)
+        console.log(this.OrderIndexDB.id)
+      }
+      else
+      {
+        console.log('editamos index db, SAP y Cosmos')
+        this.OrderReview.DocNum = this.DocNumPublish;
+        this.OrderReview.DocEntry = this.DocEntryPublish;
+        this.OrderReview!.DocumentLines = this.Cart;
+        this.OrderIndexDB.DocumentLines = this.Cart;
+        console.log(this.OrderIndexDB)
+
+        var DocumentLinesP: DocumentLines[];
+        DocumentLinesP = [];
+        
+        this.OrderReview!.DocumentLines!.forEach(element => {
+          DocumentLinesP.push({
+            ItemCode: element.ItemCode,
+            Quantity: element.Quantity,
+            TaxCode: 'EX',
+            U_Comments: element.U_Comments,
+            LineNum:element.LineNum
+          })
+        });
+
+        this.OrderReview!.DocumentLines = DocumentLinesP;
+        
+        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.idcustomer, this.Cart!, [])
+        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
+        this.OrderReviewCopy.id = this.idCosmos;
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+        //this.transactionService.editOrderLog(this.OrderReview,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
+        
+        ////there was the procces to publish order in cosmos and SAP
+        if(this.isOnline == true && this.idcustomer !== '')
+          this.updateOrderCloud('', index, order!);
+        else
+          editToCosmosDB(this.OrderReviewCopy)
+          
+        //console.log(this.OrderIndexDB)
+        //console.log(this.OrderIndexDB.id)
+        //Cuando pase el webworker, agregue el docnum
+        //console.log(this.DocNumPublish)
+      }
+
+      this.dataSharing.setOrderReview(this.OrderReview)
+      this.dataSharing.setCartData(this.Cart);
+      this.dataSharing.setOrderIndexDB(this.OrderIndexDB)
+
+    }
+  }
+  
+
+  async updateOrderCloud(type: string, index:number | undefined,order:DocumentLines[])
+  {
+    if(this.DocNumPublish === 0)
+      type = 'publish';
+    else
+      type = '';
+
+    if(type == 'publish')
+    {
+      if(this.idCosmos !== undefined)
+        editToCosmosDB(this.OrderReviewCopy)
+      else
+        this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
+        
+        console.log(this.idCosmos)
+        
+        webWorker('postOrder',this.OrderReview!).then((data) => {
+          //console.log('Valor devuelto por el Web Worker:', data);
+          if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+          {
+            const orderPublish: Order = JSON.parse(data.response);
+            this.DocNumPublish = orderPublish!.DocNum;
+            this.DocEntryPublish = orderPublish!.DocEntry
+
+            this.OrderReview!.DocNum = this.DocNumPublish;
+            this.OrderReview!.DocEntry = this.DocEntryPublish;
+
+            this.OrderReviewCopy = this.OrderReview;
+            this.OrderReviewCopy.id = this.idCosmos;
+            editToCosmosDB(this.OrderReviewCopy)
+            //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.idcustomer, this.Cart!, [])
+            //this.actualicon = 'cloud_done';
+            this.Cart![0].Icon= 'cloud_done';
+          }
+          else{
+            //this.actualicon = 'cloud_off';
+            this.Cart![0].Icon = 'cloud_off';
+            console.error('Error:', data.response)
+          }
+        })
+        .catch((error) => {
+          //this.actualicon = 'cloud_off';
+          this.Cart![0].Icon = 'cloud_off';
+          console.error('Error:', error);
+        });
+    }
+    else
+    {
+      editToCosmosDB(this.OrderReviewCopy)
+        console.log('Este es el del index en editar')
+        console.log(this.OrderIndexDB)
+
+       // this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+        webWorker('editOrder',this.OrderReview!).then((data) => {
+          //console.log('Valor devuelto por el Web Worker edit:', data);
+          if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+          {
+            // const orderEdit: Order = JSON.parse(data.response);
+            // console.log(orderEdit)
+            //this.DocNumPublish = orderPublish!.DocNum;
+            //this.actualicon = 'cloud_done';
+            if(index != undefined)
+              order[index].Icon = 'cloud_done';
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.idcustomer, this.Cart!, [])
+          }
+          else{
+            if(index != undefined)
+              order[index].Icon = 'cloud_off';
+            //this.actualicon = 'cloud_off';
+            console.error('Error:', data.response)
+          }
+        })
+        .catch((error) => {
+          //this.actualicon = 'cloud_off';
+          if(index != undefined)
+            order[index].Icon = 'cloud_off';
+          console.error('Error:', error);
+        });
+    }
+  }
+
 }
+

@@ -32,6 +32,7 @@ export class IndexDbService {
   async editOrderIndex(id: number, DocNum: number, DocEntry: number, OrderComplete: Order | OrderComplete, CardCode: string, DocumentLines: DocumentLines[],transaction_order: any): Promise<void> {
     try {
 
+      console.log(OrderComplete)
       const DocDate = OrderComplete.DocDate;
       const DocDueDate = OrderComplete.DocDueDate;
       const TaxDate = OrderComplete.TaxDate;
@@ -143,10 +144,10 @@ export class IndexDbService {
         console.log(record);
         if(record)
         {
-          if(record.transaction_order.length! > 0)
-            record.transaction_order.push(transaction);
-          else
+          if(record.transaction_order === null)
             record.transaction_order = transaction_order;
+          else
+            record.transaction_order.push(transaction);
             
           const id = record.id;
           //const transaction_order = record.transaction_order;

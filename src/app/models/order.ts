@@ -23,10 +23,11 @@ export interface Order {
     ItemDescription: string
     Quantity: number
     UnitPrice: string
-    LineTotal: string
+    LineTotal: number
     Dummie: any
     TaxRate: any
     TaxCode: string
     U_Comments: any
     ItemPrices: any
+    LineNum: number
   }
