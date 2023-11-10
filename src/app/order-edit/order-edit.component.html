@@ -10,13 +10,17 @@
           <span class="status" [style.border]="colorStatus">
             <div class="circle" [style.background-color]="statusCircle(order!.DocumentStatus)"></div> 
             <span class="status-text">{{status(order!.DocumentStatus)}}</span>
-          </span>   
+          </span> 
+          <mat-icon class="iconsave">{{cloudChange}}</mat-icon> 
         </div>
         <div>
-          <a mat-raised-button color="primary" mat-raised-button class="mobile-button" href="dashboard/order-index">
-            <mat-icon style="transform: rotate(180deg);">play_arrow</mat-icon> Back
-          </a>
-          <button mat-raised-button color="primary" mat-raised-button class="mobile-button save" (click)="updateOrder()"><mat-icon>save</mat-icon> Update</button> 
+          <h2 class="h2OrderIndex" *ngIf="OrderIndexDB !== undefined"><b>ID Index {{OrderIndexDB.id}}</b></h2>
+          <button mat-raised-button color="primary" (click)="returnPage()">
+            <mat-icon>arrow_back</mat-icon> Back
+          </button>    
+          <!-- <button mat-raised-button color="primary" class="mobile-button save" (click)="updateOrder()">
+            <mat-icon>save</mat-icon> Updat
+          </button> -->
         </div>
       </div>
       <ng-container *ngIf="order">
@@ -34,9 +38,13 @@
                 <input type="text" class="boxCustom" [(ngModel)]="order.CardName" disabled="true">
               </div>
               <div class="label-container">
+                <label class="label">Reference Number:</label>
+                <input type="text" class="boxCustom" [(ngModel)]="order.NumAtCard" disabled="true">
+              </div>
+              <div class="label-container">
                 <label class="label">Posting date:</label>
                 <mat-form-field class="example-full-width">
-                  <input matInput [matDatepicker]="postingDate" [formControl]="post" (change)="updateOrder()" [value]="order.DocDate | date:'yyyy-MM-dd'">
+                  <input matInput [matDatepicker]="postingDate"  [formControl]="post" (change)="updateOrder('ChangePostDate')" [value]="order.DocDate | date:'yyyy-MM-dd'">
                   <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
                   <mat-datepicker #postingDate></mat-datepicker>
                 </mat-form-field>
@@ -45,7 +53,7 @@
                 <label class="label">Delivery Date:</label>
                 <mat-form-field>
                   <mat-label>Choose a date</mat-label>
-                    <input matInput [matDatepicker]="deliveryDate" [formControl]="delivery" (dateChange)="updateOrder()">
+                    <input matInput [matDatepicker]="deliveryDate" [min]="minDate" [formControl]="delivery" (dateChange)="updateOrder('Change_Delivery_Date')">
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="deliveryDate"></mat-datepicker-toggle>
                     <mat-datepicker #deliveryDate></mat-datepicker>
@@ -59,35 +67,7 @@
         <!-- Tarjetas para elementos de DocumentLines -->
         <!-- Verificar si order está definido antes de mostrarlo -->
         <ng-container *ngIf="order">
-          <!-- Tarjetas para mostrar todos los elementos de DocumentLines,Address y Itemslist -->
-          <ng-container *ngIf="order">
-            <!-- Nuevo mat-card con contenido diferente -->
-            <mat-card class="mat-card">
-              <mat-card-content>
-                <h2 class="h2Mat">Address Selection<mat-icon>location_on</mat-icon></h2>
-                <div class="grid-container">
-                  <!-- Contenido diferente aquí -->
-                  <div class="label-container">
-                    <label class="label">Address:</label>
-                    <input type="text" class="boxCustom" placeholder="Address">
-                  </div>
-                  <div class="label-container">
-                    <label class="label">Country:</label>
-                    <input type="text" class="boxCustom" placeholder="Country">
-                  </div>
-                  <div class="label-container">
-                    <label class="label">City:</label>
-                    <input type="text" class="boxCustom" placeholder="City">
-                  </div>
-                  <div class="label-container">
-                    <label class="label">ZipCode:</label>
-                    <input type="text" class="boxCustom" placeholder="ZipCode">
-                  </div>
-                  <!-- Agrega el contenido adicional que necesites -->
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </ng-container>
+          <!-- Tarjeta para mostrar todos los elementos de DocumentLines -->
           <mat-card class="mat-card">
             <mat-card-content>
               <div class="button-container">
@@ -134,7 +114,7 @@
                   </div>
                   <div class="label-container">
                     <label class="label">UDF Comments:</label>
-                    <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.U_Comments">
+                    <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.U_Comments" (change)="updateOrder('Change_Comments_LineNum_'+i)">
                   </div>
                   <div class="label-container">
                     <button mat-icon-button (click)="removeItem(i)">

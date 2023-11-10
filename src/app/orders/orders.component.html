@@ -1,99 +1,57 @@
 <div class="background">
-  <h2 class="title">{{title}}</h2> 
-  <br>
-
+  <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between center">
+    <h2 class="title">New Order</h2> 
+    <button (click)="finishOrder()" [disabled]="idIndex === 0">Finish Order</button>
+  </div>
+  <div fxLayout="row" fxLayout.xs="column">
+    <h2 class="h2Order">DocNum: {{DocNumPublish}}</h2>
+    <h2 class="h2Order">ID Index: {{idIndex}}</h2>
+  </div>
+  
   <div fxLayout="row-reverse" fxLayout.xs="column">
-    <div class="label-container" disabled fxFlex="33" fxLayoutAlign="end">
+    <div class="label-container" disabled fxFlex="25" fxLayoutAlign="end">
       <mat-form-field class="example-full-width">
         <mat-label class="label">Posting Date:</mat-label>
         <input matInput [matDatepicker]="postingDate" [formControl]="tax">
+        <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
         <mat-datepicker #postingDate></mat-datepicker>
       </mat-form-field>
     </div>
-    <div class="label-container" fxFlex="33" fxLayoutAlign="end">
+    <div class="label-container" fxFlex="25" fxLayoutAlign="end">
       <mat-form-field class="example-full-width">
           <mat-label class="label">Tax Date:</mat-label>
           <input matInput [matDatepicker]="taxDate" [formControl]="tax">
+          <mat-hint>MM/DD/YYYY</mat-hint>
           <mat-datepicker-toggle matIconSuffix [for]="taxDate"></mat-datepicker-toggle>
           <mat-datepicker #taxDate></mat-datepicker>
         </mat-form-field>
     </div>
-    <div class="label-container" fxFlex="33" fxLayoutAlign="end">
+    <div class="label-container" fxFlex="25" fxLayoutAlign="end">
       <mat-form-field class="example-full-width">
         <mat-label class="label">Delivery Date:</mat-label>
-        <input matInput [min]="minDate" [matDatepicker]="deliveryDate" [formControl]="delivery">
+        <input matInput [min]="minDate" [matDatepicker]="deliveryDate" [formControl]="delivery" (dateChange)="changeOrder(undefined, undefined, 'delivery')">
         <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="deliveryDate"></mat-datepicker-toggle>
         <mat-datepicker #deliveryDate></mat-datepicker>
       </mat-form-field>
     </div>
+    <!-- <div class="label-container" disabled fxFlex="25" fxLayoutAlign="end">
+      <h2 style="margin-left: auto;"  id="DocNum">DocNum: {{DocNumPublish}}</h2>
+    </div> -->
   </div>
 
-  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-    <mat-tab label="Customer">Content 1</mat-tab>
-    <mat-tab label="Cart">Content 2</mat-tab>
-
-    
-  </mat-tab-group>
-  
-  
-  <!-- <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
-    <mat-tab label="First">Content 1</mat-tab>
-    <mat-tab label="Second">Content 2</mat-tab>
-    <mat-tab label="Third">Content 3</mat-tab>
-  </mat-tab-group> -->
-
-<!-- <div class="container" fxLayout="column" fxLayoutGap="20px">
-  <mat-card class="mat-card2">
-    <mat-card-content>
-      <h2 class="h2Mat">Dates <mat-icon>date_range</mat-icon></h2>
-      <div class="grid-container-date">
-        <div class="label-container" disabled>
-          <label class="label">Posting Date:</label>
-          <mat-form-field class="example-full-width">
-            <input matInput [matDatepicker]="postingDate" [formControl]="tax">
-            <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
-            <mat-datepicker #postingDate></mat-datepicker>
-          </mat-form-field>
-        </div>
-        <div class="label-container">
-          <label class="label">Tax Date:</label>
-          <mat-form-field class="example-full-width">
-              <input matInput [matDatepicker]="taxDate" [formControl]="tax">
-              <mat-datepicker-toggle matIconSuffix [for]="taxDate"></mat-datepicker-toggle>
-              <mat-datepicker #taxDate></mat-datepicker>
-            </mat-form-field>
-        </div>
-        <div class="label-container">
-          <label class="label">Delivery Date:</label>
-          <mat-form-field class="example-full-width">
-          <mat-label>Choose a date</mat-label>
-            <input matInput [min]="minDate" [matDatepicker]="deliveryDate" [formControl]="delivery">
-            <mat-hint>MM/DD/YYYY</mat-hint>
-            <mat-datepicker-toggle matIconSuffix [for]="deliveryDate"></mat-datepicker-toggle>
-            <mat-datepicker #deliveryDate></mat-datepicker>
-          </mat-form-field>
-        </div>
-      </div>
-    </mat-card-content>
-    <mat-card-actions>
-    </mat-card-actions>
-  </mat-card>
-<mat-accordion>
-    <div class="button-container">
-      <div class="button-group">
-      </div>
-    </div>
-      <mat-expansion-panel class="expansion" hideToggle>
-        <mat-expansion-panel-header>
-          <h2 class="h2Mat">Customer</h2>
-        </mat-expansion-panel-header>
-      <div class="cartCustom">
-        <mat-card class="mat-card"> 
-          <mat-card-content>
-            <div class="grid-container">
-              <div class="label-containerC">
+  <mat-tab-group color="warn"  mat-stretch-tabs="false" mat-align-tabs="start">
+    <br>
+    <mat-tab label="Order Details">
+      <br>
+      <div class="grid-container-customerd">
+        <mat-card class="mat-card expansion"> 
+          <mat-card-header>
+            <h2 class="h2Mat">Customer <mat-icon>person_outline</mat-icon></h2>
+          </mat-card-header>
+          <mat-card-content class="grid-container">
+              <div class="label-container">
                 <label class="label">Id Customer: </label>
                 <input type="text" class="boxCustom" id="idcustomer" aria-describedby="Id Customer" [(ngModel)]="idcustomer" [disabled]="inputSearchCutomer || (ShowEdit === false)" >
               </div>            
@@ -110,12 +68,7 @@
                   </mat-option>
                 </mat-autocomplete>
               </div>
-              <div class="label-container">
-                <label class="label">Notes and Remarks:</label>
-                <input type="text" class="boxCustom" matInput placeholder="Notes and Remarks"  [disabled]="showEditInputs"
-                [(ngModel)]="notes">
-              </div>
-              <div class="label-container">
+              <!-- <div class="label-container">
                 <label class="label">Billing Address:</label>
                 <input type="text" class="boxCustom"  matInput placeholder="Billing Address" disabled="true"
                 [(ngModel)]="billingAddress">
@@ -143,7 +96,7 @@
                   </button>
                   <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">delete</mat-icon></button>
                 </div>
-              </div>
+              </div> -->
               <div class="label-container">
                 <label class="label">Phone 1:</label>
                 <input type="text" class="boxCustom" matInput placeholder="Phone 1" [disabled]="showEditInputs"
@@ -155,6 +108,11 @@
                 [(ngModel)]="email">
               </div>
               <div class="label-container">
+                <label class="label">Notes and Remarks:</label>
+                <input type="text" class="boxCustomNotes" matInput placeholder="Notes and Remarks"  [disabled]="showEditInputs"
+                [(ngModel)]="notes">
+              </div>
+              <!-- <div class="label-container">
                 <label class="label">Shipping Type:</label>
                 <input type="text" class="boxCustom" matInput placeholder="Shipping Type" [disabled]="showEditInputs"
                 [(ngModel)]="shippingType">
@@ -163,24 +121,126 @@
                 <label class="label">Tax Id:</label>
                 <input type="text" class="boxCustom" matInput placeholder="Tax" [disabled]="showEditInputs"
                 [(ngModel)]="taxId">
-              </div>
+              </div> -->
               <div class="btns" *ngIf="ShowEdit">
                 <button mat-raised-button mat-warn-dark class="actions" *ngIf="saveUpdates" (click)="UpdateCustomer()" ><mat-icon>save</mat-icon></button>
                 <button mat-raised-button color="warn" class="actions" *ngIf="saveUpdates" (click)="Cancel()" ><mat-icon>clear</mat-icon></button>
                 <button mat-raised-button mat-warn-dark class="actions" *ngIf="inputSearchCutomer" (click)="EditInputs()"  [disabled]="showEditInputs == false"><mat-icon>edit</mat-icon></button>
               </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="mat-card expansion"> 
+          <mat-card-header>
+            <mat-card-title class="h2Mat"><h2 >Address <mat-icon>business</mat-icon></h2></mat-card-title>
+            <mat-card-subtitle>You have to choose a Customer for choose a address</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content class="grid-container-customerd">
+            <div class="radio-button-container" *ngFor="let adr of AddressData; let listIndex=index;">
+              <mat-radio-group [(ngModel)]="option" (change)="changeOrder(undefined, undefined, 'address')">
+              <div  fxLayout="row" >
+                <mat-radio-button [value]="listIndex" ></mat-radio-button>
+                <div class="option-details" >
+                  <p><b>{{adr.AddressName}}</b></p>
+                  <p>{{adr.AddressName2}}</p>
+                  <p>{{adr.Street}} {{adr.ZipCode}}</p>
+                  <p>{{adr.Block}}</p>
+                  <p>{{adr.City}}</p>
+                  <p>{{adr.Country}} {{adr.State}}</p>
+                </div>
+              </div>
+            </mat-radio-group>
             </div>
           </mat-card-content>
         </mat-card>
-        <br>
-        <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
-          <button mat-raised-button color="primary" (click)="backWindow()" *ngIf="ShowEdit">Back</button>
-          <button mat-raised-button color="primary" (click)="nextWindow()" *ngIf="!ShowEdit" id="NextB">Next</button>
-        </div>
       </div>
-    </mat-expansion-panel>
-</mat-accordion>
-</div> -->
+    </mat-tab>
+    <mat-tab label="Cart">
+      <br>
+      <div class="grid-container-customerd">
+        <mat-card class="mat-card expansion">
+          <mat-card-header>
+            <h2 class="h2Mat">Add Item <mat-icon> local_mall</mat-icon></h2>
+          </mat-card-header>
+          <mat-card-content class="grid-container">
+              <div class="label-container">
+                <label class="label">Search by name:</label>
+                <input type="text" class="boxCustom" id="search-text-item" aria-describedby="search-text" 
+                [(ngModel)]="searchTextItem" placeholder="Enter text to search" 
+                autofocus [matAutocomplete]="autoItem" >
+                <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" (optionSelected)="onSelectItem($event.option.value)">
+                  <mat-option *ngFor="let c of ListItems| appFilter: searchTextItem"  value="{{c.ItemCode}}"  class="optionList" >
+                    {{c.ItemCode}} - {{c.ItemName}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+              <div class="label-container">
+                <label  class="label">Item:</label>
+                <input type="text" class="boxCustom" matInput placeholder="Item" disabled="true" [(ngModel)]="ItemName">
+              </div>
+              <div class="label-container" *ngIf="ItemName">
+                <label class="label">Quantity:</label>
+                <input type="number" class="boxCustom" matInput placeholder="Quantity" disabled="false" [(ngModel)]="Quantity" >
+              </div>
+              <div class="label-container" *ngIf="ItemName">
+                <label class="label">Price:</label>
+                <input type="number" class="boxCustom" matInput placeholder="Price" disabled="true" [(ngModel)]="Price" >
+              </div>
+              <!-- <div class="input-container" *ngIf="ItemName">
+                <label><b>Comments: </b></label>
+                <input type="text" class="boxCart" matInput placeholder="Add Comments"  [(ngModel)]="item.Comments" >
+              </div> -->
+              <br>
+          </mat-card-content> 
+          <button class="add-button" (click)="addToCart()">Add</button>
+          <!-- <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
+            <a mat-raised-button color="primary" class="mobile-button"  (click)="backWindow()">Back</a>
+            <a mat-raised-button color="primary" class="mobile-button" (click)="nextWindow()">Review Order</a>
+          </div> -->
+        </mat-card>
+
+        <mat-card id="Cart" class="info-card image-card mat-card expansion">
+          <mat-card-header>
+            <h1 class="h2Mat">Shopping Cart <mat-icon>shopping_cart</mat-icon></h1>
+          </mat-card-header>
+          <mat-card-content >
+              <div class="cart-items" *ngFor="let Item of Cart; let listIndex=index;" >
+                <div class="label-container-cart">
+                  <label class="label" for="ItemName">Item:</label>
+                  <input type="text" matInput class="boxCustom" for="ItemName"  id="ItemName" readonly [value]="Item.ItemName">
+                </div>
+                <div class="label-container-cart-s">
+                  <label class="label" for="Quantity">Quantity:</label>
+                  <input type="number" matInput class="boxCustomShort" for="Quantity" min="1" max="1000"
+                    [(ngModel)]="Item.Quantity" (change)="updateTotal(listIndex,Item)">
+                </div>
+                <div class="label-container-cart-s">
+                  <label class="label" for="Total">Total:</label>
+                  <input type="number" matInput class="boxCustomShort" for="Price" min="1" readonly  [value]="Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'">
+                </div>
+                <div class="label-container-cart">
+                  <label class="label" for="Comments">Comments:</label>
+                  <input type="text" class="boxCustom" matInput placeholder="Add Comments" [(ngModel)]="Item.U_Comments"
+                  (change)="updateComment(listIndex)">
+                </div>
+                <div class="label-container-cart-s">
+                  <button mat-raised-button class="btnInfo" color="warn" (click)="RemoveToCart(listIndex)" [disabled]="Cart!.length === 1 && DocNumPublish !== 0">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+                <div class="label-container-cart-s">
+                  <mat-icon  class="iconC">{{Item.Icon}}</mat-icon>
+                </div>
+                <mat-divider class="mdivider"></mat-divider>
+              </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <mat-divider></mat-divider>
+            <div style="margin: 10px; text-align: right;">Total: ${{subTotal()}}</div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>
 <!-- <div *ngIf="isLoading" fxLayoutAlign="center center">
   <mat-spinner class="custom-spinner" [diameter]="120"></mat-spinner>

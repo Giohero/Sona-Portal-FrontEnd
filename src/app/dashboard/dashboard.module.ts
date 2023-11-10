@@ -22,6 +22,7 @@ import { OrdersComponent } from '../orders/orders.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import {MatTabsModule} from '@angular/material/tabs';
+import { CustomersEditComponent } from '../customers-edit/customers-edit.component';
 
 
 
@@ -43,6 +44,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     OrderReviewComponent,
     SnackbarsComponent,
     OrdersComponent,
+    CustomersEditComponent
   ],
   imports: [
     CommonModule,

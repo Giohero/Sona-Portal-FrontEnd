@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Renderer2 } from '@angular/core';
 import { Value } from '../models/items';
 import { ServiceService } from '../service/service.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +11,9 @@ import Dexie from 'dexie';
 import { IndexDbService } from '../service/index-db.service';
 import { AppComponent, webWorker } from '../app.component';
 import { DatePipe } from '@angular/common';
+import { editToCosmosDB, publishToCosmosDB } from '../service/cosmosdb.service';
+import { MsalService } from '@azure/msal-angular';
+import { TransactionlogService } from '../service/transactionlog.service'
 
 @Component({
   selector: 'app-cart',
@@ -27,21 +30,25 @@ export class CartComponent {
   Quantity = 0;
   Price = "";
   //Cart = new DocumentLinesList(onListChange);
-  Cart: DocumentLines[] | undefined;
+  public Cart: DocumentLines[] | undefined;
   CartOld: DocumentLines[] | undefined;
   elementCart:any;
   OrderReview: Order | undefined;
   customer:any;
   private Db?: Dexie;
   OrderIndexDB?:any;
-  DocNumPublish? = '';
+  DocNumPublish? = 0;
   DocEntryPublish? = '';
   actualicon : string ='cloud_queue';
-  
-constructor(private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService, private indexDB: IndexDbService, private pipe: DatePipe) {    
+  OrderReviewCopy: any;
+  idCosmos = '';
+  LineNumber=0;
+  isOnline=true;
+
+constructor(private renderer: Renderer2,private orderService: ServiceService, private dialog: MatDialog, private route: ActivatedRoute, private _snackBar: MatSnackBar, private myRouter: Router, private dataSharing: DataSharingService, private indexDB: IndexDbService, private pipe: DatePipe, private msalService: MsalService, private transactionService:TransactionlogService) {    
   this.Cart = dataSharing.getCartData();
   this.OrderIndexDB = dataSharing.getOrderIndexDB();
-
+  this.LineNumber=0;
   // if(this.Cart === undefined)
   //     this.getDataIndex();
   if(this.Cart == undefined)
@@ -53,6 +60,26 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
   // this.Db.version(1).stores({
   //   orders: '++id, DocNum, CardCode, DocumentLines',
   // });
+
+  addEventListener('online', async () => {
+    this.renderer.removeClass(document.body, 'offline');
+    this.isOnline = true;
+    this.OrderIndexDB = dataSharing.getOrderIndexDB();
+  });
+
+  window.addEventListener('offline', () => {
+    this.renderer.addClass(document.body, 'offline');
+    this.isOnline = false
+  });
+}
+
+obtainUser() {
+  const activeAccount= this.msalService.instance.getActiveAccount();
+  if (activeAccount) {
+    return activeAccount.username;
+  } else {
+    return '';
+  }
 }
 
   ngOnInit(): void {
@@ -77,6 +104,27 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
       const element = document.getElementById('Cart');
         element!.classList.remove('image-card');
     }
+
+    this.dataSharing.cartData$.subscribe((newCart) => {
+      this.Cart = newCart;
+      //console.log('actualizando carrito')
+      //console.log(this.Cart)
+    });
+
+    this.dataSharing.docNum$.subscribe((newDocNum) => {
+      this.DocNumPublish = newDocNum;
+    });
+
+    this.dataSharing.docEntry$.subscribe((newDocEntry) => {
+      this.DocEntryPublish = newDocEntry.toString();
+    });
+
+    // this.dataSharing.OrderIndexDB$.subscribe((newIndex) => {
+
+    //   if(this.OrderIndexDB != newIndex)
+    //     this.OrderIndexDB = newIndex;
+    // });
+
 
   }
 
@@ -143,10 +191,12 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
           UnitPrice: this.Price,
           LineTotal: parseFloat(this.Price) * this.Quantity,
           U_Comments: "",
-          Icon: 'cloud_queue'
+          Icon: 'cloud_queue',
+          LineNum:this.LineNumber
         };
         
         this.Cart?.push(newDocumentLine);
+        this.LineNumber++; 
         this.changeOrder(this.Cart!.length - 1, this.Cart!);
 
         this.cleanSearching()
@@ -184,7 +234,6 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
     //return this.Cart.getSumLineTotals();
     return this.Cart!.reduce((acum:number, elemento:any) => acum + elemento.LineTotal, 0);
   }
-
 
   openSnackBar(message: string, icon: string, type: string, color: string) {
 
@@ -273,9 +322,9 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
 
   getDocNum()
   {
-    if(this.DocNumPublish != '')
+    if(this.DocNumPublish != 0)
     {
-      this.OrderReview!.DocNum = this.DocNumPublish;
+      this.OrderReview!.DocNum! = this.DocNumPublish!;
       this.OrderReview!.DocEntry = this.DocEntryPublish;
     return this.DocNumPublish;
     }
@@ -306,7 +355,87 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
       //console.log(this.OrderIndexDB)
       if(this.Cart!.length! === 1 && this.OrderIndexDB === undefined)
       {
-        webWorker('postOrder',this.OrderReview).then((data) => {
+        this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, null)
+        //this.dataSharing.updateIndexOrder(this.OrderIndexDB)
+        this.OrderReview!.NumAtCard = this.OrderIndexDB.id;
+        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.IdIndex = String(this.OrderIndexDB.id);
+
+        if(this.isOnline == true)
+          this.updateOrderCloud('publish', index,order);
+        ////there was the procces to publish order in cosmos and SAP
+
+        // this.OrderReviewCopy = this.OrderReview;
+        // this.OrderReviewCopy.id = this.idCosmos;
+        // this.OrderReview!.DocNum = '12345'
+        // editToCosmosDB(this.OrderReviewCopy)
+        // this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+            
+        console.log(this.OrderIndexDB)
+        console.log(this.OrderIndexDB.id)
+      }
+      else
+      {
+        this.OrderReview.DocNum = this.DocNumPublish;
+        this.OrderReview.DocEntry = this.DocEntryPublish;
+        this.OrderReview!.DocumentLines = this.Cart;
+        this.OrderIndexDB.DocumentLines = this.Cart;
+        console.log('pasa en el index db')
+        console.log(this.OrderIndexDB)
+
+        var DocumentLinesP: DocumentLines[];
+        DocumentLinesP = [];
+        
+        this.OrderReview!.DocumentLines!.forEach(element => {
+          DocumentLinesP.push({
+            ItemCode: element.ItemCode,
+            Quantity: element.Quantity,
+            TaxCode: 'EX',
+            U_Comments: element.U_Comments,
+            LineNum:element.LineNum
+          })
+        });
+
+        this.OrderReview!.DocumentLines = DocumentLinesP;
+        
+        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.customer.CardCode, this.Cart!, [])
+        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
+        this.OrderReviewCopy.id = this.idCosmos;
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.IdIndex = String(this.OrderIndexDB.id);
+        //this.transactionService.editOrderLog(this.OrderReview,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
+        
+        ////there was the procces to publish order in cosmos and SAP
+        if(this.isOnline == true)
+          this.updateOrderCloud('', index,order);
+
+        //console.log(this.OrderIndexDB)
+        //console.log(this.OrderIndexDB.id)
+        //Cuando pase el webworker, agregue el docnum
+        //console.log(this.DocNumPublish)
+        //webWorker('postOrder',this.OrderReview)
+        
+      }
+
+      this.dataSharing.setOrderReview(this.OrderReview)
+      this.dataSharing.setCartData(this.Cart);
+      this.dataSharing.setOrderIndexDB(this.OrderIndexDB)
+      
+
+      //console.log(order)
+    }
+  }
+
+  
+  async updateOrderCloud(type: string, index:number | undefined,order:DocumentLines[])
+  {
+    if(type == 'publish')
+    {
+      this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
+        console.log(this.idCosmos)
+        
+        webWorker('postOrder',this.OrderReview!).then((data) => {
           //console.log('Valor devuelto por el Web Worker:', data);
           if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
           {
@@ -317,7 +446,11 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
             this.OrderReview!.DocNum = this.DocNumPublish;
             this.OrderReview!.DocEntry = this.DocEntryPublish;
 
-            this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+            this.OrderReviewCopy = this.OrderReview;
+            this.OrderReviewCopy.id = this.idCosmos;
+            editToCosmosDB(this.OrderReviewCopy)
+            //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.customer.CardCode, this.Cart!, [])
             //this.actualicon = 'cloud_done';
             this.Cart![0].Icon= 'cloud_done';
           }
@@ -332,33 +465,15 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
           this.Cart![0].Icon = 'cloud_off';
           console.error('Error:', error);
         });
-
-        this.OrderIndexDB = await this.indexDB.addToDB(this.OrderReview)
+    }
+    else
+    {
+      editToCosmosDB(this.OrderReviewCopy)
+        console.log('Este es el del index en editar')
         console.log(this.OrderIndexDB)
-        console.log(this.OrderIndexDB.id)
-      }
-      else
-      {
-        this.OrderReview.DocNum = this.DocNumPublish;
-        this.OrderReview.DocEntry = this.DocEntryPublish;
-        this.OrderReview!.DocumentLines = this.Cart;
 
-        var DocumentLinesP: DocumentLines[];
-        DocumentLinesP = [];
-        
-        this.OrderReview!.DocumentLines!.forEach(element => {
-          DocumentLinesP.push({
-            ItemCode: element.ItemCode,
-            Quantity: element.Quantity,
-            TaxCode: 'EX',
-            U_Comments: element.U_Comments
-          })
-        });
-
-        this.OrderReview!.DocumentLines = DocumentLinesP;
-
-        console.log( this.OrderReview!.DocumentLines!)
-        webWorker('editOrder',this.OrderReview).then((data) => {
+       // this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+        webWorker('editOrder',this.OrderReview!).then((data) => {
           //console.log('Valor devuelto por el Web Worker edit:', data);
           if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
           {
@@ -368,7 +483,7 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
             //this.actualicon = 'cloud_done';
             if(index != undefined)
               order[index].Icon = 'cloud_done';
-            this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.customer.CardCode, this.Cart!, [])
           }
           else{
             if(index != undefined)
@@ -383,24 +498,9 @@ constructor(private orderService: ServiceService, private dialog: MatDialog, pri
             order[index].Icon = 'cloud_off';
           console.error('Error:', error);
         });
-        
-        //console.log(this.OrderIndexDB)
-        //console.log(this.OrderIndexDB.id)
-        //Cuando pase el webworker, agregue el docnum
-        //console.log(this.DocNumPublish)
-        //webWorker('postOrder',this.OrderReview)
-        this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
-          
-        
-      }
-
-      this.dataSharing.setOrderReview(this.OrderReview)
-      this.dataSharing.setCartData(this.Cart);
-      this.dataSharing.setOrderIndexDB(this.OrderIndexDB)
-
-      //console.log(order)
     }
   }
+
 }
 
 

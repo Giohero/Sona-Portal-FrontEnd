@@ -13,32 +13,65 @@
         </div>
       </button>
     </div>
-    <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
-      <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex = index;">
-        <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
-          <mat-card-header>
-            <div class="doc-num-container">
-              <h1 class="doc-num">{{ Order.DocNum }}</h1>
-            </div>
-            <div class="card-info">
-              <div class="label-card">
-                <mat-icon class="label-icon">date_range</mat-icon>
-                {{ Order.DocDueDate.slice(0, 10) }}
+
+    <!-- Sección para órdenes normales -->
+    <div *ngIf="!isLoading && ListOrders.length > 0">
+      <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
+        <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;">
+          <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
+            <mat-card-header>
+              <div class="doc-num-container">
+                <h1 class="doc-num">{{ Order.DocNum }}</h1>
               </div>
+              <div class="card-info">
+                <div class="label-card">
+                  <mat-icon class="label-icon">date_range</mat-icon>
+                  {{ Order.DocDueDate.slice(0, 10) }}
+                </div>
+                <br>
+                <div class="label-card">
+                  <mat-icon class="label-icon">local_offer</mat-icon>
+                  Total: ${{ Order.DocTotal }}
+                </div>
+              </div>
+            </mat-card-header>
+            <mat-card-content class="left-align">
               <br>
-              <div class="label-card">
-                <mat-icon class="label-icon">local_offer</mat-icon>
-                Total: ${{ Order.DocTotal }}
+              <label>{{ Order.NumAtCard }}</label>
+              <br>
+              <label>{{ Order.CardCode }} - {{ Order.CardName }}</label>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección para órdenes de borrador -->
+    <div *ngIf="!isLoading && ListOrdersDrafts.length > 0">
+      <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
+        <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrdersDrafts; let listIndex=index;">
+          <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
+            <mat-card-header>
+              <div class="doc-num-container">
+                <h1 class="doc-num">{{ Order.id }}</h1>
               </div>
-            </div>
-          </mat-card-header>
-          <mat-card-content class="left-align">
-            <br>
-            <label>{{ Order.NumAtCard }}</label>
-            <br>
-            <label>{{ Order.CardCode }} - {{ Order.CardName }}</label>
-          </mat-card-content>
-        </mat-card>
+              <div class="card-info">
+                <div class="label-card">
+                  <mat-icon class="label-icon">cloud_off</mat-icon>
+                  {{ Order.DocDueDate }} <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
+                </div>
+                <br>
+                <!-- Coloca aquí las propiedades adecuadas de las órdenes de borrador -->
+              </div>
+            </mat-card-header>
+            <mat-card-content class="left-align">
+              <br>
+              <label>{{ Order.TaxDate }}</label> <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
+              <br>
+              <label>{{ Order.CardCode }}</label> <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     </div>
     <br><br>

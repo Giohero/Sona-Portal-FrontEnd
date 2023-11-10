@@ -10,11 +10,33 @@ a{
   margin-right: 20px;
 }
 
+.iconsave{
+  font-size: 28px;
+  width: 35px;
+  height: 30px;
+  border-radius: 50%;
+  margin-left: 5px;
+  text-align: center;
+  align-items: center;
+  background: linear-gradient(30deg, #a62934, #eba881);
+}
+
 .h2Order{
   background-color: #a62934;
   color: white;
   border-radius: 10px; 
   padding: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-right: 5px;
+}
+
+.h2OrderIndex{
+  background-color: #0F97A6;
+  color: white;
+  border-radius: 10px; 
+  padding: 10px;
+  font-size: small;
   padding-left: 15px;
   padding-right: 15px;
   margin-right: 5px;
@@ -224,6 +246,40 @@ a{
   background-color: grey;
   opacity: .5;
 }
+
+
+button {
+  border: none;
+  color: #fff;
+  background-image: linear-gradient(30deg, #a62934, #eba881);
+  border-radius: 20px;
+  background-size: 100% auto;
+  font-family: inherit;
+  font-size: 17px;
+  padding: 0.6em 1.5em;
+ }
+ 
+ button:hover {
+  background-position: right center;
+  background-size: 200% auto;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse512 2.5s infinite;
+  background: linear-gradient(30deg, #be0c1b, #3a86ff);
+ }
+ 
+ @keyframes pulse512 {
+  0% {
+   box-shadow: 0 0 0 0 #05bada66;
+  }
+ 
+  70% {
+   box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+  }
+ 
+  100% {
+   box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+  }
+ }
 
 /* ... (otros estilos) */
 

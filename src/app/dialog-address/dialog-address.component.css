@@ -1,20 +1,21 @@
 .modal-content {
-  background-image: url('https://cdn.pixabay.com/photo/2017/03/27/02/25/lake-kaniere-2177121_1280.jpg');
-  background-size: cover;
-  opacity: 0.8;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  /* background-image: url('https://cdn.pixabay.com/photo/2017/03/27/02/25/lake-kaniere-2177121_1280.jpg'); */
+  background-color:#fffff6 ;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   padding: 20px;
 }
-.modal-title{
-  color: darkcyan;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+.modal-title {
+  font-size: 24px;
   text-align: center;
-  font-size: 22px;
+  color: #03595c;
 }
-.table{
-  margin-top: 20%;
+.table {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 10px;
 }
 .form-grid {
   display: grid;
@@ -43,11 +44,11 @@
 .form-group input,
 .form-group select,
 .custom-select {
-  background-color: #fff;
-  border: none;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
-  box-sizing: border-box;
+  margin: 5px 0;
   width: 100%;
 }
 .form-group{
@@ -64,7 +65,7 @@
 }
 
 .modal-actions button {
-  margin: 0 10px;
+  /* margin: 0 10px; */
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -72,6 +73,48 @@
   font-size: 16px;
   cursor: pointer;
 }
+
+.modal-actions button.save-button {
+  margin-right: 10px; /* Margen solo en el lado derecho para el botón Save */
+}
+
+.modal-actions button.cancel-button {
+  margin-left: 10px; /* Margen solo en el lado izquierdo para el botón Cancel */
+}
+
+
+button {
+  border: none;
+  color: #fff;
+  background-image: linear-gradient(30deg, #a62934, #eba881);
+  border-radius: 20px;
+  background-size: 100% auto;
+  font-family: inherit;
+  font-size: 17px;
+  padding: 0.6em 1.5em;
+ }
+ 
+ button:hover {
+  background-position: right center;
+  background-size: 200% auto;
+  -webkit-animation: pulse 3s infinite;
+  animation: pulse512 3.5s infinite;
+  background: linear-gradient(30deg, #be0c1b, #3a86ff);
+ }
+ 
+ @keyframes pulse512 {
+  0% {
+   box-shadow: 0 0 0 0 #05bada66;
+  }
+ 
+  70% {
+   box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+  }
+ 
+  100% {
+   box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+  }
+ }
 /*Modo responsivo, se vuelve una columna al ejecutar con pantallas mas pequeñas
 modo simétrico*/
 @media (max-width: 768px) {

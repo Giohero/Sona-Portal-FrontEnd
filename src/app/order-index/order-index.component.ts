@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Renderer2 } from '@angular/core';
 import { ServiceService } from '../service/service.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Order } from '../models/order';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
+import { IndexDbService } from '../service/index-db.service';
 
 @Component({
   selector: 'app-order-index',
@@ -12,44 +13,72 @@ import { DataSharingService } from '../service/data-sharing.service';
   styleUrls: ['./order-index.component.css']
 })
 export class OrderIndexComponent {
+  
+  displayedColumns: string[] = ['docNum', 'dueDate', 'total', 'numAtCard', 'cardInfo'];
+  displayedColumnsDrafts: string[] = ['Id', 'PostingDate', 'DeliveryDate', 'TaxDate', 'CardCode'];
+  ListOrders: Order[] = []; 
+  ListOrdersDrafts: any;
+  //ListOrdersDrafts: any; 
+  isLoading=true;
+  searchOrder: number | undefined;
+  constructor(private orderService: ServiceService, private renderer: Renderer2,private myRouter: Router, private route: ActivatedRoute, private dialog: MatDialog, private dataSharing: DataSharingService,private indexDB: IndexDbService)
+  {
+    window.addEventListener('online', async () => {
+      this.renderer.removeClass(document.body, 'offline');
+      this.isLoading = true;
+      Promise.all([this.reloadDrafts(), this.reload()])
+      .then(() => {
+        this.isLoading = false;
+      })
+      .catch((error) => {
+        console.error('Error al cargar datos: ', error);
+        this.isLoading = false;
+      });
+    })
+    window.addEventListener('offline', () => {
+      this.renderer.addClass(document.body, 'offline');
+      //console.log("ESTAS EN FUERA DE LINEA")
+      this.openSnackBar('You\'re offline.', "wifi_off", "Disconnected", "darkorange");
+    });
 
-ListOrders: Order[] | undefined;
-isLoading=true;
-searchOrder: number | undefined;
-  constructor(private orderService: ServiceService, private myRouter: Router, private route: ActivatedRoute, private dialog: MatDialog, private dataSharing: DataSharingService)
-  {}
+  }
 
   ngOnInit(): void {
 
-    this.orderService.getOrders().subscribe((retData) => {
-
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-
-        this.ListOrders = JSON.parse(retData.response!);
-        this.ListOrders!.sort((a, b) => b.DocNum - a.DocNum);
-        //console.log(this.ListOrders)
-      } else {
-        this.openSnackBar(retData.response!, "error", "Error", "red");
-      }
-
-      this.isLoading = false
-    });
+      Promise.all([this.reloadDrafts(), this.reload()])
+      .then(() => {
+        this.isLoading = false;
+      })
+      .catch((error) => {
+        console.error('Error al cargar datos: ', error);
+        this.isLoading = false;
+      });
+    
   }
-
-  reload()
-  {
-    this.isLoading = true; 
-    setTimeout(() => {
+  
+  async reload() {
+    return new Promise<void>((resolve, reject) => {
       this.orderService.getOrders().subscribe((retData) => {
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
           this.ListOrders = JSON.parse(retData.response!);
+          resolve(); // Resuelve la promesa cuando se completan las órdenes de API
         } else {
           this.openSnackBar(retData.response!, "error", "Error", "red");
+          reject('Error en la carga de órdenes de API');
         }
-        this.isLoading = false; 
       });
-    }, 2000);
+    });
   }
+  
+  async reloadDrafts() {
+    return new Promise<void>((resolve, reject) => {
+      setTimeout(async () => {
+        this.ListOrdersDrafts = await this.indexDB.getAllIndexWDocNumDB();
+        resolve(); // Resuelve la promesa cuando se completan las órdenes de IndexedDB
+      }, 2000);
+    });
+  }
+  
 
   searchingOrder(){
     if(this.searchOrder){
@@ -63,7 +92,12 @@ searchOrder: number | undefined;
 
   selectMatCard(order:Order)
   {
-    this.dataSharing.setOrderCReview(order)
+    if(order.DocNum === undefined)
+      this.dataSharing.setOrderIndexDB(order)
+    else
+      this.dataSharing.setOrderCReview(order)
+    
+    console.log(order)
     this.myRouter.navigate(['dashboard/order-edit']);
   }
 
