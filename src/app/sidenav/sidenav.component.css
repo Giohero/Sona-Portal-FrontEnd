@@ -10,13 +10,14 @@
   position: fixed;
   top: 0;
   left: 0;
-  height: 100%;
+  height: 100vh; /* Ajuste la altura para abarcar toda la pantalla */
   width: 230px;
   background-color: #ab3548;
   z-index: 100;
   transition: all 0.5s ease;
-  border-radius: 0px 20px 20px 20px; 
+  border-radius: 0px 20px 20px 20px;
 }
+
 .main-content {
   margin-left: 78px; /* pantalla acomodada */
   z-index: 1; 
@@ -328,24 +329,14 @@
   margin-right: 20px ; /* Ajusta el valor del margen según tus necesidades */
   cursor: pointer; /* Agrega esta línea para cambiar el cursor a una mano */
 }
-
 @media (max-width: 400px) {
-  .sidebar.close .nav-list li .sub-menu {
-    display: none;
-  }
-
   .sidebar {
-    width: 78px;
-  }
-
-  .sidebar.close {
-    width: 0;
+    width: 229px; /* Ajuste el ancho para pantallas más pequeñas */
   }
 
   .home-section {
-    left: 78px;
-    width: calc(100% - 78px);
-    z-index: 100;
+    left: 200px; /* Ajuste la posición para pantallas más pequeñas */
+    width: calc(100% - 200px);
   }
 
   .sidebar.close ~ .home-section {

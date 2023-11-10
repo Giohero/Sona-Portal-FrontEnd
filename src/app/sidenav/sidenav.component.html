@@ -17,16 +17,16 @@
       <li>
         <a mat-icon-button [matMenuTriggerFor]="ordersMenu" class="menu-link">
           <div class="icon-container">
-            <i class="bi bi-card-list"></i>
+            <i class="bi bi-border-bottom"></i>
             <span class="link-name"><span class="text">Orders</span></span>
           </div>
         </a>
         <mat-menu #ordersMenu="matMenu">
           <a mat-menu-item routerLink="/dashboard/order-index">
-            <i class="bi bi-collection-fill"></i> Orders
+            <i class="bi bi-border-bottom"></i> Orders
           </a>
           <a mat-menu-item (click)="goToNewOrder()">
-            <i class="bi bi-file-earmark-plus-fill"></i> Start New Order
+            <i class="bi bi-border-bottom"></i> Start New Order
           </a>
         </mat-menu>
       </li>
@@ -57,7 +57,7 @@
               <span (click)="logout()" class="link-name"></span>
             </div>
           </div>
-          <div class="user-info" *ngIf="!isSidebarClosed">
+          <div class="user-info" *ngIf= !isSidebarClosed >
             <div class="user-email" *ngIf="currentUserEmail">
               {{ currentUserEmail }}
             </div>
