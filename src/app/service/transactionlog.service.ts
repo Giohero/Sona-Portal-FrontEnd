@@ -8,6 +8,7 @@ import { EditToCosmosDB, PublishToCosmosDB, editToCosmosDB, getFromCosmosDBByDoc
 import { Dexie } from 'dexie';
 import { IndexDbService } from './index-db.service';
 import { DataSharingService } from './data-sharing.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class TransactionlogService {
   OrderIndexDB: any;
   TransactionIndexDB: any;
 
-  constructor(private authService: MsalService, private indexDB: IndexDbService, private dataSharing: DataSharingService) { 
+  constructor(private authService: MsalService, private indexDB: IndexDbService, private dataSharing: DataSharingService, private auth: AuthService) { 
     this.Db = new Dexie('transactions');
     this.Db.version(2).stores({
       transactions: '++id, IdIndex, user, DocNum, transactions',
@@ -41,42 +42,46 @@ export class TransactionlogService {
   }
 
 
-  async addTransactionLogToCosmos(docNum: number, docEntry: number, idTransaction: string, idIndex: number) {
-    let log =  {
-      IdIndex:idIndex,
+  async addTransactionLogToCosmos(docNum: number, docEntry: number, idTransaction: string, idIndex: number, action:string, orderChange:Order) {
+    // let log =  {
+    //   IdIndex:idIndex,
+    //   user: this.obtainUser(),
+    //   DocNum: docNum,
+    //   DocEntry: docEntry,
+    //   transaction_orders: [
+    //     // {
+    //     //   id: idTransaction,
+    //     //   action: action,
+    //     //   timestamp: new Date().toISOString(),
+    //     // }
+    //   ]
+    // };
+
+    const log =  {
+      IdIndex: idIndex,
       user: this.obtainUser(),
+      id: idTransaction,
+      action: action,
+      timestamp: new Date().toISOString(),
       DocNum: docNum,
       DocEntry: docEntry,
-      transactions: [
-        // {
-        //   id: idTransaction,
-        //   action: action,
-        //   timestamp: new Date().toISOString(),
-        // }
-      ]
+      //DocNum: parseInt(DocNum),
+      order: 
+      {
+        ...orderChange
+      }
+      
     };
 
     console.log('Objeto que agregaremos a cosmos')
     console.log(this.TransactionIndexDB)
-    const getCosmos = await getFromCosmosDBByIndexId(idIndex,'transaction_log')
-    if(getCosmos != null)
-    {
-
-      console.log("Aqui encontramos las transaction en cosmos")
-      console.log(this.TransactionIndexDB)
-      getCosmos.transactions = this.TransactionIndexDB.transactions;
-      EditToCosmosDB(getCosmos,'transaction_log')
-      return idTransaction;
-    }
-    else
-    {
-      log.IdIndex = idIndex;
-      console.log("Aqui publicaremos las transaction a cosmos")
-      console.log(this.TransactionIndexDB)
-      log.transactions = this.TransactionIndexDB.transactions;
-      PublishToCosmosDB(log,'transaction_log');
-      return idTransaction;
-    }
+    
+    log.IdIndex = idIndex;
+    console.log("Aqui publicaremos las transaction a cosmos")
+    console.log(this.TransactionIndexDB)
+    //log.transactions = this.TransactionIndexDB.transactions;
+    PublishToCosmosDB(log,'transaction_log');
+    return idTransaction;
   }
 
   async AddTransactionLogDirectToCosmos(transIndexDB: any) {
@@ -101,64 +106,40 @@ export class TransactionlogService {
 
   }
 
-  async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number) {
+
+
+  async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number, orderChange:Order) {
     const idChange = uuidv4()
 
     const log =  {
       IdIndex: id,
       user: this.obtainUser(),
-      DocNum: docNum,
-      DocEntry: docEntry,
-      //DocNum: parseInt(DocNum),
-      transactions: [
-        {
-          id: idChange,
-          action: action,
-          timestamp: new Date().toISOString(),
-        }
-      ]
-    };
-
-    const transaction ={
       id: idChange,
       action: action,
       timestamp: new Date().toISOString(),
-    }
-
+      DocNum: docNum,
+      DocEntry: docEntry,
+      //DocNum: parseInt(DocNum),
+      order: 
+      {
+        ...orderChange
+      }
+      
+    };
       try {
-        this.Db!.table('transactions').where('IdIndex').equals(id).first().then(async (record) => {
-          if(record)
-          {
-            record.transactions.push(transaction);
-            const transId = await  this.Db!.table('transactions').put(record);
-            console.log('Editamos el transaction')
-            console.log(transId)
-            const retrievedOrder = await this.Db!.table('transactions').get(transId);
-            console.log(retrievedOrder)
-            //this.dataSharing.setOrderIndexDB(retrievedOrder)
-            this.dataSharing.updateIndexTransaction(retrievedOrder)
+        let Logid = await this.Db!.table('transactions').add(log);
+        console.log('Agregamos el transaction')
+        console.log(Logid)
+        const retrievedOrder = await this.Db!.table('transactions').get(Logid);
+        console.log(retrievedOrder)
+        //this.dataSharing.setOrderIndexDB(retrievedOrder)
+        this.dataSharing.updateIndexTransaction(retrievedOrder)
 
-            return idChange;
-          }
-          else
-          {
-            let Logid = await this.Db!.table('transactions').add(log);
-            console.log('Agregamos el transaction')
-            console.log(Logid)
-            const retrievedOrder = await this.Db!.table('transactions').get(Logid);
-            console.log(retrievedOrder)
-            //this.dataSharing.setOrderIndexDB(retrievedOrder)
-            this.dataSharing.updateIndexTransaction(retrievedOrder)
-
-            return idChange;
-          }
-
-        })
+        return idChange;
       } catch (error) {
         console.error('Error:', error);
         return null;
       }
-
       return idChange;
   }
 
@@ -206,12 +187,16 @@ export class TransactionlogService {
   }
 
   obtainUser() {
-    const activeAccount= this.authService.instance.getActiveAccount();
+    const activeAccount= this.auth.userAzure$;
     if (activeAccount) {
-      return activeAccount.username;
+      (activeAccount: string) => {
+      return activeAccount;
+      }
+      return '';
     } else {
       return '';
     }
+    
   }
 
   // async editOrderLog(orderOrigin:Order,order: Order, idChange: string, idIndex:number) {
@@ -342,6 +327,106 @@ export class TransactionlogService {
   //     })
   //   } catch (error) {
   //     console.error('Error:', error);
+  //   }
+  // }
+
+  // async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number) {
+  //   const idChange = uuidv4()
+
+  //   const log =  {
+  //     IdIndex: id,
+  //     user: this.obtainUser(),
+  //     DocNum: docNum,
+  //     DocEntry: docEntry,
+  //     //DocNum: parseInt(DocNum),
+  //     transactions: [
+  //       {
+  //         id: idChange,
+  //         action: action,
+  //         timestamp: new Date().toISOString(),
+  //       }
+  //     ]
+  //   };
+
+  //   const transaction ={
+  //     id: idChange,
+  //     action: action,
+  //     timestamp: new Date().toISOString(),
+  //   }
+
+  //     try {
+  //       this.Db!.table('transactions').where('IdIndex').equals(id).first().then(async (record) => {
+  //         if(record)
+  //         {
+  //           record.transactions.push(transaction);
+  //           const transId = await  this.Db!.table('transactions').put(record);
+  //           console.log('Editamos el transaction')
+  //           console.log(transId)
+  //           const retrievedOrder = await this.Db!.table('transactions').get(transId);
+  //           console.log(retrievedOrder)
+  //           //this.dataSharing.setOrderIndexDB(retrievedOrder)
+  //           this.dataSharing.updateIndexTransaction(retrievedOrder)
+
+  //           return idChange;
+  //         }
+  //         else
+  //         {
+  //           let Logid = await this.Db!.table('transactions').add(log);
+  //           console.log('Agregamos el transaction')
+  //           console.log(Logid)
+  //           const retrievedOrder = await this.Db!.table('transactions').get(Logid);
+  //           console.log(retrievedOrder)
+  //           //this.dataSharing.setOrderIndexDB(retrievedOrder)
+  //           this.dataSharing.updateIndexTransaction(retrievedOrder)
+
+  //           return idChange;
+  //         }
+
+  //       })
+  //     } catch (error) {
+  //       console.error('Error:', error);
+  //       return null;
+  //     }
+
+  //     return idChange;
+  // }
+
+
+  // async addTransactionLogToCosmos(docNum: number, docEntry: number, idTransaction: string, idIndex: number) {
+  //   let log =  {
+  //     IdIndex:idIndex,
+  //     user: this.obtainUser(),
+  //     DocNum: docNum,
+  //     DocEntry: docEntry,
+  //     transactions: [
+  //       // {
+  //       //   id: idTransaction,
+  //       //   action: action,
+  //       //   timestamp: new Date().toISOString(),
+  //       // }
+  //     ]
+  //   };
+
+  //   console.log('Objeto que agregaremos a cosmos')
+  //   console.log(this.TransactionIndexDB)
+  //   const getCosmos = await getFromCosmosDBByIndexId(idIndex,'transaction_log')
+  //   if(getCosmos != null)
+  //   {
+
+  //     console.log("Aqui encontramos las transaction en cosmos")
+  //     console.log(this.TransactionIndexDB)
+  //     getCosmos.transactions = this.TransactionIndexDB.transactions;
+  //     EditToCosmosDB(getCosmos,'transaction_log')
+  //     return idTransaction;
+  //   }
+  //   else
+  //   {
+  //     log.IdIndex = idIndex;
+  //     console.log("Aqui publicaremos las transaction a cosmos")
+  //     console.log(this.TransactionIndexDB)
+  //     log.transactions = this.TransactionIndexDB.transactions;
+  //     PublishToCosmosDB(log,'transaction_log');
+  //     return idTransaction;
   //   }
   // }
 }

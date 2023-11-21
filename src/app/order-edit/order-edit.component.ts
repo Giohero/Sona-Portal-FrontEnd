@@ -363,9 +363,9 @@ export class OrderEditComponent implements OnInit {
       
       let idTransaction;
       if(this.order?.DocNum)
-        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,this.order?.DocNum, this.order?.DocEntry)
+        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,this.order?.DocNum, this.order?.DocEntry, OrderPost)
       else
-        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0)
+        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0, OrderPost)
       
       //const idTransaction = "0";
       //console.log(JSON.stringify(this.orderOld, null, 3));
@@ -374,7 +374,7 @@ export class OrderEditComponent implements OnInit {
       if(idTransaction != null)
       {
         this.cloudChange = "cloud_upload";
-        this.indexDB.editOrderLogToIndex(OrderPost!, this.orderOld, idTransaction, this.OrderIndexDB.id)
+        //this.indexDB.editOrderLogToIndex(OrderPost!, this.orderOld, idTransaction, this.OrderIndexDB.id)
       }
 
       if(this.isOnline == true)
@@ -416,9 +416,9 @@ export class OrderEditComponent implements OnInit {
     
                 OrderPost.DocNum = orderPublish!.DocNum;
                 OrderPost.DocEntry = orderPublish!.DocEntry.toString()
-                //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
-                this.indexDB.editOrderIndex(this.OrderIndexDB.id, orderPublish!.DocNum, orderPublish!.DocEntry, OrderPost, this.order!.CardCode, this.order!.DocumentLines, [])
-                //this.actualicon = 'cloud_done';
+                 //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
+                //this.indexDB.editOrderIndex(this.OrderIndexDB.id, orderPublish!.DocNum, orderPublish!.DocEntry, OrderPost, this.order!.CardCode, this.order!.DocumentLines, [])
+                 //this.actualicon = 'cloud_done';
                 this.cloudChange = 'cloud_done';
               }
               else{
@@ -441,8 +441,8 @@ export class OrderEditComponent implements OnInit {
         }
         
 
-        this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id)
-        this.indexDB.editOrderLogToCosmos(this.orderOld,OrderPost,idTransaction!, this.OrderIndexDB.id);
+        this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id, action, OrderPost)
+        ///this.indexDB.editOrderLogToCosmos(this.orderOld,OrderPost,idTransaction!, this.OrderIndexDB.id);
       }
       //this.indexDB.editToDB(this.OrderIndexDB.id,OrderPost!.DocNum!.toString(), OrderPost, OrderPost.CardCode!, DocumentLinesP)
 

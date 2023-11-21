@@ -8,6 +8,7 @@ import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { EditToCosmosDB, getFromCosmosDBByIndexId } from '../service/cosmosdb.service';
 import { webWorker } from '../app.component';
 import { Order } from '../models/order';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +20,7 @@ export class DashboardComponent {
   TransactionIndexDB: any;
   OrderIndexDB: any;
 
-  constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService,){
+  constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService, private auth: AuthService){
     window.addEventListener('online', async () => {
       this.renderer.removeClass(document.body, 'offline');
       this.isOnline = true;
@@ -93,7 +94,7 @@ export class DashboardComponent {
           console.log(orderCopyIndex)
           if(orderCosmos.DocumentLines != null)
           { //falta hacer pruebas con la orden 
-            if(orderCosmos.DocNum !== undefined )
+            if(orderCosmos.DocEntry === undefined )
               this.PublishOrderSAP(orderIndexLastVersion,orderCosmos,orderIndex)
             else
               this.EditOrderSAP(orderCosmos,orderIndexLastVersion)
@@ -119,7 +120,7 @@ export class DashboardComponent {
           //console.log(orderCopyIndex)
           if(orderCopyIndex.DocumentLines != null)
           { //poner un metodo donde verifique que exista la orden y solo se actualice, sino que se publique
-            if(orderCosmos.DocNum !== undefined)
+            if(orderCosmos.DocEntry === undefined)
               this.PublishOrderSAP(orderIndexLastVersion,orderCosmos,orderIndex)
             else
               this.EditOrderSAP(orderCosmos,orderIndexLastVersion)
@@ -246,5 +247,8 @@ export class DashboardComponent {
     this.dataSharing.OrderIndexDB$.subscribe((newOrderIndex) => {
       this.OrderIndexDB = newOrderIndex;
     });
+
+
+    //this.auth.initializeAuthState()
   }
 }

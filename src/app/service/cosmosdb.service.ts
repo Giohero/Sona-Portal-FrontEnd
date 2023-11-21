@@ -45,6 +45,7 @@ export async function PublishToCosmosDB(order:any, type: string) {
   console.log(order)
   
   try {
+    console.log('Se debe crear el documento:');
     const { resource } = await container.items.create(order);
     //console.log('Documento creado:', resource);
     //console.log(resource.id)
@@ -79,11 +80,12 @@ export async function EditToCosmosDB(order:any, type:string) {
   const containerId = 'DataContainer';
   const database = client.database(databaseId);
   const container = database.container(containerId);
+  order.type = type;
   //console.log('estoy editando en cosmos')
-  //console.log(order.id)
+  console.log(order)
 
   try {
-    const { resource } = await container.item(String(order.id), type).replace(order);
+    const { resource } = await container.item(order.id, type).replace(order);
     console.log('Documento editado:', resource);
   } catch (error) {
     console.error('Error al crear el documento:', error);

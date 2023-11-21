@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { MsalService } from '@azure/msal-angular';
+import { AuthService } from '../service/auth.service';
 import { Router } from '@angular/router';
 import { DataSharingService } from '../service/data-sharing.service';
 import { AfterViewInit, ElementRef } from '@angular/core';
 import { Renderer2 } from '@angular/core';
 import { AccountInfo } from '@azure/msal-browser';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -64,7 +66,7 @@ export class SidenavComponent implements OnInit {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
-    private msalService: MsalService,
+    private msalService: AuthService,
     private myRouter: Router,
     private dataSharing: DataSharingService,
     private elementRef: ElementRef,
@@ -77,23 +79,39 @@ export class SidenavComponent implements OnInit {
 
   ngOnInit() {
     this.loadCurrentUserEmail();
+    console.log(this.msalService.accountAzure$)
   }
 
   shouldRun = true;
 
   loadCurrentUserEmail() {
-    const activeAccount: AccountInfo | null = this.msalService.instance.getActiveAccount();
-    if (activeAccount) {
-      this.currentUserEmail = activeAccount.username;
-    }
+    // const activeAccount: AccountInfo | null = this.msalService.getActiveAccount();
+    // if (activeAccount) {
+    //   this.currentUserEmail = activeAccount.username;
+    // }
+
+    this.msalService.userAzure$.subscribe(
+      (username: string) => {
+        this.currentUserEmail = username
+      },
+      (error: any) => {
+        this.currentUserEmail = ''
+      }
+    );
   }
   
+  // logout() {
+  //   //if is Active Directory or local
+  //   if (this.msalService.getActiveAccount() != null) {
+  //     this.msalService.logout();
+  //     this.myRouter.navigate(['']);
+  //   }
+  // }
+
   logout() {
-    //if is Active Directory or local
-    if (this.msalService.instance.getActiveAccount() != null) {
-      this.msalService.logout();
-      this.myRouter.navigate(['']);
-    }
+    this.msalService.logout().subscribe(() => {
+      console.log('Cierre de sesión exitoso');
+    });
   }
 
   goToNewOrder() {

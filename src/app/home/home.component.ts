@@ -70,16 +70,20 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
-    this.orderService.getItems().subscribe((retData) => {
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-        this.ListItems = JSON.parse(retData.response!);
-        // Llama a getOrderLogDataComparation aquí después de obtener los items
-        this.getOrderLogDataComparation();
-      } else {
-        console.log(retData.response);
-        console.log('Error');
-      }
-    });
+    // this.orderService.getItems().subscribe((retData) => {
+    //   if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+    //     this.ListItems = JSON.parse(retData.response!);
+    //     // Llama a getOrderLogDataComparation aquí después de obtener los items
+    //     this.getOrderLogDataComparation();
+    //   } else {
+    //     console.log(retData.response);
+    //     console.log('Error');
+    //   }
+    // });
+
+    this.orderService.getRetrieveItemsC().subscribe((retData) => {
+        console.log(retData)
+      });
   }
 
   onSelectMaterial(selectedData: any){

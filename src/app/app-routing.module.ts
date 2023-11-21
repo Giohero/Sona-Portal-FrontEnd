@@ -7,7 +7,9 @@ import { LoginComponent } from './login/login.component';
 
 import { MsalGuard } from '@azure/msal-angular';
 import { BrowserUtils } from '@azure/msal-browser';
+import { AuthGuardService } from './service/auth-guard.service';
 
+//const redirectToLogin = () => redirectUnauthorizedTo(['']);
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component:LoginComponent},

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 // importar librerías necesarias
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { INResponse } from '../models/INResponse';
-import { Observable } from 'rxjs';
+import { Observable, mergeMap } from 'rxjs';
 import { BusinessPartner } from '../models/customer';
 import { Order } from '../models/car';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,48 @@ export class ServiceService {
 
   myapiurl = "api/"
 
-  constructor(private myhttp: HttpClient) { }
+  constructor(private myhttp: HttpClient, private auth: AuthService) { 
+    //this.msalService.initialize();
+  }
+
+
+  // this.dataSharing.statusWifi$.subscribe((newWifi) => {
+  //   console.log('llego el cambio a '+newWifi)
+  //   this.isOnline = newWifi;
+  // });
+
+  private getHeaders(): Observable<HttpHeaders> {
+    return new Observable<HttpHeaders>((observer) => {
+      this.auth.tokenAzure$.subscribe(
+        (token) => {
+          //console.log(token)
+          if (token) {
+            const headers = new HttpHeaders({
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            });
+            //console.log(headers)
+            observer.next(headers);
+          } else {
+            observer.next(new HttpHeaders());
+          }
+        },
+        (error) => {
+          observer.error(error);
+        }
+      );
+    });
+  }
+  
+  getRetrieveItemsC(): Observable<INResponse> {
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'RetrieveClothesOrder',
+        { headers }
+      ))
+    );
+  }
 
   getOrders(): Observable<INResponse> {
     return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'GetSalesOrder')

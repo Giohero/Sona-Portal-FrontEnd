@@ -74,14 +74,20 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     MatTabsModule,
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
-      { path: 'dashboard', component: DashboardComponent, canActivate:[MsalGuard]}]),
+      { path: 'login', component: LoginComponent },
+      { path: 'dashboard', component: DashboardComponent, canActivate:[MsalGuard]}
+    ]),
     // MSAL configuration
     MsalModule.forRoot(new PublicClientApplication({
       auth: {
         clientId: '58eb92b7-6661-4642-8409-420f059fb6d3',
         authority: 'https://login.microsoftonline.com/26e6cc6b-2157-4879-a8f3-f2fc5a6a1bfd',
         redirectUri: 'http://localhost:4200/dashboard'
-      }
+      },
+      cache: {
+        cacheLocation: 'localStorage',
+        storeAuthStateInCookie: false
+      }      
     }), {
       interactionType: InteractionType.Popup
     }, {
@@ -97,7 +103,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],
-  providers: [],
+  providers: [
+    
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

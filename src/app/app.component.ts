@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BusinessPartner } from './models/customer';
 import { INResponse } from './models/INResponse';
 import { Order } from './models/car';
+import { AuthService } from './service/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -9,13 +10,17 @@ import { Order } from './models/car';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
   ListCustomers!: BusinessPartner[] ;
   response!: INResponse;
   title = 'SonaPortal';
 
+  constructor(private auth: AuthService,){}
+
   ngOnInit(): void {
     //webWorker()
+    //this.auth.initializeAuthState()
+    
   }
   
 }
