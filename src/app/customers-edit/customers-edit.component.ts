@@ -11,6 +11,7 @@ import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
 
+
 @Component({
   selector: 'app-customers-edit',
   templateUrl: './customers-edit.component.html',
@@ -43,6 +44,7 @@ export class CustomersEditComponent {
   rowBill=0;
   ShowEdit = false;
   title=""
+  // cloudChange = 'cloud_done'
 
   constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService) 
   {
