@@ -10,6 +10,7 @@ import { DocumentLines } from '../models/car';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
+import { TransactionCostumerService } from '../service/transaction-costumer.service';
 
 
 @Component({
@@ -46,7 +47,15 @@ export class CustomersEditComponent {
   title=""
   // cloudChange = 'cloud_done'
 
-  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService) 
+  constructor(private router: Router,
+     private orderService: ServiceService,
+     private route: ActivatedRoute, 
+     private dialog: MatDialog,
+     private myRouter: Router, 
+     private _snackBar: MatSnackBar,
+     private dataSharing: DataSharingService, 
+     private indexDB:IndexDbService,
+     private transactionCustomer: TransactionCostumerService,) 
   {
     this.customerBack = this.dataSharing.getCustomerData();
     this.Cart = this.dataSharing.getCartData();
@@ -295,7 +304,8 @@ export class CustomersEditComponent {
       Notes: this.notes ?? "",
       CardType: 'C'
     };
-
+    this.transactionCustomer.addTransactionToIndex(this.idcustomer,this.searchText,'C',this.CurrentSellsItem!.BPAddresses,"Customer Updated",this.email!,this.notes!);
+    
     this.orderService.UpdateCustomer(Customer).subscribe(retData => {
       //console.log(Customer);
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300)

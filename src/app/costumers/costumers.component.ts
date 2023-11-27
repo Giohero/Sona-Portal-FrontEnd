@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
+import { TransactionCostumerService } from '../service/transaction-costumer.service';
 
 @Component({
   selector: 'app-costumers',
@@ -44,6 +45,7 @@ export class CostumersComponent implements OnInit {
   title=""
 
   constructor(
+    private transactionCustomer: TransactionCostumerService,
     private customerService: ServiceService,
     private myRouter: Router,
     private dataSharing: DataSharingService,
@@ -102,6 +104,7 @@ export class CostumersComponent implements OnInit {
         }
 
         //console.log(CustomerAdd)
+        this.transactionCustomer.addTransactionToIndex(this.idcustomer,this.searchText,'C',this.CurrentSellsItem!.BPAddresses,"Customer Created",this.email!,this.notes!);
 
         this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
           //console.log(CustomerAdd);
