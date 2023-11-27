@@ -1,10 +1,10 @@
 .background {
   background-color: #fffff6;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  /* background-attachment: fixed; */
   background-size: cover;
   width: 100%;
-  min-height: 100%;
+  min-height: 100vh;
 }
 .doc-num-container {
   background-color: #a62934; /* Background color */

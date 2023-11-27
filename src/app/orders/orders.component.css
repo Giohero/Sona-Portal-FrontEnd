@@ -223,13 +223,14 @@ mat-tab{
   opacity: 0.9;
 }
 .background {
-  
   background-color: #fffff6;
   /* background-image: url('src/assets/images/BussinesVector.jpeg'); */
   /* background-image: url('src/assets/images/Camping.jpg'); */
-  height: 100hv;
   margin: 0;
   padding: 10px;
+  background-repeat: no-repeat;
+  width: 100%;
+  min-height: 100vh;
 }
 
 html, body {
