@@ -78,6 +78,8 @@ export class OrdersComponent {
   LineNumber=0;
   isOnline=true;
 
+  //Add status: index, cloud, complete
+
   constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService) 
   {
     const currentYear = new Date();
@@ -86,6 +88,9 @@ export class OrdersComponent {
     this.tax = new FormControl({ value: new Date(), disabled: true });
     this.delivery = new FormControl(new Date());
 
+    this.Cart = []
+    this.dataSharing.updateIdsOrder(0, 0)
+    this.dataSharing.updateCart([])
     //this.customerBack = this.dataSharing.getCustomerData();
     //this.Cart = this.dataSharing.getCartData();
 
@@ -98,11 +103,13 @@ export class OrdersComponent {
     this.LineNumber=0;
     // if(this.Cart === undefined)
     //     this.getDataIndex();
+    
+    /*
     if(this.Cart == undefined)
       this.Cart = []
     else
       this.CartOld = JSON.parse(JSON.stringify(this.Cart));
-
+    */
 
     // if(pageUrl === 'new-order')
     // {
@@ -813,6 +820,7 @@ export class OrdersComponent {
     const dateDefault = this.pipe.transform(today, 'yyyy-MM-dd');
     this.OrderReview!.DocDate = dateDefault?.toString();
     this.OrderReview!.TaxDate = dateDefault?.toString();
+    
 
     if(order === undefined && action)
     {
@@ -852,23 +860,28 @@ export class OrdersComponent {
       if(this.OrderIndexDB === undefined)
       {
         console.log('agregamos solo index db y Cosmos')
-        this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, null)
+        this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, 'index')
         this.idIndex = this.OrderIndexDB.id;
-        console.log(this.OrderIndexDB)
+        console.log(this.OrderReview)
         console.log(this.OrderIndexDB.id)
 
-        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
-        this.OrderReviewCopy.User = this.obtainUser();
+        //JSON.parse(JSON.stringify(this.OrderReview))
+        this.OrderReviewCopy = {};
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+        this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.Timestamp =  new Date().toISOString();
+        this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
         
         if(this.isOnline == true)
         {
           console.error('Se debe crear el documento:');
           if(this.Cart!.length > 0)
-          this.updateOrderCloud('publish', undefined, this.Cart!)
+            this.updateOrderCloud('publish', undefined, this.Cart!)
           else
             this.idCosmos = await PublishToCosmosDB(this.OrderReviewCopy, 'transaction_log')
-            console.log( this.idCosmos)
+            if(this.idCosmos != undefined)
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
         }
 
         console.log(this.idCosmos)
@@ -876,12 +889,18 @@ export class OrdersComponent {
       else
       {
         console.log('editamos solo index db')
-        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.idcustomer, this.Cart!, [])
-        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
+        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index')
+        this.OrderReviewCopy = {};
         this.OrderReviewCopy.id = this.idCosmos;
-        console.log( this.idCosmos)
-        this.OrderReviewCopy.User = this.obtainUser();
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+        this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.Timestamp =  new Date().toISOString();
+        this.OrderReviewCopy.DocNum = Number(this.OrderReview!.DocNum!);
+        this.OrderReviewCopy.DocEntry = Number(this.OrderReview!.DocEntry!);
+        this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
+
+        console.log( this.idCosmos)
         console.log(this.OrderIndexDB)
 
         //console.log('deberia de editarlo a SAP y Cosmos')
@@ -890,11 +909,15 @@ export class OrdersComponent {
           if(this.Cart!.length > 0)
           this.updateOrderCloud('', undefined, this.Cart!)
           else
-            EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
+          {
+            var publishCosmos = await EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
+            if(publishCosmos == true)
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+          }
         }
       }
     }
-    else if(order !== this.CartOld)
+    else
     {
       console.log("paso por el carrito")
       if(this.idcustomer === '')  
@@ -909,20 +932,28 @@ export class OrdersComponent {
       if(this.Cart!.length! === 1 && this.OrderIndexDB === undefined)
       {
         console.log('agregamos index db, SAP y Cosmos')
-        this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, null)
+        this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, 'index')
 
         this.idIndex = this.OrderIndexDB.id;
         this.OrderReview!.NumAtCard = this.OrderIndexDB.id;
-        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
-        this.OrderReviewCopy.User = this.obtainUser();
-        this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
 
+        this.OrderReviewCopy = {};
+        this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+        this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.Timestamp =  new Date().toISOString();
+        this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
+        
         if(this.isOnline == true)
         {
           if(this.idcustomer !== '')
           this.updateOrderCloud('publish', index, order!);
           else
+          {
             this.idCosmos = await PublishToCosmosDB(this.OrderReviewCopy, 'transaction_log')
+            if(this.idCosmos != undefined)
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+          }
         }
         ////there was the procces to publish order in cosmos and SAP
 
@@ -959,11 +990,17 @@ export class OrdersComponent {
 
         this.OrderReview!.DocumentLines = DocumentLinesP;
         
-        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.idcustomer, this.Cart!, [])
-        this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
+        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index')
+        this.OrderReviewCopy = {};
         this.OrderReviewCopy.id = this.idCosmos;
-        this.OrderReviewCopy.User = this.obtainUser();
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+        this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
+        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.Timestamp =  new Date().toISOString();
+        this.OrderReviewCopy.DocNum = Number(this.OrderReview!.DocNum!);
+        this.OrderReviewCopy.DocEntry = Number(this.OrderReview!.DocEntry!);
+        this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
+        
         console.log(this.OrderReviewCopy)
         //this.transactionService.editOrderLog(this.OrderReview,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
         
@@ -973,7 +1010,11 @@ export class OrdersComponent {
           if(this.idcustomer !== '')
           this.updateOrderCloud('', index, order!);
           else
-            EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
+          {
+            publishCosmos = await EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
+            if(publishCosmos == true)
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+          }
         }
         //console.log(this.OrderIndexDB)
         //console.log(this.OrderIndexDB.id)
@@ -1000,10 +1041,15 @@ export class OrdersComponent {
     {
       //editToCosmosDB(this.OrderReviewCopy)
       if(this.idCosmos !== undefined)
-        EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
+      {
+        var publishCosmos = await EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
+        if(publishCosmos == true)
+          this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+      }
       else
+      {
         this.idCosmos = await PublishToCosmosDB(this.OrderReviewCopy, 'transaction_log')
-        
+      }
         console.log(this.idCosmos)
         
         webWorker('postOrder',this.OrderReview!).then((data) => {
@@ -1017,12 +1063,20 @@ export class OrdersComponent {
             this.OrderReview!.DocNum = this.DocNumPublish;
             this.OrderReview!.DocEntry = this.DocEntryPublish;
 
-            this.OrderReviewCopy = this.OrderReview;
+            this.OrderReviewCopy = {};
             this.OrderReviewCopy.id = this.idCosmos;
+            this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+            this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
+            this.OrderReviewCopy.User = this.obtainUser();
+            this.OrderReviewCopy.Timestamp =  new Date().toISOString();
+            this.OrderReviewCopy.DocNum = Number(this.OrderReview!.DocNum!);
+            this.OrderReviewCopy.DocEntry = Number(this.OrderReview!.DocEntry!);
+            this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
+
             EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             ///editToCosmosDB(this.OrderReviewCopy)
             //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
-            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.idcustomer, this.Cart!, [])
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete')
             //this.actualicon = 'cloud_done';
             this.Cart![0].Icon= 'cloud_done';
           }
@@ -1055,7 +1109,7 @@ export class OrdersComponent {
             //this.actualicon = 'cloud_done';
             if(index != undefined)
               order[index].Icon = 'cloud_done';
-            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, this.idcustomer, this.Cart!, [])
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete')
           }
           else{
             if(index != undefined)

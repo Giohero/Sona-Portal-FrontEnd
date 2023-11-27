@@ -87,8 +87,10 @@ export async function EditToCosmosDB(order:any, type:string) {
   try {
     const { resource } = await container.item(order.id, type).replace(order);
     console.log('Documento editado:', resource);
+    return true;
   } catch (error) {
     console.error('Error al crear el documento:', error);
+    return false;
   }
 }
 

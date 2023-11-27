@@ -27,8 +27,14 @@ export class DataSharingService {
   TransactionIndexDB$: Observable<number> = this.TransactionIndexDBActual.asObservable();
   private statusWifi: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   statusWifi$: Observable<boolean> = this.statusWifi.asObservable();
+  private tokenSignal: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  tokenSignal$: Observable<string> = this.tokenSignal.asObservable();
 
   constructor() { }
+
+  updateTokenSignal(tokenS: string): void {
+    this.tokenSignal.next(tokenS);
+  }
 
   setCustomerData(customer: any) {
     this.customerData = customer;

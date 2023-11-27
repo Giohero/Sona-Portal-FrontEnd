@@ -12,7 +12,8 @@ import { Order as OrderPost, DocumentLines as DocLinePost } from '../models/car'
 import { webWorker } from '../app.component';
 import { IndexDbService } from '../service/index-db.service';
 import { TransactionlogService } from '../service/transactionlog.service';
-import { editToCosmosDB } from '../service/cosmosdb.service';
+import { PublishToCosmosDB, editToCosmosDB } from '../service/cosmosdb.service';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-order-edit',
@@ -34,7 +35,7 @@ export class OrderEditComponent implements OnInit {
   cloudChange = 'cloud_done'
   minDate?: Date;
 
-  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService, private transLog: TransactionlogService, private myRouter: Router,) {
+  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService, private transLog: TransactionlogService, private myRouter: Router, private auth: AuthService) {
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
 
@@ -357,16 +358,35 @@ export class OrderEditComponent implements OnInit {
       // console.log("Index antes de hacer cambios")
       console.log(this.OrderIndexDB)
       if(this.OrderIndexDB == undefined)
-          this.OrderIndexDB = await this.indexDB.addOrderIndex(this.orderOld, [])
-        
+      {
+
+        //Add the new order in index 
+        this.OrderIndexDB = await this.indexDB.addOrderIndex(this.orderOld, 'index')
+
+        var OrderReviewCopy: any;
+        OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
+        OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
+        OrderReviewCopy.User = this.obtainUser();
+        OrderReviewCopy.Timestamp =  new Date().toISOString();
+        OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.orderOld));
+
+        //Add in Cosmos the Create Order 
+        var idCosmos = await PublishToCosmosDB(OrderReviewCopy, 'transaction_log')
+        if(idCosmos != undefined) //Change the status in index 
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'cosmos')
+      }
+          
       OrderPost.NumAtCard = this.OrderIndexDB.id;
-      
       let idTransaction;
+
       if(this.order?.DocNum)
-        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,this.order?.DocNum, this.order?.DocEntry, OrderPost)
+        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,this.order?.DocNum, this.order?.DocEntry, OrderPost, "index")
       else
-        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0, OrderPost)
+        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0, OrderPost, "index")
       
+      //Add the change for the change in Index status
+      this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id, action, OrderPost)
+      this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost)
       //const idTransaction = "0";
       //console.log(JSON.stringify(this.orderOld, null, 3));
       console.log('aqui pasa el id transaction '+ idTransaction)
@@ -389,6 +409,7 @@ export class OrderEditComponent implements OnInit {
               if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
               {
                 this.cloudChange = "cloud_done";
+                this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
                 // const orderEdit: Order = JSON.parse(data.response);
                 // console.log(orderEdit)
                 //this.DocNumPublish = orderPublish!.DocNum;
@@ -416,6 +437,9 @@ export class OrderEditComponent implements OnInit {
     
                 OrderPost.DocNum = orderPublish!.DocNum;
                 OrderPost.DocEntry = orderPublish!.DocEntry.toString()
+
+                this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'complete')
+                this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
                  //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
                 //this.indexDB.editOrderIndex(this.OrderIndexDB.id, orderPublish!.DocNum, orderPublish!.DocEntry, OrderPost, this.order!.CardCode, this.order!.DocumentLines, [])
                  //this.actualicon = 'cloud_done';
@@ -441,7 +465,7 @@ export class OrderEditComponent implements OnInit {
         }
         
 
-        this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id, action, OrderPost)
+        
         ///this.indexDB.editOrderLogToCosmos(this.orderOld,OrderPost,idTransaction!, this.OrderIndexDB.id);
       }
       //this.indexDB.editToDB(this.OrderIndexDB.id,OrderPost!.DocNum!.toString(), OrderPost, OrderPost.CardCode!, DocumentLinesP)
@@ -460,6 +484,28 @@ export class OrderEditComponent implements OnInit {
     //   this.myRouter.navigate(['dashboard/order-drafts']);
     this.myRouter.navigate(['dashboard/order-index']);
   }
+
+  obtainUser() {
+    // const activeAccount= this.msalService.instance.getActiveAccount();
+    // if (activeAccount) {
+      
+    //   return activeAccount.username;
+    // } else {
+    //   return '';
+    // }
+
+    const activeAccount= this.auth.userAzure$;
+    if (activeAccount) {
+      (activeAccount: string) => {
+        return activeAccount;
+      }
+      return ''
+    } else {
+      return '';
+    }
+
+  }
+
 
 }
 

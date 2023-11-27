@@ -29,8 +29,8 @@ import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 // MSAL imports
-import { MsalModule } from '@azure/msal-angular';
-import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import { MsalModule, MsalRedirectComponent } from '@azure/msal-angular';
+import { BrowserUtils, InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { MsalGuard } from '@azure/msal-angular';
 import { OrdersComponent } from './orders/orders.component';
 import { FilterPipe } from './service/filter.pipe';
@@ -43,7 +43,9 @@ import { OrderIndexComponent } from './order-index/order-index.component';
 import { OrderEditComponent } from './order-edit/order-edit.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
-
+const isIE =
+  window.navigator.userAgent.indexOf("MSIE ") > -1 ||
+  window.navigator.userAgent.indexOf("Trident/") > -1;
 
 @NgModule({
   declarations: [
@@ -76,7 +78,14 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       { path: '', component: LoginComponent },
       { path: 'login', component: LoginComponent },
       { path: 'dashboard', component: DashboardComponent, canActivate:[MsalGuard]}
-    ]),
+    ],
+    {
+       // Don't perform initial navigation in iframes or popups
+       initialNavigation:
+       !BrowserUtils.isInIframe() && !BrowserUtils.isInPopup()
+         ? "enabledNonBlocking"
+         : "disabled", // Set to enabledBlocking to use Angular Universal
+    }),
     // MSAL configuration
     MsalModule.forRoot(new PublicClientApplication({
       auth: {
@@ -85,16 +94,19 @@ import { ServiceWorkerModule } from '@angular/service-worker';
         redirectUri: 'http://localhost:4200/dashboard'
       },
       cache: {
-        cacheLocation: 'localStorage',
-        storeAuthStateInCookie: false
+        cacheLocation: "localStorage",
+        storeAuthStateInCookie: isIE,
       }      
     }), {
-      interactionType: InteractionType.Popup
+      interactionType: InteractionType.Popup, // MSAL Guard Configuration
+        authRequest: {
+          scopes: ["user.read"],
+        },
     }, {
       protectedResourceMap: new Map([
         ['https://graph.microsoft.com/v1.0/me', ['user.read']]
       ]),
-      interactionType: InteractionType.Redirect
+      interactionType: InteractionType.Redirect 
     }),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
@@ -104,9 +116,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     })
   ],
   providers: [
-    
+    MsalRedirectComponent
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule { }
 

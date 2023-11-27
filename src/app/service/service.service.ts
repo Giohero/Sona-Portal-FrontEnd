@@ -89,6 +89,10 @@ export class ServiceService {
     return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'UpdateBusinessPartner', Customer)
   }
 
+  GetTokenSignal(): Observable<{url:string, accesToken: string}> {
+    return this.myhttp.get<{url:string, accesToken: string}>(this.myappurlcetos + this.myapiurl + 'negotiate')
+  }
+
   PostOrder(Order: Order):Observable<INResponse> {
     return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'CreateSalesOrder', Order)
   }

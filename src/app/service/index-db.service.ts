@@ -29,16 +29,19 @@ export class IndexDbService {
 
   
   //async editToDB(id: number, DocNum: string = '12345', DocDate: string = '0001-01-01', DocDueDate: string = '0001-01-01', TaxDate: string = '0001-01-01', CardCode: string, DocumentLines: DocumentLines[], AddressExtension: AddressExtension = {}): Promise<void> {
-  async editOrderIndex(id: number, DocNum: number, DocEntry: number, OrderComplete: Order | OrderComplete, CardCode: string, DocumentLines: DocumentLines[],transaction_order: any): Promise<void> {
+  async editOrderIndex(id: number, DocNum: number, DocEntry: number, OrderComplete: Order | OrderComplete, status: string): Promise<void> {
     try {
 
       console.log(OrderComplete)
-      const DocDate = OrderComplete.DocDate;
-      const DocDueDate = OrderComplete.DocDueDate;
-      const TaxDate = OrderComplete.TaxDate;
-      const AddressExtension = OrderComplete.AddressExtension;
+      // const DocDate = OrderComplete.DocDate;
+      // const DocDueDate = OrderComplete.DocDueDate;
+      // const TaxDate = OrderComplete.TaxDate;
+      // const AddressExtension = OrderComplete.AddressExtension;
+      const Action = "Create_Order";
+      const Timestamp = new Date().toISOString();
+      const Order = OrderComplete;
 
-      const orderId = await  this.Db!.table('orders').put({ id, DocNum, DocEntry, DocDate, DocDueDate, TaxDate, CardCode, DocumentLines, AddressExtension, transaction_order });
+      const orderId = await  this.Db!.table('orders').put({ id, Action, Timestamp, DocNum, DocEntry, Order, status});
       console.log(orderId)
       const retrievedOrder = await this.Db!.table('orders').get(orderId);
       console.log(retrievedOrder)
@@ -51,7 +54,7 @@ export class IndexDbService {
   }
 
 
-  async addOrderIndex(data: Order, transaction_order: any): Promise<any> {
+  async addOrderIndex(data: Order, status: string): Promise<any> {
     //const DocNum = data.DocNum;
     // 
     const currentDate = new Date();
@@ -67,16 +70,19 @@ export class IndexDbService {
       const formattedTime = `${dia}${mes}${lastTwoDigitsOfYear}${hora}${minutos}${lastoneMil}`;
       const id = parseInt(formattedTime);
 
-    const CardCode = data.CardCode;
-    const DocumentLines = data.DocumentLines;
+    // const CardCode = data.CardCode;
+    // const DocumentLines = data.DocumentLines;
     const DocNum = data.DocNum;
     const DocEntry = data.DocEntry;
-    const DocDate = data.DocDate;
-    const DocDueDate = data.DocDueDate;
-    const TaxDate = data.TaxDate;
+    const Action = "Create_Order";
+    const Order = data;
+    const Timestamp = new Date().toISOString();
+    // const DocDate = data.DocDate;
+    // const DocDueDate = data.DocDueDate;
+    // const TaxDate = data.TaxDate;
 
     try {
-      const orderId = await this.Db!.table('orders').add({ id, DocNum, DocEntry, DocDate, DocDueDate, TaxDate, CardCode, DocumentLines, transaction_order});
+      const orderId = await this.Db!.table('orders').add({ id, Action, Timestamp, DocNum, DocEntry, Order, status});
       const retrievedOrder = await this.Db!.table('orders').get(orderId);
       console.log("Agregando a Order Index DB");
       console.log(retrievedOrder);
@@ -119,6 +125,23 @@ export class IndexDbService {
 
         console.log(lastRecord)
         return lastRecord;
+      }
+      else
+        return null;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  }
+
+  async getAllOrdersWithoutUpdate(): Promise<any> {
+    try {
+      const allOrders = await this.Db!.table('orders').toArray();
+      if (allOrders.length > 0) {
+        const lastRecords = allOrders.filter(x => x.status != "complete");
+
+        console.log(lastRecords)
+        return lastRecords;
       }
       else
         return null;
@@ -171,12 +194,12 @@ export class IndexDbService {
           //const transaction_order = record.transaction_order;
 
           console.log('estamos editando la orden para agregar el cambio '+ idIndex)
-          this.editOrderIndex(id, order.DocNum!, Number(order.DocEntry!), orderOrigin, order.CardCode!, order.DocumentLines!, record.transaction_order);
+          this.editOrderIndex(id, order.DocNum!, Number(order.DocEntry!), orderOrigin, '');
         }
         else
         {
           console.log('estamos agregando la orden desde cero para agregar el cambio '+ idIndex)
-          this.addOrderIndex(order, transaction_order)
+          this.addOrderIndex(order, 'index')
           
         }
       })
@@ -218,19 +241,19 @@ export class IndexDbService {
 
     console.log(orderIndexDB)
 
-    const getCosmos = await getFromCosmosDBByIndexId(idIndex,'order_log')
+    const getCosmos = await getFromCosmosDBByIndexId(idIndex,'transaction_log')
     if(getCosmos == null)
     {
       var orderPublishCosmos = JSON.parse(JSON.stringify(orderIndexDB));
       //No quita el id, por eso hicimos copia
-      orderPublishCosmos.IdIndex = orderIndexDB.id;
-      PublishToCosmosDB(orderPublishCosmos,'order_log');
+      orderPublishCosmos.IdIndex = idIndex;
+      PublishToCosmosDB(orderPublishCosmos,'transaction_log');
       console.log('Estoy obteniendo null en el editOrderLog');
     }
     else
     {
-      getCosmos.transaction_order = this.OrderIndexDB.transaction_order;
-      EditToCosmosDB(getCosmos,'order_log');
+      getCosmos.Order = orderIndexDB.Order;
+      EditToCosmosDB(getCosmos,'transaction_log');
     }
 
   }

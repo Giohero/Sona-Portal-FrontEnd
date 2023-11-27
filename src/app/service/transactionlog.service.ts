@@ -106,9 +106,7 @@ export class TransactionlogService {
 
   }
 
-
-
-  async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number, orderChange:Order) {
+  async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number, orderChange:Order, status: string) {
     const idChange = uuidv4()
 
     const log =  {
@@ -119,8 +117,8 @@ export class TransactionlogService {
       timestamp: new Date().toISOString(),
       DocNum: docNum,
       DocEntry: docEntry,
-      //DocNum: parseInt(DocNum),
-      order: 
+      Status: status,
+      order:  
       {
         ...orderChange
       }
@@ -141,6 +139,42 @@ export class TransactionlogService {
         return null;
       }
       return idChange;
+  }
+
+  async editTransactionToIndex(id: string, idChange: string, action: string, docNum: number, docEntry: number, status:string, orderChange:Order) {
+    
+    const log =  {
+      IdIndex: id,
+      user: this.obtainUser(),
+      id: idChange,
+      action: action,
+      timestamp: new Date().toISOString(),
+      DocNum: docNum,
+      DocEntry: docEntry,
+      Status: status,
+      order:  
+      {
+        ...orderChange
+      }
+      
+    };
+    
+    try {
+      let Logid = await this.Db!.table('transactions').put(log);
+      console.log('Editamos la transaction')
+      console.log(Logid)
+      const retrievedOrder = await this.Db!.table('transactions').get(Logid);
+      console.log(retrievedOrder)
+      //this.dataSharing.setOrderIndexDB(retrievedOrder)
+      this.dataSharing.updateIndexTransaction(retrievedOrder)
+
+      return idChange;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+    return idChange;
+
   }
 
   async getLogs() {
