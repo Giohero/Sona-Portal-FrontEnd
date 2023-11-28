@@ -80,11 +80,11 @@ export class HomeComponent {
     //     console.log('Error');
     //   }
     // });
-
     this.getOrderLogDataComparation()
+
     this.orderService.getRetrieveItemsC().subscribe((retData) => {
-        console.log(retData)
-      });
+      console.log(retData)
+    });
   }
 
   onSelectMaterial(selectedData: any){

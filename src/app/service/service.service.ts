@@ -31,8 +31,9 @@ export class ServiceService {
   private getHeaders(): Observable<HttpHeaders> {
     return new Observable<HttpHeaders>((observer) => {
       this.auth.tokenAzure$.subscribe(
-        (token) => {
-          //console.log(token)
+        (token:string) => {
+          console.log(this.auth.userAzure$)
+          console.log(token)
           if (token) {
             const headers = new HttpHeaders({
               'Content-Type': 'application/json',

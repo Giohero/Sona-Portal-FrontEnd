@@ -216,6 +216,10 @@ export class OrdersComponent {
         this.openSnackBar(retData.response!, "error", "Error", "red");
       }
 
+      this.orderService.getRetrieveItemsC().subscribe((retData) => {
+        console.log(retData)
+      });
+
       this.dataSharing.cartData$.subscribe((newCart) => {
         this.Cart = newCart;
         //console.log('actualizando carrito')

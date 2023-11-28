@@ -1,12 +1,15 @@
-import { Injectable } from '@angular/core';
-import { MsalService } from '@azure/msal-angular';
-import { PublicClientApplication, AuthenticationResult, AccountInfo, ITokenCache } from '@azure/msal-browser';
-import { BehaviorSubject, Observable, from, map, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
+import { PublicClientApplication, AuthenticationResult, AccountInfo, ITokenCache, InteractionStatus, RedirectRequest } from '@azure/msal-browser';
+import { BehaviorSubject, Observable, filter, from, map, of, takeUntil } from 'rxjs';
+import { Profile } from '../models/loginAccount';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnInit {
 
   //private msalService: PublicClientApplication;
   private tokenAzure: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -16,12 +19,25 @@ export class AuthService {
   private accountAzure: BehaviorSubject<any> = new BehaviorSubject<any>({});
   accountAzure$: Observable<any> = this.accountAzure.asObservable();
 
-  constructor(private msalService: MsalService,) {
+  loginDisplay = false;
+  GRAPH_ENDPOINT = "https://graph.microsoft.com/v1.0/me";
+  profile: Profile = {};
+
+  constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration, 
+  private broadcastService: MsalBroadcastService, 
+  private msalService: MsalService, 
+  private myRouter: Router,
+  private http: HttpClient) {
     //msalService = new PublicClientApplication(this.msalConfig);
     this.msalService.initialize();
   }
 
+  ngOnInit() {
+    
+  }
+
   getToken(newToken:string): void {
+    console.log(newToken)
     this.tokenAzure.next(newToken);
   }
 
@@ -35,12 +51,83 @@ export class AuthService {
     this.userAzure.next(newAccount);
   }
 
-  login(): Observable<AuthenticationResult> {
-    return from(this.msalService.loginPopup());
+  login() {
+    // this.msalService.loginPopup()
+    //   .subscribe({
+    //     next: (result) => {
+    //       console.log(result);
+    //       this.setLoginDisplay();
+    //       this.myRouter.navigate(['dashboard']);
+    //     },
+    //     error: (error) => console.log(error)
+    //   });
+
+    this.msalService.loginRedirect({
+      scopes: ['openid', 'profile', 'user.read'],  
+      redirectStartPage: '/dashboard',
+      onRedirectNavigate(url) {
+        url : '/login'
+        return true;  
+      },
+      tokenBodyParameters: {
+      },
+    }).subscribe();
+
+
+    console.log(this.msalService.instance.getAllAccounts())
+
+    // if (this.msalGuardConfig.authRequest){
+    //   this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest)
+    // } else {
+      
+    // }
+
+    // this.msalService.instance.handleRedirectPromise().then(
+    //   res => {
+    //     if(res != null && res.account != null)
+    //     {
+    //       this.msalService.instance.setActiveAccount(res.account)
+    //       console.log(res)
+    //     }
+    //   }
+    // )
+    
   }
 
-  logout(): Observable<void> {
-    return from(this.msalService.logout());
+  getProfile() {
+    this.http.get(this.GRAPH_ENDPOINT)
+      .subscribe((profile: Profile) => {
+        console.log(profile)
+        this.profile = profile;
+        this.getUser(profile!.mail!)
+        
+        
+        console.log(this.msalService.instance.getAccountByLocalId(profile.id!))
+        var account = this.msalService.instance.getAccountByLocalId(profile.id!)
+        this.getToken(account!.idToken!)
+        this.msalService.instance.setActiveAccount(account)
+        //this.getTokenMSAL()
+        
+      });
+  }
+
+  getTokenMSAL(){
+    this.msalService.acquireTokenSilent({ scopes: ["User.Read"] }).subscribe(
+      response => {console.log(response)
+
+      this.getToken(response.idToken!)
+      }
+    )
+  }
+
+  setLoginDisplay() {
+    this.loginDisplay = this.msalService.instance.getAllAccounts().length > 0;
+  }
+
+  logout() { // Add log out function here
+    this.msalService.logoutRedirect({
+      postLogoutRedirectUri: '/login'
+    });
   }
 
   getActiveAccount(): AccountInfo | null {

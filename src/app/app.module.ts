@@ -16,7 +16,7 @@ import { SidenavComponent } from './sidenav/sidenav.component';
 import { HomeComponent } from './home/home.component';
 import { MatTableModule } from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
-import { HttpClientModule } from '@angular/common/http'; /* component for us an api  */
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; /* component for us an api  */
 /**default */
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -29,7 +29,7 @@ import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 // MSAL imports
-import { MsalModule, MsalRedirectComponent } from '@azure/msal-angular';
+import { MsalInterceptor, MsalModule, MsalRedirectComponent } from '@azure/msal-angular';
 import { BrowserUtils, InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { MsalGuard } from '@azure/msal-angular';
 import { OrdersComponent } from './orders/orders.component';
@@ -98,7 +98,7 @@ const isIE =
         storeAuthStateInCookie: isIE,
       }      
     }), {
-      interactionType: InteractionType.Popup, // MSAL Guard Configuration
+      interactionType: InteractionType.Redirect, // MSAL Guard Configuration
         authRequest: {
           scopes: ["user.read"],
         },
@@ -116,7 +116,12 @@ const isIE =
     })
   ],
   providers: [
-    MsalRedirectComponent
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MsalInterceptor,
+      multi: true,
+    },
+    MsalGuard
   ],
   bootstrap: [AppComponent, MsalRedirectComponent]
 })

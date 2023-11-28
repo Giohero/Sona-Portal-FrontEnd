@@ -79,7 +79,7 @@ export class SidenavComponent implements OnInit {
 
   ngOnInit() {
     this.loadCurrentUserEmail();
-    console.log(this.msalService.accountAzure$)
+    //console.log(this.msalService.accountAzure$)
   }
 
   shouldRun = true;
@@ -109,13 +109,28 @@ export class SidenavComponent implements OnInit {
   // }
 
   logout() {
-    this.msalService.logout().subscribe(() => {
-      console.log('Cierre de sesión exitoso');
-    });
+    this.msalService.logout()
+  }
+
+  goToDashboard() {
+    this.dataSharing.setCustomerData(null);
+    this.myRouter.navigate(['/dashboard']);
   }
 
   goToNewOrder() {
     this.dataSharing.setCustomerData(null);
     this.myRouter.navigate(['dashboard/order-customer/new-order']);
   }
+
+  goToCustomers() {
+    this.dataSharing.setCustomerData(null);
+    this.myRouter.navigate(['dashboard/costumers']);
+  }
+
+  goToItems() {
+    this.dataSharing.setCustomerData(null);
+    this.myRouter.navigate(['dashboard/items']);
+  }
+
+
 }

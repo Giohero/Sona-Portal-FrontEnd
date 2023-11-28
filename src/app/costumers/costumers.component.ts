@@ -56,6 +56,7 @@ export class CostumersComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCustomerData();
+    
   }
 
   AddNewCustomer(type: string) {

@@ -28,6 +28,9 @@ export class DashboardComponent {
   //checar los estados de orders, sacar los que no tengan complete, y publicarlos
   //si hay una transaccion activa, no subirlo y primero checar si existe la orden en sap para actualizarlo
   constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService, private auth: AuthService){
+    //auth.getProfile()
+    //auth.getTokenMSAL()
+    
     window.addEventListener('online', async () => {
       this.renderer.removeClass(document.body, 'offline');
       this.isOnline = true;

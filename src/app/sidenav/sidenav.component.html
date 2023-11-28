@@ -6,12 +6,12 @@
   <nav>
     <ul class="nav-list">
       <li>
-        <a href="/dashboard">
+        <a (click)="goToDashboard()">
           <i class="bi bi-house"></i>
           <span class="link-name">Home</span>
         </a>
         <ul class="sub-menu blank">
-          <li><a href="/dashboard" class="link-name">Home</a></li>
+          <li><a (click)="goToDashboard()" class="link-name">Home</a></li>
         </ul>
       </li>
       <li>
@@ -32,19 +32,19 @@
       </li>
       <li>
         <div class="icon-link">
-          <a href="/dashboard/costumers">
+          <a  (click)="goToCustomers()">
             <i class="bi bi-person-square"></i>
             <span class="link-name">Customers</span>
           </a>
         </div>
       </li>
       <li>
-        <a href="/dashboard/items">
+        <a>
           <i class="bi bi-diagram-3"></i>
           <span class="link-name">Items</span>
         </a>
         <ul class="sub-menu blank">
-          <li><a href="/dashboard/items" class="link-name">Items</a></li>
+          <li><a (click)="goToItems()" class="link-name">Items</a></li>
         </ul>
       </li>
       <li>

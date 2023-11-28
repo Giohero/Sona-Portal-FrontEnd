@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
   constructor(private auth: AuthService,){}
 
   ngOnInit(): void {
+    this.auth.getProfile()
     //webWorker()
     //this.auth.initializeAuthState()
     
