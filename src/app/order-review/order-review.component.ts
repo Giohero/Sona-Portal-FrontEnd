@@ -212,11 +212,13 @@ export class OrderReviewComponent {
       {
         this.openSnackBar("Id Index: "+ this.OrderIndexDB.id, "check_circle", "Order Storage Locally", "blue");
         this.myRouter.navigate(['dashboard/order-index'])
+        this.Cart = [];
 
       }
       else{
         this.openSnackBar("DocNum: "+ this.OrderReview!.DocNum, "check_circle", "Order Completed!", "green");
         this.myRouter.navigate(['dashboard/order-index'])
+        this.Cart = [];
       }
 
     }
