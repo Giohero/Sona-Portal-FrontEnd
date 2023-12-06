@@ -27,14 +27,10 @@ export class DataSharingService {
   TransactionIndexDB$: Observable<number> = this.TransactionIndexDBActual.asObservable();
   private statusWifi: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   statusWifi$: Observable<boolean> = this.statusWifi.asObservable();
-  private tokenSignal: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  tokenSignal$: Observable<string> = this.tokenSignal.asObservable();
+  private orderSignal: BehaviorSubject<any> = new BehaviorSubject<any>({});
+  orderSignal$: Observable<any> = this.orderSignal.asObservable();
 
   constructor() { }
-
-  updateTokenSignal(tokenS: string): void {
-    this.tokenSignal.next(tokenS);
-  }
 
   setCustomerData(customer: any) {
     this.customerData = customer;
@@ -68,6 +64,11 @@ export class DataSharingService {
   updateWifi(wifi: boolean): void {
     console.log('cambio a ' + wifi)
     this.statusWifi.next(wifi);
+  }
+
+  updateOrderSignal(updateOrder: Order | undefined): void {
+    //console.log('cambio a ' + updateOrder)
+    this.orderSignal.next(updateOrder);
   }
 
   getCartData() {

@@ -14,6 +14,8 @@ import { IndexDbService } from '../service/index-db.service';
 import { TransactionlogService } from '../service/transactionlog.service';
 import { PublishToCosmosDB, editToCosmosDB } from '../service/cosmosdb.service';
 import { AuthService } from '../service/auth.service';
+import { SignalRService } from '../service/signalr.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-order-edit',
@@ -35,11 +37,13 @@ export class OrderEditComponent implements OnInit {
   cloudChange = 'cloud_done'
   minDate?: Date;
 
-  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService, private transLog: TransactionlogService, private myRouter: Router, private auth: AuthService) {
+  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService, private transLog: TransactionlogService, private myRouter: Router, private auth: AuthService, private signalr:SignalRService,  private router: Router) {
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
 
-    console.log("esta es la orden")
+    // const currentRoute = this.router.url;
+    // console.log('Ruta actual:', currentRoute);
+    // console.log("esta es la orden")
     console.log(this.order)
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
@@ -118,6 +122,19 @@ export class OrderEditComponent implements OnInit {
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
       console.log('llego el cambio a '+newWifi)
       this.isOnline = newWifi;
+    });
+
+    this.dataSharing.orderSignal$.subscribe((newOrder) => {
+      console.log(newOrder)
+
+      if(JSON.stringify(newOrder) != "{}")
+      {
+        this.order = newOrder;
+
+        const DocDueDate = new Date(newOrder.DocDueDate);
+        DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
+        this.delivery = new FormControl(DocDueDate);
+      }
     });
 
   }
@@ -313,6 +330,7 @@ export class OrderEditComponent implements OnInit {
 
     if(this.order !== this.orderOld)
     {
+      this.obtainUser()
       this.cloudChange = "cloud_queue";
 
       var DocumentLinesP: DocLinePost[];
@@ -359,11 +377,11 @@ export class OrderEditComponent implements OnInit {
       console.log(this.OrderIndexDB)
       if(this.OrderIndexDB == undefined)
       {
-
         //Add the new order in index 
         this.OrderIndexDB = await this.indexDB.addOrderIndex(this.orderOld, 'index')
 
         var OrderReviewCopy: any;
+        OrderReviewCopy = {};
         OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
         OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
         OrderReviewCopy.User = this.obtainUser();
@@ -408,11 +426,13 @@ export class OrderEditComponent implements OnInit {
             webWorker('editOrder',OrderPost).then((data) => {
               if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
               {
+                console.log(data)
                 this.cloudChange = "cloud_done";
                 this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
                 // const orderEdit: Order = JSON.parse(data.response);
                 // console.log(orderEdit)
                 //this.DocNumPublish = orderPublish!.DocNum;
+                this.signalr.sendMessageAPI(JSON.stringify(this.order),'order', this.usernameAzure)
               }
               else
               {
@@ -478,32 +498,19 @@ export class OrderEditComponent implements OnInit {
 
   returnPage()
   {
-    // if(this.OrderIndexDB == undefined)
-    //   this.myRouter.navigate(['dashboard/order-index']);
-    // else
-    //   this.myRouter.navigate(['dashboard/order-drafts']);
     this.myRouter.navigate(['dashboard/order-index']);
   }
-
+  
+  usernameAzure=''
   obtainUser() {
-    // const activeAccount= this.msalService.instance.getActiveAccount();
-    // if (activeAccount) {
-      
-    //   return activeAccount.username;
-    // } else {
-    //   return '';
-    // }
-
-    const activeAccount= this.auth.userAzure$;
-    if (activeAccount) {
-      (activeAccount: string) => {
-        return activeAccount;
+    this.auth.userAzure$.subscribe(
+      (username: string) => {
+        this.usernameAzure= username;
+      },
+      (error: any) => {
+        this.usernameAzure= ''
       }
-      return ''
-    } else {
-      return '';
-    }
-
+    );
   }
 
 

@@ -1,2 +1,23 @@
 <router-outlet></router-outlet>
+
+<!-- <div>
+    <h1>{{ title }}</h1>
+  
+    <form (ngSubmit)="sendMessage()" #messageForm="ngForm">
+      <label for="user">Usuario:</label>
+      <input type="text" id="user" name="user" [(ngModel)]="user" required>
+  
+      <label for="message">Mensaje:</label>
+      <textarea id="message" name="message" [(ngModel)]="message" required></textarea>
+  
+      <button type="submit" [disabled]="messageForm.invalid">Enviar Mensaje</button>
+    </form>
+  
+    <div *ngIf="messages.length > 0">
+      <h2>Mensajes Recibidos:</h2>
+      <ul>
+        <li *ngFor="let msg of messages">{{ msg }}</li>
+      </ul>
+    </div>
+  </div> -->
 <!-- <app-sidenav></app-sidenav> -->

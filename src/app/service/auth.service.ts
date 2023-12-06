@@ -37,17 +37,17 @@ export class AuthService implements OnInit {
   }
 
   getToken(newToken:string): void {
-    console.log(newToken)
+    //console.log(newToken)
     this.tokenAzure.next(newToken);
   }
 
   getUser(newUser:string): void {
-    console.log(newUser)
+    //console.log(newUser)
     this.userAzure.next(newUser);
   }
 
   getAccount(newAccount:any): void {
-    console.log(newAccount)
+    //console.log(newAccount)
     this.userAzure.next(newAccount);
   }
 
@@ -97,16 +97,16 @@ export class AuthService implements OnInit {
   getProfile() {
     this.http.get(this.GRAPH_ENDPOINT)
       .subscribe((profile: Profile) => {
-        console.log(profile)
+        //console.log(profile)
         this.profile = profile;
         this.getUser(profile!.mail!)
         
         
-        console.log(this.msalService.instance.getAccountByLocalId(profile.id!))
+        //console.log(this.msalService.instance.getAccountByLocalId(profile.id!))
         var account = this.msalService.instance.getAccountByLocalId(profile.id!)
         this.getToken(account!.idToken!)
         this.msalService.instance.setActiveAccount(account)
-        //this.getTokenMSAL()
+        this.getTokenMSAL()
         
       });
   }

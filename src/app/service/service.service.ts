@@ -32,8 +32,8 @@ export class ServiceService {
     return new Observable<HttpHeaders>((observer) => {
       this.auth.tokenAzure$.subscribe(
         (token:string) => {
-          console.log(this.auth.userAzure$)
-          console.log(token)
+          //console.log(this.auth.userAzure$)
+          //console.log(token)
           if (token) {
             const headers = new HttpHeaders({
               'Content-Type': 'application/json',
@@ -90,8 +90,8 @@ export class ServiceService {
     return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'UpdateBusinessPartner', Customer)
   }
 
-  GetTokenSignal(): Observable<{url:string, accesToken: string}> {
-    return this.myhttp.get<{url:string, accesToken: string}>(this.myappurlcetos + this.myapiurl + 'negotiate')
+  GetTokenSignal(): Observable<{url:string, accessToken: string}> {
+    return this.myhttp.get<{url:string, accessToken: string}>(this.myappurlcetos + this.myapiurl + 'negotiate')
   }
 
   PostOrder(Order: Order):Observable<INResponse> {
@@ -107,5 +107,14 @@ export class ServiceService {
   }
   getOrderLogDataComparation(): Observable<INResponse> {
     return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'OrderLogDataComparation')
+  }
+
+  // sendSignal(): Observable<any> {
+  //   return this.myhttp.post<any>(`${this.myappurlcetos}/api/SignalRTest`, {});
+  // }
+
+  sendSignalR(user: string, type: string, message: string): Observable<any> {
+    const body = { user, type, message };
+    return this.myhttp.post<any>(`${this.myappurlcetos}api/SignalRTest`, body);
   }
 }

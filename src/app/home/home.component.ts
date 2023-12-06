@@ -135,7 +135,7 @@ export class HomeComponent {
           this.single = this.ordersData.map(item => ({ name: item.name, value: item.value }));
           this.singleBar = this.ordersData.map(item => ({ name: item.name, value: item.value }));
   
-          console.log("data", this.ordersData);
+          //console.log("data", this.ordersData);
         } else {
           console.error('Failed to retrieve order log data:', retData.statusCode);
         }

@@ -76,6 +76,8 @@ export class CustomersEditComponent {
       this.title = "Edit Customer";
       this.ShowEdit = true
     }
+    const currentRoute = this.router.url;
+    console.log('Ruta actual:', currentRoute);
 
   }
 
@@ -137,6 +139,7 @@ export class CustomersEditComponent {
         }
       }, 100);
     }
+    
     
 
   }

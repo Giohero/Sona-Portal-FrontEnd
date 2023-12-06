@@ -3,6 +3,8 @@ import { BusinessPartner } from './models/customer';
 import { INResponse } from './models/INResponse';
 import { Order } from './models/car';
 import { AuthService } from './service/auth.service';
+import { SignalRService } from './service/signalr.service';
+import { ServiceService } from './service/service.service';
 
 @Component({
   selector: 'app-root',
@@ -14,16 +16,37 @@ export class AppComponent implements OnInit {
   ListCustomers!: BusinessPartner[] ;
   response!: INResponse;
   title = 'SonaPortal';
+  user ='Usuario';
+  message='';
+  messages:string[] = [];
+  tokenSignalR='';
 
-  constructor(private auth: AuthService,){}
+  constructor(private auth: AuthService,private signalRService: SignalRService, private service: ServiceService){}
 
   ngOnInit(): void {
     this.auth.getProfile()
-    //webWorker()
-    //this.auth.initializeAuthState()
-    
+    this.signalRService.startConnection();
+    //Subscribe to receive message
+    // this.signalRService.getMessageStream().subscribe(
+    //   (message: string) => {
+    //     console.log('Mensaje recibido:', message);
+    //     this.messages.push(message);
+    //   },
+    //   (error) => console.error('Error al recibir mensajes desde SignalR:', error)
+    // );
+
+   //this.signalRService.getMessages();
   }
-  
+
+  ngOnDestroy(): void {
+    this.signalRService.stopConnection(); // Ensure SignalR connection is stopped
+  }
+
+  sendMessage()
+  {
+    this.signalRService.sendSignalRMessage(this.message, 'example',this.user)
+  }
+
 }
 
 // export function webWorker(pType: string, pOrder: Order): Promise<any>  

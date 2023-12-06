@@ -1,6 +1,8 @@
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule } from '@angular/forms';
+
 /**Material modules */
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
@@ -17,6 +19,7 @@ import { HomeComponent } from './home/home.component';
 import { MatTableModule } from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; /* component for us an api  */
+import { SignalRService } from './service/signalr.service';
 /**default */
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -74,6 +77,7 @@ const isIE =
     MatExpansionModule,
     MatPaginatorModule,
     MatTabsModule,
+    FormsModule,
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
       { path: 'login', component: LoginComponent },
@@ -121,10 +125,8 @@ const isIE =
       useClass: MsalInterceptor,
       multi: true,
     },
-    MsalGuard
+    MsalGuard,SignalRService
   ],
   bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule { }
-
-
