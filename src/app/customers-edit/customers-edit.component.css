@@ -1,229 +1,273 @@
-h2{
-    color: black;
+h2 {
+  color: black;
 }
 
 .button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
-  }
-  
-  .h2Mat {
-    display: block;
-    text-align: left;
-    color: #0F97A6;
-    display: inline-block;
-    margin-right: 10px;
-  }
-  
-  .btns {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    
-  }
-  
-  .mat-raised-button mat-icon {
-    color: white;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
 }
-  
-  .actions {
-    margin-left: 2px;
-    margin-top: 10px;
-    color: white;
-  }
 
-/*   
-  .actions button mat-icon {
-    color: white;
-  } */
+.h2Mat {
+  display: block;
+  text-align: left;
+  color: #0F97A6;
+  display: inline-block;
+  margin-right: 10px;
+}
 
-  
+.btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mat-raised-button mat-icon {
+  color: white;
+}
+
+.actions {
+  margin-left: 2px;
+  margin-top: 10px;
+  color: white;
+}
+
 button.mat-raised-button .icon {
-    color: white;
+  color: white;
 }
-  
-  .button-group {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-wrap: wrap;
+
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.custom-button,
+.edit-custom-button {
+  width: 100%;
+  margin-top: 10px;
+  color: #ffffff;
+  background-color: darkcyan;
+}
+
+.edit-custom-button:disabled {
+  background-color: grey;
+  opacity: .5;
+}
+
+.add-custom-button {
+  width: 100%;
+  margin-top: 10px;
+  color: #ffffff;
+  background-color: darkcyan;
+}
+
+.list-custom-button {
+  width: 100%;
+  margin-top: 10px;
+  color: #ffffff;
+  background-color: darkcyan;
+}
+
+.custom-snackbar {
+  background-color: #ff231b;
+  color: #ffffff;
+  height: 50px;
+  text-align: center;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  size: 15px;
+}
+
+.mat-card {
+  border-top: 8px solid #0F97A6;
+  background-color: rgba(254, 254, 254, 0.9);
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  color: rgb(255, 255, 255);
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fffff6;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.grid-container {
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 10px;
+  display: grid;
+}
+
+.label-container,
+.label-containerC {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: -50px;
+}
+
+.label {
+  font-size: 1.1em;
+  margin-bottom: 5px;
+  color: #e77155;
+}
+
+.boxCustom {
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+body {
+  background-color: rgb(238, 25, 106);
+}
+
+.cartnext {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.right-button {
+  margin-left: auto;
+}
+
+button {
+  border: none;
+  color: #fff;
+  background-image: linear-gradient(30deg, #a62934, #eba881);
+  border-radius: 20px;
+  background-size: 100% auto;
+  font-family: inherit;
+  font-size: 17px;
+  padding: 0.6em 1.5em;
+}
+
+button:hover {
+  background-position: right center;
+  background-size: 200% auto;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse512 1.5s infinite;
+  background: linear-gradient(30deg, #be0c1b, #3a86ff);
+}
+
+@keyframes pulse512 {
+  0% {
+    box-shadow: 0 0 0 0 #05bada66;
   }
-  
-  .custom-button,
-  .edit-custom-button {
-    width: 100%;
-    margin-top: 10px;
-    color: #ffffff;
-    background-color: darkcyan;
+
+  70% {
+    box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
   }
-  
-  .edit-custom-button:disabled{
-    background-color: grey;
-    opacity: .5;
+
+  100% {
+    box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
   }
-  
-  .add-custom-button {
-    width: 100%;
-    margin-top: 10px;
-    color: #ffffff;
-    background-color: darkcyan;
-  }
-  
-  .list-custom-button {
-    width: 100%;
-    margin-top: 10px;
-    color: #ffffff;
-    background-color: darkcyan;
-  }
-  
-  .custom-snackbar {
-      background-color: #ff231b; /* Cambia esto al color que desees */
-      color: #ffffff; /* Cambia esto al color del texto deseado */
-      height: 50px;
-      text-align: center;
-      font-family: Georgia, 'Times New Roman', Times, serif;
-      size: 15px;
-  }
-  
-  .mat-card {
-    border-top: 8px solid #0F97A6;
-    background-color: rgba(254, 254, 254, 0.9);
-    padding: 20px;
-  }
-  
+}
+
+.icon {
+  color: white;
+}
+
+/* tamaños de pantalla de celu*/
+@media only screen and (max-width: 990px) {
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    color:rgb(255, 255, 255);
+    grid-template-columns: 1fr;
+    margin-left: 70px;
+    align-items: center;
+    overflow-y: auto;
+    max-height: 99%;
   }
-  
-  .background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #fffff6;
-    /* background-image: url('src/assets/images/Camping.jpg'); */
-    background-repeat: no-repeat;
-    background-size: cover;
-    
-    
-  }
-  
-  .grid-container {
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 10px;
-    display: grid;
-  }
-  
-  .label-container,
-  .label-containerC {
+  .mat-card {
     display: flex;
     flex-direction: column;
-    padding-bottom: -50px;
+    width: 85%;
   }
-  
   .label {
-    font-size: 1.1em;
-    margin-bottom: 5px;
-    color: #e77155;
+    white-space: nowrap;
   }
-  
-  .boxCustom {
-    height: 40px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    padding: 10px;
+  .boxCustom{
+    width: 30vh;
   }
-  
-  body {
-    background-color: rgb(238, 25, 106);
+  .grid-container {
+    /* display: flex;
+    flex-direction: column; */
+    grid-template-columns: 1fr;
   }
-  
-  .cartnext {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
+  .add-custom-button,
+  .edit-custom-button,
+  .list-custom-button {
+    padding: 10px 5px;
+    text-align: center;
   }
-  .right-button {
-    margin-left: auto;   /* cambiar el botón de next a la derecha*/
+  .icon {
+    text-align: center;
   }
 
-  
-button {
-    border: none;
-    color: #fff;
-    background-image: linear-gradient(30deg, #a62934, #eba881);
-    border-radius: 20px;
-    background-size: 100% auto;
-    font-family: inherit;
-    font-size: 17px;
-    padding: 0.6em 1.5em;
-   }
-   
-   button:hover {
-    background-position: right center;
-    background-size: 200% auto;
-    -webkit-animation: pulse 2s infinite;
-    animation: pulse512 1.5s infinite;
-    background: linear-gradient(30deg, #be0c1b, #3a86ff);
-   }
-   
-   @keyframes pulse512 {
-    0% {
-     box-shadow: 0 0 0 0 #05bada66;
-    }
-   
-    70% {
-     box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
-    }
-   
-    100% {
-     box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
-    }
-   }
-   .icon {
-    color: white;
+  .button-container {
+    display: flex;
+    justify-content: space-around; 
   }
-  
-  /* Estilos responsivos */
-  /* Pantallas más pequeñas */
-  @media screen and (max-width: 768px) {
-    .container {
-      grid-template-columns: 1fr; /* Cambiar a una sola columna */
-    }
-  
-    .grid-container {
-      grid-template-columns: 1fr;
-      grid-gap: 20px; 
-    }
-  
-    .label-container,
-    .label-containerC {
-      margin-bottom: 20px; 
-    }
-  
-    .custom-button,
-    .edit-custom-button {
-      width: auto; 
-      margin: 10px 0; 
-    }
-  
-    .label {
-      font-size: 1em; 
-    }
-  
-    .boxCustom {
-      height: auto; 
-      padding: 8px; 
-    }
-  
-    .cartnext {
-      margin-left: 0; 
-      
-    }
-    
+  .button-group{
+    gap: 10vh;
   }
+  .iconsave{
+    font-size: 28px;
+    width: 35px;
+    height: 30px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    align-items: center;
+    background: linear-gradient(30deg, #a62934, #eba881);
+  }
+}
+/* pantalla para tablets */
+@media only screen and (min-width: 601px) and (max-width: 1366px) {
+  .container {
+    margin-left: 80px;
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    max-height: 99%;
+  }
+  .mat-card {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+  }
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+  .boxCustom {
+    width: 90%;
+    align-items: center;
+  }
+  .custom-button {
+    width: 70%;
+  }
+  .add-custom-button {
+    width: 97px;
+  }
+  .edit-custom-button {
+    width: 97px;
+  }
+  .list-custom-button {
+    width: 97px;
+  }
+  .icon {
+    margin-left: 90px;
+    align-items: center;
+  }
+}

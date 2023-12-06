@@ -6,8 +6,8 @@
     <div class="container">
       <br>
       <div style="display: flex; align-items: center;">
-        <h2>{{title}}</h2>
-        <mat-icon style="margin-left: 10px; margin-bottom: 15px; color:black;">cloud_done</mat-icon> 
+        <h2 class="title">{{title}}</h2>
+        <mat-icon class="iconsave">cloud_done</mat-icon> 
       </div>
       <mat-card class="mat-card"> 
         <mat-card-content>
@@ -55,7 +55,7 @@
               <input type="text" class="boxCustom" matInput placeholder="Shipping Address" disabled="true"
               [(ngModel)]="shippingAddress">
               
-              <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px" *ngIf="ShowEdit">
+              <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px" *ngIf="ShowEdit">
                 <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_ShipTo')"><mat-icon class="icon">add_box</mat-icon></button>
                 <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
                 </button>

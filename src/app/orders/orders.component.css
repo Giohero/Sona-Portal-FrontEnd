@@ -311,11 +311,11 @@ body {
   margin-left: 20px;
 }
 
-/* Estilos responsivos para pantallas más pequeñas */
-@media screen and (max-width: 794px) {
+/* para celulares */
+@media screen and (max-width: 767px) {
   .grid-container,
   .grid-container-date {
-    grid-template-columns: 1fr; /* Cambiar a una sola columna */
+    grid-template-columns: 1fr; 
     grid-gap: 5px;
 
     margin: 3px;
@@ -325,7 +325,51 @@ body {
     width: 250px;
     margin: 3px;
   }
-  
+  .boxCustomNotes{
+    width: 80%;
+  }
+  .custom-button,
+  .edit-custom-button,
+  .add-custom-button,
+  .list-custom-button {
+    width: auto; 
+    margin: 10px 0; 
+  }
+
+  .label {
+    font-size: 1em; 
+  }
+
+  .boxCustom {
+    height: auto; 
+    padding: 8px; 
+  }
+
+  .cartnext {
+    margin-left: 0; 
+  }
+  .grid-container-customerd{
+    display: flex;
+    flex-direction: column;
+  }
+}
+/* para tablets o ipads */
+@media screen and (max-width: 1024px) {
+  .grid-container,
+  .grid-container-date {
+    grid-template-columns: 1fr; 
+    grid-gap: 5px;
+
+    margin: 3px;
+  }
+
+  .label-container{
+    width: 250px;
+    margin: 3px;
+  }
+  .boxCustomNotes{
+    width: 80%;
+  }
 
   /* .label-container,
   .label-containerC {
@@ -351,5 +395,5 @@ body {
 
   .cartnext {
     margin-left: 0; 
-  }
+  } 
 }

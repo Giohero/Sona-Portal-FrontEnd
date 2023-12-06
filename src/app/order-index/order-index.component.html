@@ -1,6 +1,6 @@
 <div class="background">
   <div class="container">
-    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner> 
     <br>
     <h2>Orders</h2>
     <div class="labelSearch">
@@ -12,12 +12,11 @@
           <div class="progress"></div>
         </div>
       </button>
-
-      <!-- Botones para filtrar entre órdenes normales y de borrador -->
-      <div class="filter-buttons">
-        <button class="filter-button" (click)="showRealOrders()">Orders SAP</button>
-        <button class="filter-button" (click)="showDraftOrders()">Draft Orders</button>
-      </div>
+    </div>
+    <!-- Botones para filtrar entre órdenes normales y de borrador -->
+    <div class="filter-buttons">
+      <button class="filter-button" (click)="showRealOrders()">Orders SAP</button>
+      <button class="filter-button" (click)="showDraftOrders()">Draft Orders</button>
     </div>
 
     <!-- Sección para órdenes normales -->

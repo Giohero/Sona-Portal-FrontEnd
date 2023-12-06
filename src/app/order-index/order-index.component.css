@@ -43,19 +43,19 @@
   font-weight: bold;
 }
 .filter-button{
-  font-size: 12px; /* Puedes ajustar el tamaño según tus preferencias */
-  padding: 5px 10px; /* Ajusta el relleno (padding) según tus preferencias */
+  font-size: 12px; 
+  padding: 5px 10px; 
 }
 
 .label-icon {
   font-size: 24px;
-  color: #FF5722; /* Puedes cambiar el color a tu preferencia */
+  color: #FF5722; 
 }
 .cloudid-icon{
   font-size: 24px;
   color: #1e74f7; /* Puedes cambiar el color a tu preferencia */
 }
-/* Agrega estas reglas CSS para posicionar el icono de la nube */
+
 .mat-card-header {
   position: relative;
 }
@@ -81,9 +81,6 @@
 }
 
 /* Otros estilos que puedas necesitar */
-
-
-
 .orderSection {
   display: flex;
   flex-direction: column;
@@ -169,6 +166,7 @@ h2 {
   margin-left: 110px;
   margin-bottom: 10px;
 }
+
 .filter-buttons, .iconsearch {
   margin-right: 10px; /* Ajusta el espacio entre los botones de filtrado y los botones de búsqueda/recarga */
 }
@@ -254,56 +252,73 @@ button {
   .labelSearch {
     margin-left: 0;
   }
+  .filter-buttons{
+    margin-left: 60px;
+    margin-bottom: 20px;
+  }
+  .filter-button{
+    gap: 10px; 
+  }
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .mat-card {
+    margin: 10px;
+  }
+  
+  .Cart {
+    width: 100%;
+  }   
 }
 
-/* Media query para iPads */
-@media (min-width: 768px) and (max-width: 1023px) {
-  /* Estilos específicos para iPads */
-
+@media (max-width: 280px) and (max-height: 653px) {
   .Cart {
-    width: calc(95% - 1px);
-    margin: 10px;
-    padding: 8px;
-    min-height: 200px; /* Ajusta la altura deseada */
-  }
-
-  .Cart:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
+    width: 40vh; 
+    margin-left: 20vh;
   }
 
   .labelSearch {
-    margin-left: 0;
+    display: flex;
+    flex-direction: column; /* en columna */
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    margin-left: 110px;
+    margin-bottom: 10px;
   }
-
-  .orderSection {
-    font-size: 15px; /* Ajusta el tamaño de fuente */
+  
+  .filter-buttons,
+  .iconsearch {
+    margin-right: 10px;
   }
-
-  .mat-card {
-    margin-bottom: 8px;
-  }
-
-  h2 {
-    margin-left: 15px;
-  }
-
-  .filter-button {
-    font-size: 10px; /* Ajusta el tamaño según tus preferencias */
-    padding: 3px 8px; /* Ajusta el relleno según tus preferencias */
-  }
-
+  
   .searchOrder {
-    font-size: 12px;
-    height: 30px;
-    width: 60%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 15px;
+    height: 40px;
+    width: 41vh;
   }
-  .label-icon {
-    font-size: 14px;
-    color: #FF5722; /* Puedes cambiar el color a tu preferencia */
+  
+  .iconsearch {
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 10px;
+    align-items: center;
+    display: flex;
+    background-color: darkcyan;
+  }
+  
+  .iconsearch mat-icon {
+    margin-right: 5px;
   }
 
-  /* Puedes ajustar más estilos según sea necesario para iPads */
+  .filter-button{
+    width: 100px;
+  }
 }
-
-
