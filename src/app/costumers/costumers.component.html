@@ -13,7 +13,7 @@
     <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="customerSection">
       <div class="customers" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let customer of filteredCustomerData.slice(currentPage * pageSize, (currentPage + 1) * pageSize); let customerIndex = index"></div>
       <div class="customers" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let customer of customerData.slice(currentPage * pageSize, (currentPage + 1) * pageSize); let customerIndex = index">
-        <mat-card class="Customer" style="display: flex;" (click)="editCustomer(customer)">        
+        <mat-card class="Customer" (click)="editCustomer(customer)">        
           <mat-card-header>
               <div style="flex: 1;" ><div class="custom-icon user-icon">{{ customer.CardName.charAt(0) }} </div></div>
               <div class="LabelCardCode" style="display: flex; align-items: center;"fxLayoutAlign="center center" >{{ customer.CardCode }}</div>

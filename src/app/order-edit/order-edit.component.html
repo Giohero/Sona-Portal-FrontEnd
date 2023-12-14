@@ -10,8 +10,10 @@
           <span class="status" [style.border]="colorStatus">
             <div class="circle" [style.background-color]="statusCircle(order!.DocumentStatus)"></div> 
             <span class="status-text">{{status(order!.DocumentStatus)}}</span>
-          </span> 
-          <mat-icon class="iconsave">{{cloudChange}}</mat-icon> 
+          </span>
+          <div class="icos">
+            <mat-icon class="iconsave">{{cloudChange}}</mat-icon>
+          </div>
         </div>
         <div>
           <h2 class="h2OrderIndex" *ngIf="OrderIndexDB !== undefined"><b>ID Index {{OrderIndexDB.id}}</b></h2>
