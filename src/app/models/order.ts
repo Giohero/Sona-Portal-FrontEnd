@@ -22,7 +22,7 @@ export interface Order {
     FixedItemCode: any
     ItemDescription: string
     Quantity: number
-    UnitPrice: string
+    UnitPrice: number
     LineTotal: number
     Dummie: any
     TaxRate: any

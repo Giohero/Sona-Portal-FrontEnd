@@ -166,7 +166,8 @@ export class OrderEditComponent implements OnInit {
     {
       var itemFound = this.ListItems.find(x => x.ItemCode === selectedData);
       item.ItemDescription = itemFound!.ItemName;
-      item.UnitPrice = itemFound!.ItemPrices[0].Price.toString();
+      // item.UnitPrice = itemFound!.ItemPrices[0].Price.toString();
+      item.UnitPrice = parseFloat(itemFound!.ItemPrices[0].Price.toString());
     }
   }
 
@@ -190,53 +191,51 @@ export class OrderEditComponent implements OnInit {
       return 'green'
   }
 
-  changeQuantity(item: DocumentLines)
-  {
-    console.log(item)
-    console.log(this.orderOld)
-    var itemOld;
+  changeQuantity(item: DocumentLines) {
+  console.log(item);
+  console.log(this.orderOld);
 
-    if(this.orderOld.DocumentLines === undefined) //when the order doesn't have doclines (Index)
-      itemOld = undefined;
-    else
-      itemOld = this.orderOld?.DocumentLines.find((x:any) => x.ItemCode === item.ItemCode);
+  var itemOld: DocumentLines | undefined;
 
-    if(itemOld == undefined)
-    {
-      var totalItem =  parseFloat(item.UnitPrice) * item.Quantity;
-      console.log(totalItem)
-      item.LineTotal = totalItem
-      this.updateOrder('Add_New_Item_'+ item.ItemCode)
-    }
-    else
-    {
-      var unitPriceOld = parseFloat(itemOld!.LineTotal) / itemOld!.Quantity;
+  if (this.orderOld.DocumentLines === undefined) { // when the order doesn't have doclines (Index)
+    itemOld = undefined;
+  } else {
+    itemOld = this.orderOld?.DocumentLines.find((x: any) => x.ItemCode === item.ItemCode);
+  }
 
-      console.log(unitPriceOld)
-      if(item.UnitPrice === unitPriceOld.toString())
-      {
-        var totalItem =  parseFloat(item.UnitPrice) * item.Quantity;
-        console.log(totalItem)
-        item.LineTotal = totalItem
-      }
+  var unitPriceOld = itemOld !== undefined ? parseFloat(itemOld.LineTotal.toString()) / itemOld.Quantity : 0;
+
+  if (itemOld === undefined) {
+    var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
+    console.log(totalItem);
+    item.LineTotal = totalItem;
+    this.updateOrder('Add_New_Item_' + item.ItemCode);
+  } else {
+    console.log(unitPriceOld);
+
+    if (item.UnitPrice.toString() === unitPriceOld.toString()) {
+      var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
+      console.log(totalItem);
+      item.LineTotal = totalItem;
+    } else {
+      var difference = Math.abs(itemOld.Quantity - item.Quantity);
+      var totalUpdate = parseFloat(item.UnitPrice.toString()) * difference;
+
+      // Calcular el nuevo total
+      var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
+      item.LineTotal = totalItem;
+
+      if (itemOld.Quantity > item.Quantity)
+        item.LineTotal = parseFloat(itemOld.LineTotal.toString()) - totalUpdate;
+      else if (itemOld.Quantity < item.Quantity)
+        item.LineTotal = parseFloat(itemOld.LineTotal.toString()) + totalUpdate;
       else
-      {
-        var diference = Math.abs(itemOld!.Quantity - item.Quantity);
-        //console.log(itemOld!.Quantity)
-        //console.log(item.Quantity)
-        //console.log(this.orderOld)
-        var totalUpdate = (parseFloat(item.UnitPrice) * diference);
-        //console.log(totalUpdate)
-        if(itemOld!.Quantity > item.Quantity)
-          item.LineTotal = (parseFloat(itemOld.LineTotal) - totalUpdate);
-        else if(itemOld!.Quantity < item.Quantity)
-          item.LineTotal = (parseFloat(itemOld.LineTotal) + totalUpdate);
-        else
-          item.LineTotal = itemOld.LineTotal
-      }
-    
-      this.updateOrder('Change_Quantity_LineNum_'+ item.LineNum)
+        item.LineTotal = parseFloat(itemOld.LineTotal.toString());
     }
+
+    this.updateOrder('Change_Quantity_LineNum_' + item.LineNum);
+  }
+   
     
 
     
@@ -251,6 +250,7 @@ export class OrderEditComponent implements OnInit {
       return this.order?.DocTotal
     else
       return sumLines;
+    
   }
 
   addItem()
@@ -260,7 +260,7 @@ export class OrderEditComponent implements OnInit {
       FixedItemCode: "",
       ItemDescription: "",
       Quantity: 0,
-      UnitPrice: "",
+      UnitPrice: 0,
       LineTotal: 0.0,
       Dummie: "",
       TaxRate: "",
