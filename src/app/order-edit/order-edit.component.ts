@@ -126,7 +126,8 @@ export class OrderEditComponent implements OnInit {
 
     this.dataSharing.orderSignal$.subscribe((newOrder) => {
       console.log(newOrder)
-
+      
+      console.log('pasa por el cambio')
       if(JSON.stringify(newOrder) != "{}")
       {
         this.order = newOrder;

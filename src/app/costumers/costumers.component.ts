@@ -43,6 +43,7 @@ export class CostumersComponent implements OnInit {
   rowBill=0;
   ShowEdit = false;
   title=""
+  isOnline!:boolean;
 
   constructor(
     private transactionCustomer: TransactionCostumerService,
@@ -57,9 +58,13 @@ export class CostumersComponent implements OnInit {
   ngOnInit(): void {
     this.loadCustomerData();
     
+    this.dataSharing.statusWifi$.subscribe((newWifi) => {
+      console.log('llego el cambio a '+newWifi)
+      this.isOnline = newWifi;
+    });
   }
 
-  AddNewCustomer(type: string) {
+  AdCustomer(type: string) {
     //var GetBill = this.CurrentSellsItem?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
     const dialogRef = this.dialog.open(DialogAddressComponent, {
       height: 'auto',
@@ -105,7 +110,7 @@ export class CostumersComponent implements OnInit {
         }
 
         //console.log(CustomerAdd)
-        this.transactionCustomer.addTransactionToIndex(this.idcustomer,this.searchText,'C',this.CurrentSellsItem!.BPAddresses,"Customer Created",this.email!,this.notes!);
+        this.transactionCustomer.addTransactionCustomerToIndex(this.idcustomer,this.searchText,'C',this.CurrentSellsItem!.BPAddresses,"Customer Created",this.email!,this.notes!, '');
 
         this.orderService.UpdateCustomer(CustomerAdd).subscribe(retData => {
           //console.log(CustomerAdd);
@@ -204,16 +209,20 @@ export class CostumersComponent implements OnInit {
   currentPage = 0; 
 
 
-onPageChange(event: any): void {
-  this.currentPage = event.pageIndex;
-  this.pageSize = event.pageSize;
-}
-
-
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
 
   editCustomer(customer: any) {
+    
     this.dataSharing.setCustomerData(customer);
     console.log(customer)
+    this.myRouter.navigate(['dashboard/customers-edit']);
+  }
+
+  AddNewCustomer() {
+    this.dataSharing.setCustomerData(undefined);
     this.myRouter.navigate(['dashboard/customers-edit']);
   }
 

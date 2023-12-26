@@ -85,6 +85,7 @@ export class SignalRService {
   sendMessageAPI(message:string, type:string, user:string): void {
     console.log(user)
     console.log(message)
+    console.log(type)
     if (message && user) {
       
       console.log('Estado de la conexion antes de enviar un mensaje:', this.getConnectionState());
