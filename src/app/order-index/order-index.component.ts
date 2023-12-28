@@ -54,7 +54,6 @@ export class OrderIndexComponent {
   }
 
   ngOnInit(): void {
-
       Promise.all([this.reloadDrafts(), this.reload()])
       .then(() => {
         this.isLoading = false;
@@ -64,6 +63,20 @@ export class OrderIndexComponent {
         this.isLoading = false;
       });
     
+  }
+
+  reloadAll()
+  {
+    this.searchOrder = undefined;
+    this.isLoading = true;
+    Promise.all([this.reloadDrafts(), this.reload()])
+      .then(() => {
+        this.isLoading = false;
+      })
+      .catch((error) => {
+        console.error('Error al cargar datos: ', error);
+        this.isLoading = false;
+      });
   }
   
   async reload() {
@@ -92,9 +105,19 @@ export class OrderIndexComponent {
 
   searchingOrder(){
     if(this.searchOrder){
-      var OrderFound = this.ListOrders?.find(x => x.DocNum == this.searchOrder )
-      this.ListOrders = [];
-      this.ListOrders.push(OrderFound!); 
+      //var OrderFound = this.ListOrders?.filter(x => x.DocNum == this.searchOrder )
+      const OrderFound = this.ListOrders?.filter(x => {
+        return x?.DocNum?.toString().includes(this.searchOrder!.toString());
+      });
+      console.log(OrderFound)
+      if(OrderFound.length > 0)
+      {
+        console.log(OrderFound)
+        this.ListOrders = [];
+        this.ListOrders = OrderFound; 
+      }
+      else
+        this.openSnackBar("Don't Found any document", 'warning', "Don't Found", 'darkorange');
     }
     else
     this.openSnackBar("You should put Document Order", 'error', 'Error', 'red');

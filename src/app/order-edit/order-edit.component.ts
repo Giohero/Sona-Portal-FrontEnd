@@ -130,12 +130,15 @@ export class OrderEditComponent implements OnInit {
       console.log('pasa por el cambio')
       if(JSON.stringify(newOrder) != "{}")
       {
-        this.order = newOrder;
+        if(newOrder.DocNum === this.order?.DocNum)
+        {
+          this.order = newOrder;
 
-        const DocDueDate = new Date(newOrder.DocDueDate);
-        console.log(newOrder.DocDueDate)
-        DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
-        this.delivery = new FormControl(DocDueDate);
+          const DocDueDate = new Date(newOrder.DocDueDate);
+          console.log(newOrder.DocDueDate)
+          DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
+          this.delivery = new FormControl(DocDueDate);
+        }
       }
     });
 
