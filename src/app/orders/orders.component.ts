@@ -721,7 +721,7 @@ export class OrdersComponent {
     {
       //this.Cart.updateItem(index, item);
       this.changeOrder(index, this.Cart!, '');
-      item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity!;
+      item.LineTotal = item.UnitPrice * item.Quantity!;
     }
       
   }
@@ -740,11 +740,11 @@ export class OrdersComponent {
         
         const newDocumentLine: DocumentLines = {
           ItemCode: this.searchTextItem,
-          ItemName: this.ItemName,
+          ItemDescription: this.ItemName,
           Quantity: this.Quantity,
           TaxCode: "EX",
-          UnitPrice: this.Price,
-          LineTotal: parseFloat(this.Price) * this.Quantity,
+          UnitPrice: Number(this.Price),
+          LineTotal: Number(this.Price) * this.Quantity,
           U_Comments: "",
           Icon: 'cloud_queue'
         };

@@ -206,7 +206,7 @@
               <div class="cart-items" *ngFor="let Item of Cart; let listIndex=index;" >
                 <div class="label-container-cart">
                   <label class="label" for="ItemName">Item:</label>
-                  <input type="text" matInput class="boxCustom" for="ItemName"  id="ItemName" readonly [value]="Item.ItemName">
+                  <input type="text" matInput class="boxCustom" for="ItemName"  id="ItemName" readonly [value]="Item.ItemDescription">
                 </div>
                 <div class="label-container-cart-s">
                   <label class="label" for="Quantity">Quantity:</label>

@@ -185,10 +185,10 @@ obtainUser() {
         
         const newDocumentLine: DocumentLines = {
           ItemCode: this.searchText,
-          ItemName: this.ItemName,
+          ItemDescription: this.ItemName,
           Quantity: this.Quantity,
           TaxCode: "EX",
-          UnitPrice: this.Price,
+          //UnitPrice: this.Price,
           LineTotal: parseFloat(this.Price) * this.Quantity,
           U_Comments: "",
           Icon: 'cloud_queue',
@@ -219,7 +219,7 @@ obtainUser() {
     {
       //this.Cart.updateItem(index, item);
       this.changeOrder(index, this.Cart!);
-      item.LineTotal = parseFloat(item.UnitPrice) * item.Quantity!;
+      item.LineTotal = item.UnitPrice * item.Quantity!;
     }
       
   }
