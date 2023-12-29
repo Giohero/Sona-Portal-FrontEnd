@@ -18,7 +18,7 @@
               <div style="flex: 1;" ><div class="custom-icon user-icon">{{ customer.CardName.charAt(0) }} </div></div>
               <div class="LabelCardCode" style="display: flex; align-items: center;"fxLayoutAlign="center center" >{{ customer.CardCode }}</div>
           </mat-card-header>
-          <mat-card-content class="customer-data">      
+          <mat-card-content class="customer-data">
             <br>          
             <div class="LabelCardName ">
               <label>{{ customer.CardName }}</label>
@@ -28,6 +28,14 @@
             </div>
             <br>
             <br>
+            <!-- <mat-card-actions class="customer-actions">
+              <button mat-icon-button (click)="editCustomer(customer)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="removeCustomer(customer)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-card-actions> -->
           </mat-card-content>
         </mat-card>
       </div>
