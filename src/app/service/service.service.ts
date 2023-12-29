@@ -202,7 +202,14 @@ export class ServiceService {
   // }
 
   sendSignalR(user: string, type: string, message: string): Observable<any> {
+    //console.log(this.auth.getAccessToken())
     const body = { user, type, message };
-    return this.myhttp.post<any>(`${this.myappurlcosmos}api/SignalRTest`, body);
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<any>(
+        `${this.myappurlcosmos}api/SignalRTest`,
+        body,
+        { headers }
+      ))
+    );
   }
 }
