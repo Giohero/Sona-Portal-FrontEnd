@@ -88,7 +88,7 @@ export class DataSharingService {
   setOrderCReview(order: any) {
     //console.log('OrderCReview')
     this.orderCData = order;
-    //console.log(this.orderCData)
+    console.log(this.orderCData)
   }
 
   getOrderCReview() {

@@ -99,7 +99,7 @@
                   <mat-list-item  *ngFor="let item of Cart; let listIndex=index;">
                     <div matListItemTitle><mat-icon>check_circle_outline</mat-icon><b>{{listIndex+1}}</b></div>
                     <div matListItemTitle>{{item.ItemCode}}</div>
-                    <div class="info-item"  matListItemLine><b>{{item.ItemName}}</b></div>
+                    <div class="info-item"  matListItemLine><b>{{item.ItemDescription}}</b></div>
                     <div class="info-item" matListItemLine>Quantity: {{item.Quantity}}</div>
                     <div class="info-item" matListItemLine>Total: ${{item.LineTotal}}</div>
                     <div class="info-item" matListItemLine>Comments: {{item.U_Comments}}</div>

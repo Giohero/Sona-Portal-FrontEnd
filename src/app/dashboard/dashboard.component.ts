@@ -9,6 +9,7 @@ import { EditToCosmosDB, getFromCosmosDBByIndexId } from '../service/cosmosdb.se
 import { webWorker } from '../app.component';
 import { Order } from '../models/order';
 import { AuthService } from '../service/auth.service';
+import { SignalRService } from '../service/signalr.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,7 +28,7 @@ export class DashboardComponent {
 
   //checar los estados de orders, sacar los que no tengan complete, y publicarlos
   //si hay una transaccion activa, no subirlo y primero checar si existe la orden en sap para actualizarlo
-  constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService, private auth: AuthService){
+  constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService, private auth: AuthService,private signalRService: SignalRService){
     //auth.getProfile()
     //auth.getTokenMSAL()
     
@@ -35,6 +36,9 @@ export class DashboardComponent {
       this.renderer.removeClass(document.body, 'offline');
       this.isOnline = true;
       dataSharing.updateWifi(this.isOnline)
+
+      //restart the connection of Signal R
+      this.signalRService.startConnection();
 
       this.openSnackBar('You\'re online.', "wifi", "Connected!", "green");
       

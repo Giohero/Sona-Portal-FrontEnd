@@ -4,7 +4,7 @@
     <br>
     <h2>Customers</h2>
     <div fxLayout="row" fxLayoutAlign="end center">
-      <button mat-raised-button color="primary" (click)="AddNewCustomer('')">Add New Customer</button>
+      <button mat-raised-button color="primary" (click)="AddNewCustomer()">Add New Customer</button>
       <div style="width: 1.5rem;"></div>
       <button mat-raised-button color="primary" (click)="toggleSort()">Sort {{ isAscending ? 'A-Z' : 'Z-A' }}</button>
       <div style="width: 10.8rem;"></div>
@@ -28,14 +28,6 @@
             </div>
             <br>
             <br>
-            <!-- <mat-card-actions class="customer-actions">
-              <button mat-icon-button (click)="editCustomer(customer)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button (click)="removeCustomer(customer)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </mat-card-actions> -->
           </mat-card-content>
         </mat-card>
       </div>

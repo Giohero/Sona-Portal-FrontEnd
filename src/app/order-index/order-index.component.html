@@ -6,7 +6,7 @@
     <div class="labelSearch">
       <input matInput placeholder="Document Order" type="text" class="searchOrder" [(ngModel)]="searchOrder">
       <button class="iconsearch" (click)="searchingOrder()"><mat-icon>search</mat-icon>Search</button>
-      <button class="iconsearch" (click)="reload()">    
+      <button class="iconsearch" (click)="reloadAll()">    
         <mat-icon>refresh</mat-icon>
         <div *ngIf="isLoading" class="progress-bar">
           <div class="progress"></div>

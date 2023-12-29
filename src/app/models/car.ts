@@ -1,9 +1,9 @@
 export class DocumentLines {
     ItemCode?: string;
-    ItemName?: string;
+    ItemDescription?: string;
     Quantity?: number;
     TaxCode?: string;
-    UnitPrice?: string;
+    UnitPrice?: number;
     LineTotal?: number;
     U_Comments?: string;
     Icon?:string;

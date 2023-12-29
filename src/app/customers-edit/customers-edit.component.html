@@ -8,8 +8,10 @@
       <div style="display: flex; align-items: center;">
         <h2 class="title">{{title}}</h2>
         <mat-icon class="iconsave">cloud_done</mat-icon> 
+        <button mat-raised-button color="primary" (click)="backWindow()" *ngIf="ShowEdit">Back</button>
       </div>
-      <mat-card class="mat-card"> 
+      <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
+      <mat-card class="mat-card" *ngIf="!isLoading" > 
         <mat-card-content>
           <h2 class="h2Mat">Customer</h2>
           <div class="grid-container">
@@ -93,10 +95,6 @@
         </mat-card-content>
       </mat-card>
       <br>
-      <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
-        <button mat-raised-button color="primary" (click)="backWindow()" *ngIf="ShowEdit">Back</button>
-        <button mat-raised-button color="primary" (click)="nextWindow()" *ngIf="!ShowEdit" id="NextB">Next</button>
-      </div>
     </div>
   </div>
   <!-- <div *ngIf="isLoading" fxLayoutAlign="center center">

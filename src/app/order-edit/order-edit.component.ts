@@ -62,28 +62,28 @@ export class OrderEditComponent implements OnInit {
       this.delivery = new FormControl(DocDueDate);
       //console.log(this.delivery)
     }
-    else
-    {
-      this.post = new FormControl({value: new Date(), disabled: true});
-      this.delivery = new FormControl(new Date());
+    // else
+    // {
+    //   this.post = new FormControl({value: new Date(), disabled: true});
+    //   this.delivery = new FormControl(new Date());
       
-      let lastVersionIndex;
-      if(this.OrderIndexDB.transaction_order !== null )
-        lastVersionIndex = this.OrderIndexDB.transaction_order[this.OrderIndexDB.transaction_order.length - 1].order
-      else
-        lastVersionIndex = this.OrderIndexDB;
+    //   let lastVersionIndex;
+    //   if(this.OrderIndexDB.transaction_order !== null )
+    //     lastVersionIndex = this.OrderIndexDB.transaction_order[this.OrderIndexDB.transaction_order.length - 1].order
+    //   else
+    //     lastVersionIndex = this.OrderIndexDB;
       
-      console.log(lastVersionIndex)
-      this.order! = lastVersionIndex;
-      this.orderOld = JSON.parse(JSON.stringify(lastVersionIndex));
+    //   console.log(lastVersionIndex)
+    //   this.order! = lastVersionIndex;
+    //   this.orderOld = JSON.parse(JSON.stringify(lastVersionIndex));
 
-      if(this.order!.DocumentLines === undefined)
-        this.order!.DocumentLines = [];
+    //   if(this.order!.DocumentLines === undefined)
+    //     this.order!.DocumentLines = [];
 
-      console.log(this.order!.DocumentLines)
+    //   console.log(this.order!.DocumentLines)
 
-      this.cloudChange = "cloud_queue";
-    }
+    //   this.cloudChange = "cloud_queue";
+    // }
   }
 
   async getOrderIndex(){
@@ -126,14 +126,19 @@ export class OrderEditComponent implements OnInit {
 
     this.dataSharing.orderSignal$.subscribe((newOrder) => {
       console.log(newOrder)
-
+      
+      console.log('pasa por el cambio')
       if(JSON.stringify(newOrder) != "{}")
       {
-        this.order = newOrder;
+        if(newOrder.DocNum === this.order?.DocNum)
+        {
+          this.order = newOrder;
 
-        const DocDueDate = new Date(newOrder.DocDueDate);
-        DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
-        this.delivery = new FormControl(DocDueDate);
+          const DocDueDate = new Date(newOrder.DocDueDate);
+          console.log(newOrder.DocDueDate)
+          DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
+          this.delivery = new FormControl(DocDueDate);
+        }
       }
     });
 
@@ -165,7 +170,8 @@ export class OrderEditComponent implements OnInit {
     {
       var itemFound = this.ListItems.find(x => x.ItemCode === selectedData);
       item.ItemDescription = itemFound!.ItemName;
-      item.UnitPrice = itemFound!.ItemPrices[0].Price.toString();
+      // item.UnitPrice = itemFound!.ItemPrices[0].Price.toString();
+      item.UnitPrice = parseFloat(itemFound!.ItemPrices[0].Price.toString());
     }
   }
 
@@ -189,53 +195,51 @@ export class OrderEditComponent implements OnInit {
       return 'green'
   }
 
-  changeQuantity(item: DocumentLines)
-  {
-    console.log(item)
-    console.log(this.orderOld)
-    var itemOld;
+  changeQuantity(item: DocumentLines) {
+  console.log(item);
+  console.log(this.orderOld);
 
-    if(this.orderOld.DocumentLines === undefined) //when the order doesn't have doclines (Index)
-      itemOld = undefined;
-    else
-      itemOld = this.orderOld?.DocumentLines.find((x:any) => x.ItemCode === item.ItemCode);
+  var itemOld: DocumentLines | undefined;
 
-    if(itemOld == undefined)
-    {
-      var totalItem =  parseFloat(item.UnitPrice) * item.Quantity;
-      console.log(totalItem)
-      item.LineTotal = totalItem
-      this.updateOrder('Add_New_Item_'+ item.ItemCode)
-    }
-    else
-    {
-      var unitPriceOld = parseFloat(itemOld!.LineTotal) / itemOld!.Quantity;
+  if (this.orderOld.DocumentLines === undefined) { // when the order doesn't have doclines (Index)
+    itemOld = undefined;
+  } else {
+    itemOld = this.orderOld?.DocumentLines.find((x: any) => x.ItemCode === item.ItemCode);
+  }
 
-      console.log(unitPriceOld)
-      if(item.UnitPrice === unitPriceOld.toString())
-      {
-        var totalItem =  parseFloat(item.UnitPrice) * item.Quantity;
-        console.log(totalItem)
-        item.LineTotal = totalItem
-      }
+  var unitPriceOld = itemOld !== undefined ? parseFloat(itemOld.LineTotal.toString()) / itemOld.Quantity : 0;
+
+  if (itemOld === undefined) {
+    var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
+    console.log(totalItem);
+    item.LineTotal = totalItem;
+    this.updateOrder('Add_New_Item_' + item.ItemCode);
+  } else {
+    console.log(unitPriceOld);
+
+    if (item.UnitPrice.toString() === unitPriceOld.toString()) {
+      var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
+      console.log(totalItem);
+      item.LineTotal = totalItem;
+    } else {
+      var difference = Math.abs(itemOld.Quantity - item.Quantity);
+      var totalUpdate = parseFloat(item.UnitPrice.toString()) * difference;
+
+      // Calcular el nuevo total
+      var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
+      item.LineTotal = totalItem;
+
+      if (itemOld.Quantity > item.Quantity)
+        item.LineTotal = parseFloat(itemOld.LineTotal.toString()) - totalUpdate;
+      else if (itemOld.Quantity < item.Quantity)
+        item.LineTotal = parseFloat(itemOld.LineTotal.toString()) + totalUpdate;
       else
-      {
-        var diference = Math.abs(itemOld!.Quantity - item.Quantity);
-        //console.log(itemOld!.Quantity)
-        //console.log(item.Quantity)
-        //console.log(this.orderOld)
-        var totalUpdate = (parseFloat(item.UnitPrice) * diference);
-        //console.log(totalUpdate)
-        if(itemOld!.Quantity > item.Quantity)
-          item.LineTotal = (parseFloat(itemOld.LineTotal) - totalUpdate);
-        else if(itemOld!.Quantity < item.Quantity)
-          item.LineTotal = (parseFloat(itemOld.LineTotal) + totalUpdate);
-        else
-          item.LineTotal = itemOld.LineTotal
-      }
-    
-      this.updateOrder('Change_Quantity_LineNum_'+ item.LineNum)
+        item.LineTotal = parseFloat(itemOld.LineTotal.toString());
     }
+
+    this.updateOrder('Change_Quantity_LineNum_' + item.LineNum);
+  }
+   
     
 
     
@@ -250,6 +254,7 @@ export class OrderEditComponent implements OnInit {
       return this.order?.DocTotal
     else
       return sumLines;
+    
   }
 
   addItem()
@@ -259,7 +264,7 @@ export class OrderEditComponent implements OnInit {
       FixedItemCode: "",
       ItemDescription: "",
       Quantity: 0,
-      UnitPrice: "",
+      UnitPrice: 0,
       LineTotal: 0.0,
       Dummie: "",
       TaxRate: "",
@@ -340,7 +345,10 @@ export class OrderEditComponent implements OnInit {
       this.order?.DocumentLines.forEach(element => {
         DocumentLinesP.push({
           ItemCode: element.ItemCode,
+          ItemDescription: element.ItemDescription,
           Quantity: element.Quantity,
+          UnitPrice: element.UnitPrice,
+          LineTotal: element.LineTotal,
           TaxCode: 'EX',
           U_Comments: element.U_Comments,
           LineNum:count
@@ -352,6 +360,7 @@ export class OrderEditComponent implements OnInit {
       // const docDate = this.pipe.transform(this.order?.DocDate, 'yyyy-MM-dd');
 
       const docDueDate = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
+      console.log(docDueDate)
       const docDate =  this.pipe.transform(this.post.value, 'yyyy-MM-dd');
       //const taxDate = this.pipe.transform(this.order?.TaxDate, 'yyyy-MM-dd');
       
@@ -365,12 +374,13 @@ export class OrderEditComponent implements OnInit {
         CardName: this.order?.CardName,
       }
 
+
       if(this.order?.DocNum)
       {
         OrderPost.DocEntry = this.order?.DocEntry.toString()
         OrderPost.DocNum = this.order?.DocNum
       }
-      console.log(this.order)
+      console.log(OrderPost)
 
       ////Add Index DB/////
       // console.log("Index antes de hacer cambios")
@@ -417,65 +427,70 @@ export class OrderEditComponent implements OnInit {
 
       if(this.isOnline == true)
       {
-        //this.OrderIndexDB = this.dataSharing.getOrderIndexDB();
 
         if(this.order!.DocumentLines.length > 0)
         {
           if(this.order!.DocNum !== undefined)
           {
-            webWorker('editOrder',OrderPost).then((data) => {
-              if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
-              {
-                console.log(data)
-                this.cloudChange = "cloud_done";
-                this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
-                // const orderEdit: Order = JSON.parse(data.response);
-                // console.log(orderEdit)
-                //this.DocNumPublish = orderPublish!.DocNum;
-                this.signalr.sendMessageAPI(JSON.stringify(this.order),'order', this.usernameAzure)
-              }
-              else
-              {
-                this.cloudChange = "cloud_off";
-                console.error('Error:', data.response)
-              }
-            })
-            .catch((error) => {
-              this.cloudChange = "cloud_off";
-              console.error('Error:', error);
-            });
+            console.log(OrderPost)
+            this.cloudChange = "cloud_done";
+            this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
+
+            // webWorker('editOrder',OrderPost).then((data) => {
+            //   if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+            //   {
+            //     console.log(data)
+            //     this.cloudChange = "cloud_done";
+            //     this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
+            //     // const orderEdit: Order = JSON.parse(data.response);
+            //     // console.log(orderEdit)
+            //     //this.DocNumPublish = orderPublish!.DocNum;
+            //     this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
+            //   }
+            //   else
+            //   {
+            //     this.cloudChange = "cloud_off";
+            //     console.error('Error:', data.response)
+            //   }
+            // })
+            // .catch((error) => {
+            //   this.cloudChange = "cloud_off";
+            //   console.error('Error:', error);
+            // });
           }
           else
           {
-            webWorker('postOrder',OrderPost).then((data) => {
-              //console.log('Valor devuelto por el Web Worker:', data);
-              if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
-              {
-                const orderPublish: Order = JSON.parse(data.response);
-                this.order!.DocNum = orderPublish!.DocNum;
-                this.order!.DocEntry = orderPublish!.DocEntry
-    
-                OrderPost.DocNum = orderPublish!.DocNum;
-                OrderPost.DocEntry = orderPublish!.DocEntry.toString()
+            this.cloudChange = 'cloud_done';
 
-                this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'complete')
-                this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
-                 //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
-                //this.indexDB.editOrderIndex(this.OrderIndexDB.id, orderPublish!.DocNum, orderPublish!.DocEntry, OrderPost, this.order!.CardCode, this.order!.DocumentLines, [])
-                 //this.actualicon = 'cloud_done';
-                this.cloudChange = 'cloud_done';
-              }
-              else{
-                //this.actualicon = 'cloud_off';
-                this.cloudChange = 'cloud_off';
-                console.error('Error:', data.response)
-              }
-            })
-            .catch((error) => {
-              //this.actualicon = 'cloud_off';
-              this.cloudChange = 'cloud_off';
-              console.error('Error:', error);
-            });
+            // webWorker('postOrder',OrderPost).then((data) => {
+            //   //console.log('Valor devuelto por el Web Worker:', data);
+            //   if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+            //   {
+            //     const orderPublish: Order = JSON.parse(data.response);
+            //     this.order!.DocNum = orderPublish!.DocNum;
+            //     this.order!.DocEntry = orderPublish!.DocEntry
+    
+            //     OrderPost.DocNum = orderPublish!.DocNum;
+            //     OrderPost.DocEntry = orderPublish!.DocEntry.toString()
+
+            //     this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'complete')
+            //     this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
+            //      //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
+            //     //this.indexDB.editOrderIndex(this.OrderIndexDB.id, orderPublish!.DocNum, orderPublish!.DocEntry, OrderPost, this.order!.CardCode, this.order!.DocumentLines, [])
+            //      //this.actualicon = 'cloud_done';
+            //     this.cloudChange = 'cloud_done';
+            //   }
+            //   else{
+            //     //this.actualicon = 'cloud_off';
+            //     this.cloudChange = 'cloud_off';
+            //     console.error('Error:', data.response)
+            //   }
+            // })
+            // .catch((error) => {
+            //   //this.actualicon = 'cloud_off';
+            //   this.cloudChange = 'cloud_off';
+            //   console.error('Error:', error);
+            // });
           }
           
         }
@@ -498,6 +513,8 @@ export class OrderEditComponent implements OnInit {
 
   returnPage()
   {
+    this.dataSharing.setOrderCReview(undefined);
+    this.dataSharing.setOrderIndexDB(undefined);
     this.myRouter.navigate(['dashboard/order-index']);
   }
   

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { BehaviorSubject, Observable, Subject, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ServiceService } from './service.service';
 import { HttpClient } from '@angular/common/http';
@@ -59,32 +59,66 @@ export class SignalRService {
 
   //metodo para inicializar la conexion 
   startConnection = () => {
-    this.service.GetTokenSignal()
-    .subscribe(token => {
+  //   this.service.GetTokenSignal()
+  //   .subscribe(token => {
       
-    this.updateToken(token.accessToken)
+  //   this.updateToken(token.accessToken)
 
-    this.hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl(token.url, {
-      accessTokenFactory: () => token.accessToken
-    })
-    .build();
+  //   this.hubConnection = new signalR.HubConnectionBuilder()
+  //   .withUrl(token.url, {
+  //     accessTokenFactory: () => token.accessToken
+  //   })
+  //   .build();
 
-    this.hubConnection
-    .start()
-    .then(async () => 
-    {console.log('Conexión SignalR iniciada')
-    //this.getMessageStream()
-    await this.getMessages()
-    //await this.sendMessage()
+  //   this.hubConnection
+  //   .start()
+  //   .then(async () => 
+  //   {console.log('Conexión SignalR iniciada')
+  //   //this.getMessageStream()
+  //   await this.getMessages()
+  //   //await this.sendMessage()
+  //   })
+  //   .catch(err => console.error('Error al iniciar la conexión SignalR:', err));
+  // })
+
+  this.service.GetTokenSignal()
+    .pipe(
+      retryWhen(errors =>
+        errors.pipe(
+          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+        )
+      ),
+      catchError(error => {
+        return throwError(error);
+      })
+    )
+    .subscribe((token:any) => {
+      
+      this.updateToken(token.accessToken)
+  
+      this.hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl(token.url, {
+        accessTokenFactory: () => token.accessToken
+      })
+      .build();
+  
+      this.hubConnection
+      .start()
+      .then(async () => 
+      {console.log('Connection SignalR started')
+      //this.getMessageStream()
+      await this.getMessages()
+      //await this.sendMessage()
+      })
+      .catch(err => console.error('Error inicialize connection SignalR:', err));
     })
-    .catch(err => console.error('Error al iniciar la conexión SignalR:', err));
-  })
+
   }
 
   sendMessageAPI(message:string, type:string, user:string): void {
     console.log(user)
     console.log(message)
+    console.log(type)
     if (message && user) {
       
       console.log('Estado de la conexion antes de enviar un mensaje:', this.getConnectionState());

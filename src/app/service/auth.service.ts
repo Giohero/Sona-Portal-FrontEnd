@@ -5,6 +5,7 @@ import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalSe
 import { PublicClientApplication, AuthenticationResult, AccountInfo, ITokenCache, InteractionStatus, RedirectRequest } from '@azure/msal-browser';
 import { BehaviorSubject, Observable, filter, from, map, of, takeUntil } from 'rxjs';
 import { Profile } from '../models/loginAccount';
+import { SignalRService } from './signalr.service';
 
 @Injectable({
   providedIn: 'root'
@@ -97,7 +98,7 @@ export class AuthService implements OnInit {
   getProfile() {
     this.http.get(this.GRAPH_ENDPOINT)
       .subscribe((profile: Profile) => {
-        //console.log(profile)
+        console.log(profile)
         this.profile = profile;
         this.getUser(profile!.mail!)
         
@@ -107,7 +108,7 @@ export class AuthService implements OnInit {
         this.getToken(account!.idToken!)
         this.msalService.instance.setActiveAccount(account)
         this.getTokenMSAL()
-        
+        //this.signalRService.startConnection();
       });
   }
 

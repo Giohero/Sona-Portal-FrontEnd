@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.auth.getProfile()
     this.signalRService.startConnection();
+
     //Subscribe to receive message
     // this.signalRService.getMessageStream().subscribe(
     //   (message: string) => {
