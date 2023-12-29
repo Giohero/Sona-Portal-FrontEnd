@@ -3,6 +3,9 @@ import { Value } from '../models/items';
 import { ServiceService } from '../service/service.service';
 import {MatTabsModule} from '@angular/material/tabs';
 import { Color, ScaleType } from '@swimlane/ngx-charts';
+import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { SnackbarsComponent } from '../snackbars/snackbars.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-home',
@@ -52,7 +55,7 @@ export class HomeComponent {
   };
   
 
-  constructor(private orderService: ServiceService) {
+  constructor(private orderService: ServiceService, private dialog: MatDialog,) {
     const single1 = this.single;
     const multi1 = this.multi;
     Object.assign(this, {single1, multi1}) 
@@ -104,7 +107,19 @@ export class HomeComponent {
   }
 
   getOrderLogDataComparation(): void {
-    this.orderService.getOrderLogDataComparation().subscribe(
+    this.orderService.getOrderLogDataComparation()
+    .pipe(
+      retryWhen(errors =>
+        errors.pipe(
+          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+        )
+      ),
+      catchError(error => {
+        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+        return throwError(error);
+      })
+    )
+    .subscribe(
       (retData) => {
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
           const orderCountCurrentMonth = retData.orderCountCurrentMonth;
@@ -140,11 +155,27 @@ export class HomeComponent {
           console.error('Failed to retrieve order log data:', retData.statusCode);
         }
       },
-      (error) => {
-        console.error('Failed to retrieve order log data:', error);
-      }
     );
   }
   
+  openSnackBar(message: string, icon: string, type: string, color: string) {
+    const dialogRef = this.dialog.open(SnackbarsComponent, {
+      hasBackdrop: false,
+      width: '300px',
+      position: {
+        top: '10px',   // Ajusta la posición vertical según sea necesario
+        right: '20px', // Ajusta la posición horizontal según sea necesario
+      },
+      data: { 
+        message: message,
+        icon: icon,
+        type: type,
+        color: color
+      },
+    })
+    setTimeout(() => {
+      dialogRef.close();
+    }, 5000); 
+  }
 
 }

@@ -6,6 +6,8 @@ import { Order } from '../models/order';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
+import { AuthService } from '../service/auth.service';
+import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 
 @Component({
   selector: 'app-order-index',
@@ -21,7 +23,7 @@ export class OrderIndexComponent {
   //ListOrdersDrafts: any; 
   isLoading=true;
   searchOrder: number | undefined;
-  constructor(private orderService: ServiceService, private renderer: Renderer2,private myRouter: Router, private route: ActivatedRoute, private dialog: MatDialog, private dataSharing: DataSharingService,private indexDB: IndexDbService)
+  constructor(private orderService: ServiceService, private renderer: Renderer2,private myRouter: Router, private route: ActivatedRoute, private dialog: MatDialog, private dataSharing: DataSharingService,private indexDB: IndexDbService, private auth:AuthService, private service:ServiceService)
   {
     window.addEventListener('online', async () => {
       this.renderer.removeClass(document.body, 'offline');
@@ -63,8 +65,12 @@ export class OrderIndexComponent {
         this.isLoading = false;
       });
     
+      // this.auth.tokenAzure$.subscribe((newToken) => {
+      //   this.service.reloadComponent()
+      // }
+      // );
   }
-
+  
   reloadAll()
   {
     this.searchOrder = undefined;
@@ -81,16 +87,27 @@ export class OrderIndexComponent {
   
   async reload() {
     return new Promise<void>((resolve, reject) => {
-      this.orderService.getOrders().subscribe((retData) => {
-        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+      this.orderService.getOrders()
+      .pipe(
+        retryWhen(errors =>
+          errors.pipe(
+            mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+          )
+        ),
+        catchError(error => {
+          this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+          this.isLoading = false;
+          return throwError(error);
+        })
+      )
+      .subscribe(
+        retData => {
           this.ListOrders = JSON.parse(retData.response!);
-          resolve(); // Resuelve la promesa cuando se completan las órdenes de API
-        } else {
-          this.openSnackBar(retData.response!, "error", "Error", "red");
-          reject('Error en la carga de órdenes de API');
+          resolve(); // Resuelve la promesa cuando se completan las órdenes de la API
         }
-      });
+      );
     });
+    
   }
   
   async reloadDrafts() {

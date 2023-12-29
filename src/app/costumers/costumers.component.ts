@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
 import { TransactionCostumerService } from '../service/transaction-costumer.service';
+import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 
 @Component({
   selector: 'app-costumers',
@@ -232,21 +233,46 @@ export class CostumersComponent implements OnInit {
 
   loadCustomerData(): void {
     this.isLoading = true;
-    this.customerService.getCustomer().subscribe(
-      (retData: INResponse) => {
+    // this.customerService.getCustomer().subscribe(
+    //   (retData: INResponse) => {
+    //     if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+    //       this.customerData = JSON.parse(retData.response!);
+          
+    //       console.log(this.customerData);
+    //     } else {
+    //       console.log('Error fetching customer data');
+    //     }
+    //     this.isLoading = false;
+    //   },
+    //   (error) => {
+    //     console.error('Error fetching customer data:', error);
+    //     this.isLoading = false;
+    //   }
+    // );
+
+    this.orderService.getCustomer()
+    .pipe(
+      retryWhen(errors =>
+        errors.pipe(
+          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+        )
+      ),
+      catchError(error => {
+        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+        this.isLoading = false;
+        return throwError(error);
+      })
+    )
+    .subscribe(
+      (retData:INResponse) =>  {
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
           this.customerData = JSON.parse(retData.response!);
           
           console.log(this.customerData);
-        } else {
-          console.log('Error fetching customer data');
-        }
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error('Error fetching customer data:', error);
+        } 
         this.isLoading = false;
       }
     );
   }
+  
 }

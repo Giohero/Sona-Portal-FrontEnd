@@ -16,6 +16,7 @@ import { webWorker } from '../app.component';
 import { MsalService } from '@azure/msal-angular';
 import { EditToCosmosDB, PublishToCosmosDB, editToCosmosDB, publishToCosmosDB } from '../service/cosmosdb.service';
 import { AuthService } from '../service/auth.service';
+import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 
 @Component({
   selector: 'app-orders',
@@ -177,69 +178,88 @@ export class OrdersComponent {
   ngOnInit(): void {
     //this.ShowEdit = "none"
     this.elementCart = "info-card image-card";
-    this.orderService.getItems().subscribe((retData) => {
+    this.orderService.getItems()
+    .pipe(
+      retryWhen(errors =>
+        errors.pipe(
+          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+        )
+      ),
+      catchError(error => {
+        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+        this.isLoading = false;
+        return throwError(error);
+      })
+    )
+    .subscribe(
+      (retData) => {
+        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-
-        this.ListItems = JSON.parse(retData.response!);
-        //console.log(this.ListItems)
-      } else {
-
-        this.openSnackBar(retData.response!, "error", "Error", "red");
-
-      }
-
-    });
-
-    this.orderService.getCustomer().subscribe((retData) => {
-
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-
-        this.ListCustomers = JSON.parse(retData.response!);
-        //console.log(this.ListCustomers)
-        if(this.customerBack != undefined)
-        {
-          if(this.customerBack.CardName === undefined)
-          {
-            this.onSelectCustomer(this.customerBack)
-            //this.searchText = this.customerBack.CardName
-          }
-          else
-          {
-            this.searchText = this.customerBack.CardName
-            this.onSelectCustomer(this.customerBack.CardName)
-          }
-          
+          this.ListItems = JSON.parse(retData.response!);
+          //console.log(this.ListItems)
         }
-          
-      } else {
-        this.openSnackBar(retData.response!, "error", "Error", "red");
       }
+    );
 
-      this.orderService.getRetrieveItemsC().subscribe((retData) => {
-        console.log(retData)
-      });
+    this.orderService.getCustomer()
+    .pipe(
+      retryWhen(errors =>
+        errors.pipe(
+          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+        )
+      ),
+      catchError(error => {
+        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+        this.isLoading = false;
+        return throwError(error);
+      })
+    )
+    .subscribe(
+      (retData) => {
 
-      this.dataSharing.cartData$.subscribe((newCart) => {
-        this.Cart = newCart;
-        //console.log('actualizando carrito')
-        //console.log(this.Cart)
-      });
+        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
   
-      this.dataSharing.docNum$.subscribe((newDocNum) => {
-        this.DocNumPublish = newDocNum;
-      });
-  
-      this.dataSharing.docEntry$.subscribe((newDocEntry) => {
-        this.DocEntryPublish = newDocEntry.toString();
-      });
+          this.ListCustomers = JSON.parse(retData.response!);
+          //console.log(this.ListCustomers)
+          if(this.customerBack != undefined)
+          {
+            if(this.customerBack.CardName === undefined)
+            {
+              this.onSelectCustomer(this.customerBack)
+              //this.searchText = this.customerBack.CardName
+            }
+            else
+            {
+              this.searchText = this.customerBack.CardName
+              this.onSelectCustomer(this.customerBack.CardName)
+            }
+          }
+      }}
+    );
 
-      this.dataSharing.statusWifi$.subscribe((newWifi) => {
-        console.log('llego el cambio a '+newWifi)
-        this.isOnline = newWifi;
-      });
-
+    this.orderService.getRetrieveItemsC().subscribe((retData) => {
+      console.log(retData)
     });
+
+    this.dataSharing.cartData$.subscribe((newCart) => {
+      this.Cart = newCart;
+      //console.log('actualizando carrito')
+      //console.log(this.Cart)
+    });
+
+    this.dataSharing.docNum$.subscribe((newDocNum) => {
+      this.DocNumPublish = newDocNum;
+    });
+
+    this.dataSharing.docEntry$.subscribe((newDocEntry) => {
+      this.DocEntryPublish = newDocEntry.toString();
+    });
+
+    this.dataSharing.statusWifi$.subscribe((newWifi) => {
+      console.log('llego el cambio a '+newWifi)
+      this.isOnline = newWifi;
+    });
+
 
     // if(this.Cart!.length! > 0)
     // {

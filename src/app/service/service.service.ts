@@ -6,19 +6,20 @@ import { Observable, mergeMap } from 'rxjs';
 import { BusinessPartner } from '../models/customer';
 import { Order } from '../models/car';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 // code to use an api 
 export class ServiceService {
-  myappurlcosmos = "https://functionhandlecosmosdb.azurewebsites.net/"; 
+  myappurlcetos = "https://functionhandlecosmosdb.azurewebsites.net/"; 
   myappurlsap = "https://orderpadfunctions.azurewebsites.net/";
-  myappurlcetos = "https://sonafunctions01.azurewebsites.net/";
+   myappurlcosmos = "https://sonafunctions01.azurewebsites.net/";
 
   myapiurl = "api/"
 
-  constructor(private myhttp: HttpClient, private auth: AuthService) { 
+  constructor(private myhttp: HttpClient, private auth: AuthService, private router: Router) { 
     //this.msalService.initialize();
   }
 
@@ -26,14 +27,22 @@ export class ServiceService {
   // this.dataSharing.statusWifi$.subscribe((newWifi) => {
   //   console.log('llego el cambio a '+newWifi)
   //   this.isOnline = newWifi;
-  // });
+  // });\
+
+  reloadComponent(): void {
+    // Navegar a la misma ruta recargará el componente
+    const currentUrl = this.router.url;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([currentUrl]);
+    });
+  }
 
   private getHeaders(): Observable<HttpHeaders> {
     return new Observable<HttpHeaders>((observer) => {
       this.auth.tokenAzure$.subscribe(
         (token:string) => {
           //console.log(this.auth.userAzure$)
-          //console.log(token)
+          console.log(token)
           if (token) {
             const headers = new HttpHeaders({
               'Content-Type': 'application/json',
@@ -63,50 +72,129 @@ export class ServiceService {
   }
 
   getOrders(): Observable<INResponse> {
-    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'GetSalesOrder')
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'GetSalesOrder',
+        { headers }
+      ))
+    );
   }
 
   getOrderByDocNum(DocNum:string): Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'GetSpecificSalesOrder', DocNum)
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'GetSpecificSalesOrder',
+        DocNum,
+        { headers }
+      ))
+    );
   }
 
   getCustomer(): Observable<INResponse> {
-    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'SearchBusinessPartners')
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'SearchBusinessPartners',
+        { headers }
+      ))
+    );
   }
 
   getItems(): Observable<INResponse> {
-    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'RetrieveItems')
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'RetrieveItems',
+        { headers }
+      ))
+    );
   }
 
   getStates(): Observable<INResponse> {
-    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'RetrieveSAPStates')
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'RetrieveSAPStates',
+        { headers }
+      ))
+    );
   }
 
   PostCustomer(Customer: any): Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'CreateBusinessPartner', Customer)
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'CreateBusinessPartner',
+        Customer,
+        { headers }
+      ))
+    );
   }
 
-  UpdateCustomer(Customer:any): Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'UpdateBusinessPartner', Customer)
+  UpdateCustomer(Customer: any): Observable<INResponse> {
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'UpdateBusinessPartner',
+        Customer,
+        { headers }
+      ))
+    );
+  }
+
+  PostOrder(Order: Order): Observable<INResponse> {
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'CreateSalesOrder',
+        Order,
+        { headers }
+      ))
+    );
+  }
+
+  UpdateOrder(Order: Order): Observable<INResponse> {
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'UpdateHeaderOrder',
+        Order,
+        { headers }
+      ))
+    );
+  }
+
+  DeleteAddresBP(Customer: any): Observable<INResponse> {
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'UpdateBPAddress',
+        Customer,
+        { headers }
+      ))
+    );
   }
 
   GetTokenSignal(): Observable<{url:string, accessToken: string}> {
-    return this.myhttp.get<{url:string, accessToken: string}>(this.myappurlcetos + this.myapiurl + 'negotiate')
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<{url:string, accessToken: string}>(
+        this.myappurlcosmos + this.myapiurl + 'negotiate',
+        { headers }
+      ))
+    );
   }
 
-  PostOrder(Order: Order):Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'CreateSalesOrder', Order)
-  }
-
-  UpdateOrder(Order: Order):Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'UpdateHeaderOrder', Order)
-  }
-
-  DeleteAddresBP(Customer:any):Observable<INResponse> {
-    return this.myhttp.post<INResponse>(this.myappurlcetos + this.myapiurl + 'UpdateBPAddress', Customer)
-  }
   getOrderLogDataComparation(): Observable<INResponse> {
-    return this.myhttp.get<INResponse>(this.myappurlcetos + this.myapiurl + 'OrderLogDataComparation')
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'OrderLogDataComparation',
+        { headers }
+      ))
+    );
   }
 
   // sendSignal(): Observable<any> {
@@ -115,6 +203,6 @@ export class ServiceService {
 
   sendSignalR(user: string, type: string, message: string): Observable<any> {
     const body = { user, type, message };
-    return this.myhttp.post<any>(`${this.myappurlcetos}api/SignalRTest`, body);
+    return this.myhttp.post<any>(`${this.myappurlcosmos}api/SignalRTest`, body);
   }
 }
