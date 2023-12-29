@@ -96,3 +96,13 @@ body {
     margin-bottom: 10px;
   }
 }
+@media screen and (max-width: 767px) {
+  .Circlechart{
+    margin-left: -10vh;
+    transform: scale(0.9);
+  }
+  .barChart{
+    transform: scale(0.4);
+    margin-left: -15vh;
+  }
+}

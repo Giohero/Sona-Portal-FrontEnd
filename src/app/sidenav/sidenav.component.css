@@ -373,3 +373,19 @@
     background-color: #fa9393;
   }
 }
+@media (max-width: 768px) and (max-height: 1024px){
+  .sidebar{
+    height: 100%;
+  }
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vh;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); 
+    backdrop-filter: blur(10px); 
+    z-index: 99; 
+    display: none; 
+  }
+}

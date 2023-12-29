@@ -125,7 +125,7 @@ input{
   word-wrap: break-word;
   bottom: 0;
   right: 0;
-  color: rgb(230, 228, 228);
+  color: rgb(230, 230, 228);
   font-family: 'Courier New', Courier, monospace;
   font-size: 60px;
   text-align: right;
@@ -252,7 +252,12 @@ input:focus {
     width: calc(100% - 6px); 
   }
 }
-
+@media only screen and (max-width: 375px) {
+  .mat-card-wrapper{
+    position: relative;
+    top: -100px;
+  }
+}
 @media only screen and (max-width: 768px) {
   .mat-card-white {
     width: 90%;
@@ -285,5 +290,64 @@ input:focus {
     width: 80%; 
     max-width: 300px; 
   }
+  .mat-card-wrapper{
+    margin-top: 20vh;
+  }
+}
+ @media only screen and (min-width: 769px) and (max-width: 820px) {
+  .mat-card-wrapper {
+    margin-top: 20vh;
+  }
 }
 
+@media only screen and (width: 821px) and (max-width: 1024px) {
+  .mat-card-wrapper {
+    margin-top: 20vh;
+  }
+}
+
+@media only screen and (width: 1024px) and (max-width: 600px) {
+  .mat-card-wrapper {
+    margin-top: 20vh;
+  }
+}
+
+@media only screen and (min-width: 820px) and (width: 1180px) {
+  .mat-card-wrapper {
+    margin-top: 20vh;
+  }
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1366px) {
+  .mat-card-wrapper {
+    margin-top: 20vh;
+  }
+}
+
+@media only screen and (min-width: 1367px) and (max-width: 1440px) {
+  .mat-card-wrapper {
+    margin-top: 20vh;
+  }
+}
+@media only screen and (min-width: 540px) and (max-width: 720px) {
+  .mat-card-wrapper {
+    margin-top: 5vh;
+    flex-direction: column;
+    width: 80%;
+    margin: 55px;
+  }
+  .mat-card-white{
+    margin: 20px;
+  }
+}
+/* @media only screen and (max-width: 600px) {
+  .mat-card-wrapper {
+    margin-top: 5vh;
+    width: 90%;
+    margin: 15px;
+    padding-left: 10px;
+  }
+  .mat-card-white{
+    margin: 10px;
+  }
+} */

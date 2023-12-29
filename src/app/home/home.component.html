@@ -36,7 +36,8 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Orders</h5>
-              <ngx-charts-pie-chart
+              <div class="Circlechart">
+                <ngx-charts-pie-chart
                 [view]=" [400, 200]"
                 [scheme]="colorScheme"
                 [results]="single"
@@ -46,6 +47,7 @@
                 [doughnut]="doughnut"
                 (select)="onSelect($event)">
               </ngx-charts-pie-chart>
+              </div>
               <!-- <p class="card-text">Follow us on Facebook!</p>
               <a href="https://www.facebook.com/officialsonaenterprises/" class="btn btn-primary">Go to Facebook</a> -->
             </div>
@@ -55,7 +57,8 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Orders</h5>
-              <ngx-charts-bar-vertical
+              <div class="barChart">
+                <ngx-charts-bar-vertical
                 [view]="[700, 200]"
                 [scheme]="colorScheme"
                 [results]="singleBar"
@@ -69,6 +72,7 @@
                 [yAxisLabel]="yAxisLabel"
                 (select)="onSelect($event)">
               </ngx-charts-bar-vertical>
+              </div>
               <!-- <p class="card-text">News in real time...</p>
               <a href="#" class="btn btn-primary">Go to Twitter</a> -->
             </div>
