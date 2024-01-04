@@ -12,6 +12,7 @@ export class ItemsComponent {
   ListItems!: Value[] ;
   displayedColumns : string [] = ['selectedCustomer', 'item', 'orderTotal', 'symbol'];
   dataSource = new MatTableDataSource(this.ListItems);
+  isLoading: boolean = true;
 
   applyFilter(event: Event){
     const filterValue = (event.target as HTMLInputElement).value;
@@ -21,7 +22,7 @@ export class ItemsComponent {
   constructor(private orderService: ServiceService) {}
 
   ngOnInit(): void {
-
+    
     this.orderService.getItems().subscribe((retData) => {
 
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
@@ -35,7 +36,10 @@ export class ItemsComponent {
         console.log(retData.response);
 
         console.log('Error');
-
+      }
+      
+      ()=>{
+        this.isLoading=false;
       }
 
     });
@@ -59,5 +63,4 @@ export class ItemsComponent {
   removeCustomer(customer: any) {
     // Logic to delete costumer selected
   }
-
 }
