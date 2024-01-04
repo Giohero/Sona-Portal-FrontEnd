@@ -1,0 +1,18 @@
+.body{
+    background-color: #fffff6;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    min-height: 100vh;
+}
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+table {
+    width: 100%;
+    border-top: 10px solid #0F97A6;
+}
+.title{
+    margin-left: 30px;
+}

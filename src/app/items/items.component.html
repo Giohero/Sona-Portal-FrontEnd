@@ -1,27 +1,36 @@
-<mat-table class="mat-elevation-z8" style="width: 100%" [dataSource]="ListItems">
-    <!-- Column: Show selected customer -->
+<div class="body">
+  <div class="title"><br>
+    <h2>Items</h2>
+  </div>
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+  </mat-form-field>
+  
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  
+    <!-- Position Column -->
     <ng-container matColumnDef="selectedCustomer">
-      <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
-      <mat-cell *matCellDef="let customerData">{{ customerData.ItemCode }}</mat-cell>
+      <th mat-header-cell *matHeaderCellDef> Item Code </th>
+      <td mat-cell *matCellDef="let customerData"> {{ customerData.ItemCode }} </td>
     </ng-container>
   
-    
-    <!-- Column: Show a few items, item code, description, price -->
+    <!-- Name Column -->
     <ng-container matColumnDef="item">
-      <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
-      <mat-cell *matCellDef="let customer">{{ customer.ItemName}}</mat-cell>
+      <th mat-header-cell *matHeaderCellDef> Item Name </th>
+      <td mat-cell *matCellDef="let customer"> {{ customer.ItemName }} </td>
     </ng-container>
   
-    <!-- Column: Show order total -->
+    <!-- Weight Column -->
     <ng-container matColumnDef="orderTotal">
-      <mat-header-cell *matHeaderCellDef>Bar Code</mat-header-cell>
-      <mat-cell *matCellDef="let customer">{{ customer.BarCode }}</mat-cell>
+      <th mat-header-cell *matHeaderCellDef> Bar Code </th>
+      <td mat-cell *matCellDef="let customer"> {{ customer.BarCode }} </td>
     </ng-container>
   
-    <!-- Column: Buttons (import order, change, more info, remove) -->
+    <!-- Actions Column -->
     <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-      <mat-cell *matCellDef="let customer">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let customer">
         <button mat-icon-button (click)="importOrder(customer)">
           <mat-icon>add_shopping_cart</mat-icon>
         </button>
@@ -34,10 +43,16 @@
         <button mat-icon-button (click)="removeCustomer(customer)">
           <mat-icon>delete</mat-icon>
         </button>
-      </mat-cell>
+      </td>
     </ng-container>
   
-    <!-- Add columns at the table -->
-    <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
-  </mat-table>	
+    <!-- Header and Row Definitions -->
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+  
+    <!-- No Data Row -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+    </tr>
+  </table>  
+</div>

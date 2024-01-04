@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Value } from '../models/items';
 import { ServiceService } from '../service/service.service';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-items',
@@ -9,6 +10,13 @@ import { ServiceService } from '../service/service.service';
 })
 export class ItemsComponent {
   ListItems!: Value[] ;
+  displayedColumns : string [] = ['selectedCustomer', 'item', 'orderTotal', 'symbol'];
+  dataSource = new MatTableDataSource(this.ListItems);
+
+  applyFilter(event: Event){
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
   constructor(private orderService: ServiceService) {}
 
@@ -19,6 +27,7 @@ export class ItemsComponent {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
         this.ListItems = JSON.parse(retData.response!);
+        this.dataSource = new MatTableDataSource(this.ListItems); 
 
       
       } else {
