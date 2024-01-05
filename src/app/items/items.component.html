@@ -1,9 +1,4 @@
 <div class="body">
-  <!-- <div class="d-flex justify-content-center text-primary" ngIf="isLoading">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div> -->
   <div class="title"><br>
     <h2>Items</h2>
   </div>
@@ -60,6 +55,9 @@
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">Data no found in the list "{{input.value}}"</td>
       </tr>
-    </table>  
+    </table>
+    <div class="spinner-container">
+      <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
+    </div>
   </div>
 </div>

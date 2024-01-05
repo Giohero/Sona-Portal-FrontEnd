@@ -5,16 +5,18 @@ import { MatTableDataSource } from '@angular/material/table';
 import Dexie from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
 
+
 @Component({
   selector: 'app-items',
   templateUrl: './items.component.html',
-  styleUrls: ['./items.component.css']
+  styleUrls: ['./items.component.css'],
+  
 })
 export class ItemsComponent {
   ListItems!: Value[] ;
   displayedColumns : string [] = ['selectedCustomer', 'item', 'orderTotal', 'symbol'];
   dataSource = new MatTableDataSource(this.ListItems);
-  isLoading: boolean = true;
+  isLoading = false;
 
   private Db?: Dexie;
   //private OrderIndexDB:any;
@@ -25,6 +27,7 @@ export class ItemsComponent {
   }
 
   constructor(private orderService: ServiceService) {
+
     this.Db = new Dexie('items');
     this.Db.version(3).stores({
       items: '++id, ItemCode,ItemName'
@@ -37,27 +40,35 @@ export class ItemsComponent {
   columnsToDisplay = ['selectedCustomer', 'item', 'orderTotal', 'actions'];
   
   getItemsC() {
-    this.orderService.getItems().subscribe((retData) => {
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-        this.ListItems = JSON.parse(retData.response!);
+    this.isLoading = true;
+    this.orderService.getItems().subscribe(
+      (retData) => {
+        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+          this.ListItems = JSON.parse(retData.response!);
   
-        // Opción 1: Si getItemsC devuelve una lista de Value
-        this.ListItems.forEach(item => {
-          this.addItemIndex(item);
-        });
+          // Opción 1: Si getItemsC devuelve una lista de Value
+          this.ListItems.forEach(item => {
+            this.addItemIndex(item);
+          });
   
-        this.dataSource = new MatTableDataSource(this.ListItems);
-      } else {
-        console.log(retData.response);
-        console.log('Error');
+          this.dataSource = new MatTableDataSource(this.ListItems);
+          this.isLoading = false;
+        } else {
+          console.log(retData.response);
+          console.log('Error de la API');
+          this.isLoading = false;
+        }
+      },
+      (error) => {
+        console.log('Error en la solicitud:', error);
+        this.isLoading = false; 
+      },
+      () => {
+        console.log('Carga completa');
+        this.isLoading = false;
       }
-    },
-    () => {
-      this.isLoading = false;
-    });
+    );
   }
-
-
   async addItemIndex(data: Value): Promise<any> {
     
     const id = uuidv4();
@@ -74,6 +85,7 @@ export class ItemsComponent {
       return retrievedOrder;
     } catch (error) {
       console.error('Error:', error);
+      this.isLoading = false;
       return null;
     }
   }

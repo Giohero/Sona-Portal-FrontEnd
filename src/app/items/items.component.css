@@ -1,9 +1,15 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 .body{
     background-color: #fffff6;
     background-repeat: no-repeat;
     background-size: cover;
     width: 100%;
-    min-height: 100vh;
+    flex: 1;
 }
 .mat-mdc-form-field {
     font-size: 14px;
@@ -25,6 +31,14 @@ table {
 .search{
     border-radius: 10px;
 }
+
+.spin{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+}
+
 @media screen and (max-width: 600px){
     .table-container{
         margin: 1px;
