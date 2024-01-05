@@ -17,7 +17,7 @@ export class IndexDbService {
   constructor(private dataSharing: DataSharingService) 
   { 
     this.Db = new Dexie('order');
-    this.Db.version(3).stores({
+    this.Db.version(4).stores({ //Actualizar Numero 
       orders: '++id, DocNum, DocEntry, DocDate, DocDueDate, TaxDate, CardCode, DocumentLines, AddressExtension, transaction_order'
     });
 
