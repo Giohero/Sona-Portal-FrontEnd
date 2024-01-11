@@ -7,8 +7,6 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
 import { DataSharingService } from './data-sharing.service';
-import { IndexItemsService } from './index-items.service';
-import { IndexCustomersService } from './index-customers.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +18,10 @@ export class SignalRService {
   tokenSignal$: Observable<string> = this.tokenSignal.asObservable();
   tokenSignalR='';
 
-  constructor(private authService: AuthService, private service: ServiceService, private myhttp: HttpClient, private router: Router, private dataSharing: DataSharingService, private itemsIndex: IndexItemsService, private customerindex: IndexCustomersService) {
+  constructor(private authService: AuthService, private service: ServiceService, private myhttp: HttpClient, private router: Router, private dataSharing: DataSharingService) {
 
     this.tokenSignal$.subscribe((tokenR:string) => {
-      //console.log('ya paso por aqui el token '+ tokenR)
+      console.log('ya paso por aqui el token '+ tokenR)
       this.tokenSignalR = tokenR;
     } )
 
@@ -57,26 +55,31 @@ export class SignalRService {
       }
       //this.messageSubject.next(fullMessage);
     });
-
-    this.hubConnection?.on('GetUsers', (DocNum: string, DocEntry: string, users: string) => {
-      const fullMessage = `${DocNum} - ${DocEntry}: ${users}`;
-      console.log('Mensaje recibido:', fullMessage);
-      var usersC = JSON.parse(users);
-      var signalR = {DocNum, DocEntry, usersC}
-      const currentRoute = this.router.url;
-      console.log('Ruta actual:', currentRoute);
-      
-      if(currentRoute === '/dashboard/order-edit')
-      {
-        console.log('Lo enviaremos a orden edit');
-        this.dataSharing.updateUsersSignal(signalR);
-      }
-      //this.messageSubject.next(fullMessage);
-    });
   }
 
   //metodo para inicializar la conexion 
   startConnection = () => {
+  //   this.service.GetTokenSignal()
+  //   .subscribe(token => {
+      
+  //   this.updateToken(token.accessToken)
+
+  //   this.hubConnection = new signalR.HubConnectionBuilder()
+  //   .withUrl(token.url, {
+  //     accessTokenFactory: () => token.accessToken
+  //   })
+  //   .build();
+
+  //   this.hubConnection
+  //   .start()
+  //   .then(async () => 
+  //   {console.log('Conexión SignalR iniciada')
+  //   //this.getMessageStream()
+  //   await this.getMessages()
+  //   //await this.sendMessage()
+  //   })
+  //   .catch(err => console.error('Error al iniciar la conexión SignalR:', err));
+  // })
 
   this.service.GetTokenSignal()
     .pipe(
@@ -90,11 +93,8 @@ export class SignalRService {
       })
     )
     .subscribe((token:any) => {
-      console.log(token.accessToken)
+      
       this.updateToken(token.accessToken)
-
-      this.itemsIndex.getItemsIndesxDB(this.itemsIndex);
-      this.customerindex.getCustomersIndesxDB(this.customerindex);
   
       this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(token.url, {
@@ -121,40 +121,12 @@ export class SignalRService {
     console.log(type)
     if (message && user) {
       
-      console.log('Status of connection befor the send message:', this.getConnectionState());
+      console.log('Estado de la conexion antes de enviar un mensaje:', this.getConnectionState());
   
       //this.sendMessage();
       this.sendSignalRMessage(message,type,user)
     } else {
-      console.error('User and the menssagge are required');
-    }
-  }
-
-  sendUserAPI(email:string, name:string, docnum:string, docentry:string): void {
-    console.log(email)
-    console.log(name)
-    console.log(docnum)
-    if (name && docnum) {
-      console.log('Status of connection befor the send message:', this.getConnectionState());
-  
-      //this.sendMessage();
-      this.sendSignalRMessageUser(email,name,docnum,docentry)
-    } else {
-      console.error('User and the menssagge are required');
-    }
-  }
-
-  removeUserAPI(email:string, name:string, docnum:string, docentry:string): void {
-    console.log(email)
-    console.log(name)
-    console.log(docnum)
-    if (name && docnum) {
-      console.log('Status of connection befor the send message:', this.getConnectionState());
-  
-      //this.sendMessage();
-      this.removeSignalRMessageUser(email,name,docnum,docentry)
-    } else {
-      console.error('User and the menssagge are required');
+      console.error('El usuario y el mensaje son obligatorios.');
     }
   }
 
@@ -164,20 +136,6 @@ export class SignalRService {
        console.log("Ya se envio");
      });
  }
-
- sendSignalRMessageUser(email:string, name:string, docnum:string, docentry:string) {
-    this.service.sendUserSignalR(email, name, docnum, docentry)
-     .subscribe(response => {
-       console.log("Ya se envio el usuario");
-     });
- }
-
- removeSignalRMessageUser(email:string, name:string, docnum:string, docentry:string) {
-  this.service.removeUserSignalR(email, name, docnum, docentry)
-   .subscribe(response => {
-     console.log("Ya se borro el usuario");
-   });
-}
 
   // Method for enviar mensajes
   public sendMessage(): void {
@@ -194,7 +152,7 @@ export class SignalRService {
   }
   //Verificar estado de la conexion
   public getConnectionState(): string {
-    return this.hubConnection?.state ?? 'No connection';
+    return this.hubConnection?.state ?? 'No hay conexión';
   }
   
 

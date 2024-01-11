@@ -147,7 +147,7 @@ export class OrderIndexComponent {
     else
       this.dataSharing.setOrderCReview(order)
     
-    //console.log(order)
+    console.log(order)
     this.myRouter.navigate(['dashboard/order-edit']);
   }
 
