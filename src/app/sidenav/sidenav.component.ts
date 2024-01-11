@@ -8,6 +8,7 @@ import { AfterViewInit, ElementRef } from '@angular/core';
 import { Renderer2 } from '@angular/core';
 import { AccountInfo } from '@azure/msal-browser';
 import { Observable } from 'rxjs';
+import { SignalRService } from '../service/signalr.service';
 
 
 @Component({
@@ -20,6 +21,8 @@ export class SidenavComponent implements OnInit {
   mobileQuery: MediaQueryList;
   isSidebarClosed: boolean = true;
   currentUserEmail: string | null = null;
+  usernameAzure = '';
+  nameAzure = '';
   // isSubMenuOpen: boolean = false;
   // showSubMenu: boolean = false;
   // isOrdersMenuExpanded: boolean = false;
@@ -71,6 +74,8 @@ export class SidenavComponent implements OnInit {
     private dataSharing: DataSharingService,
     private elementRef: ElementRef,
     private renderer: Renderer2,
+    private auth: AuthService,
+    private signalr: SignalRService
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
@@ -78,6 +83,24 @@ export class SidenavComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.auth.userAzure$.subscribe(
+      (username: string) => {
+        this.usernameAzure = username
+      },
+      (error: any) => {
+        this.usernameAzure = ''
+      }
+    );
+
+    this.auth.nameAzure$.subscribe(
+      (username: string) => {
+        this.nameAzure = username
+      },
+      (error: any) => {
+        this.nameAzure = ''
+      }
+    );
+
     this.loadCurrentUserEmail();
     //console.log(this.msalService.accountAzure$)
   }
@@ -109,6 +132,7 @@ export class SidenavComponent implements OnInit {
   // }
 
   logout() {
+    this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
     this.msalService.logout()
   }
 

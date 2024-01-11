@@ -1,4 +1,4 @@
-import { Component, Renderer2 } from '@angular/core';
+import { Component, HostListener, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MsalService } from '@azure/msal-angular';
 import { IndexDbService } from '../service/index-db.service';
@@ -319,5 +319,10 @@ export class DashboardComponent {
       }
     });
     //this.auth.initializeAuthState()
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
   }
 }
