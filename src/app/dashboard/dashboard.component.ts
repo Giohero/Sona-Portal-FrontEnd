@@ -10,10 +10,6 @@ import { webWorker } from '../app.component';
 import { Order } from '../models/order';
 import { AuthService } from '../service/auth.service';
 import { SignalRService } from '../service/signalr.service';
-import { IndexItemsService } from '../service/index-items.service';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
-import { UsersAzure, UsersSR } from '../models/userSignalR';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,22 +24,14 @@ export class DashboardComponent {
   isOnline = true;
   TransactionIndexDB: any;
   OrderIndexDB: any;
-  tokenAzure= '';
-  UsersAzure: UsersAzure = {};
-  usernameAzure = '';
-  nameAzure = '';
+
 
   //checar los estados de orders, sacar los que no tengan complete, y publicarlos
   //si hay una transaccion activa, no subirlo y primero checar si existe la orden en sap para actualizarlo
-  constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService, private auth: AuthService,private signalRService: SignalRService, private serviceItem:IndexItemsService, private router: Router, private signalr: SignalRService){
+  constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService, private auth: AuthService,private signalRService: SignalRService){
     //auth.getProfile()
     //auth.getTokenMSAL()
-    //console.log("Rectificando si existe los items")
-    //serviceItem.getItemsIndesxDB(serviceItem);
-
-    console.log(signalRService.getConnectionState())
-
-    //This ejecuted when is get back the online web
+    
     window.addEventListener('online', async () => {
       this.renderer.removeClass(document.body, 'offline');
       this.isOnline = true;
@@ -65,7 +53,7 @@ export class DashboardComponent {
           console.log(orderIndex)
           //console.log(orderIndex.Order.DocumentLines)
 
-          if((orderIndex.Order.DocumentLines != undefined || orderIndex.Order.DocumentLines.length > 0 )&& orderIndex.Order.CardCode != undefined)
+          if(orderIndex.Order.DocumentLines != undefined && orderIndex.Order.CardCode != undefined)
           {
             console.log(orderIndex.status)
             if(orderIndex.status === 'cosmos')
@@ -88,12 +76,8 @@ export class DashboardComponent {
                 indexDB.EditOrderLogDirectToCosmos(orderIndex.id, orderCosmos);
                 console.log(orderCosmos)
                 
-                if(orderCosmos.DocEntry === undefined || orderCosmos.DocEntry === 0)
-                {
-                  delete orderIndex.Order.DocNum;
-                  delete orderIndex.Order.DocEntry;
+                if(orderCosmos.DocEntry === undefined)
                   this.PublishOrderSAP(orderIndex.Order,orderCosmos,orderIndex)
-                }
                 else
                   this.EditOrderSAP(orderCosmos,orderIndex.Order)
               }
@@ -113,11 +97,7 @@ export class DashboardComponent {
                     this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos')
                 
                 if(orderIndex.DocEntry === undefined || orderIndex.DocEntry === 0)
-                {
-                  delete orderIndex.Order.DocNum;
-                  delete orderIndex.Order.DocEntry;
                   this.PublishOrderSAP(orderIndex.Order,orderCopyIndex,orderIndex)
-                }
                 else
                   this.EditOrderSAP(orderIndex,orderIndex.Order)
               }
@@ -204,7 +184,7 @@ export class DashboardComponent {
   }
 
   PublishOrderSAP(orderIndexLastVersion:any, orderCopyIndex:any, orderIndex:any){
-    webWorker("postOrder", orderIndexLastVersion, this.tokenAzure).then((data) => {
+    webWorker("postOrder", orderIndexLastVersion).then((data) => {
       console.log('Deberia publicar la orden')
       //console.log('Valor devuelto por el Web Worker:', data);
       if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
@@ -243,7 +223,7 @@ export class DashboardComponent {
   }
 
   EditOrderSAP(orderCosmos: any, orderIndexLastVersion:any){
-    webWorker("editOrder", orderCosmos, this.tokenAzure).then((data) => {
+    webWorker("editOrder", orderCosmos).then((data) => {
       console.log('Deberia editar la orden ')
       //console.log('Valor devuelto por el Web Worker:', data);
       if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
@@ -272,24 +252,6 @@ export class DashboardComponent {
   }
 
   ngOnInit(): void {
-    this.auth.userAzure$.subscribe(
-      (username: string) => {
-        this.usernameAzure = username
-      },
-      (error: any) => {
-        this.usernameAzure = ''
-      }
-    );
-
-    this.auth.nameAzure$.subscribe(
-      (username: string) => {
-        this.nameAzure = username
-      },
-      (error: any) => {
-        this.nameAzure = ''
-      }
-    );
-
     this.dataSharing.TransactionIndexDB$.subscribe((newTransIndex) => {
       this.TransactionIndexDB = newTransIndex;
     });
@@ -298,26 +260,7 @@ export class DashboardComponent {
       this.OrderIndexDB = newOrderIndex;
     });
 
-    this.auth.tokenAzure$.subscribe((newToken) => {
-      this.tokenAzure = newToken;
-    });
 
-    this.dataSharing.usersSignal$.subscribe((newUsers) => {
-      if(newUsers != null)
-        this.UsersAzure = newUsers;
-    });
-
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe((event: any) => {
-      console.log('La ruta activa es:', event.url);
-
-      if(event.url !== '/dashboard/order-edit')
-      {
-        this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.UsersAzure!.DocNum!.toString(), this.UsersAzure!.DocEntry!.toString())
-        this.dataSharing.updateUsersSignal({});
-      }
-    });
     //this.auth.initializeAuthState()
   }
 }

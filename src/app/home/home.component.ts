@@ -84,6 +84,10 @@ export class HomeComponent {
     //   }
     // });
     this.getOrderLogDataComparation()
+
+    this.orderService.getRetrieveItemsC().subscribe((retData) => {
+      console.log(retData)
+    });
   }
 
   onSelectMaterial(selectedData: any){

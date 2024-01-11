@@ -15,8 +15,7 @@ import { TransactionlogService } from '../service/transactionlog.service';
 import { PublishToCosmosDB, editToCosmosDB } from '../service/cosmosdb.service';
 import { AuthService } from '../service/auth.service';
 import { SignalRService } from '../service/signalr.service';
-import { BehaviorSubject, Observable, catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
-import { UsersSR } from '../models/userSignalR';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-order-edit',
@@ -37,19 +36,15 @@ export class OrderEditComponent implements OnInit {
   isOnline!:boolean;
   cloudChange = 'cloud_done'
   minDate?: Date;
-  usernameAzure='';
-  nameAzure='';
-  UsersConnection : UsersSR[] = [];
 
   constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService, private transLog: TransactionlogService, private myRouter: Router, private auth: AuthService, private signalr:SignalRService,  private router: Router) {
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
 
-
     // const currentRoute = this.router.url;
     // console.log('Ruta actual:', currentRoute);
     // console.log("esta es la orden")
-    //console.log(this.order)
+    console.log(this.order)
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
 
@@ -92,49 +87,15 @@ export class OrderEditComponent implements OnInit {
   }
 
   async getOrderIndex(){
-    //console.log(this.order!.DocNum)
+    console.log(this.order!.DocNum)
     //this.OrderIndexDB = this.dataSharing.getOrderIndexDB();
     //if(this.OrderIndexDB === undefined)
     this.OrderIndexDB = await this.indexDB.getOrderLogByDocNum2(this.order!.DocNum);
-    //console.log(this.OrderIndexDB)
+    console.log(this.OrderIndexDB)
   }
 
   ngOnInit(): void {
-
-    this.auth.userAzure$.subscribe(
-      (username: string) => {
-        this.usernameAzure = username
-      },
-      (error: any) => {
-        this.usernameAzure = ''
-      }
-    );
-
-    this.auth.nameAzure$.subscribe(
-      (username: string) => {
-        this.nameAzure = username
-      },
-      (error: any) => {
-        this.nameAzure = ''
-      }
-    );
-
-    //console.log('pasa por send signalmessage')
-    this.signalr.sendSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
-
-    this.orderService.getItems()
-    .pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-        )
-      ),
-      catchError(error => {
-        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-        return throwError(error);
-      })
-    )
-    .subscribe((retData) => {
+    this.orderService.getItems().subscribe((retData) => {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
         this.ListItems = JSON.parse(retData.response!);
       } else {
@@ -166,7 +127,7 @@ export class OrderEditComponent implements OnInit {
     this.dataSharing.orderSignal$.subscribe((newOrder) => {
       console.log(newOrder)
       
-      //console.log('pasa por el cambio')
+      console.log('pasa por el cambio')
       if(JSON.stringify(newOrder) != "{}")
       {
         if(newOrder.DocNum === this.order?.DocNum)
@@ -177,23 +138,6 @@ export class OrderEditComponent implements OnInit {
           console.log(newOrder.DocDueDate)
           DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
           this.delivery = new FormControl(DocDueDate);
-          
-          //clean the signal R
-          this.dataSharing.updateOrderSignal({});
-        }
-      }
-    });
-
-    this.dataSharing.usersSignal$.subscribe((newUsers) => {
-      //console.log(newUsers)
-      
-      //console.log('pasa por el cambio')
-      if(newUsers != undefined)
-      {
-        if(newUsers.DocNum === this.order?.DocNum.toString() && newUsers.DocEntry === this.order?.DocEntry.toString())
-        {
-          this.UsersConnection = newUsers.users!;
-          //console.log("si pasa los usuarios")
         }
       }
     });
@@ -392,7 +336,6 @@ export class OrderEditComponent implements OnInit {
     if(this.order !== this.orderOld)
     {
       this.obtainUser()
-      //console.log(this.usernameAzure)
       this.cloudChange = "cloud_queue";
 
       var DocumentLinesP: DocLinePost[];
@@ -451,7 +394,7 @@ export class OrderEditComponent implements OnInit {
         OrderReviewCopy = {};
         OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
         OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
-        OrderReviewCopy.User = this.usernameAzure;
+        OrderReviewCopy.User = this.obtainUser();
         OrderReviewCopy.Timestamp =  new Date().toISOString();
         OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.orderOld));
 
@@ -465,13 +408,13 @@ export class OrderEditComponent implements OnInit {
       let idTransaction;
 
       if(this.order?.DocNum)
-        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,this.order?.DocNum, this.order?.DocEntry, OrderPost, "index", this.usernameAzure)
+        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,this.order?.DocNum, this.order?.DocEntry, OrderPost, "index")
       else
-        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0, OrderPost, "index", this.usernameAzure)
+        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0, OrderPost, "index")
       
       //Add the change for the change in Index status
-      this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id, action, OrderPost, this.usernameAzure)
-      this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost, this.usernameAzure)
+      this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id, action, OrderPost)
+      this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost)
       //const idTransaction = "0";
       //console.log(JSON.stringify(this.orderOld, null, 3));
       console.log('aqui pasa el id transaction '+ idTransaction)
@@ -570,25 +513,23 @@ export class OrderEditComponent implements OnInit {
 
   returnPage()
   {
-    //console.log('pasa por send signalmessage')
-    this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
-    
-    this.dataSharing.updateUsersSignal({});
     this.dataSharing.setOrderCReview(undefined);
     this.dataSharing.setOrderIndexDB(undefined);
     this.myRouter.navigate(['dashboard/order-index']);
   }
   
+  usernameAzure=''
   obtainUser() {
     this.auth.userAzure$.subscribe(
       (username: string) => {
-        this.usernameAzure = username
+        this.usernameAzure= username;
       },
       (error: any) => {
-        this.usernameAzure = ''
+        this.usernameAzure= ''
       }
     );
   }
+
 
 }
 

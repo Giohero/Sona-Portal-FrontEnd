@@ -14,11 +14,9 @@ export class AuthService implements OnInit {
 
   //private msalService: PublicClientApplication;
   private tokenAzure: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  public tokenAzure$: Observable<string> = this.tokenAzure.asObservable();
+  tokenAzure$: Observable<string> = this.tokenAzure.asObservable();
   private userAzure: BehaviorSubject<string> = new BehaviorSubject<string>('');
   userAzure$: Observable<string> = this.userAzure.asObservable();
-  private nameAzure: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  nameAzure$: Observable<string> = this.nameAzure.asObservable();
   private accountAzure: BehaviorSubject<any> = new BehaviorSubject<any>({});
   accountAzure$: Observable<any> = this.accountAzure.asObservable();
 
@@ -47,11 +45,6 @@ export class AuthService implements OnInit {
   getUser(newUser:string): void {
     //console.log(newUser)
     this.userAzure.next(newUser);
-  }
-
-  getName(newName:string): void {
-    //console.log(newUser)
-    this.nameAzure.next(newName);
   }
 
   getAccount(newAccount:any): void {
@@ -105,10 +98,10 @@ export class AuthService implements OnInit {
   getProfile() {
     this.http.get(this.GRAPH_ENDPOINT)
       .subscribe((profile: Profile) => {
-        //console.log(profile)
+        console.log(profile)
         this.profile = profile;
         this.getUser(profile!.mail!)
-        this.getName(profile.givenName + ' ' + profile.surname)
+        
         
         //console.log(this.msalService.instance.getAccountByLocalId(profile.id!))
         var account = this.msalService.instance.getAccountByLocalId(profile.id!)
@@ -121,8 +114,7 @@ export class AuthService implements OnInit {
 
   getTokenMSAL(){
     this.msalService.acquireTokenSilent({ scopes: ["User.Read"] }).subscribe(
-      response => {
-      //console.log(response)
+      response => {console.log(response)
 
       this.getToken(response.idToken!)
       }

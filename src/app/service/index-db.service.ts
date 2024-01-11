@@ -247,15 +247,13 @@ export class IndexDbService {
       var orderPublishCosmos = JSON.parse(JSON.stringify(orderIndexDB));
       //No quita el id, por eso hicimos copia
       orderPublishCosmos.IdIndex = idIndex;
-      var idCosmos = await PublishToCosmosDB(orderPublishCosmos,'transaction_log');
+      PublishToCosmosDB(orderPublishCosmos,'transaction_log');
       console.log('Estoy obteniendo null en el editOrderLog');
-      return idCosmos;
     }
     else
     {
       getCosmos.Order = orderIndexDB.Order;
-      var trueCosmos = EditToCosmosDB(getCosmos,'transaction_log');
-      return trueCosmos;
+      EditToCosmosDB(getCosmos,'transaction_log');
     }
 
   }
