@@ -20,11 +20,12 @@ export class TransactionlogService {
   //private DbOrders?: Dexie;
   OrderIndexDB: any;
   TransactionIndexDB: any;
+  usernameAzure='';
 
   constructor(private authService: MsalService, private indexDB: IndexDbService, private dataSharing: DataSharingService, private auth: AuthService) { 
-    this.Db = new Dexie('transactions');
+    this.Db = new Dexie('order_transactions');
     this.Db.version(2).stores({
-      transactions: '++id, IdIndex, user, DocNum, transactions',
+      orders: '++id, IdIndex, user, DocNum, transactions',
     });
 
     // this.DbOrders = new Dexie('order');
@@ -42,7 +43,7 @@ export class TransactionlogService {
   }
 
 
-  async addTransactionLogToCosmos(docNum: number, docEntry: number, idTransaction: string, idIndex: number, action:string, orderChange:Order) {
+  async addTransactionLogToCosmos(docNum: number, docEntry: number, idTransaction: string, idIndex: number, action:string, orderChange:Order, userAzure:string) {
     // let log =  {
     //   IdIndex:idIndex,
     //   user: this.obtainUser(),
@@ -59,7 +60,7 @@ export class TransactionlogService {
 
     const log =  {
       IdIndex: idIndex,
-      user: this.obtainUser(),
+      user: userAzure,
       id: idTransaction,
       action: action,
       timestamp: new Date().toISOString(),
@@ -106,12 +107,12 @@ export class TransactionlogService {
 
   }
 
-  async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number, orderChange:Order, status: string) {
+  async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number, orderChange:Order, status: string, userAzure:string) {
     const idChange = uuidv4()
 
     const log =  {
       IdIndex: id,
-      user: this.obtainUser(),
+      user: userAzure,
       id: idChange,
       action: action,
       timestamp: new Date().toISOString(),
@@ -125,10 +126,10 @@ export class TransactionlogService {
       
     };
       try {
-        let Logid = await this.Db!.table('transactions').add(log);
+        let Logid = await this.Db!.table('orders').add(log);
         console.log('Agregamos el transaction')
         console.log(Logid)
-        const retrievedOrder = await this.Db!.table('transactions').get(Logid);
+        const retrievedOrder = await this.Db!.table('orders').get(Logid);
         console.log(retrievedOrder)
         //this.dataSharing.setOrderIndexDB(retrievedOrder)
         this.dataSharing.updateIndexTransaction(retrievedOrder)
@@ -141,11 +142,11 @@ export class TransactionlogService {
       return idChange;
   }
 
-  async editTransactionToIndex(id: string, idChange: string, action: string, docNum: number, docEntry: number, status:string, orderChange:Order) {
+  async editTransactionToIndex(id: string, idChange: string, action: string, docNum: number, docEntry: number, status:string, orderChange:Order, userAzure:string) {
     
     const log =  {
       IdIndex: id,
-      user: this.obtainUser(),
+      user: userAzure,
       id: idChange,
       action: action,
       timestamp: new Date().toISOString(),
@@ -160,10 +161,10 @@ export class TransactionlogService {
     };
     
     try {
-      let Logid = await this.Db!.table('transactions').put(log);
+      let Logid = await this.Db!.table('orders').put(log);
       console.log('Editamos la transaction')
       console.log(Logid)
-      const retrievedOrder = await this.Db!.table('transactions').get(Logid);
+      const retrievedOrder = await this.Db!.table('orders').get(Logid);
       console.log(retrievedOrder)
       //this.dataSharing.setOrderIndexDB(retrievedOrder)
       this.dataSharing.updateIndexTransaction(retrievedOrder)
@@ -179,7 +180,7 @@ export class TransactionlogService {
 
   async getLogs() {
     //console.log(this.logs);
-    const allOrders = await this.Db!.table('transactions').toArray();
+    const allOrders = await this.Db!.table('orders').toArray();
     return allOrders.length;
   }
 
@@ -188,7 +189,7 @@ export class TransactionlogService {
     // const serializedLogs = JSON.stringify(this.logs);
     // console.log(serializedLogs);
 
-    const allOrders = await this.Db!.table('transactions').toArray();
+    const allOrders = await this.Db!.table('orders').toArray();
     return allOrders;
   }
 
@@ -210,7 +211,7 @@ export class TransactionlogService {
 
     try {
       // Verificar si existe un docnum, para que se vaya con la siguiente
-      const allOrders = await this.Db!.table('transactions').toArray();
+      const allOrders = await this.Db!.table('orders').toArray();
       const ordersWithoutDocnum = allOrders.find(order => order.IdIndex === idIndex);
       return ordersWithoutDocnum;
     } catch (error) {
@@ -221,16 +222,14 @@ export class TransactionlogService {
   }
 
   obtainUser() {
-    const activeAccount= this.auth.userAzure$;
-    if (activeAccount) {
-      (activeAccount: string) => {
-      return activeAccount;
+    this.auth.userAzure$.subscribe(
+      (username: string) => {
+        this.usernameAzure = username
+      },
+      (error: any) => {
+        this.usernameAzure = ''
       }
-      return '';
-    } else {
-      return '';
-    }
-    
+    );
   }
 
   // async editOrderLog(orderOrigin:Order,order: Order, idChange: string, idIndex:number) {

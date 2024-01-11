@@ -2,7 +2,7 @@
   <div class="title"><br>
     <h2>Items</h2>
   </div>
-  <div class="table-container">
+  <div class="table-container" [style.display]="showTable">
     <mat-form-field>
       <mat-label>Search</mat-label>
       <input class="search" matInput (keyup)="applyFilter($event)" placeholder="Item" #input>
@@ -56,8 +56,8 @@
         <td class="mat-cell" colspan="4">Data no found in the list "{{input.value}}"</td>
       </tr>
     </table>
-    <div class="spinner-container">
-      <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
-    </div>
+  </div>
+  <div class="table-container spinner-container">
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
   </div>
 </div>

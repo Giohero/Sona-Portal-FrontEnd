@@ -74,7 +74,7 @@ export class AppComponent implements OnInit {
 //   });
 // }
 
-export function webWorker(pType: string, pOrder: Order): Promise<any> {
+export function webWorker(pType: string, pOrder: Order, pToken: string): Promise<any> {
   return new Promise((resolve, reject) => {
     if (typeof Worker !== 'undefined') {
       const worker = new Worker(new URL('./app.worker', import.meta.url));
@@ -90,7 +90,7 @@ export function webWorker(pType: string, pOrder: Order): Promise<any> {
         reject(error); 
       };
 
-      worker.postMessage({ type: pType, order: pOrder });
+      worker.postMessage({ type: pType, order: pOrder, tokenAzure: pToken});
     } else {
       reject(new Error('Los Web Workers no son compatibles en este entorno.'));
     }

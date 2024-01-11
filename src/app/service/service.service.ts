@@ -42,7 +42,7 @@ export class ServiceService {
       this.auth.tokenAzure$.subscribe(
         (token:string) => {
           //console.log(this.auth.userAzure$)
-          console.log(token)
+          //console.log(token)
           if (token) {
             const headers = new HttpHeaders({
               'Content-Type': 'application/json',
@@ -59,16 +59,6 @@ export class ServiceService {
         }
       );
     });
-  }
-  
-  getRetrieveItemsC(): Observable<INResponse> {
-    //console.log(this.auth.getAccessToken())
-    return this.getHeaders().pipe(
-      mergeMap((headers) => this.myhttp.get<INResponse>(
-        this.myappurlcosmos + this.myapiurl + 'RetrieveClothesOrder',
-        { headers }
-      ))
-    );
   }
 
   getOrders(): Observable<INResponse> {
@@ -207,6 +197,30 @@ export class ServiceService {
     return this.getHeaders().pipe(
       mergeMap((headers) => this.myhttp.post<any>(
         `${this.myappurlcosmos}api/SignalRTest`,
+        body,
+        { headers }
+      ))
+    );
+  }
+
+  sendUserSignalR(email:string, name:string, docnum:string, docentry:string): Observable<any> {
+    //console.log(this.auth.getAccessToken())
+    const body = {email, name, docnum, docentry};
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<any>(
+        `${this.myappurlcosmos}api/SignalRUsers`,
+        body,
+        { headers }
+      ))
+    );
+  }
+
+  removeUserSignalR(email:string, name:string, docnum:string, docentry:string): Observable<any> {
+    //console.log(this.auth.getAccessToken())
+    const body = {email, name, docnum, docentry};
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.post<any>(
+        `${this.myappurlcosmos}api/SignalRRemoveUser`,
         body,
         { headers }
       ))
