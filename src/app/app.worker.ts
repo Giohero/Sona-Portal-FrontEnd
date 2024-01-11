@@ -9,6 +9,7 @@ addEventListener('message', async (event: MessageEvent) => {
   // postMessage(response);
   const messageData = event.data.type;
   console.log(event.data.order)
+  console.log(event.data.tokenAzure)
   const myappurlcosmos = "https://functionhandlecosmosdb.azurewebsites.net/"; 
   const myappurlsap = "https://orderpadfunctions.azurewebsites.net/";
   const myappurlcetos = "https://sonafunctions01.azurewebsites.net/";
@@ -17,7 +18,13 @@ addEventListener('message', async (event: MessageEvent) => {
 
   if (messageData === 'customers') {
     try {
-      const response = await fetch(myappurlcetos + myapiurl + 'SearchBusinessPartners'); 
+      const response = await fetch(myappurlcetos + myapiurl + 'SearchBusinessPartners',{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json', 
+          Authorization: `Bearer ${event.data.tokenAzure}`
+        },
+      }); 
       const data = await response.json();
       const responseIn: INResponse = data;
       const customers: BusinessPartner[] = JSON.parse(responseIn.response!);
@@ -36,6 +43,7 @@ addEventListener('message', async (event: MessageEvent) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', 
+          Authorization: `Bearer ${event.data.tokenAzure}`
         },
         body: JSON.stringify(event.data.order),
       });
@@ -58,7 +66,8 @@ addEventListener('message', async (event: MessageEvent) => {
       const response  = await fetch(myappurlcetos + myapiurl + 'UpdateHeaderOrder', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${event.data.tokenAzure}` 
         },
         body: JSON.stringify(event.data.order),
       });

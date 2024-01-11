@@ -10,6 +10,7 @@ import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
 import { TransactionCostumerService } from '../service/transaction-costumer.service';
 import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { IndexCustomersService } from '../service/index-customers.service';
 
 @Component({
   selector: 'app-costumers',
@@ -53,16 +54,34 @@ export class CostumersComponent implements OnInit {
     private dataSharing: DataSharingService,
     private orderService: ServiceService,
     private dialog: MatDialog,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private custService:IndexCustomersService
   ) {}
 
   ngOnInit(): void {
-    this.loadCustomerData();
-    
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
-      console.log('llego el cambio a '+newWifi)
+      //console.log('llego el cambio a '+newWifi)
       this.isOnline = newWifi;
     });
+
+    if(this.isOnline == true)
+      this.loadCustomerData();
+    else
+      this.getInformationIndex();
+  }
+
+  async getInformationIndex()
+  {
+    this.isLoading = true;
+    try
+    {
+      this.customerData = await this.custService.RetrieveCustomersIndex();
+      //console.log(this.ListCustomers)
+      this.isLoading = false;
+    } catch (error) {
+      console.error('Error get index:', error);
+      this.isLoading = false;
+    }
   }
 
   AdCustomer(type: string) {
@@ -233,23 +252,6 @@ export class CostumersComponent implements OnInit {
 
   loadCustomerData(): void {
     this.isLoading = true;
-    // this.customerService.getCustomer().subscribe(
-    //   (retData: INResponse) => {
-    //     if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-    //       this.customerData = JSON.parse(retData.response!);
-          
-    //       console.log(this.customerData);
-    //     } else {
-    //       console.log('Error fetching customer data');
-    //     }
-    //     this.isLoading = false;
-    //   },
-    //   (error) => {
-    //     console.error('Error fetching customer data:', error);
-    //     this.isLoading = false;
-    //   }
-    // );
-
     this.orderService.getCustomer()
     .pipe(
       retryWhen(errors =>
@@ -268,7 +270,7 @@ export class CostumersComponent implements OnInit {
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
           this.customerData = JSON.parse(retData.response!);
           
-          console.log(this.customerData);
+          //console.log(this.customerData);
         } 
         this.isLoading = false;
       }

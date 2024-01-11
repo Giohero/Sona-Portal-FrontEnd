@@ -17,6 +17,8 @@ import { MsalService } from '@azure/msal-angular';
 import { EditToCosmosDB, PublishToCosmosDB, editToCosmosDB, publishToCosmosDB } from '../service/cosmosdb.service';
 import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { IndexCustomersService } from '../service/index-customers.service';
+import { IndexItemsService } from '../service/index-items.service';
 
 @Component({
   selector: 'app-orders',
@@ -79,9 +81,11 @@ export class OrdersComponent {
   LineNumber=0;
   isOnline=true;
 
+  tokenAzure='';
+
   //Add status: index, cloud, complete
 
-  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService) 
+  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService, private custService:IndexCustomersService, private itemsService:IndexItemsService) 
   {
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
@@ -178,73 +182,86 @@ export class OrdersComponent {
   ngOnInit(): void {
     //this.ShowEdit = "none"
     this.elementCart = "info-card image-card";
-    this.orderService.getItems()
-    .pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-        )
-      ),
-      catchError(error => {
-        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-        this.isLoading = false;
-        return throwError(error);
-      })
-    )
-    .subscribe(
-      (retData) => {
-        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
-          this.ListItems = JSON.parse(retData.response!);
-          //console.log(this.ListItems)
-        }
-      }
-    );
-
-    this.orderService.getCustomer()
-    .pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-        )
-      ),
-      catchError(error => {
-        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-        this.isLoading = false;
-        return throwError(error);
-      })
-    )
-    .subscribe(
-      (retData) => {
-
-        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-  
-          this.ListCustomers = JSON.parse(retData.response!);
-          //console.log(this.ListCustomers)
-          if(this.customerBack != undefined)
-          {
-            if(this.customerBack.CardName === undefined)
-            {
-              this.onSelectCustomer(this.customerBack)
-              //this.searchText = this.customerBack.CardName
-            }
-            else
-            {
-              this.searchText = this.customerBack.CardName
-              this.onSelectCustomer(this.customerBack.CardName)
-            }
-          }
-      }}
-    );
-
-    this.orderService.getRetrieveItemsC().subscribe((retData) => {
-      console.log(retData)
+    this.dataSharing.statusWifi$.subscribe((newWifi) => {
+      //console.log('llego el cambio a '+newWifi)
+      this.isOnline = newWifi;
     });
+
+    this.auth.tokenAzure$.subscribe((newToken) => {
+      //console.log('llego el cambio a '+newWifi)
+      this.tokenAzure = newToken;
+    });
+
+    console.log(this.isOnline)
+    if(this.isOnline == true)
+    {
+      this.orderService.getItems()
+      .pipe(
+        retryWhen(errors =>
+          errors.pipe(
+            mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+          )
+        ),
+        catchError(error => {
+          this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+          this.isLoading = false;
+          return throwError(error);
+        })
+      )
+      .subscribe(
+        (retData) => {
+          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+
+            this.ListItems = JSON.parse(retData.response!);
+            //console.log(this.ListItems)
+          }
+        }
+      );
+
+      this.orderService.getCustomer()
+      .pipe(
+        retryWhen(errors =>
+          errors.pipe(
+            mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+          )
+        ),
+        catchError(error => {
+          this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+          this.isLoading = false;
+          return throwError(error);
+        })
+      )
+      .subscribe(
+        (retData) => {
+
+          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+    
+            this.ListCustomers = JSON.parse(retData.response!);
+            //console.log(this.ListCustomers)
+            if(this.customerBack != undefined)
+            {
+              if(this.customerBack.CardName === undefined)
+              {
+                this.onSelectCustomer(this.customerBack)
+                //this.searchText = this.customerBack.CardName
+              }
+              else
+              {
+                this.searchText = this.customerBack.CardName
+                this.onSelectCustomer(this.customerBack.CardName)
+              }
+            }
+        }}
+      );
+    }
+    else
+    {
+      this.getInformationByIndex();
+    }
 
     this.dataSharing.cartData$.subscribe((newCart) => {
       this.Cart = newCart;
-      //console.log('actualizando carrito')
-      //console.log(this.Cart)
     });
 
     this.dataSharing.docNum$.subscribe((newDocNum) => {
@@ -254,30 +271,20 @@ export class OrdersComponent {
     this.dataSharing.docEntry$.subscribe((newDocEntry) => {
       this.DocEntryPublish = newDocEntry.toString();
     });
+  }
 
-    this.dataSharing.statusWifi$.subscribe((newWifi) => {
-      console.log('llego el cambio a '+newWifi)
-      this.isOnline = newWifi;
-    });
-
-
-    // if(this.Cart!.length! > 0)
-    // {
-    //   const element = document.getElementById('Cart');
-    //     element!.classList.remove('image-card');
-    // }
-
-    //const element = document.getElementById('NextB');
-    //console.log(this.title)
-    // if(this.title == "New Order")
-    // {
-    //   setTimeout(() => {
-    //     const element = document.getElementById('NextB');
-    //     if (element) {
-    //       element.classList.add('right-button');
-    //     }
-    //   }, 100);
-    // }
+  async getInformationByIndex()
+  {
+    try
+    {
+      this.ListCustomers = await this.custService.RetrieveCustomersIndex();
+      //console.log(this.ListCustomers)
+      this.ListItems = await this.itemsService.RetrieveItemsIndex();
+      //console.log(this.ListItems)
+    } catch (error) {
+      console.error('Error get index:', error);
+    }
+    
   }
   
   openSnackBar(message: string, icon: string, type: string, color: string) {
@@ -817,14 +824,6 @@ export class OrdersComponent {
 
   ////////////////// Sincronize the order in Index DB, Cosmos and SAP ////////////////////
   obtainUser() {
-    // const activeAccount= this.msalService.instance.getActiveAccount();
-    // if (activeAccount) {
-      
-    //   return activeAccount.username;
-    // } else {
-    //   return '';
-    // }
-
     const activeAccount= this.auth.userAzure$;
     if (activeAccount) {
       (activeAccount: string) => {
@@ -834,7 +833,6 @@ export class OrdersComponent {
     } else {
       return '';
     }
-
   }
 
   async changeOrder(index:number | undefined,order:DocumentLines[] | undefined, action : string)
@@ -1076,7 +1074,7 @@ export class OrdersComponent {
       }
         console.log(this.idCosmos)
         
-        webWorker('postOrder',this.OrderReview!).then((data) => {
+        webWorker('postOrder',this.OrderReview!, this.tokenAzure).then((data) => {
           //console.log('Valor devuelto por el Web Worker:', data);
           if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
           {
@@ -1123,7 +1121,7 @@ export class OrdersComponent {
         console.log(this.OrderIndexDB)
 
        // this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
-        webWorker('editOrder',this.OrderReview!).then((data) => {
+        webWorker('editOrder',this.OrderReview!, this.tokenAzure).then((data) => {
           //console.log('Valor devuelto por el Web Worker edit:', data);
           if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
           {

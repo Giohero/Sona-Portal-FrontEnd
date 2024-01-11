@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DocumentLines, Order } from '../models/car';
 import { Order as OrdeComplete} from '../models/order';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { UsersAzure, UsersSR } from '../models/userSignalR';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,8 @@ export class DataSharingService {
   statusWifi$: Observable<boolean> = this.statusWifi.asObservable();
   private orderSignal: BehaviorSubject<any> = new BehaviorSubject<any>({});
   orderSignal$: Observable<any> = this.orderSignal.asObservable();
+  private usersSignal: BehaviorSubject<UsersAzure> = new BehaviorSubject<UsersAzure>({});
+  usersSignal$: Observable<UsersAzure> = this.usersSignal.asObservable();
 
   constructor() { }
 
@@ -71,6 +74,11 @@ export class DataSharingService {
     this.orderSignal.next(updateOrder);
   }
 
+  updateUsersSignal(usersNews: UsersAzure): void {
+    //console.log('cambio a ' + usersNews)
+    this.usersSignal.next(usersNews);
+  }
+
   getCartData() {
     return this.cartData;
   }
@@ -88,7 +96,7 @@ export class DataSharingService {
   setOrderCReview(order: any) {
     //console.log('OrderCReview')
     this.orderCData = order;
-    console.log(this.orderCData)
+    //console.log(this.orderCData)
   }
 
   getOrderCReview() {

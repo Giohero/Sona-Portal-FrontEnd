@@ -119,6 +119,8 @@ obtainUser() {
       this.DocEntryPublish = newDocEntry.toString();
     });
 
+    
+
     // this.dataSharing.OrderIndexDB$.subscribe((newIndex) => {
 
     //   if(this.OrderIndexDB != newIndex)
@@ -435,7 +437,7 @@ obtainUser() {
       this.idCosmos = await publishToCosmosDB(this.OrderReviewCopy)
         console.log(this.idCosmos)
         
-        webWorker('postOrder',this.OrderReview!).then((data) => {
+        webWorker('postOrder',this.OrderReview!, 'token1').then((data) => {
           //console.log('Valor devuelto por el Web Worker:', data);
           if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
           {
@@ -473,7 +475,7 @@ obtainUser() {
         console.log(this.OrderIndexDB)
 
        // this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
-        webWorker('editOrder',this.OrderReview!).then((data) => {
+        webWorker('editOrder',this.OrderReview!, 'token1').then((data) => {
           //console.log('Valor devuelto por el Web Worker edit:', data);
           if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
           {
