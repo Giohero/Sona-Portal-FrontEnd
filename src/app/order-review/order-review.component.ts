@@ -13,6 +13,7 @@ import { DataSharingService } from '../service/data-sharing.service';
 import { data } from 'jquery';
 import { IndexDbService } from '../service/index-db.service';
 import { webWorker } from '../app.component';
+import { AuthService } from '../service/auth.service';
 
 
 
@@ -52,8 +53,11 @@ export class OrderReviewComponent {
   sumLines?: number;
   Cart!: DocumentLines[];
   isOnline=true;
+  tokenAzure=''
+  nameAzure='';
+  usernameAzure = '';
 
-  constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute, private _snackBar: MatSnackBar, private pipe: DatePipe, private dataSharing:DataSharingService, private indexDB:IndexDbService,private renderer: Renderer2,) {
+  constructor(private orderService: ServiceService, private myRouter: Router, private dialog: MatDialog,  private route: ActivatedRoute, private _snackBar: MatSnackBar, private pipe: DatePipe, private dataSharing:DataSharingService, private indexDB:IndexDbService,private renderer: Renderer2, private auth:AuthService) {
     this.OrderReview = dataSharing.getOrderReview();
     this.CustomerData = dataSharing.getCustomerData();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
@@ -87,6 +91,29 @@ export class OrderReviewComponent {
   }
 
   ngOnInit(): void {
+
+    this.auth.tokenAzure$.subscribe((newToken) => {
+      //console.log('llego el cambio a '+newWifi)
+      this.tokenAzure = newToken;
+    });
+    
+    this.auth.nameAzure$.subscribe(
+      (username: string) => {
+        this.nameAzure = username
+      },
+      (error: any) => {
+        this.nameAzure = ''
+      }
+    );
+
+    this.auth.userAzure$.subscribe(
+      (username: string) => {
+        this.usernameAzure = username
+      },
+      (error: any) => {
+        this.usernameAzure = ''
+      }
+    );
 
     
   }
@@ -271,7 +298,7 @@ export class OrderReviewComponent {
 
   async updateOrderCloud(order: Order)
   {
-    webWorker('editOrder',order).then((data) => {
+    webWorker('editOrder',order, this.tokenAzure).then((data) => {
       //console.log('Valor devuelto por el Web Worker edit:', data);
       if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
       {

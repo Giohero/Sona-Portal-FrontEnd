@@ -44,7 +44,8 @@ import { CustomersEditComponent } from '../customers-edit/customers-edit.compone
     OrderReviewComponent,
     SnackbarsComponent,
     OrdersComponent,
-    CustomersEditComponent
+    CustomersEditComponent,
+    
   ],
   imports: [
     CommonModule,
