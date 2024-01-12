@@ -128,6 +128,7 @@ const isIE =
     },
     MsalGuard,SignalRService
   ],
-  bootstrap: [AppComponent, MsalRedirectComponent]
+  bootstrap: [AppComponent, MsalRedirectComponent],
+  
 })
 export class AppModule { }

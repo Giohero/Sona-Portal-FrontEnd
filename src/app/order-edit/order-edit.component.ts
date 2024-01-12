@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DocumentLines, Order } from '../models/order';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -44,8 +44,6 @@ export class OrderEditComponent implements OnInit {
   constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService, private transLog: TransactionlogService, private myRouter: Router, private auth: AuthService, private signalr:SignalRService,  private router: Router) {
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
-
-
     // const currentRoute = this.router.url;
     // console.log('Ruta actual:', currentRoute);
     // console.log("esta es la orden")
@@ -66,6 +64,28 @@ export class OrderEditComponent implements OnInit {
       DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
       this.delivery = new FormControl(DocDueDate);
       //console.log(this.delivery)
+    }
+    else
+    {
+      var orderSave = localStorage.getItem('OrderSave');
+      console.log(orderSave)
+      if(orderSave != null)
+      {
+        this.order = JSON.parse(orderSave)
+        this.orderOld = JSON.parse(JSON.stringify(this.order));
+        const DocDate = new Date(this.order!.DocDate);
+        DocDate.setMinutes(DocDate.getMinutes() + DocDate.getTimezoneOffset());
+        this.post = new FormControl({value: DocDate, disabled: true});
+        //console.log(this.orderOld)
+        const DocDueDate = new Date(this.order!.DocDueDate);
+        DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
+        this.delivery = new FormControl(DocDueDate);
+        //console.log(this.delivery)
+      }
+      else
+      {
+        this.returnPage();
+      }
     }
     // else
     // {
@@ -571,8 +591,11 @@ export class OrderEditComponent implements OnInit {
   returnPage()
   {
     //console.log('pasa por send signalmessage')
-    this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
-    
+    if(this.order != undefined)
+      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
+    else
+      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
+
     this.dataSharing.updateUsersSignal({});
     this.dataSharing.setOrderCReview(undefined);
     this.dataSharing.setOrderIndexDB(undefined);
@@ -590,5 +613,10 @@ export class OrderEditComponent implements OnInit {
     );
   }
 
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    var orderString = JSON.stringify(this.order)
+    localStorage.setItem('OrderSave', orderString);
+  }
 }
 
