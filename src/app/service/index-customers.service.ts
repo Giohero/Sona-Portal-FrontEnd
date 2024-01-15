@@ -31,7 +31,7 @@ export class IndexCustomersService {
         if (!db.objectStoreNames.contains('customers')) {
           ///Create the index Db
 
-          db.createObjectStore('customers', { keyPath: 'id' });
+          db.createObjectStore('customers', { keyPath: 'CardCode' });
 
           console.log('Add the customers to Index DB')
           itemService.getCustomersToIndexDB(db)
@@ -77,7 +77,6 @@ export class IndexCustomersService {
         // Add element to Index DB 
         itemsData.forEach((CustomNew) => {
           itemsStore.add({
-            id:CustomNew.CardCode,
             CardCode: CustomNew.CardCode,
             CardName: CustomNew.CardName,
             CardType: CustomNew.CardType,

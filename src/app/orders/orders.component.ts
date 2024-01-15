@@ -842,8 +842,10 @@ export class OrdersComponent {
     const dateDefault = this.pipe.transform(today, 'yyyy-MM-dd');
     this.OrderReview!.DocDate = dateDefault?.toString();
     this.OrderReview!.TaxDate = dateDefault?.toString();
+    //Add Ddefault delivery date
+    const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
+    this.OrderReview!.DocDueDate = dateDelivery?.toString();
     
-
     if(order === undefined && action)
     {
       if(action === 'customer')

@@ -167,16 +167,6 @@ export class SignalRService {
 
  sendSignalRMessageUser(email:string, name:string, docnum:string, docentry:string) {
     this.service.sendUserSignalR(email, name, docnum, docentry)
-    .pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-        )
-      ),
-      catchError(error => {
-        return throwError(error);
-      })
-    )
      .subscribe(response => {
        console.log("Ya se envio el usuario");
      });

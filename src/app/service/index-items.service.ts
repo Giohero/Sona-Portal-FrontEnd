@@ -15,7 +15,7 @@ export class IndexItemsService {
   constructor(private service: ServiceService) {
     this.Db = new Dexie('items');
     this.Db.version(3).stores({
-      items: '++id, ItemCode,ItemName'
+      items: '++id, ItemCode,ItemName,ItemPrices'
     });
    }
 
@@ -25,10 +25,10 @@ export class IndexItemsService {
 
       const ItemCode = data.ItemCode;
       const ItemName = data.ItemName;
-
+      const ItemPrices = data.ItemPrices;
 
     try {
-      const itemId = await this.Db!.table('items').add({ id, ItemCode,ItemName});
+      const itemId = await this.Db!.table('items').add({ id, ItemCode,ItemName, ItemPrices});
       const retrievedOrder = await this.Db!.table('items').get(itemId);
       console.log("Agregando a Item Index DB");
       console.log(retrievedOrder);
@@ -54,7 +54,7 @@ export class IndexItemsService {
         if (!db.objectStoreNames.contains('items')) {
           ///Create the index Db
 
-          db.createObjectStore('items', { keyPath: 'id' });
+          db.createObjectStore('items', { keyPath: 'ItemCode' });
 
           console.log('Add the items to Index DB')
           itemService.getItemsToIndexDB(db)
@@ -96,14 +96,15 @@ export class IndexItemsService {
         const itemsStore = transaction.objectStore('items');
         
         let itemsData : Value[] = JSON.parse(response.response!);
+        //console.log(itemsData)
         
         // Add element to Index DB 
         itemsData.forEach((itemNew) => {
           //console.log(itemNew)
           itemsStore.add({
-            id:itemNew.ItemCode,
             ItemCode: itemNew.ItemCode,
             ItemName: itemNew.ItemName,
+            ItemPrices: itemNew.ItemPrices
           });
         });
 
