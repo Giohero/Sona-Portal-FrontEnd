@@ -23,7 +23,8 @@
       </div>
     </div>
     <!-- Sección para órdenes normales -->
-    <div *ngIf="!isLoading && showRealOrdersFlag && ListOrders.length > 0">
+    <div *ngIf="isOnline && !isLoading && showRealOrdersFlag && ListOrders.length > 0">
+    <!-- <div *ngIf="!isLoading && showRealOrdersFlag && ListOrders.length > 0"> -->
       <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
         <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;">
           <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
@@ -50,6 +51,11 @@
               <br>
               <label class="name">{{ Order.CardCode }} - {{ Order.CardName }}</label>
             </mat-card-content>
+            <div class="icon-container">
+              <img src="assets/icons/icons8-sap-48.png" alt="SAP icon">
+              <img src="assets/icons/icons8-database-48.png" alt="IndexDB Icon">
+              <img src="assets/icons/icons8-planet-50.png" alt="CosmosDB icon">             
+            </div>
           </mat-card>
         </div>
       </div>
@@ -57,7 +63,8 @@
 
     <!-- Sección para órdenes de borrador -->
     <div class="">
-      <div *ngIf="!isLoading && !showRealOrdersFlag && ListOrdersDrafts.length > 0">
+      <div *ngIf="!isOnline && !isLoading && ListOrdersDrafts.length > 0">
+      <!-- <div *ngIf="!isLoading && !showRealOrdersFlag && ListOrdersDrafts.length > 0"> -->
         <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
           <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrdersDrafts; let listIndex=index;">
             <div class="draft-orders">

@@ -21,9 +21,18 @@ export class OrderIndexComponent {
   ListOrders: Order[] = []; 
   ListOrdersDrafts: any;
   //ListOrdersDrafts: any; 
+  isOnline!:boolean;
   isLoading=true;
   searchOrder: number | undefined;
-  constructor(private orderService: ServiceService, private renderer: Renderer2,private myRouter: Router, private route: ActivatedRoute, private dialog: MatDialog, private dataSharing: DataSharingService,private indexDB: IndexDbService, private auth:AuthService, private service:ServiceService)
+  constructor(private orderService: ServiceService, 
+    private renderer: Renderer2,
+    private myRouter: Router, 
+    private route: ActivatedRoute, 
+    private dialog: MatDialog, 
+    private dataSharing: DataSharingService,
+    private indexDB: IndexDbService, 
+    private auth:AuthService, 
+    private service:ServiceService)
   {
     window.addEventListener('online', async () => {
       this.renderer.removeClass(document.body, 'offline');
@@ -55,21 +64,42 @@ export class OrderIndexComponent {
     this.showRealOrdersFlag = false;
   }
 
-  ngOnInit(): void {
-      Promise.all([this.reloadDrafts(), this.reload()])
-      .then(() => {
-        this.isLoading = false;
-      })
-      .catch((error) => {
-        console.error('Error al cargar datos: ', error);
-        this.isLoading = false;
-      });
+  // ngOnInit(): void {
+  //     Promise.all([this.reloadDrafts(), this.reload()])
+  //     .then(() => {
+  //       this.isLoading = false;
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error al cargar datos: ', error);
+  //       this.isLoading = false;
+  //     });
     
-      // this.auth.tokenAzure$.subscribe((newToken) => {
-      //   this.service.reloadComponent()
-      // }
-      // );
+  //     // this.auth.tokenAzure$.subscribe((newToken) => {
+  //     //   this.service.reloadComponent()
+  //     // }
+  //     // );
+  // }
+  ngOnInit(): void {
+    this.dataSharing.statusWifi$.subscribe((isOnline) => {
+      this.isOnline = isOnline;
+      if (this.isOnline) {
+        this.reload().then(() => {
+          this.isLoading = false;
+        }).catch((error) => {
+          console.error('Error al cargar datos: ', error);
+          this.isLoading = false;
+        });
+      } else {
+        this.reloadDrafts().then(() => {
+          this.isLoading = false;
+        }).catch((error) => {
+          console.error('Error al cargar drafts: ', error);
+          this.isLoading = false;
+        });
+      }
+    });
   }
+  
   
   reloadAll()
   {
