@@ -31,6 +31,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { IconModule } from './svg/icon.module';
 
 
 @NgModule({
@@ -66,7 +67,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     MatIconModule,
     MatListModule,
     MatButtonModule,
-    NgxChartsModule
+    NgxChartsModule,
+    IconModule
   ],
 
  exports: [
