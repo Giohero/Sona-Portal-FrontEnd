@@ -92,6 +92,7 @@ export class DashboardComponent {
                 {
                   delete orderIndex.Order.DocNum;
                   delete orderIndex.Order.DocEntry;
+                  console.log(orderIndex.Order)
                   this.PublishOrderSAP(orderIndex.Order,orderCosmos,orderIndex)
                 }
                 else
@@ -314,7 +315,12 @@ export class DashboardComponent {
 
       if(event.url !== '/dashboard/order-edit')
       {
-        this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.UsersAzure!.DocNum!.toString(), this.UsersAzure!.DocEntry!.toString())
+        localStorage.removeItem('OrderSave');
+        if(this.UsersAzure != undefined)
+          this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.UsersAzure!.DocNum!.toString(), this.UsersAzure!.DocEntry!.toString())
+        else
+          this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
+
         this.dataSharing.updateUsersSignal({});
       }
     });

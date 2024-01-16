@@ -140,9 +140,10 @@ export class OrderIndexComponent {
     this.openSnackBar("You should put Document Order", 'error', 'Error', 'red');
   }
 
-  selectMatCard(order:Order)
+  selectMatCard(order:any)
   {
-    if(order.DocNum === undefined)
+    console.log(order)
+    if(order.DocNum === undefined || order.DocNum == 0)
       this.dataSharing.setOrderIndexDB(order)
     else
       this.dataSharing.setOrderCReview(order)

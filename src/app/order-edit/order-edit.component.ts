@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DocumentLines, Order } from '../models/order';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -17,6 +17,8 @@ import { AuthService } from '../service/auth.service';
 import { SignalRService } from '../service/signalr.service';
 import { BehaviorSubject, Observable, catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { UsersSR } from '../models/userSignalR';
+import { IndexCustomersService } from '../service/index-customers.service';
+import { IndexItemsService } from '../service/index-items.service';
 
 @Component({
   selector: 'app-order-edit',
@@ -31,7 +33,7 @@ export class OrderEditComponent implements OnInit {
   delivery!: FormControl;
   selectedItemIndex: number | null = null;
   ListItems!: Value[];
-  colorStatus=""
+  colorStatus="2px solid green"
   OrderIndexDB?:any;
   TransactionIndexDB?:any;
   isOnline!:boolean;
@@ -40,12 +42,24 @@ export class OrderEditComponent implements OnInit {
   usernameAzure='';
   nameAzure='';
   UsersConnection : UsersSR[] = [];
+  time : any;
+  counter = 0;
 
-  constructor( private route: ActivatedRoute,private pipe: DatePipe, private dataSharing:DataSharingService, private orderService: ServiceService, private dialog: MatDialog, private indexDB: IndexDbService, private transLog: TransactionlogService, private myRouter: Router, private auth: AuthService, private signalr:SignalRService,  private router: Router) {
+  constructor( private route: ActivatedRoute,
+    private pipe: DatePipe, 
+    private dataSharing:DataSharingService, 
+    private orderService: ServiceService, 
+    private dialog: MatDialog, 
+    private indexDB: IndexDbService, 
+    private transLog: TransactionlogService, 
+    private myRouter: Router, 
+    private auth: AuthService, 
+    private signalr:SignalRService,  
+    private router: Router,
+    private custService:IndexCustomersService,
+    private itemsService:IndexItemsService) {
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
-
-
     // const currentRoute = this.router.url;
     // console.log('Ruta actual:', currentRoute);
     // console.log("esta es la orden")
@@ -67,28 +81,51 @@ export class OrderEditComponent implements OnInit {
       this.delivery = new FormControl(DocDueDate);
       //console.log(this.delivery)
     }
-    // else
-    // {
-    //   this.post = new FormControl({value: new Date(), disabled: true});
-    //   this.delivery = new FormControl(new Date());
-      
-    //   let lastVersionIndex;
-    //   if(this.OrderIndexDB.transaction_order !== null )
-    //     lastVersionIndex = this.OrderIndexDB.transaction_order[this.OrderIndexDB.transaction_order.length - 1].order
-    //   else
-    //     lastVersionIndex = this.OrderIndexDB;
-      
-    //   console.log(lastVersionIndex)
-    //   this.order! = lastVersionIndex;
-    //   this.orderOld = JSON.parse(JSON.stringify(lastVersionIndex));
+    else if(this.OrderIndexDB != undefined)
+    {
+      this.order = this.OrderIndexDB.Order
+      this.orderOld = JSON.parse(JSON.stringify(this.order));
+      const DocDate = new Date(this.order!.DocDate);
+      DocDate.setMinutes(DocDate.getMinutes() + DocDate.getTimezoneOffset());
+      this.post = new FormControl({value: DocDate, disabled: true});
+        //console.log(this.orderOld)
+      const DocDueDate = new Date(this.order!.DocDueDate);
+      DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
+      this.delivery = new FormControl(DocDueDate);
+        //console.log(this.delivery)
 
-    //   if(this.order!.DocumentLines === undefined)
-    //     this.order!.DocumentLines = [];
+      if(this.order!.DocumentLines === undefined)
+      this.order!.DocumentLines = [];
 
-    //   console.log(this.order!.DocumentLines)
+      console.log(this.order!.DocumentLines)
 
-    //   this.cloudChange = "cloud_queue";
-    // }
+      this.cloudChange = "cloud_queue";
+    }
+    else
+    {
+      var orderSave = localStorage.getItem('OrderSave');
+      console.log(orderSave)
+      if(orderSave != null)
+      {
+        this.order = JSON.parse(orderSave)
+        this.orderOld = JSON.parse(JSON.stringify(this.order));
+        const DocDate = new Date(this.order!.DocDate);
+        DocDate.setMinutes(DocDate.getMinutes() + DocDate.getTimezoneOffset());
+        this.post = new FormControl({value: DocDate, disabled: true});
+        //console.log(this.orderOld)
+        const DocDueDate = new Date(this.order!.DocDueDate);
+        DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
+        this.delivery = new FormControl(DocDueDate);
+        //console.log(this.delivery)
+
+        if(this.order?.DocNum == 0)
+          this.cloudChange = "cloud_queue";
+      }
+      else
+      {
+        this.returnPage();
+      }
+    }
   }
 
   async getOrderIndex(){
@@ -100,6 +137,11 @@ export class OrderEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.dataSharing.statusWifi$.subscribe((newWifi) => {
+      console.log('llego el cambio a '+newWifi)
+      this.isOnline = newWifi;
+    });
 
     this.auth.userAzure$.subscribe(
       (username: string) => {
@@ -119,11 +161,24 @@ export class OrderEditComponent implements OnInit {
       }
     );
 
-    //console.log('pasa por send signalmessage')
-    this.signalr.sendSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
+    this.dataSharing.OrderIndexDB$.subscribe((newOrderIndex) => {
+      this.OrderIndexDB = newOrderIndex;
+    });
 
-    this.orderService.getItems()
-    .pipe(
+    this.dataSharing.TransactionIndexDB$.subscribe((newTransIndex) => {
+      this.TransactionIndexDB = newTransIndex;
+    });
+
+    this.getOrderIndex()
+
+    if(this.isOnline == true)
+    {
+
+      if(this.order?.DocNum != 0 && this.order?.DocEntry != 0)
+        this.getSignalR(this.nameAzure, this.usernameAzure)
+
+       this.orderService.getItems()
+       .pipe(
       retryWhen(errors =>
         errors.pipe(
           mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
@@ -133,37 +188,16 @@ export class OrderEditComponent implements OnInit {
         this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
         return throwError(error);
       })
-    )
-    .subscribe((retData) => {
+       )
+       .subscribe((retData) => {
       if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
         this.ListItems = JSON.parse(retData.response!);
       } else {
         this.openSnackBar(retData.response!, "error", "Error", "red");
       }
-    });
+       });
 
-    this.dataSharing.statusWifi$.subscribe((newWifi) => {
-      console.log('llego el cambio a '+newWifi)
-      this.isOnline = newWifi;
-    });
-
-
-    this.getOrderIndex()
-
-    this.dataSharing.OrderIndexDB$.subscribe((newOrderIndex) => {
-      this.OrderIndexDB = newOrderIndex;
-    });
-
-    this.dataSharing.TransactionIndexDB$.subscribe((newTransIndex) => {
-      this.TransactionIndexDB = newTransIndex;
-    });
-
-    this.dataSharing.statusWifi$.subscribe((newWifi) => {
-      console.log('llego el cambio a '+newWifi)
-      this.isOnline = newWifi;
-    });
-
-    this.dataSharing.orderSignal$.subscribe((newOrder) => {
+       this.dataSharing.orderSignal$.subscribe((newOrder) => {
       console.log(newOrder)
       
       //console.log('pasa por el cambio')
@@ -182,9 +216,9 @@ export class OrderEditComponent implements OnInit {
           this.dataSharing.updateOrderSignal({});
         }
       }
-    });
+       });
 
-    this.dataSharing.usersSignal$.subscribe((newUsers) => {
+       this.dataSharing.usersSignal$.subscribe((newUsers) => {
       //console.log(newUsers)
       
       //console.log('pasa por el cambio')
@@ -196,8 +230,46 @@ export class OrderEditComponent implements OnInit {
           //console.log("si pasa los usuarios")
         }
       }
-    });
+       });
+     }
+     else
+     {
+        this.getInformationByIndex();
+     }
 
+  }
+
+  getSignalR(name: string, email: string): void {
+    this.time = setInterval(() => {
+      if (name !== ' ' && email !== ' ') {
+        this.counter++;
+
+        if (this.counter >= 3) {
+          if(this.UsersConnection.length == 0)
+          {
+            this.signalr.sendSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
+            clearInterval(this.time);
+          }
+        }
+      } else {
+        // Resetear el contador si alguna variable es ' '
+        this.counter = 0;
+      }
+    }, 5000);
+  }
+
+  async getInformationByIndex()
+  {
+    try
+    {
+      //this.ListCustomers = await this.custService.RetrieveCustomersIndex();
+      //console.log(this.ListCustomers)
+      this.ListItems = await this.itemsService.RetrieveItemsIndex();
+      //console.log(this.ListItems)
+    } catch (error) {
+      console.error('Error get index:', error);
+    }
+    
   }
 
   openSnackBar(message: string, icon: string, type: string, color: string) {
@@ -571,8 +643,11 @@ export class OrderEditComponent implements OnInit {
   returnPage()
   {
     //console.log('pasa por send signalmessage')
-    this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
-    
+    if(this.order != undefined)
+      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
+    else
+      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
+
     this.dataSharing.updateUsersSignal({});
     this.dataSharing.setOrderCReview(undefined);
     this.dataSharing.setOrderIndexDB(undefined);
@@ -590,5 +665,10 @@ export class OrderEditComponent implements OnInit {
     );
   }
 
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    var orderString = JSON.stringify(this.order)
+    localStorage.setItem('OrderSave', orderString);
+  }
 }
 
