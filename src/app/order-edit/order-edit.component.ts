@@ -381,17 +381,24 @@ export class OrderEditComponent implements OnInit {
     
   }
 
-  totalOrder()
-  {
-    let sumLines = this.order!.DocumentLines.length > 0 ? this.order!.DocumentLines!.reduce((acum: number, elemento: any) => acum + elemento.LineTotal, 0) : 0;
-    
-    if(sumLines == this.order?.DocTotal)
-      return this.order?.DocTotal
-    else
-      return sumLines;
-    
+  totalOrder() {
+    let sumLines = this.order && this.order.DocumentLines ? this.order.DocumentLines
+      .reduce((acum: number, elemento: any) => {
+        const unitPrice = elemento.UnitPrice !== undefined ? parseFloat(elemento.UnitPrice.toString()) : 0;
+        const lineTotal = unitPrice > 0 ? parseFloat(elemento.LineTotal.toString()) : 0;
+        return acum + lineTotal;
+      }, 0) : 0;
+  
+    // Make sure that sumLines is a valid number, if not, default to 0
+    sumLines = Number.isNaN(sumLines) ? 0 : sumLines;
+  
+    const docTotal = sumLines === parseFloat(this.order?.DocTotal?.toString() || '0') ? parseFloat(this.order?.DocTotal?.toString() || '0') : sumLines;
+  
+    // console.log('sumLines:', sumLines);
+    // console.log('docTotal:', docTotal);
+  
+    return docTotal;
   }
-
   addItem()
   {
     const Item : DocumentLines = {
