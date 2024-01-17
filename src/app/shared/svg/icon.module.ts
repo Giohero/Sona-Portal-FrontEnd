@@ -8,9 +8,21 @@ export class IconModule {
     private matIconRegistry: MatIconRegistry
   ) {
     this.matIconRegistry.addSvgIcon(
-      'indexdb-icon',
+      'indexdb',
       this.domSanitizer.bypassSecurityTrustResourceUrl(
-        'assets/icons/indexdb-icon.svg'
+        'assets/icons/indexdb.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'sap',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        'assets/icons/sap.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'cosmosdb',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        'assets/icons/cosmosdb.svg'
       )
     );
   }

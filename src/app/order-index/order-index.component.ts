@@ -83,12 +83,14 @@ export class OrderIndexComponent {
     this.dataSharing.statusWifi$.subscribe((isOnline) => {
       this.isOnline = isOnline;
       if (this.isOnline) {
-        this.reload().then(() => {
-          this.isLoading = false;
-        }).catch((error) => {
-          console.error('Error al cargar datos: ', error);
-          this.isLoading = false;
-        });
+        Promise.all([this.reloadDrafts(), this.reload()])
+      .then(() => {
+        this.isLoading = false;
+      })
+      .catch((error) => {
+        console.error('Error al cargar datos: ', error);
+        this.isLoading = false;
+      });
       } else {
         this.reloadDrafts().then(() => {
           this.isLoading = false;
