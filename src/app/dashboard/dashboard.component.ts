@@ -32,6 +32,7 @@ export class DashboardComponent {
   UsersAzure: UsersAzure = {};
   usernameAzure = '';
   nameAzure = '';
+  previousURL = '';
 
   //checar los estados de orders, sacar los que no tengan complete, y publicarlos
   //si hay una transaccion activa, no subirlo y primero checar si existe la orden en sap para actualizarlo
@@ -49,8 +50,10 @@ export class DashboardComponent {
       this.isOnline = true;
       dataSharing.updateWifi(this.isOnline)
 
-      //restart the connection of Signal R
-      this.signalRService.startConnection();
+      console.log(this.usernameAzure)
+      //restart the connection of Signal 
+      if(this.usernameAzure != undefined)
+        this.signalRService.startConnection();
 
       this.openSnackBar('You\'re online.', "wifi", "Connected!", "green");
       
@@ -312,17 +315,21 @@ export class DashboardComponent {
     .pipe(filter(event => event instanceof NavigationEnd))
     .subscribe((event: any) => {
       console.log('La ruta activa es:', event.url);
-
-      if(event.url !== '/dashboard/order-edit')
+      console.log(this.previousURL)
+      if(this.previousURL == '/dashboard/order-edit')
       {
+        //console.log(this.usernameAzure, this.nameAzure)
         localStorage.removeItem('OrderSave');
-        if(this.UsersAzure != undefined)
+        if(JSON.stringify(this.UsersAzure) != "{}")
           this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.UsersAzure!.DocNum!.toString(), this.UsersAzure!.DocEntry!.toString())
         else
           this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
 
         this.dataSharing.updateUsersSignal({});
+        this.previousURL = event.url;
       }
+      else
+        this.previousURL = event.url
     });
     //this.auth.initializeAuthState()
   }

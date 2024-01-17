@@ -10,6 +10,18 @@ a{
   margin-right: 20px;
 }
 
+.users{
+  display: flex;
+  align-items:center;
+  justify-content: space-between;
+  margin-right: 10px;
+  margin-top: -18px;
+}
+.container-users{
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .iconsave{
   font-size: 28px;
   width: 35px;

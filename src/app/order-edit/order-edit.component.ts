@@ -44,6 +44,7 @@ export class OrderEditComponent implements OnInit {
   UsersConnection : UsersSR[] = [];
   time : any;
   counter = 0;
+  connectedUsers: string[] = [];
 
   constructor( private route: ActivatedRoute,
     private pipe: DatePipe, 
@@ -174,7 +175,7 @@ export class OrderEditComponent implements OnInit {
     if(this.isOnline == true)
     {
 
-      if(this.order?.DocNum != 0 && this.order?.DocEntry != 0)
+      if(this.order?.DocNum != 0 && this.order?.DocEntry != 0 )
         this.getSignalR(this.nameAzure, this.usernameAzure)
 
        this.orderService.getItems()
@@ -219,15 +220,16 @@ export class OrderEditComponent implements OnInit {
        });
 
        this.dataSharing.usersSignal$.subscribe((newUsers) => {
-      //console.log(newUsers)
+      console.log(newUsers)
       
       //console.log('pasa por el cambio')
       if(newUsers != undefined)
       {
         if(newUsers.DocNum === this.order?.DocNum.toString() && newUsers.DocEntry === this.order?.DocEntry.toString())
         {
-          this.UsersConnection = newUsers.users!;
-          //console.log("si pasa los usuarios")
+          this.UsersConnection = newUsers.usersC!;
+          // console.log("si pasa los usuarios")
+          this.connectedUsers = (newUsers.usersC || []).filter(user => !!user?.Name).map(user => user!.Name || '');
         }
       }
        });
@@ -243,11 +245,16 @@ export class OrderEditComponent implements OnInit {
     this.time = setInterval(() => {
       if (name !== ' ' && email !== ' ') {
         this.counter++;
+        console.log(this.order, this.UsersConnection)
 
         if (this.counter >= 3) {
-          if(this.UsersConnection.length == 0)
+          if(this.UsersConnection == undefined || this.UsersConnection.length == 0)
           {
-            this.signalr.sendSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
+            if(this.order != undefined && this.order!.DocNum != 0 && this.order!.DocNum != undefined)
+              this.signalr.sendSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum, this.order!.DocEntry)
+            // else 
+            //   this.signalr.sendSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
+            
             clearInterval(this.time);
           }
         }
@@ -642,11 +649,11 @@ export class OrderEditComponent implements OnInit {
 
   returnPage()
   {
-    //console.log('pasa por send signalmessage')
-    if(this.order != undefined)
-      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum.toString(), this.order!.DocEntry.toString())
-    else
-      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
+    console.log(this.order)
+    if(this.order != undefined && this.order.DocNum != undefined)
+      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum, this.order!.DocEntry)
+    // else
+    //   this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
 
     this.dataSharing.updateUsersSignal({});
     this.dataSharing.setOrderCReview(undefined);

@@ -165,14 +165,14 @@ export class SignalRService {
      });
  }
 
- sendSignalRMessageUser(email:string, name:string, docnum:string, docentry:string) {
+ sendSignalRMessageUser(email:string, name:string, docnum:string | number, docentry:string | number) {
     this.service.sendUserSignalR(email, name, docnum, docentry)
      .subscribe(response => {
        console.log("Ya se envio el usuario");
      });
  }
 
- removeSignalRMessageUser(email:string, name:string, docnum:string, docentry:string) {
+ removeSignalRMessageUser(email:string, name:string, docnum:string | number, docentry:string | number) {
   this.service.removeUserSignalR(email, name, docnum, docentry)
    .subscribe(response => {
      console.log("Ya se borro el usuario");

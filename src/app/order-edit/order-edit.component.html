@@ -25,6 +25,14 @@
           </button> -->
         </div>
       </div>
+      <div class="container-users">
+        <i class="bi bi-eye-fill" style="color: black;"></i><h1 style="color: black; margin-top: -10px;">:</h1>&nbsp;
+        <div *ngFor="let usersC of UsersConnection" class="users">
+          <!-- <h1>Edit</h1> -->
+          <span style="color: black;">{{usersC.Name}}</span>
+          <i class="bi bi-person-raised-hand" style="color: black;"></i>
+        </div>
+      </div>
       <ng-container *ngIf="order">
         <!-- First Card -->
         <mat-card class="mat-card">

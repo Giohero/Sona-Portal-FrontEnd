@@ -8,5 +8,5 @@ export class UsersSR{
 export class UsersAzure{
     DocEntry?:string;
     DocNum?: string;
-    users?: UsersSR[];
+    usersC?: UsersSR[];
 }

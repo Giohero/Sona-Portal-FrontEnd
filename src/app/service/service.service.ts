@@ -203,7 +203,7 @@ export class ServiceService {
     );
   }
 
-  sendUserSignalR(email:string, name:string, docnum:string, docentry:string): Observable<any> {
+  sendUserSignalR(email:string, name:string, docnum:string | number, docentry:string | number): Observable<any> {
     //console.log(this.auth.getAccessToken())
     const body = {email, name, docnum, docentry};
     return this.getHeaders().pipe(
@@ -215,7 +215,7 @@ export class ServiceService {
     );
   }
 
-  removeUserSignalR(email:string, name:string, docnum:string, docentry:string): Observable<any> {
+  removeUserSignalR(email:string, name:string, docnum:string | number, docentry:string | number): Observable<any> {
     //console.log(this.auth.getAccessToken())
     const body = {email, name, docnum, docentry};
     return this.getHeaders().pipe(
