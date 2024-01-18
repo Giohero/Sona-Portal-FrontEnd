@@ -162,14 +162,6 @@ export class OrderEditComponent implements OnInit {
       }
     );
 
-    this.dataSharing.OrderIndexDB$.subscribe((newOrderIndex) => {
-      this.OrderIndexDB = newOrderIndex;
-    });
-
-    this.dataSharing.TransactionIndexDB$.subscribe((newTransIndex) => {
-      this.TransactionIndexDB = newTransIndex;
-    });
-
     this.getOrderIndex()
 
     if(this.isOnline == true)
@@ -178,8 +170,23 @@ export class OrderEditComponent implements OnInit {
       if(this.order?.DocNum != 0 && this.order?.DocEntry != 0 )
         this.getSignalR(this.nameAzure, this.usernameAzure)
 
-       this.orderService.getItems()
-       .pipe(
+      this.dataSharing.usersSignal$.subscribe((newUsers) => {
+        console.log(newUsers)
+        
+        //console.log('pasa por el cambio')
+        if(newUsers != undefined)
+        {
+          if(newUsers.DocNum === this.order?.DocNum.toString() && newUsers.DocEntry === this.order?.DocEntry.toString())
+          {
+            this.UsersConnection = newUsers.usersC!;
+            // console.log("si pasa los usuarios")
+            this.connectedUsers = (newUsers.usersC || []).filter(user => !!user?.Name).map(user => user!.Name || '');
+          }
+        }
+      });
+
+      this.orderService.getItems()
+      .pipe(
       retryWhen(errors =>
         errors.pipe(
           mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
@@ -188,56 +195,48 @@ export class OrderEditComponent implements OnInit {
       catchError(error => {
         this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
         return throwError(error);
-      })
-       )
-       .subscribe((retData) => {
-      if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-        this.ListItems = JSON.parse(retData.response!);
-      } else {
-        this.openSnackBar(retData.response!, "error", "Error", "red");
-      }
+        })
+      )
+      .subscribe((retData) => {
+        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+          this.ListItems = JSON.parse(retData.response!);
+        } else {
+          this.openSnackBar(retData.response!, "error", "Error", "red");
+        }
        });
 
-       this.dataSharing.orderSignal$.subscribe((newOrder) => {
-      console.log(newOrder)
-      
-      //console.log('pasa por el cambio')
-      if(JSON.stringify(newOrder) != "{}")
-      {
-        if(newOrder.DocNum === this.order?.DocNum)
+      this.dataSharing.orderSignal$.subscribe((newOrder) => {
+        console.log(newOrder)
+        
+        if(JSON.stringify(newOrder) != "{}")
         {
-          this.order = newOrder;
+          if(newOrder.DocNum === this.order?.DocNum)
+          {
+            this.order = newOrder;
 
-          const DocDueDate = new Date(newOrder.DocDueDate);
-          console.log(newOrder.DocDueDate)
-          DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
-          this.delivery = new FormControl(DocDueDate);
-          
-          //clean the signal R
-          this.dataSharing.updateOrderSignal({});
+            const DocDueDate = new Date(newOrder.DocDueDate);
+            console.log(newOrder.DocDueDate)
+            DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
+            this.delivery = new FormControl(DocDueDate);
+            
+            //clean the signal R
+            this.dataSharing.updateOrderSignal({});
+          }
         }
-      }
-       });
-
-       this.dataSharing.usersSignal$.subscribe((newUsers) => {
-      console.log(newUsers)
-      
-      //console.log('pasa por el cambio')
-      if(newUsers != undefined)
-      {
-        if(newUsers.DocNum === this.order?.DocNum.toString() && newUsers.DocEntry === this.order?.DocEntry.toString())
-        {
-          this.UsersConnection = newUsers.usersC!;
-          // console.log("si pasa los usuarios")
-          this.connectedUsers = (newUsers.usersC || []).filter(user => !!user?.Name).map(user => user!.Name || '');
-        }
-      }
        });
      }
      else
      {
         this.getInformationByIndex();
      }
+
+     this.dataSharing.OrderIndexDB$.subscribe((newOrderIndex) => {
+      this.OrderIndexDB = newOrderIndex;
+    });
+
+    this.dataSharing.TransactionIndexDB$.subscribe((newTransIndex) => {
+      this.TransactionIndexDB = newTransIndex;
+    });
 
   }
 
