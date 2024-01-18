@@ -38,7 +38,9 @@
         "/UpdateBusinessPartner",
         "/CreateSalesOrder",
         "/UpdateHeaderOrder",
-        "/DeleteAddressBP"
+        "/DeleteAddressBP",
+        "/OrderLogDataComparation",
+        "/negotiate"
       ],
       "cacheConfig": {
         "maxSize": 100,

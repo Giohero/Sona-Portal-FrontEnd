@@ -41,14 +41,14 @@ export class SignalRService {
     console.log(this.hubConnection?.state)
     this.hubConnection?.on('SendMessage', (user: string, message: string, type: string) => {
       const fullMessage = `${type} - ${user}: ${message}`;
-      console.log('Mensaje recibido:', fullMessage);
+      //console.log('Mensaje recibido:', fullMessage);
 
       const currentRoute = this.router.url;
-      console.log('Ruta actual:', currentRoute);
+      //console.log('Ruta actual:', currentRoute);
       
       if(currentRoute === '/dashboard/order-edit' && type === 'order')
       {
-        console.log('Lo enviaremos a orden edit');
+        //console.log('Lo enviaremos a orden edit');
         this.dataSharing.updateOrderSignal(JSON.parse(message));
       }
       else if(currentRoute === '/dashboard/customers-edit'&& type === 'customer')
@@ -60,15 +60,15 @@ export class SignalRService {
 
     this.hubConnection?.on('GetUsers', (DocNum: string, DocEntry: string, users: string) => {
       const fullMessage = `${DocNum} - ${DocEntry}: ${users}`;
-      console.log('Mensaje recibido:', fullMessage);
+      //console.log('Mensaje recibido:', fullMessage);
       var usersC = JSON.parse(users);
       var signalR = {DocNum, DocEntry, usersC}
       const currentRoute = this.router.url;
-      console.log('Ruta actual:', currentRoute);
+      //console.log('Ruta actual:', currentRoute);
       
       if(currentRoute === '/dashboard/order-edit')
       {
-        console.log('Lo enviaremos a orden edit');
+        //console.log('Lo enviaremos a orden edit');
         this.dataSharing.updateUsersSignal(signalR);
       }
       //this.messageSubject.next(fullMessage);
@@ -90,7 +90,7 @@ export class SignalRService {
       })
     )
     .subscribe((token:any) => {
-      console.log(token.accessToken)
+      //console.log(token.accessToken)
       this.updateToken(token.accessToken)
 
       this.itemsIndex.getItemsIndesxDB(this.itemsIndex);
@@ -116,12 +116,12 @@ export class SignalRService {
   }
 
   sendMessageAPI(message:string, type:string, user:string): void {
-    console.log(user)
-    console.log(message)
-    console.log(type)
+    //console.log(user)
+    //console.log(message)
+    //console.log(type)
     if (message && user) {
       
-      console.log('Status of connection befor the send message:', this.getConnectionState());
+      //console.log('Status of connection befor the send message:', this.getConnectionState());
   
       //this.sendMessage();
       this.sendSignalRMessage(message,type,user)
@@ -131,9 +131,9 @@ export class SignalRService {
   }
 
   sendUserAPI(email:string, name:string, docnum:string, docentry:string): void {
-    console.log(email)
-    console.log(name)
-    console.log(docnum)
+    //console.log(email)
+    //console.log(name)
+    //console.log(docnum)
     if (name && docnum) {
       console.log('Status of connection befor the send message:', this.getConnectionState());
   
@@ -145,9 +145,9 @@ export class SignalRService {
   }
 
   removeUserAPI(email:string, name:string, docnum:string, docentry:string): void {
-    console.log(email)
-    console.log(name)
-    console.log(docnum)
+    //console.log(email)
+    //console.log(name)
+    //console.log(docnum)
     if (name && docnum) {
       console.log('Status of connection befor the send message:', this.getConnectionState());
   
@@ -161,21 +161,21 @@ export class SignalRService {
   sendSignalRMessage(message:string, type:string, user:string) {
     this.service.sendSignalR(user, type, message)
      .subscribe(response => {
-       console.log("Ya se envio");
+       console.log("Send the User");
      });
  }
 
  sendSignalRMessageUser(email:string, name:string, docnum:string | number, docentry:string | number) {
     this.service.sendUserSignalR(email, name, docnum, docentry)
      .subscribe(response => {
-       console.log("Ya se envio el usuario");
+       console.log("Send the User");
      });
  }
 
  removeSignalRMessageUser(email:string, name:string, docnum:string | number, docentry:string | number) {
   this.service.removeUserSignalR(email, name, docnum, docentry)
    .subscribe(response => {
-     console.log("Ya se borro el usuario");
+     console.log("Clean the user");
    });
 }
 
@@ -200,7 +200,7 @@ export class SignalRService {
 
   public stopConnection(): void {//stop conexion
     this.hubConnection?.stop()
-      .then(() => console.log('Conexión SignalR detenida'))
+      .then(() => console.log('Stop Conection SignalR'))
       .catch(error => console.error('Error al detener la conexión SignalR:', error));
   }
 
