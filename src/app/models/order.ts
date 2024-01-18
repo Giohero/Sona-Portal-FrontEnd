@@ -1,4 +1,7 @@
 export interface Order {
+    source: string
+    icon: string
+    status: string
     DocEntry: number
     DocNum: number
     DocumentStatus: string

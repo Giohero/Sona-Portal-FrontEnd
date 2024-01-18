@@ -24,6 +24,7 @@ export class OrderIndexComponent {
   isOnline!:boolean;
   isLoading=true;
   searchOrder: number | undefined;
+  statusIcon ='indexdb';
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
     private myRouter: Router, 
@@ -63,6 +64,15 @@ export class OrderIndexComponent {
   showDraftOrders() {
     this.showRealOrdersFlag = false;
   }
+  // ...
+
+  private updateIconsBasedOnSource() {
+    this.ListOrders.forEach(order => {
+      // Asume que `order` tiene una propiedad `source`
+      order.icon = order.source === 'indexdb' ? 'indexdb' : 'cosmosdb';
+    });
+  }
+  
 
   // ngOnInit(): void {
   //     Promise.all([this.reloadDrafts(), this.reload()])
@@ -80,6 +90,8 @@ export class OrderIndexComponent {
   //     // );
   // }
   ngOnInit(): void {
+
+    //icons index and cosmos
     this.dataSharing.statusWifi$.subscribe((isOnline) => {
       this.isOnline = isOnline;
       if (this.isOnline) {
@@ -101,7 +113,6 @@ export class OrderIndexComponent {
       }
     });
   }
-  
   
   reloadAll()
   {
