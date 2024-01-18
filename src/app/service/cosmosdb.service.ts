@@ -42,16 +42,16 @@ export async function PublishToCosmosDB(order:any, type: string) {
   const container = database.container(containerId);
   order.type = type;
   delete order.id;
-  console.log(order)
+  //console.log(order)
   
   try {
-    console.log('Se debe crear el documento:');
+    //console.log('Se debe crear el documento:');
     const { resource } = await container.items.create(order);
     //console.log('Documento creado:', resource);
     //console.log(resource.id)
     return resource.id;
   } catch (error) {
-    console.error('Error al crear el documento:', error);
+    console.error('Error create document:', error);
     return null;
   }
 }

@@ -105,7 +105,7 @@ export class AuthService implements OnInit {
   getProfile() {
     this.http.get(this.GRAPH_ENDPOINT)
       .subscribe((profile: Profile) => {
-        console.log(profile)
+        //console.log(profile)
         this.profile = profile;
         this.getUser(profile!.mail!)
         this.getName(profile.givenName + ' ' + profile.surname)

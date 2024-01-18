@@ -84,8 +84,8 @@ export class IndexDbService {
     try {
       const orderId = await this.Db!.table('orders').add({ id, Action, Timestamp, DocNum, DocEntry, Order, status});
       const retrievedOrder = await this.Db!.table('orders').get(orderId);
-      console.log("Agregando a Order Index DB");
-      console.log(retrievedOrder);
+      console.log("Add transaction");
+      //console.log(retrievedOrder);
       this.dataSharing.setOrderIndexDB(retrievedOrder)
       this.dataSharing.updateIndexOrder(retrievedOrder)
       return retrievedOrder;
