@@ -70,7 +70,7 @@ export class OrderEditComponent implements OnInit {
 
     if(this.order != undefined)
     {
-      //console.log(this.OrderIndexDB)
+      console.log(this.OrderIndexDB)
       this.orderOld = JSON.parse(JSON.stringify(this.order));
       
       const DocDate = new Date(this.order.DocDate);
@@ -98,14 +98,14 @@ export class OrderEditComponent implements OnInit {
       if(this.order!.DocumentLines === undefined)
       this.order!.DocumentLines = [];
 
-      //console.log(this.order!.DocumentLines)
+      console.log(this.order!.DocumentLines)
 
       this.cloudChange = "cloud_queue";
     }
     else
     {
       var orderSave = localStorage.getItem('OrderSave');
-      //console.log(orderSave)
+      console.log(orderSave)
       if(orderSave != null)
       {
         this.order = JSON.parse(orderSave)
@@ -140,7 +140,7 @@ export class OrderEditComponent implements OnInit {
   ngOnInit(): void {
 
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
-      console.log('Is Online: '+newWifi)
+      console.log('llego el cambio a '+newWifi)
       this.isOnline = newWifi;
     });
 
@@ -171,10 +171,10 @@ export class OrderEditComponent implements OnInit {
         this.getSignalR(this.nameAzure, this.usernameAzure)
 
       this.dataSharing.usersSignal$.subscribe((newUsers) => {
-        //console.log(newUsers)
+        console.log(newUsers)
         
         //console.log('pasa por el cambio')
-        if(newUsers != undefined && newUsers.DocNum != '0')
+        if(newUsers != undefined)
         {
           if(newUsers.DocNum === this.order?.DocNum.toString() && newUsers.DocEntry === this.order?.DocEntry.toString())
           {
@@ -206,7 +206,7 @@ export class OrderEditComponent implements OnInit {
        });
 
       this.dataSharing.orderSignal$.subscribe((newOrder) => {
-        //console.log(newOrder)
+        console.log(newOrder)
         
         if(JSON.stringify(newOrder) != "{}")
         {
@@ -215,7 +215,7 @@ export class OrderEditComponent implements OnInit {
             this.order = newOrder;
 
             const DocDueDate = new Date(newOrder.DocDueDate);
-            //console.log(newOrder.DocDueDate)
+            console.log(newOrder.DocDueDate)
             DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
             this.delivery = new FormControl(DocDueDate);
             
@@ -244,7 +244,7 @@ export class OrderEditComponent implements OnInit {
     this.time = setInterval(() => {
       if (name !== ' ' && email !== ' ') {
         this.counter++;
-        console.log(this.UsersConnection)
+        console.log(this.order, this.UsersConnection)
 
         if (this.counter >= 3) {
           if(this.UsersConnection == undefined || this.UsersConnection.length == 0)
@@ -330,8 +330,8 @@ export class OrderEditComponent implements OnInit {
   }
 
   changeQuantity(item: DocumentLines) {
-  //console.log(item);
-  //console.log(this.orderOld);
+  console.log(item);
+  console.log(this.orderOld);
 
   var itemOld: DocumentLines | undefined;
 
@@ -345,15 +345,15 @@ export class OrderEditComponent implements OnInit {
 
   if (itemOld === undefined) {
     var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
-    //console.log(totalItem);
+    console.log(totalItem);
     item.LineTotal = totalItem;
     this.updateOrder('Add_New_Item_' + item.ItemCode);
   } else {
-    //console.log(unitPriceOld);
+    console.log(unitPriceOld);
 
     if (item.UnitPrice.toString() === unitPriceOld.toString()) {
       var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
-      //console.log(totalItem);
+      console.log(totalItem);
       item.LineTotal = totalItem;
     } else {
       var difference = Math.abs(itemOld.Quantity - item.Quantity);
@@ -502,7 +502,7 @@ export class OrderEditComponent implements OnInit {
       // const docDate = this.pipe.transform(this.order?.DocDate, 'yyyy-MM-dd');
 
       const docDueDate = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
-      //console.log(docDueDate)
+      console.log(docDueDate)
       const docDate =  this.pipe.transform(this.post.value, 'yyyy-MM-dd');
       //const taxDate = this.pipe.transform(this.order?.TaxDate, 'yyyy-MM-dd');
       
@@ -522,11 +522,11 @@ export class OrderEditComponent implements OnInit {
         OrderPost.DocEntry = this.order?.DocEntry.toString()
         OrderPost.DocNum = this.order?.DocNum
       }
-      //console.log(OrderPost)
+      console.log(OrderPost)
 
       ////Add Index DB/////
       // console.log("Index antes de hacer cambios")
-      //console.log(this.OrderIndexDB)
+      console.log(this.OrderIndexDB)
       if(this.OrderIndexDB == undefined)
       {
         //Add the new order in index 
@@ -559,7 +559,7 @@ export class OrderEditComponent implements OnInit {
       this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost, this.usernameAzure)
       //const idTransaction = "0";
       //console.log(JSON.stringify(this.orderOld, null, 3));
-      //console.log('aqui pasa el id transaction '+ idTransaction)
+      console.log('aqui pasa el id transaction '+ idTransaction)
 
       if(idTransaction != null)
       {
@@ -574,7 +574,7 @@ export class OrderEditComponent implements OnInit {
         {
           if(this.order!.DocNum !== undefined)
           {
-            //console.log(OrderPost)
+            console.log(OrderPost)
             this.cloudChange = "cloud_done";
             this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
 
@@ -682,11 +682,6 @@ export class OrderEditComponent implements OnInit {
   unloadNotification($event: any): void {
     var orderString = JSON.stringify(this.order)
     localStorage.setItem('OrderSave', orderString);
-
-    if(this.order != undefined && this.order.DocNum != undefined)
-      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum, this.order!.DocEntry)
-    else
-      this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
   }
 }
 

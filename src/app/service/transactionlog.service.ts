@@ -74,12 +74,12 @@ export class TransactionlogService {
       
     };
 
-    //console.log('Objeto que agregaremos a cosmos')
-    //console.log(this.TransactionIndexDB)
+    console.log('Objeto que agregaremos a cosmos')
+    console.log(this.TransactionIndexDB)
     
     log.IdIndex = idIndex;
-    //console.log("Aqui publicaremos las transaction a cosmos")
-    //console.log(this.TransactionIndexDB)
+    console.log("Aqui publicaremos las transaction a cosmos")
+    console.log(this.TransactionIndexDB)
     //log.transactions = this.TransactionIndexDB.transactions;
     PublishToCosmosDB(log,'transaction_log');
     return idTransaction;
@@ -127,10 +127,10 @@ export class TransactionlogService {
     };
       try {
         let Logid = await this.Db!.table('orders').add(log);
-        console.log('Add transaction')
-        //console.log(Logid)
+        console.log('Agregamos el transaction')
+        console.log(Logid)
         const retrievedOrder = await this.Db!.table('orders').get(Logid);
-        //console.log(retrievedOrder)
+        console.log(retrievedOrder)
         //this.dataSharing.setOrderIndexDB(retrievedOrder)
         this.dataSharing.updateIndexTransaction(retrievedOrder)
 
@@ -162,10 +162,10 @@ export class TransactionlogService {
     
     try {
       let Logid = await this.Db!.table('orders').put(log);
-      //console.log('Editamos la transaction')
-      //console.log(Logid)
+      console.log('Editamos la transaction')
+      console.log(Logid)
       const retrievedOrder = await this.Db!.table('orders').get(Logid);
-      //console.log(retrievedOrder)
+      console.log(retrievedOrder)
       //this.dataSharing.setOrderIndexDB(retrievedOrder)
       this.dataSharing.updateIndexTransaction(retrievedOrder)
 

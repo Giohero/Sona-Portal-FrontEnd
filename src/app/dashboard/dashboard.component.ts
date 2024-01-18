@@ -314,8 +314,8 @@ export class DashboardComponent {
     this.router.events
     .pipe(filter(event => event instanceof NavigationEnd))
     .subscribe((event: any) => {
-      //console.log('La ruta activa es:', event.url);
-      //console.log(this.previousURL)
+      console.log('La ruta activa es:', event.url);
+      console.log(this.previousURL)
       if(this.previousURL == '/dashboard/order-edit')
       {
         //console.log(this.usernameAzure, this.nameAzure)
