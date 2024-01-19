@@ -24,7 +24,6 @@ export class OrderIndexComponent {
   isLoading=true;
   searchOrder: number | undefined;
   statusIcon ='indexdb';
-  statusIcon ='indexdb';
 
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
