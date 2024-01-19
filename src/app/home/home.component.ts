@@ -69,7 +69,7 @@ export class HomeComponent {
   
 
   onSelect(event: Event) {
-    console.log(event);
+    //console.log(event);
   }
 
   ngOnInit(): void {

@@ -32,7 +32,7 @@ export class IndexDbService {
   async editOrderIndex(id: number, DocNum: number, DocEntry: number, OrderComplete: Order | OrderComplete, status: string): Promise<void> {
     try {
 
-      console.log(OrderComplete)
+      //console.log(OrderComplete)
       // const DocDate = OrderComplete.DocDate;
       // const DocDueDate = OrderComplete.DocDueDate;
       // const TaxDate = OrderComplete.TaxDate;
@@ -42,9 +42,9 @@ export class IndexDbService {
       const Order = OrderComplete;
 
       const orderId = await  this.Db!.table('orders').put({ id, Action, Timestamp, DocNum, DocEntry, Order, status});
-      console.log(orderId)
+      //console.log(orderId)
       const retrievedOrder = await this.Db!.table('orders').get(orderId);
-      console.log(retrievedOrder)
+      //console.log(retrievedOrder)
       this.dataSharing.setOrderIndexDB(retrievedOrder)
       this.dataSharing.updateIndexOrder(retrievedOrder)
       console.log("Edit Record with ID" +id+" in the table.");
@@ -104,8 +104,8 @@ export class IndexDbService {
 
 
         const getLastOneVersion = lastRecord.transaction_order[lastRecord.transaction_order.length - 1].order;
-        console.log('si pasa por aqui en obtener el ultimo')
-        console.log(getLastOneVersion)
+       // console.log('si pasa por aqui en obtener el ultimo')
+        //console.log(getLastOneVersion)
         return getLastOneVersion;
       }
       else
@@ -123,7 +123,7 @@ export class IndexDbService {
       if (allOrders.length > 0) {
         const lastRecord = allOrders[allOrders.length - 1];
 
-        console.log(lastRecord)
+        //console.log(lastRecord)
         return lastRecord;
       }
       else
@@ -140,7 +140,7 @@ export class IndexDbService {
       if (allOrders.length > 0) {
         const lastRecords = allOrders.filter(x => x.status != "complete");
 
-        console.log(lastRecords)
+        //console.log(lastRecords)
         return lastRecords;
       }
       else
@@ -182,7 +182,7 @@ export class IndexDbService {
       // }
 
       this.Db!.table('orders').where('id').equals(idIndex).first().then(async (record) => {
-        console.log(record);
+        //console.log(record);
         if(record)
         {
           if(record.transaction_order === null)
@@ -239,7 +239,7 @@ export class IndexDbService {
 
   async EditOrderLogDirectToCosmos(idIndex:number, orderIndexDB: any) {
 
-    console.log(orderIndexDB)
+    //console.log(orderIndexDB)
 
     const getCosmos = await getFromCosmosDBByIndexId(idIndex,'transaction_log')
     if(getCosmos == null)
@@ -248,7 +248,7 @@ export class IndexDbService {
       //No quita el id, por eso hicimos copia
       orderPublishCosmos.IdIndex = idIndex;
       var idCosmos = await PublishToCosmosDB(orderPublishCosmos,'transaction_log');
-      console.log('Estoy obteniendo null en el editOrderLog');
+      //console.log('Estoy obteniendo null en el editOrderLog');
       return idCosmos;
     }
     else
@@ -283,8 +283,8 @@ export class IndexDbService {
   async getOrderLogByDocNum(DocNum: number) {
 
     this.Db!.table('orders').where('DocNum').equals(DocNum).first().then(async (record) => {
-      console.log("record encontrado en Index");
-      console.log(record);
+      //console.log("record encontrado en Index");
+      //console.log(record);
       if(record)
         return record;
       else

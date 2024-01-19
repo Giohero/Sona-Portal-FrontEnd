@@ -160,7 +160,7 @@ export class OrderReviewComponent {
 
   async getDataIndex(){
     const orderComplete = await this.indexDB.getLastOneDB();
-    console.log(orderComplete)
+    //console.log(orderComplete)
     if (window.confirm("You have an Order. \nDo you would continue editing this Order?")) {
       this.OrderReview = orderComplete;
       this.OrderIndexDB = orderComplete;
@@ -258,7 +258,7 @@ export class OrderReviewComponent {
   async changeOrder()
   {
     const selectedAddress = this.CustomerData.Addresses[this.option];
-    console.log(selectedAddress)
+    //console.log(selectedAddress)
     const dateToday = this.pipe.transform(this.tax.value, 'yyyy-MM-dd');
     const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
     this.OrderReview!.DocDate = dateToday?.toString();
@@ -284,7 +284,7 @@ export class OrderReviewComponent {
 
     if(this.OrderReview !== this.OrderReviewOld)
     {
-      console.log(this.OrderReview)
+      //console.log(this.OrderReview)
       
       if(this.isOnline == true)
         this.updateOrderCloud(this.OrderReview!);

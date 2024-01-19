@@ -38,7 +38,7 @@ export class SignalRService {
  async getMessages(){
     //  Este es mtodo del server es el que manejara los mensajes entrantes
     // Después de recibir un mensaje
-    console.log(this.hubConnection?.state)
+    //console.log(this.hubConnection?.state)
     this.hubConnection?.on('SendMessage', (user: string, message: string, type: string) => {
       const fullMessage = `${type} - ${user}: ${message}`;
       //console.log('Mensaje recibido:', fullMessage);

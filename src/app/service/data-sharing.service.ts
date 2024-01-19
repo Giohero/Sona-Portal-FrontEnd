@@ -65,7 +65,7 @@ export class DataSharingService {
   }
 
   updateWifi(wifi: boolean): void {
-    console.log('cambio a ' + wifi)
+    console.log('Is Online: ' + wifi)
     this.statusWifi.next(wifi);
   }
 

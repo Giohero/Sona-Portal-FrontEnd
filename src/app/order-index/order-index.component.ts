@@ -20,10 +20,11 @@ export class OrderIndexComponent {
   displayedColumnsDrafts: string[] = ['Id', 'PostingDate', 'DeliveryDate', 'TaxDate', 'CardCode'];
   ListOrders: Order[] = []; 
   ListOrdersDrafts: any;
-  //ListOrdersDrafts: any; 
   isOnline!:boolean;
   isLoading=true;
   searchOrder: number | undefined;
+  statusIcon ='indexdb';
+
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
     private myRouter: Router, 
@@ -88,14 +89,14 @@ export class OrderIndexComponent {
         this.isLoading = false;
       })
       .catch((error) => {
-        console.error('Error al cargar datos: ', error);
+        console.error('Error charge the data: ', error);
         this.isLoading = false;
       });
       } else {
         this.reloadDrafts().then(() => {
           this.isLoading = false;
         }).catch((error) => {
-          console.error('Error al cargar drafts: ', error);
+          console.error('Error charge drafts: ', error);
           this.isLoading = false;
         });
       }

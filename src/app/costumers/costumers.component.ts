@@ -237,7 +237,7 @@ export class CostumersComponent implements OnInit {
   editCustomer(customer: any) {
     
     this.dataSharing.setCustomerData(customer);
-    console.log(customer)
+    //console.log(customer)
     this.myRouter.navigate(['dashboard/customers-edit']);
   }
 

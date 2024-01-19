@@ -69,7 +69,7 @@ export class CustomersEditComponent {
     //   this.getDataIndex();
 
     const currentRoute = this.router.url;
-    console.log('Ruta actual:', currentRoute);
+    //console.log('Ruta actual:', currentRoute);
 
   }
 
@@ -154,7 +154,7 @@ export class CustomersEditComponent {
       this.ShowEdit = true;
     
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
-      console.log('llego el cambio a '+newWifi)
+      console.log('Is Online: '+newWifi)
       this.isOnline = newWifi;
     });
 
@@ -310,7 +310,7 @@ export class CustomersEditComponent {
           this.transactionCustomer.editTransactionCustomerToIndex(idTransaction!, Customer, 'complete')
           this.billingAddress = '';
           this.shippingAddress = '';
-          console.log(retData.response!)
+          //console.log(retData.response!)
           
           Customer.ContactPerson = undefined;
           Customer.EmailAddress = undefined;
@@ -626,7 +626,7 @@ export class CustomersEditComponent {
 
   CheckList(type:string)
   {
-    console.log(this.customerBack?.BPAddresses)
+    //console.log(this.customerBack?.BPAddresses)
     const dialogRef = this.dialog.open(DialogAddressComponent, {
       height: 'auto',
       width: '90%',
@@ -669,8 +669,8 @@ export class CustomersEditComponent {
       BPAddresses
     }
 
-    console.log('es el objeto que mandamos');
-    console.log(Customer);
+    //console.log('es el objeto que mandamos');
+    //console.log(Customer);
     let idTransaction = await this.transactionCustomer.addTransactionCustomerToIndex(this.idcustomer,this.searchText,'C',this.customerBack!.BPAddresses,"Delete Address",this.email!,this.notes!, 'index');
 
     if(this.isOnline == true)
@@ -689,7 +689,7 @@ export class CustomersEditComponent {
 
 
       this.orderService.DeleteAddresBP(Customer).subscribe((retData) => {
-        console.log(retData)
+        //console.log(retData)
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
 
           //this.ListCustomers = JSON.parse(retData.response!);

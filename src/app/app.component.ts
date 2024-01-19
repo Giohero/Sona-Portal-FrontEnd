@@ -80,19 +80,19 @@ export function webWorker(pType: string, pOrder: Order, pToken: string): Promise
       const worker = new Worker(new URL('./app.worker', import.meta.url));
 
       worker.onmessage = ({ data }) => {
-        console.log('Mensaje recibido del Web Worker:');
+        console.log('Message from Web Worker:');
         console.log(data);
         resolve(data); 
       };
 
       worker.onerror = (error) => {
-        console.error('Error en el Web Worker:', error);
+        console.error('Error  Web Worker:', error);
         reject(error); 
       };
 
       worker.postMessage({ type: pType, order: pOrder, tokenAzure: pToken});
     } else {
-      reject(new Error('Los Web Workers no son compatibles en este entorno.'));
+      reject(new Error('Web Workers doesnt matching correctly.'));
     }
   });
 }

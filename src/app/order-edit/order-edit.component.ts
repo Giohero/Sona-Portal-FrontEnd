@@ -655,7 +655,7 @@ export class OrderEditComponent implements OnInit {
 
   returnPage()
   {
-    console.log(this.order)
+    //console.log(this.order)
     if(this.order != undefined && this.order.DocNum != undefined)
       this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum, this.order!.DocEntry)
     // else

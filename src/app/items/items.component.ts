@@ -137,7 +137,7 @@ export class ItemsComponent {
 
   editCustomer(customer: any) {
     // Logic to change the costumer selected
-    console.log('Editar cliente:', customer);
+    //console.log('Editar cliente:', customer);
   }
 
   showMoreInfo(customer: any) {

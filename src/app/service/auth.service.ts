@@ -82,7 +82,7 @@ export class AuthService implements OnInit {
     }).subscribe();
 
 
-    console.log(this.msalService.instance.getAllAccounts())
+    //console.log(this.msalService.instance.getAllAccounts())
 
     // if (this.msalGuardConfig.authRequest){
     //   this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest)
@@ -202,7 +202,7 @@ export class AuthService implements OnInit {
   // }
 
   isLoggedIn(): boolean {
-    console.log(this.msalService.instance.getActiveAccount())
+    //console.log(this.msalService.instance.getActiveAccount())
     return this.msalService.instance.getActiveAccount() != null;
   }
 

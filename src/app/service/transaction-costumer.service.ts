@@ -42,10 +42,10 @@ export class TransactionCostumerService {
 
       try {
         let Logid = await this.Db!.table('costumers').add(log);
-        console.log('Agregamos el customer_transactions')
-        console.log(Logid)
+        console.log('Add customer_transactions')
+        //console.log(Logid)
         const retrievedCostumerTransaction = await this.Db!.table('costumers').get(Logid);
-        console.log(retrievedCostumerTransaction)
+        //console.log(retrievedCostumerTransaction)
         this.dataSharing.updateIndexTransaction(retrievedCostumerTransaction)
         return idChange;
       } catch (error) {
@@ -73,10 +73,10 @@ export class TransactionCostumerService {
     
     try {
       let Logid = await this.Db!.table('costumers').put(log);
-      console.log('Editamos la transaction de customer')
-      console.log(Logid)
+      console.log('Edit transaction_customer')
+      //console.log(Logid)
       const retrievedOrder = await this.Db!.table('costumers').get(Logid);
-      console.log(retrievedOrder)
+      //console.log(retrievedOrder)
       //this.dataSharing.setOrderIndexDB(retrievedOrder)
       this.dataSharing.updateIndexTransaction(retrievedOrder)
 

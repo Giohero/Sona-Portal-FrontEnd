@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit, OnDestroy{
 
   getAccessToken() {
     //this.authService.getToken();
-    console.log(this.authService.tokenAzure$)
+    //console.log(this.authService.tokenAzure$)
   }
 
   // logout() {

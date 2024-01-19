@@ -8,8 +8,8 @@ addEventListener('message', async (event: MessageEvent) => {
   // const response = `worker response to ${data}`;
   // postMessage(response);
   const messageData = event.data.type;
-  console.log(event.data.order)
-  console.log(event.data.tokenAzure)
+  //console.log(event.data.order)
+  //console.log(event.data.tokenAzure)
   const myappurlcosmos = "https://functionhandlecosmosdb.azurewebsites.net/"; 
   const myappurlsap = "https://orderpadfunctions.azurewebsites.net/";
   const myappurlcetos = "https://sonafunctions01.azurewebsites.net/";
@@ -28,7 +28,7 @@ addEventListener('message', async (event: MessageEvent) => {
       const data = await response.json();
       const responseIn: INResponse = data;
       const customers: BusinessPartner[] = JSON.parse(responseIn.response!);
-      console.log(customers)
+      //console.log(customers)
       self.postMessage(customers);
     } catch (error) {
       self.postMessage({ error: error });
@@ -72,8 +72,8 @@ addEventListener('message', async (event: MessageEvent) => {
         body: JSON.stringify(event.data.order),
       });
       const data = await response.json();
-      console.log('este es mi resultado')
-      console.log(data)
+      //console.log('este es mi resultado')
+      //console.log(data)
       const responseIn: INResponse = data;
       ///const order: Order[] = JSON.parse(responseIn.response!);
       //console.log(order)

@@ -91,8 +91,12 @@
                   <br>
                   <label>{{ Order.DocDueDate }}</label> <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
                   <br>
-                  <label>{{ Order.CardCode }}</label> <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
-                  <mat-icon svgIcon="indexdb"></mat-icon>
+                  <label>{{Order.CardCode}}</label>
+                  <mat-icon *ngIf="Order.status === 'index'" svgIcon="indexdb"></mat-icon>
+                  <ng-container *ngIf="Order.status === 'cosmos'">
+                    <mat-icon svgIcon="indexdb"></mat-icon>
+                    <mat-icon svgIcon="cosmosdb"></mat-icon>
+                  </ng-container>
                 </mat-card-content>
               </mat-card>
             </div>

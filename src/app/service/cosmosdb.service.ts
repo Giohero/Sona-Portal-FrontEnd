@@ -21,8 +21,8 @@ export async function publishToCosmosDB(order:any) {
   const database = client.database(databaseId);
   const container = database.container(containerId);
   order.type = 'order_log';
-  console.log("esta es la orden para cosmos")
-  console.log(order)
+  //console.log("esta es la orden para cosmos")
+  //console.log(order)
   
   try {
     const { resource } = await container.items.create(order);
@@ -30,7 +30,7 @@ export async function publishToCosmosDB(order:any) {
     //console.log(resource.id)
     return resource.id;
   } catch (error) {
-    console.error('Error al crear el documento:', error);
+    console.error('Error create document:', error);
     return null;
   }
 }
@@ -64,14 +64,14 @@ export async function editToCosmosDB(order:any) {
   const database = client.database(databaseId);
   const container = database.container(containerId);
   order.type = 'order_log';
-  console.log('estoy editando en cosmos')
-  console.log(order.id)
+  //console.log('estoy editando en cosmos')
+  //console.log(order.id)
 
   try {
     const { resource } = await container.item(order.id.toString(), order.type).replace(order);
-    console.log('Documento creado:', resource);
+    //console.log('Documento creado:', resource);
   } catch (error) {
-    console.error('Error al crear el documento:', error);
+    console.error('Error edit document:', error);
   }
 }
 
@@ -82,14 +82,14 @@ export async function EditToCosmosDB(order:any, type:string) {
   const container = database.container(containerId);
   order.type = type;
   //console.log('estoy editando en cosmos')
-  console.log(order)
+  //console.log(order)
 
   try {
     const { resource } = await container.item(order.id, type).replace(order);
-    console.log('Documento editado:', resource);
+    //console.log('Documento editado:', resource);
     return true;
   } catch (error) {
-    console.error('Error al crear el documento:', error);
+    console.error('Error edit document:', error);
     return false;
   }
 }
@@ -108,13 +108,13 @@ export async function getFromCosmosDBByIndexId(idIndex: number, type: string) {
     
     if (resources && resources.length > 0) {
       const orderFind = resources[0];
-      console.log('Documento encontrado:', orderFind);
+      //console.log('Documento encontrado:', orderFind);
       return orderFind;
     } else {
       return null; 
     }
   } catch (error) {
-    console.error('Error al obtener el documento:', error);
+    console.error('Error get the document:', error);
     throw error; 
   }
 }
@@ -128,7 +128,7 @@ export async function getFromCosmosDBByDocNum(docNum: any, type: string) {
   try {
 
     const querySpec = 'SELECT * FROM c WHERE c.DocNum = '+  docNum  +' AND c.type = \''+type+'\''
-    console.log(querySpec);
+    //console.log(querySpec);
     const { resources } = await container.items.query(querySpec).fetchAll();
     
     if(resources == null)
@@ -136,13 +136,13 @@ export async function getFromCosmosDBByDocNum(docNum: any, type: string) {
 
     if (resources && resources.length > 0) {
       const orderFind = resources[0];
-      console.log('Documento encontrado:', orderFind);
+      //console.log('Documento encontrado:', orderFind);
       return orderFind;
     } else {
       return null; 
     }
   } catch (error) {
-    console.error('Error al obtener el documento:', error);
+    console.error('Error get the document:', error);
     throw error; 
   }
 }

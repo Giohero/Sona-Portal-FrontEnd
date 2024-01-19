@@ -42,7 +42,7 @@ export class DashboardComponent {
     //console.log("Rectificando si existe los items")
     //serviceItem.getItemsIndesxDB(serviceItem);
 
-    console.log(signalRService.getConnectionState())
+    //console.log(signalRService.getConnectionState())
 
     //This ejecuted when is get back the online web
     window.addEventListener('online', async () => {
@@ -50,14 +50,14 @@ export class DashboardComponent {
       this.isOnline = true;
       dataSharing.updateWifi(this.isOnline)
 
-      console.log(this.usernameAzure)
+      //console.log(this.usernameAzure)
       //restart the connection of Signal 
       if(this.usernameAzure != undefined)
         this.signalRService.startConnection();
 
       this.openSnackBar('You\'re online.', "wifi", "Connected!", "green");
       
-      console.log('Este es el de Index que trajimos del servicio')
+      console.log('Update Orders in Offline')
 
       var getOrdersNotUpdated = await indexDB.getAllOrdersWithoutUpdate(); //obtain since index db
 
@@ -70,13 +70,13 @@ export class DashboardComponent {
 
           if((orderIndex.Order.DocumentLines != undefined || orderIndex.Order.DocumentLines.length > 0 )&& orderIndex.Order.CardCode != undefined)
           {
-            console.log(orderIndex.status)
+            //console.log(orderIndex.status)
             if(orderIndex.status === 'cosmos')
             {
-              console.log(orderIndex.id)
+              //console.log(orderIndex.id)
               var orderCosmos = await getFromCosmosDBByIndexId(orderIndex.id, 'transaction_log');
-              console.log('este es el cosmos')
-              console.log(orderCosmos)
+              //console.log('este es el cosmos')
+              //console.log(orderCosmos)
       
               if(orderCosmos != null)
               {
@@ -89,13 +89,13 @@ export class DashboardComponent {
                 orderCosmos.Order = orderIndex.Order;
                 
                 indexDB.EditOrderLogDirectToCosmos(orderIndex.id, orderCosmos);
-                console.log(orderCosmos)
+                //console.log(orderCosmos)
                 
                 if(orderCosmos.DocEntry === undefined || orderCosmos.DocEntry === 0)
                 {
                   delete orderIndex.Order.DocNum;
                   delete orderIndex.Order.DocEntry;
-                  console.log(orderIndex.Order)
+                  //console.log(orderIndex.Order)
                   this.PublishOrderSAP(orderIndex.Order,orderCosmos,orderIndex)
                 }
                 else
@@ -103,7 +103,7 @@ export class DashboardComponent {
               }
               else 
               {
-                console.log('No se encontro en cosmos, publicaremos la orden en Cosmos y SAP')
+                console.log('Publish in Cosmos and SAP')
                 var orderCopyIndex: any;
                 orderCopyIndex = {};
                 orderCopyIndex.IdIndex = orderIndex.id;
@@ -128,7 +128,7 @@ export class DashboardComponent {
             }
             else if(orderIndex.status === 'index')
             {
-              console.log('No se encontro en cosmos, publicaremos la orden en Cosmos y SAP')
+              console.log('Publish in Cosmos and SAP')
               orderCopyIndex = {};
               orderCopyIndex.IdIndex = orderIndex.id;
               orderCopyIndex.Action = 'Create_Order';
@@ -148,7 +148,7 @@ export class DashboardComponent {
           }
           else
           {
-            console.log('No se encontro en cosmos, la publicaremos, porque no cumple con los requisitos para sap')
+            console.log('Publish only Cosmos, doesnt have the requirents for publish in SAP')
               orderCopyIndex = {};
               orderCopyIndex.IdIndex = orderIndex.id;
               orderCopyIndex.Action = 'Create_Order';
@@ -170,7 +170,7 @@ export class DashboardComponent {
     window.addEventListener('offline', () => {
       this.renderer.addClass(document.body, 'offline');
       this.isOnline = false;
-      console.log(this.isOnline)
+      //console.log(this.isOnline)
       dataSharing.updateWifi(this.isOnline)
       //console.log("ESTAS EN FUERA DE LINEA")
       this.openSnackBar('You\'re offline.', "wifi_off", "Disconnected", "darkorange");
@@ -209,7 +209,7 @@ export class DashboardComponent {
 
   PublishOrderSAP(orderIndexLastVersion:any, orderCopyIndex:any, orderIndex:any){
     webWorker("postOrder", orderIndexLastVersion, this.tokenAzure).then((data) => {
-      console.log('Deberia publicar la orden')
+      console.log('Publish to SAP')
       //console.log('Valor devuelto por el Web Worker:', data);
       if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
       {
@@ -217,7 +217,7 @@ export class DashboardComponent {
         const orderPublish: Order = JSON.parse(data.response);
         orderIndexLastVersion.DocumentLines.forEach((x:any) => x.Icon = "cloud_done")
         
-        console.log(orderPublish.DocEntry)
+        //console.log(orderPublish.DocEntry)
         this.dataSharing.setCartData(orderIndexLastVersion.DocumentLines);
         this.dataSharing.updateIdsOrder(orderPublish.DocNum, orderPublish.DocEntry)
         this.dataSharing.updateCart(orderIndexLastVersion.DocumentLines);
@@ -233,7 +233,7 @@ export class DashboardComponent {
         this.dataSharing.updateIndexOrder(orderIndex)
         //dataSharing.setOrderReview(orderPublish)
         // console.log("Pasan los document del cloud")
-        console.log(orderIndex)
+        //console.log(orderIndex)
 
       }
       else{
@@ -248,7 +248,7 @@ export class DashboardComponent {
 
   EditOrderSAP(orderCosmos: any, orderIndexLastVersion:any){
     webWorker("editOrder", orderCosmos, this.tokenAzure).then((data) => {
-      console.log('Deberia editar la orden ')
+      console.log('Edit Order in SAP')
       //console.log('Valor devuelto por el Web Worker:', data);
       if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
       {
