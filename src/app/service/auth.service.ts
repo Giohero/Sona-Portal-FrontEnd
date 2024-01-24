@@ -59,47 +59,63 @@ export class AuthService implements OnInit {
     this.userAzure.next(newAccount);
   }
 
-  login() {
-    // this.msalService.loginPopup()
-    //   .subscribe({
-    //     next: (result) => {
-    //       console.log(result);
-    //       this.setLoginDisplay();
-    //       this.myRouter.navigate(['dashboard']);
-    //     },
-    //     error: (error) => console.log(error)
-    //   });
+  // login() {
+  //   // this.msalService.loginPopup()
+  //   //   .subscribe({
+  //   //     next: (result) => {
+  //   //       console.log(result);
+  //   //       this.setLoginDisplay();
+  //   //       this.myRouter.navigate(['dashboard']);
+  //   //     },
+  //   //     error: (error) => console.log(error)
+  //   //   });
 
-    this.msalService.loginRedirect({
-      scopes: ['openid', 'profile', 'user.read'],  
-      redirectStartPage: '/dashboard',
-      onRedirectNavigate(url) {
-        url : '/login'
-        return true;  
-      },
-      tokenBodyParameters: {
-      },
-    }).subscribe();
+  //   this.msalService.loginRedirect({
+  //     scopes: ['openid', 'profile', 'user.read'],  
+  //     redirectStartPage: '/dashboard',
+  //     onRedirectNavigate(url) {
+  //       url : '/login'
+  //       return true;  
+  //     },
+  //     tokenBodyParameters: {
+  //     },
+  //   }).subscribe();
 
 
-    //console.log(this.msalService.instance.getAllAccounts())
+  //   //console.log(this.msalService.instance.getAllAccounts())
 
-    // if (this.msalGuardConfig.authRequest){
-    //   this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest)
-    // } else {
+  //   // if (this.msalGuardConfig.authRequest){
+  //   //   this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest)
+  //   // } else {
       
-    // }
+  //   // }
 
-    // this.msalService.instance.handleRedirectPromise().then(
-    //   res => {
-    //     if(res != null && res.account != null)
-    //     {
-    //       this.msalService.instance.setActiveAccount(res.account)
-    //       console.log(res)
-    //     }
-    //   }
-    // )
+  //   // this.msalService.instance.handleRedirectPromise().then(
+  //   //   res => {
+  //   //     if(res != null && res.account != null)
+  //   //     {
+  //   //       this.msalService.instance.setActiveAccount(res.account)
+  //   //       console.log(res)
+  //   //     }
+  //   //   }
+  //   // )
     
+  // }
+  login() {
+    this.msalService.loginPopup({
+      scopes: ['openid', 'profile', 'user.read']
+    }).subscribe({
+      next: (result) => {
+        if (result.account) {
+          this.msalService.instance.setActiveAccount(result.account);
+          this.getProfile();
+          this.myRouter.navigate(['/dashboard']);
+        }
+      },
+      error: (error) => {
+        console.error('Error en el inicio de sesión:', error);
+      }
+    });
   }
 
   getProfile() {

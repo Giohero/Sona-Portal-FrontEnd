@@ -61,8 +61,8 @@
                 [(ngModel)]="searchText" placeholder="Enter text to search" 
                 autofocus [matAutocomplete]="auto" [disabled]="inputSearchCutomer">
                 <button mat-raised-button class="custom-button" [disabled]="searchText.length == 0" *ngIf="showAddButton && ShowEdit" (click)="CreateCustomer()">Add New Customer</button>
-                <button mat-raised-button class="custom-button" *ngIf="inputSearchCutomer && (ShowEdit === false)" (click)="changeCustomer()">Change Customer</button>
-                <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectCustomer($event.option.value)">
+                <button  class="custom-button" *ngIf="inputSearchCutomer && (ShowEdit === false)" (click)="changeCustomer()">Change Customer</button>
+                <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectCustomer($event.option.value, false)">
                   <mat-option *ngFor="let c of ListCustomers| appFilterC: searchText"  value="{{c.CardName}}"  class="optionList" >
                     {{c.CardCode}} - {{c.CardName}}
                   </mat-option>
@@ -198,7 +198,7 @@
           </div> -->
         </mat-card>
 
-        <mat-card id="Cart" class="info-card image-card mat-card expansion">
+        <mat-card id="Cart" class="image-card info-card mat-card expansion">
           <mat-card-header>
             <h1 class="h2Mat">Shopping Cart <mat-icon>shopping_cart</mat-icon></h1>
           </mat-card-header>
@@ -242,6 +242,7 @@
     </mat-tab>
   </mat-tab-group>
 </div>
-<!-- <div *ngIf="isLoading" fxLayoutAlign="center center">
-  <mat-spinner class="custom-spinner" [diameter]="120"></mat-spinner>
-</div> -->
+<div *ngIf="isLoading" class="custom-spinner" fxLayoutAlign="center center">
+  <mat-spinner [diameter]="120"></mat-spinner>
+  Charging Order...
+</div>

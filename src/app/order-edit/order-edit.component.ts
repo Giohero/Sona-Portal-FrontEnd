@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { DocumentLines, Order } from '../models/order';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -58,7 +58,8 @@ export class OrderEditComponent implements OnInit {
     private signalr:SignalRService,  
     private router: Router,
     private custService:IndexCustomersService,
-    private itemsService:IndexItemsService) {
+    private itemsService:IndexItemsService,
+    private cdr: ChangeDetectorRef) {
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
     // const currentRoute = this.router.url;
@@ -181,6 +182,7 @@ export class OrderEditComponent implements OnInit {
             this.UsersConnection = newUsers.usersC!;
             // console.log("si pasa los usuarios")
             this.connectedUsers = (newUsers.usersC || []).filter(user => !!user?.Name).map(user => user!.Name || '');
+            this.cdr.detectChanges()
           }
         }
       });

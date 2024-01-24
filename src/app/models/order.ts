@@ -12,7 +12,7 @@ export interface Order {
     CardCode: string
     CardName: string
     NumAtCard: any
-    DocTotal: number
+    DocTotal: number 
     Comments: any
     U_INN_Cust_Portal: any
     DocumentLines: DocumentLines[]

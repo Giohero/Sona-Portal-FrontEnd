@@ -67,7 +67,7 @@
 
     <!-- Sección para órdenes de borrador -->
     <div class="">
-      <div *ngIf="!isLoading && ListOrdersDrafts.length > 0">
+      <div *ngIf="!showRealOrdersFlag &&!isLoading && ListOrdersDrafts.length > 0">
       <!-- <div *ngIf="!isLoading && !showRealOrdersFlag && ListOrdersDrafts.length > 0"> -->
         <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
           <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrdersDrafts; let listIndex=index;">

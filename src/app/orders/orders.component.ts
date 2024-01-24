@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Value } from '../models/items';
 import { ServiceService } from '../service/service.service';
 import { BPAddresses, BusinessPartner } from '../models/customer';
@@ -126,9 +126,102 @@ export class OrdersComponent {
     //   this.title = "Edit Customer";
     //   this.ShowEdit = true
     // }
-    
+    var orderSave = localStorage.getItem('OrderNewSave');
+    console.log(orderSave)
+    if(orderSave != null)
+    {
+      const orderSaveCache = JSON.parse(orderSave);
+
+      if("IdIndex" in orderSaveCache)
+      {
+        this.idCosmos = orderSaveCache.IdCosmos;
+        this.idIndex = orderSaveCache.IdIndex;
+        this.OrderIndexDB = JSON.parse(orderSaveCache.Index);
+        //console.log(this.OrderIndexDB)
+      }
+
+      const DeliveryDate = new Date(orderSaveCache.DocDueDate);
+      DeliveryDate.setMinutes(DeliveryDate.getMinutes() + DeliveryDate.getTimezoneOffset());
+      this.delivery = new FormControl(DeliveryDate);
+      this.searchText = orderSaveCache.CardName;
+      this.idcustomer = orderSaveCache.CardCode;
+      this.DocNumPublish = orderSaveCache.DocNum;
+      this.DocEntryPublish = orderSaveCache.DocEntry;
+      this.Cart = orderSaveCache.DocumentLines;
+      this.dataSharing.updateIdsOrder(orderSaveCache.DocNum, orderSaveCache.DocEntry)
+      this.dataSharing.updateCart(orderSaveCache.DocumentLines)
+      //console.log(this.Cart)
+
+      if(orderSaveCache.CardCode != '')
+      {
+       this.trySelectCustomer(orderSaveCache)
+      }
+
+
+      ///Inside of OrderReview
+      this.OrderReview.DocNum = orderSaveCache.DocNum;
+      this.OrderReview.DocEntry = orderSaveCache.DocEntry;
+      this.OrderReview!.CardName = orderSaveCache.CardName;
+      this.OrderReview!.CardCode = orderSaveCache.CardCode;
+      this.OrderReview!.DocumentLines = this.Cart;
+      var DocumentLinesP: DocumentLines[];
+      DocumentLinesP = [];
+      this.OrderReview!.DocumentLines!.forEach(element => {
+        DocumentLinesP.push({
+          ItemCode: element.ItemCode,
+          Quantity: element.Quantity,
+          TaxCode: 'EX',
+          U_Comments: element.U_Comments,
+          LineNum:element.LineNum
+        })
+      });
+
+      this.OrderReview!.DocumentLines = DocumentLinesP;
+
+    }
+    else
+      this.isLoading = false;
   }
-  
+  trySelectCustomer(orderSaveCache: any): void {
+      setTimeout(() => {
+          //console.log(orderSaveCache)
+          if (this.ListCustomers != undefined) {
+            if(this.ListCustomers.length === 0 )
+            {
+              console.log("Try to select the customer...");
+              this.trySelectCustomer(orderSaveCache);
+            }
+            else
+            {
+              this.option = orderSaveCache.OptionAddress
+              this.onSelectCustomer(orderSaveCache.CardCode, true);
+
+              if(orderSaveCache.OptionAddress != undefined)
+              {
+                const selectedAddress = this.AddressData[orderSaveCache.OptionAddress];
+                //console.log(selectedAddress)
+
+                var AddressSelect: AddressExtension = {
+                  ShipToStreet: selectedAddress.AddressName,
+                  ShipToStreetNo: selectedAddress.Street,
+                  ShipToBlock: selectedAddress.Block,
+                  ShipToZipCode: selectedAddress.ZipCode,
+                  ShipToCity: selectedAddress.City,
+                  ShipToCountry: selectedAddress.Country,
+                  ShipToState: selectedAddress.State
+                }
+
+                this.OrderReview!.AddressExtension = {}
+                this.OrderReview!.AddressExtension! = AddressSelect;
+              }
+            }
+
+          } else {
+            console.log("Reintentando seleccionar cliente...");
+            this.trySelectCustomer(orderSaveCache); 
+          }
+        }, 5000);
+  }
   ////////////// Methods Undefindeds ////////////
   async getDataIndex(){
     const orderComplete = await this.indexDB.getLastOneDB();
@@ -243,13 +336,13 @@ export class OrdersComponent {
             {
               if(this.customerBack.CardName === undefined)
               {
-                this.onSelectCustomer(this.customerBack)
+                this.onSelectCustomer(this.customerBack, false)
                 //this.searchText = this.customerBack.CardName
               }
               else
               {
                 this.searchText = this.customerBack.CardName
-                this.onSelectCustomer(this.customerBack.CardName)
+                this.onSelectCustomer(this.customerBack.CardName, false)
               }
             }
         }}
@@ -318,6 +411,7 @@ export class OrdersComponent {
       this.openSnackBar("DocNum: "+ this.OrderReview!.DocNum, "check_circle", "Order Completed!", "green");
       this.myRouter.navigate(['dashboard/order-index'])
     }
+    localStorage.removeItem('OrderNewSave');
   }
 
 
@@ -353,7 +447,7 @@ export class OrdersComponent {
     this.AddressData = []
   }
 
-  onSelectCustomer(selectedData:any){
+  onSelectCustomer(selectedData:any, bringCache : boolean){
     //console.log(this.customerBack.CardName)
     this.CurrentSellsBP = this.ListCustomers.find(x => x.CardName === selectedData || x.CardCode === selectedData);
     //console.log(this.CurrentSellsItem);
@@ -408,7 +502,8 @@ export class OrdersComponent {
     this.idcustomer = this.CurrentSellsBP!.CardCode;
     this.isLoading=false
 
-    this.changeOrder(undefined, undefined, 'customer')
+    if(bringCache == false)
+      this.changeOrder(undefined, undefined, 'customer')
     
   }
 
@@ -834,6 +929,53 @@ export class OrdersComponent {
       return '';
     }
   }
+  async SaveOrderCache()
+  {
+    let OrderNewCache:any = {};
+
+    const today = new Date();
+    const dateDefault = this.pipe.transform(today, 'yyyy-MM-dd');
+    OrderNewCache.DocDate = dateDefault?.toString();
+    OrderNewCache.TaxDate = dateDefault?.toString();
+    const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
+    OrderNewCache.DocDueDate = dateDelivery?.toString();
+    OrderNewCache.CardName = this.searchText;
+    OrderNewCache.CardCode = this.idcustomer;
+
+    OrderNewCache.DocNum = this.DocNumPublish;
+    OrderNewCache.DocEntry = this.DocEntryPublish;
+    OrderNewCache.DocumentLines = this.Cart;
+
+    if(this.option != undefined)
+    {
+      OrderNewCache.OptionAddress = this.option;
+    //   const selectedAddress = this.AddressData[this.option];
+    // //console.log(selectedAddress)
+
+    // var AddressSelect: AddressExtension = {
+    //   ShipToStreet: selectedAddress.AddressName,
+    //   ShipToStreetNo: selectedAddress.Street,
+    //   ShipToBlock: selectedAddress.Block,
+    //   ShipToZipCode: selectedAddress.ZipCode,
+    //   ShipToCity: selectedAddress.City,
+    //   ShipToCountry: selectedAddress.Country,
+    //   ShipToState: selectedAddress.State
+    // }
+
+    // this.OrderReview!.AddressExtension = {}
+    // this.OrderReview!.AddressExtension! = AddressSelect;
+    }
+
+    if(this.OrderIndexDB != undefined)
+    {
+      OrderNewCache.IdIndex = this.idIndex;
+      OrderNewCache.Index = JSON.stringify(this.OrderIndexDB);
+      OrderNewCache.IdCosmos = this.idCosmos
+    }
+
+    var orderNewString = JSON.stringify(OrderNewCache)
+    localStorage.setItem('OrderNewSave', orderNewString);
+  }
 
   async changeOrder(index:number | undefined,order:DocumentLines[] | undefined, action : string)
   {
@@ -930,7 +1072,7 @@ export class OrdersComponent {
         //console.log('deberia de editarlo a SAP y Cosmos')
         if(this.isOnline == true)
         {
-          if(this.Cart!.length > 0)
+          if(this.Cart!.length > 0 && this.idcustomer !== '')
           this.updateOrderCloud('', undefined, this.Cart!)
           else
           {
@@ -1150,6 +1292,14 @@ export class OrdersComponent {
         });
     }
   }
-
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    //localStorage.removeItem('OrderNewSave');
+    if(this.idIndex != 0)
+    {
+      localStorage.removeItem('OrderNewSave');
+      this.SaveOrderCache()
+    }
+  }
 }
 

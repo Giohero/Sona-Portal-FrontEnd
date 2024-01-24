@@ -25,5 +25,11 @@ export class IconModule {
         'assets/icons/cosmosdb.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'cart',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        'assets/icons/cart.svg'
+      )
+    );
   }
 }

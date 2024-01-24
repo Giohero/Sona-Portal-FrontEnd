@@ -70,7 +70,21 @@ mat-tab{
   margin-left: 4px;
   width: 0px;
 }
-
+.custom-spinner{
+  size: 30%;
+  position: fixed; 
+  top: 0;
+  left: 5%;
+  right: 0; 
+  bottom: 0; 
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50; 
+  font-family: inherit;
+  font-size: 20px;
+}
 .grid-container-customerd{
   grid-template-columns: 9fr 10fr;
   /* grid-template-columns: repeat(2, 1fr); */
@@ -197,14 +211,22 @@ mat-tab{
   justify-content: space-between;
 }
 
-.image-card {
+/* .image-card {
   background-image: url('https://cdn.pixabay.com/photo/2016/12/12/13/23/shopping-cart-1901584_1280.png');
   background-size: 30%;
   background-repeat: no-repeat;
   background-position: center;
   padding: 5px;
+} */
+.image-card {
+  /* background-image: url('https://cdn.pixabay.com/photo/2016/12/12/13/23/shopping-cart-1901584_1280.png'); */
+  background-image: url('../../assets/icons/cart.svg');
+  background-size: contain; 
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 5px;
+ 
 }
-
 .mat-card {
   /* border-top: 8px solid darkcyan; */
   background-color: rgba(254, 254, 254, 0.9);
@@ -352,6 +374,7 @@ body {
     display: flex;
     flex-direction: column;
   }
+  
 }
 /* para tablets o ipads */
 @media screen and (max-width: 1024px) {

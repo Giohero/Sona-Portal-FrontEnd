@@ -40,13 +40,13 @@
               <input type="text" class="boxCustom"  matInput placeholder="Billing Address" disabled="true"
               [(ngModel)]="billingAddress">
               <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px" *ngIf="ShowEdit">
-                <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_BillTo')"><mat-icon class="icon" fxFlex="33%">add_box</mat-icon>
+                <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_BillTo')"><mat-icon style="display: inline;" fxFlex="33%">add_box</mat-icon>
                 </button>
-                <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_BillTo', rowBill)" [disabled]="billingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
+                <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_BillTo', rowBill)" [disabled]="billingAddress === ''"><mat-icon style="display: inline;" fxFlex="33%">edit_square</mat-icon>
                 </button>
-                <button mat-raised-button class="list-custom-button" *ngIf="inputSearchCutomer" (click)="CheckList('bo_BillTo')"><mat-icon class="icon" fxFlex="33%"> list_alt</mat-icon>
+                <button mat-raised-button class="list-custom-button" *ngIf="inputSearchCutomer" (click)="CheckList('bo_BillTo')"><mat-icon style="display: inline;" fxFlex="33%"> list_alt</mat-icon>
                 </button>
-                <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_BillTo', rowBill)" [disabled]="billingAddress === ''"><mat-icon class="icon" fxFlex="33%">delete</mat-icon>
+                <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_BillTo', rowBill)" [disabled]="billingAddress === ''"><mat-icon style="display: inline;" fxFlex="33%">delete</mat-icon>
                 </button>
               </div>
             </div>
@@ -56,12 +56,12 @@
               [(ngModel)]="shippingAddress">
               
               <div  fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px" *ngIf="ShowEdit">
-                <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_ShipTo')"><mat-icon class="icon">add_box</mat-icon></button>
-                <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">edit_square</mat-icon>
+                <button mat-raised-button class="add-custom-button" *ngIf="inputSearchCutomer" (click)="AddAddress('bo_ShipTo')"><mat-icon style="display: inline;">add_box</mat-icon></button>
+                <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="UpdateAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon style="display: inline;" fxFlex="33%">edit_square</mat-icon>
                 </button>
-                <button mat-raised-button class="list-custom-button" *ngIf="inputSearchCutomer" (click)="CheckList('bo_ShipTo')"><mat-icon class="icon" fxFlex="33%"> list_alt</mat-icon>
+                <button mat-raised-button class="list-custom-button" *ngIf="inputSearchCutomer" (click)="CheckList('bo_ShipTo')"><mat-icon style="display: inline;" fxFlex="33%"> list_alt</mat-icon>
                 </button>
-                <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">delete</mat-icon></button>
+                <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon style="display: inline;" fxFlex="33%">delete</mat-icon></button>
               </div>
             </div>
             <div class="label-container">

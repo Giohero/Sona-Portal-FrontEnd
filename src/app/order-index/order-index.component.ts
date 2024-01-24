@@ -8,6 +8,7 @@ import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
 import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { error } from 'jquery';
 
 @Component({
   selector: 'app-order-index',
@@ -15,7 +16,6 @@ import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
   styleUrls: ['./order-index.component.css']
 })
 export class OrderIndexComponent {
-  
   displayedColumns: string[] = ['docNum', 'dueDate', 'total', 'numAtCard', 'cardInfo'];
   displayedColumnsDrafts: string[] = ['Id', 'PostingDate', 'DeliveryDate', 'TaxDate', 'CardCode'];
   ListOrders: Order[] = []; 
@@ -24,7 +24,6 @@ export class OrderIndexComponent {
   isLoading=true;
   searchOrder: number | undefined;
   statusIcon ='indexdb';
-
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
     private myRouter: Router, 
@@ -64,6 +63,9 @@ export class OrderIndexComponent {
   showDraftOrders() {
     this.showRealOrdersFlag = false;
   }
+  sortOrders() {
+    this.ListOrders.sort((a, b) => b.DocNum - a.DocNum);
+  }
   // ...
 
   private updateIconsBasedOnSource() {
@@ -90,7 +92,6 @@ export class OrderIndexComponent {
   //     // );
   // }
   ngOnInit(): void {
-
     //icons index and cosmos
     this.dataSharing.statusWifi$.subscribe((isOnline) => {
       this.isOnline = isOnline;
@@ -146,11 +147,18 @@ export class OrderIndexComponent {
       .subscribe(
         retData => {
           this.ListOrders = JSON.parse(retData.response!);
-          resolve(); // Resuelve la promesa cuando se completan las órdenes de la API
+          console.log('ListOrders:', this.ListOrders);
+          this.sortOrders();
+          this.ListOrders.forEach(order => {
+            console.log(`Order ${order.DocNum}: Total - ${order.DocTotal}`);
+          });
+          resolve();
+        },
+        error => {
+          reject(error);
         }
-      );
+      );      
     });
-    
   }
   
   async reloadDrafts() {
@@ -162,7 +170,6 @@ export class OrderIndexComponent {
     });
   }
   
-
   searchingOrder(){
     if(this.searchOrder){
       //var OrderFound = this.ListOrders?.filter(x => x.DocNum == this.searchOrder )

@@ -171,6 +171,15 @@ button:hover {
   animation: pulse512 1.5s infinite;
   background: linear-gradient(30deg, #be0c1b, #3a86ff);
 }
+.mat-mdc-raised-button .mat-icon {
+  color: white;
+}
+.mat-mdc-raised-button:not(:disabled) mat-icon {
+  color: white; /* Usar mayor especificidad */
+}
+.custom-button .custom-icon {
+  color: white;
+}
 
 @keyframes pulse512 {
   0% {
@@ -187,106 +196,70 @@ button:hover {
 }
 
 .icon {
-  color: white;
+  display: inline;
 }
 
 /* tamaños de pantalla de celu*/
-@media only screen and (max-width: 990px) {
-  .container {
-    grid-template-columns: 1fr;
-    margin-left: 70px;
-    align-items: center;
-    overflow-y: auto;
-    max-height: 99%;
+@media (min-width: 768px) and (max-width: 1024px) {
+  .custom-icon {
+    width: 100% !important; 
   }
-  .mat-card {
-    display: flex;
-    flex-direction: column;
-    width: 85%;
-  }
-  .label {
-    white-space: nowrap;
-  }
-  .boxCustom{
-    width: 30vh;
-  }
-  .grid-container {
-    /* display: flex;
-    flex-direction: column; */
-    grid-template-columns: 1fr;
-  }
-  .add-custom-button,
-  .edit-custom-button,
-  .list-custom-button {
-    padding: 10px 5px;
-    text-align: center;
-  }
-  .icon {
-    text-align: center;
+}
+@media (max-width: 767px) {
+  button {
+    font-size: 15px; 
+    padding: 10px; 
+    margin-bottom: 10px; 
   }
 
-  .button-container {
-    display: flex;
-    justify-content: space-around; 
-  }
-  .button-group{
-    gap: 10vh;
-  }
-  .iconsave{
-    font-size: 28px;
-    width: 35px;
-    height: 30px;
-    border-radius: 50%;
-    margin-left: 10px;
-    margin-bottom: 15px;
-    text-align: center;
-    align-items: center;
-    background: linear-gradient(30deg, #a62934, #eba881);
+  .customerSection {
+    flex-direction: column; 
   }
 }
-/* pantalla para tablets */
-@media only screen and (min-width: 601px) and (max-width: 1366px) {
-  .container {
-    margin-left: 80px;
-    grid-template-columns: 1fr;
-    overflow-y: auto;
-    max-height: 99%;
-  }
-  .mat-card {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-  }
-  .grid-container {
-    grid-template-columns: 1fr;
-  }
-  .boxCustom {
-    width: 90%;
-    align-items: center;
-  }
-  .custom-button {
-    width: 70%;
-  }
-  .add-custom-button {
-    width: 97px;
-  }
-  .edit-custom-button {
-    width: 97px;
-  }
-  .list-custom-button {
-    width: 97px;
-  }
-  .icon {
-    margin-left: 90px;
-    align-items: center;
-  }
-  .backbtn{
-    border: none;
-    color: #fff;
-    background-image: linear-gradient(30deg, #a62934, #eba881);
-    border-radius: 20px;
-    background-size: 100% auto;
-    font-family: inherit;
-    font-size: 17px;
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  button {
+    font-size: 17px; 
   }
 }
+
+@media (max-width: 767px) {
+  .button mat-icon {
+    font-size: 20px; 
+    margin-right: 5px; 
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .button mat-icon {
+    font-size: 24px; 
+  }
+}
+
+
+@media only screen 
+  and (min-device-width: 768px) 
+  and (max-device-width: 1024px) 
+  and (orientation: portrait) {
+    .mat-mdc-raised-button mat-icon {
+        color: white !important;
+    }
+}
+
+@media only screen 
+  and (min-device-width: 768px) 
+  and (max-device-width: 1024px) 
+  and (orientation: landscape) {
+    .mat-mdc-raised-button mat-icon {
+        color: white !important;
+    }
+}
+
+
+@media only screen 
+  and (min-device-width: 600px) 
+  and (max-device-width: 800px) {
+    .mat-mdc-raised-button mat-icon {
+        color: white !important;
+    }
+  }

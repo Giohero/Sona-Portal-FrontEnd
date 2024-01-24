@@ -24,7 +24,9 @@ export class AppComponent implements OnInit {
   constructor(private auth: AuthService,private signalRService: SignalRService, private service: ServiceService){}
 
   ngOnInit(): void {
-    this.auth.getProfile()
+    if (this.auth.isLoggedIn()) {
+      this.auth.getProfile();
+    }
     this.signalRService.startConnection();
 
     //Subscribe to receive message

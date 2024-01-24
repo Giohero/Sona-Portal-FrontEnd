@@ -68,7 +68,7 @@ export class DashboardComponent {
           console.log(orderIndex)
           //console.log(orderIndex.Order.DocumentLines)
 
-          if((orderIndex.Order.DocumentLines != undefined || orderIndex.Order.DocumentLines.length > 0 )&& orderIndex.Order.CardCode != undefined)
+          if(orderIndex.Order.DocumentLines != undefined && orderIndex.Order.CardCode != undefined)
           {
             //console.log(orderIndex.status)
             if(orderIndex.status === 'cosmos')
@@ -327,6 +327,11 @@ export class DashboardComponent {
 
         this.dataSharing.updateUsersSignal({});
         this.previousURL = event.url;
+      }
+      else if(this.previousURL == '/dashboard/order-customer/new-order' && this.isOnline == true)
+      {
+        localStorage.removeItem('OrderNewSave');
+        console.log('ya quedo')
       }
       else
         this.previousURL = event.url
