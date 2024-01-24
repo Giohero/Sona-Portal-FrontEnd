@@ -182,6 +182,16 @@ h2 {
   color: darkcyan;
 }
 
+.mat-mdc-raised-button .mat-icon {
+  color: white;
+}
+.mat-mdc-raised-button:not(:disabled) mat-icon {
+  color: white; /* Usar mayor especificidad */
+}
+.custom-button .custom-icon {
+  color: white;
+}
+
 button {
   border: none;
   color: #fff;
@@ -200,15 +210,7 @@ button {
   animation: pulse512 2.5s infinite;
   background: linear-gradient(30deg, #be0c1b, #3a86ff);
  }
- .mat-mdc-raised-button .mat-icon {
-  color: white;
-}
-.mat-mdc-raised-button:not(:disabled) mat-icon {
-  color: white; /* Usar mayor especificidad */
-}
-.custom-button .custom-icon {
-  color: white;
-}
+ 
  @keyframes pulse512 {
   0% {
    box-shadow: 0 0 0 0 #05bada66;
@@ -223,42 +225,73 @@ button {
   }
  }
 
- @media (max-width: 767px) {
+
+@media (max-width: 767px) {
+  .Customer {
+    width: calc(50% - 15px);
+    margin-right: 15px;
+  }
+
+  .Customer:nth-child(2n) {
+    margin-right: 0;
+  }
+
+  .labelSearch {
+    margin-left: 0;
+  }
+  .Customer{
+    width: 25vh;
+  }
+}
+@media (min-width: 768px) {
+  .customerSection {
+    box-sizing: border-box; 
+    width: 105%;
+ }
+ .custom-icon {
+  display: flex !important;
+  }
+}
+/* Mostrar íconos a ancho completo en tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .custom-icon {
+    width: 100% !important; 
+  }
+}
+@media (max-width: 767px) {
   button {
-    font-size: 15px; 
-    padding: 10px; 
-    margin-bottom: 10px; 
+    font-size: 15px; /* Tamaño de fuente más pequeño para pantallas pequeñas */
+    padding: 10px; /* Aumentar el padding para una mejor accesibilidad */
+    margin-bottom: 10px; /* Añadir espacio entre botones */
   }
 
   .customerSection {
-    flex-direction: column; 
+    flex-direction: column; /* Cambiar la dirección del flex si es necesario */
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
   button {
-    font-size: 17px;
-  }
-  .custom-icon {
-    width: 100% !important; 
+    font-size: 17px; /* Tamaño de fuente para tabletas */
+    /* Otros ajustes específicos para tabletas */
   }
 }
 
 @media (max-width: 767px) {
   .button mat-icon {
-    font-size: 20px; 
-    margin-right: 5px; 
+    font-size: 20px; /* Tamaño de ícono para móviles */
+    margin-right: 5px; /* Ajustar espaciado si es necesario */
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .button mat-icon {
-    font-size: 24px; 
-    
+    font-size: 24px; /* Tamaño de ícono para tabletas */
+    /* Otros ajustes específicos para tabletas */
   }
 }
 
-
+/* Reglas para iPads en modo portrait */
 @media only screen 
   and (min-device-width: 768px) 
   and (max-device-width: 1024px) 
@@ -268,7 +301,7 @@ button {
     }
 }
 
-
+/* Reglas para iPads en modo landscape */
 @media only screen 
   and (min-device-width: 768px) 
   and (max-device-width: 1024px) 
@@ -278,10 +311,11 @@ button {
     }
 }
 
+/* Reglas para Kindle */
 @media only screen 
   and (min-device-width: 600px) 
   and (max-device-width: 800px) {
     .mat-mdc-raised-button mat-icon {
         color: white !important;
     }
-  }
+}
