@@ -16,7 +16,7 @@
           </div>
         </div>
         <div>
-          <h2 class="h2OrderIndex" *ngIf="OrderIndexDB !== undefined"><b>ID Index {{OrderIndexDB.id}}</b></h2>
+          <h2 class="h2OrderIndex" *ngIf="OrderIndexDB !== undefined"><b>ID Index {{OrderIndexDB.id || indexDBNumber}}</b></h2>
           <button mat-raised-button color="primary" class="return" (click)="returnPage()">
             <mat-icon>arrow_back</mat-icon> Back
           </button>    
@@ -25,13 +25,17 @@
           </button> -->
         </div>
       </div>
-      <div class="container-users">
+      <div *ngIf="validateOrderDraft() == true" class="container-users">
         <i class="bi bi-eye-fill" style="color: black;"></i><h1 style="color: black; margin-top: -10px;">:</h1>&nbsp;
         <div *ngFor="let usersC of UsersConnection" class="users">
           <!-- <h1>Edit</h1> -->
           <span style="color: black;">{{usersC.Name}}</span>
           <i class="bi bi-person-raised-hand" style="color: black;"></i>
         </div>
+      </div>
+
+      <div>
+        <span *ngIf="errorStatus != ''" style="color: rgb(177, 0, 0);"><b>Error Sap:</b> {{errorStatus}}</span>
       </div>
       <ng-container *ngIf="order">
         <!-- First Card -->

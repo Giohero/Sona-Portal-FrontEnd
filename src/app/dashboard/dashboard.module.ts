@@ -23,6 +23,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import {MatTabsModule} from '@angular/material/tabs';
 import { CustomersEditComponent } from '../customers-edit/customers-edit.component';
+import { DialogRechargeComponent } from '../dialog-recharge/dialog-recharge.component';
 
 
 
@@ -45,6 +46,7 @@ import { CustomersEditComponent } from '../customers-edit/customers-edit.compone
     SnackbarsComponent,
     OrdersComponent,
     CustomersEditComponent,
+    DialogRechargeComponent
     
   ],
   imports: [

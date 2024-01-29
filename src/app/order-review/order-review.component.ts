@@ -289,7 +289,7 @@ export class OrderReviewComponent {
       if(this.isOnline == true)
         this.updateOrderCloud(this.OrderReview!);
 
-      this.indexDB.editOrderIndex(this.OrderIndexDB.id, Number(this.OrderReview?.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cloud')
+      this.indexDB.editOrderIndex(this.OrderIndexDB.id, Number(this.OrderReview?.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cloud', '')
       this.dataSharing.setOrderReview(this.OrderReview)
       //this.dataSharing.setCartData(this.Cart);
       this.dataSharing.setOrderIndexDB(this.OrderIndexDB)

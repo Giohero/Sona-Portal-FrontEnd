@@ -1,0 +1,45 @@
+<div id="dialog" class="custom-dialog">
+<button class="close" (click)="onNoClick()"><i class="fas fa-times-circle"></i></button>
+<button class="close" (click)="onMinClick()" *ngIf="expandWindow == true"><i class="fas fa-minus-circle"></i></button>
+<button class="close" (click)="onMaxClick()" *ngIf="expandWindow == false"><i class="far fa-window-maximize"></i></button>
+<h1 mat-dialog-title class="tittle"><mat-icon class="icon" svgIcon="indexdb"></mat-icon>Update Orders in Offline</h1>
+<mat-accordion> 
+    <mat-expansion-panel [expanded]="expandWindow">
+        <div>
+            <table>
+            <tbody>
+                <tr *ngFor="let element of indexList">
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                {{ element.id }}
+                            </mat-panel-title>
+                            <mat-panel-description>
+                                Id Index DB
+                            </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <tr *ngFor="let message of element.message">
+                                {{message}}
+                            </tr>
+                            <button class="view" (click)="searchIndex(element.id!)">View</button>
+                    </mat-expansion-panel>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        <div mat-dialog-content>
+        <p style="color:#0c727da3;">Orders to Charge: {{data.NumberOrders}} </p>
+        <mat-progress-bar *ngIf="indexList.length !== data.NumberOrders" mode="query"></mat-progress-bar>
+        
+        <!-- <mat-form-field>
+            <input matInput [(ngModel)]="data.email">
+        </mat-form-field> -->
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>
+<!-- <div mat-dialog-actions>
+  
+  <button mat-button [mat-dialog-close]="data.email" cdkFocusInitial>Yes</button>
+</div> -->
+
+</div>

@@ -147,11 +147,11 @@ export class OrderIndexComponent {
       .subscribe(
         retData => {
           this.ListOrders = JSON.parse(retData.response!);
-          console.log('ListOrders:', this.ListOrders);
+          //console.log('ListOrders:', this.ListOrders);
           this.sortOrders();
-          this.ListOrders.forEach(order => {
-            console.log(`Order ${order.DocNum}: Total - ${order.DocTotal}`);
-          });
+          // this.ListOrders.forEach(order => {
+          //   //console.log(`Order ${order.DocNum}: Total - ${order.DocTotal}`);
+          // });
           resolve();
         },
         error => {
@@ -193,7 +193,7 @@ export class OrderIndexComponent {
   selectMatCard(order:any)
   {
     console.log(order)
-    if(order.DocNum === undefined || order.DocNum == 0)
+    if(order.DocNum === undefined || order.DocNum == 0 || Number.isNaN(order.DocNum))
       this.dataSharing.setOrderIndexDB(order)
     else
       this.dataSharing.setOrderCReview(order)

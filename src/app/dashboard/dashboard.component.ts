@@ -14,6 +14,7 @@ import { IndexItemsService } from '../service/index-items.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { UsersAzure, UsersSR } from '../models/userSignalR';
+import { DialogRechargeComponent } from '../dialog-recharge/dialog-recharge.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -44,6 +45,18 @@ export class DashboardComponent {
 
     //console.log(signalRService.getConnectionState())
 
+    // const dialogRef = this.dialog.open(DialogRechargeComponent, {
+    //   width: '400px',
+    //   height: "auto",
+    //   panelClass: 'fixWindow',
+    //   position: {
+    //     bottom: '20px',
+    //     right: '20px'
+    //   },
+    //   data: {NumberOrders: 3},
+    //   hasBackdrop: false
+    // });
+
     //This ejecuted when is get back the online web
     window.addEventListener('online', async () => {
       this.renderer.removeClass(document.body, 'offline');
@@ -57,16 +70,31 @@ export class DashboardComponent {
 
       this.openSnackBar('You\'re online.', "wifi", "Connected!", "green");
       
-      console.log('Update Orders in Offline')
+      //console.log('Update Orders in Offline')
 
       var getOrdersNotUpdated = await indexDB.getAllOrdersWithoutUpdate(); //obtain since index db
 
       if(getOrdersNotUpdated != undefined)
       {
+
+        //Create the dialog
+        const dialogRef = this.dialog.closeAll();
+        this.dialog.open(DialogRechargeComponent, {
+          //width: '400px',
+          //height: "auto",
+          position: {
+            bottom: '20px',
+            right: '20px'
+          },
+          data: {NumberOrders: getOrdersNotUpdated.length},
+          hasBackdrop: false
+        });
+
         for (const orderIndex of getOrdersNotUpdated) {
 
           console.log(orderIndex)
           //console.log(orderIndex.Order.DocumentLines)
+          dataSharing.updateOrderRecharge(orderIndex)
 
           if(orderIndex.Order.DocumentLines != undefined && orderIndex.Order.CardCode != undefined)
           {
@@ -80,6 +108,7 @@ export class DashboardComponent {
       
               if(orderCosmos != null)
               {
+                dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Update Cosmos'})
                 orderCosmos.IdIndex = orderIndex.id;
                 orderCosmos.Action = 'Create_Order';
                 orderCosmos.User = this.obtainUser()
@@ -93,17 +122,20 @@ export class DashboardComponent {
                 
                 if(orderCosmos.DocEntry === undefined || orderCosmos.DocEntry === 0)
                 {
+                  dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Publish in SAP'})
                   delete orderIndex.Order.DocNum;
                   delete orderIndex.Order.DocEntry;
                   //console.log(orderIndex.Order)
                   this.PublishOrderSAP(orderIndex.Order,orderCosmos,orderIndex)
                 }
                 else
-                  this.EditOrderSAP(orderCosmos,orderIndex.Order)
+                {
+                  dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Update in SAP'})
+                  this.EditOrderSAP(orderCosmos,orderIndex.Order, orderIndex)
+                }  
               }
               else 
               {
-                console.log('Publish in Cosmos and SAP')
                 var orderCopyIndex: any;
                 orderCopyIndex = {};
                 orderCopyIndex.IdIndex = orderIndex.id;
@@ -112,23 +144,29 @@ export class DashboardComponent {
                 orderCopyIndex.Timestamp = orderIndex.Timestamp;
                 orderCopyIndex.Order = JSON.parse(JSON.stringify(orderIndex.Order));
                 
+                dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Publish in Cosmos'})
                 orderCopyIndex.id  = await indexDB.EditOrderLogDirectToCosmos(orderCopyIndex.IdIndex,orderCopyIndex);
                 if(orderCopyIndex.id != undefined)
-                    this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos')
+                    this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos', '')
                 
                 if(orderIndex.DocEntry === undefined || orderIndex.DocEntry === 0)
                 {
                   delete orderIndex.Order.DocNum;
                   delete orderIndex.Order.DocEntry;
+                  dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Publish in SAP'})
                   this.PublishOrderSAP(orderIndex.Order,orderCopyIndex,orderIndex)
                 }
                 else
-                  this.EditOrderSAP(orderIndex,orderIndex.Order)
+                {
+                  dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Update in SAP'})
+                  this.EditOrderSAP(orderIndex,orderIndex.Order, orderIndex)
+                }
               }
             }
             else if(orderIndex.status === 'index')
             {
-              console.log('Publish in Cosmos and SAP')
+              //console.log('Publish in Cosmos and SAP')
+              dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Publish in Cosmos'})
               orderCopyIndex = {};
               orderCopyIndex.IdIndex = orderIndex.id;
               orderCopyIndex.Action = 'Create_Order';
@@ -138,27 +176,34 @@ export class DashboardComponent {
               
               orderCopyIndex.id  = await indexDB.EditOrderLogDirectToCosmos(orderCopyIndex.IdIndex,orderCopyIndex);
               if(orderCopyIndex.id != undefined)
-                  this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos')
+                  this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos', '')
               
-            if(orderIndex.DocEntry === undefined || orderIndex.DocEntry === 0)
-              this.PublishOrderSAP(orderIndex.Order,orderCopyIndex,orderIndex)
-            else
-              this.EditOrderSAP(orderIndex,orderIndex.Order)
+              if(orderIndex.DocEntry === undefined || orderIndex.DocEntry === 0)
+              {
+                this.PublishOrderSAP(orderIndex.Order,orderCopyIndex,orderIndex)
+                dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Publish in SAP'})
+              }
+              else
+              {
+                this.EditOrderSAP(orderIndex,orderIndex.Order, orderIndex)
+                dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Update in SAP'})
+              }
             }
           }
           else
           {
-            console.log('Publish only Cosmos, doesnt have the requirents for publish in SAP')
-              orderCopyIndex = {};
-              orderCopyIndex.IdIndex = orderIndex.id;
-              orderCopyIndex.Action = 'Create_Order';
-              orderCopyIndex.User = this.obtainUser(); [ ]
-              orderCopyIndex.Timestamp = orderIndex.Timestamp;
-              orderCopyIndex.Order = JSON.parse(JSON.stringify(orderIndex.Order));
-              
-              orderCopyIndex.id  = await indexDB.EditOrderLogDirectToCosmos(orderCopyIndex.IdIndex,orderCopyIndex);
-              if(orderCopyIndex.id != undefined)
-                  this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos')
+            //console.log('Publish only Cosmos, doesnt have the requirents for publish in SAP')
+            dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Publish only Cosmos, doesnt have the requirents for publish in SAP'})
+            orderCopyIndex = {};
+            orderCopyIndex.IdIndex = orderIndex.id;
+            orderCopyIndex.Action = 'Create_Order';
+            orderCopyIndex.User = this.obtainUser(); [ ]
+            orderCopyIndex.Timestamp = orderIndex.Timestamp;
+            orderCopyIndex.Order = JSON.parse(JSON.stringify(orderIndex.Order));
+            
+            orderCopyIndex.id  = await indexDB.EditOrderLogDirectToCosmos(orderCopyIndex.IdIndex,orderCopyIndex);
+            if(orderCopyIndex.id != undefined)
+                this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos', '')
           }
         }
       }
@@ -210,6 +255,8 @@ export class DashboardComponent {
   PublishOrderSAP(orderIndexLastVersion:any, orderCopyIndex:any, orderIndex:any){
     webWorker("postOrder", orderIndexLastVersion, this.tokenAzure).then((data) => {
       console.log('Publish to SAP')
+
+      console.log(orderIndex)
       //console.log('Valor devuelto por el Web Worker:', data);
       if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
       {
@@ -228,17 +275,23 @@ export class DashboardComponent {
         if(orderCopyIndex.id != null || orderCopyIndex.id != undefined)
           EditToCosmosDB(orderCopyIndex, 'transaction_log')
         //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
-        this.indexDB.editOrderIndex(orderIndex.id,orderPublish!.DocNum!, orderPublish.DocEntry, orderCopyIndex.Order, 'complete')
-        orderIndex = this.dataSharing.getOrderIndexDB();
+        this.indexDB.editOrderIndex(orderIndex.id,orderPublish!.DocNum!, orderPublish.DocEntry, orderCopyIndex.Order, 'complete', '')
+        //orderIndex = this.dataSharing.getOrderIndexDB();
         this.dataSharing.updateIndexOrder(orderIndex)
         //dataSharing.setOrderReview(orderPublish)
         // console.log("Pasan los document del cloud")
-        //console.log(orderIndex)
-
+        console.log(data.response)
+        console.log({idIndex: orderIndex.id, message: 'Complete: DocNum: ' +  orderPublish.DocNum})
+        this.dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Complete: DocNum - ' +  orderPublish.DocNum + ' DocEntry - ' + orderPublish.DocEntry})
       }
       else{
-        this.openSnackBar(data.response!, "error", "Error", "red");
-        //console.error('Error:', data.response)
+        orderCopyIndex.ErrorSap = data.response;
+        EditToCosmosDB(orderCopyIndex, 'transaction_log')
+        this.indexDB.editOrderIndex(orderIndex.id,0, 0, orderCopyIndex.Order, 'cosmos', data.response)
+        //this.openSnackBar(data.response!, "error", "Error", "red");
+        var errorMessage = JSON.parse(data.response)
+        this.dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Incomplete: '+ errorMessage.error.message.value})
+        console.error('Error:', data.response)
       }
     })
     .catch((error) => {
@@ -246,7 +299,7 @@ export class DashboardComponent {
     });
   }
 
-  EditOrderSAP(orderCosmos: any, orderIndexLastVersion:any){
+  EditOrderSAP(orderCosmos: any, orderIndexLastVersion:any, indexRecord:any){
     webWorker("editOrder", orderCosmos, this.tokenAzure).then((data) => {
       console.log('Edit Order in SAP')
       //console.log('Valor devuelto por el Web Worker:', data);
@@ -266,6 +319,10 @@ export class DashboardComponent {
 
       }
       else{
+        //this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(orderCosmos.DocNum), Number(orderCosmos.DocEntry), this.OrderReview!, 'cosmos', '')
+        orderCosmos.ErrorSap =  data.response;
+        this.transLog.addTransactionToIndex(orderCosmos.Action, indexRecord.id,orderCosmos.DocNum,orderCosmos.DocEntry, orderIndexLastVersion, "cosmos", this.usernameAzure, data.response)
+        EditToCosmosDB(orderCosmos, 'transaction_log')
         this.openSnackBar(data.response!, "error", "Error", "red");
         //console.error('Error:', data.response)
       }

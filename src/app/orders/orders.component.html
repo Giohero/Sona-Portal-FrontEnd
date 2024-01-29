@@ -198,7 +198,7 @@
           </div> -->
         </mat-card>
 
-        <mat-card id="Cart" class="image-card info-card mat-card expansion">
+        <mat-card id="Cart" class="image-card info-card mat-card expansion" [class.image-card]="Cart && Cart.length ===0">
           <mat-card-header>
             <h1 class="h2Mat">Shopping Cart <mat-icon>shopping_cart</mat-icon></h1>
           </mat-card-header>

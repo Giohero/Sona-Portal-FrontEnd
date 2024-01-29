@@ -1,0 +1,75 @@
+.close{
+    font-size: 20px;
+    justify-content: flex-end;
+    align-items: center;
+    background: white;
+    border: 0 white;
+    margin: 2px;
+    color: rgb(158, 0, 0);;
+}
+
+.close:hover{
+    color: black;
+    background: white;
+}
+
+.tittle{
+    padding: 2px;
+    margin-left: 10px;
+    padding-left: 10px;
+}
+
+.icon{
+    font-size: 5px;
+    height: auto;
+}
+
+.custom-dialog{
+    width: 400px;
+    z-index: 30;
+}
+
+.fixWindow{
+    z-index: -30;
+}
+
+.view{
+    color: rgb(210, 142, 18);
+    border: 2px solid rgb(210, 142, 18);
+    background: white;
+    border-radius: 5px;
+    
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+}
+
+.view:hover{
+    background-color: rgb(210, 142, 18, 0.1);
+}
+
+:host ::ng-deep .cdk-overlay-pane {
+    z-index: -30;
+}
+
+@media (max-width: 430px) {
+    .custom-dialog {
+      width: 100%;
+      border-radius: 0;
+    }
+
+    .tittle{
+        font-size: calc(20px * 0.80);
+        padding: 2px;
+        margin-left: 10px;
+        padding-left: 10px;
+        width: 100%;
+    }
+
+    .fixWindow{
+        z-index: -30;
+    }
+
+    :host ::ng-deep .cdk-overlay-pane {
+        z-index: -30;
+    }
+  }

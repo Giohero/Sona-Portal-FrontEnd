@@ -45,6 +45,9 @@ export class OrderEditComponent implements OnInit {
   time : any;
   counter = 0;
   connectedUsers: string[] = [];
+  errorStatus: string = ''
+  tokenAzure: string = ''
+  indexDBNumber: string | number = ''
 
   constructor( private route: ActivatedRoute,
     private pipe: DatePipe, 
@@ -69,6 +72,9 @@ export class OrderEditComponent implements OnInit {
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
 
+    //console.log('Esta es mi order', this.order)
+    //console.log('esta es mi indexDB',this.OrderIndexDB)
+    //console.log(this.OrderIndexDB)
     if(this.order != undefined)
     {
       //console.log(this.OrderIndexDB)
@@ -85,7 +91,9 @@ export class OrderEditComponent implements OnInit {
     }
     else if(this.OrderIndexDB != undefined)
     {
+      //console.log(this.OrderIndexDB)
       this.order = this.OrderIndexDB.Order
+      dataSharing.updateIndexOrder(this.OrderIndexDB)
       this.orderOld = JSON.parse(JSON.stringify(this.order));
       const DocDate = new Date(this.order!.DocDate);
       DocDate.setMinutes(DocDate.getMinutes() + DocDate.getTimezoneOffset());
@@ -95,6 +103,11 @@ export class OrderEditComponent implements OnInit {
       DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
       this.delivery = new FormControl(DocDueDate);
         //console.log(this.delivery)
+      if(this.OrderIndexDB.error != '')
+      {
+        const ErrorString =  JSON.parse(this.OrderIndexDB.error);
+        this.errorStatus = ErrorString.error.message.value
+      }
 
       if(this.order!.DocumentLines === undefined)
       this.order!.DocumentLines = [];
@@ -102,6 +115,8 @@ export class OrderEditComponent implements OnInit {
       //console.log(this.order!.DocumentLines)
 
       this.cloudChange = "cloud_queue";
+
+      //console.log('esta es mi indexDB',this.OrderIndexDB)
     }
     else
     {
@@ -109,7 +124,29 @@ export class OrderEditComponent implements OnInit {
       //console.log(orderSave)
       if(orderSave != null)
       {
-        this.order = JSON.parse(orderSave)
+        const OrderComplete = JSON.parse(orderSave)
+
+        if(OrderComplete.error != '')
+        {
+          if (typeof OrderComplete.error === 'string') 
+            this.errorStatus = OrderComplete.error
+          else
+          {
+            const ErrorString =  JSON.parse(OrderComplete.error);
+          this.errorStatus = ErrorString.error.message.value
+          }
+        }
+
+        if('indexDB' in OrderComplete)
+        {
+          //console.log(OrderComplete.indexDB)
+          this.OrderIndexDB = JSON.parse(OrderComplete.indexDB)
+          this.indexDBNumber = this.OrderIndexDB.id
+          //console.log(this.OrderIndexDB)
+          //console.log(this.OrderIndexDB.id)
+        }
+
+        this.order = JSON.parse(OrderComplete.order)
         this.orderOld = JSON.parse(JSON.stringify(this.order));
         const DocDate = new Date(this.order!.DocDate);
         DocDate.setMinutes(DocDate.getMinutes() + DocDate.getTimezoneOffset());
@@ -120,7 +157,7 @@ export class OrderEditComponent implements OnInit {
         this.delivery = new FormControl(DocDueDate);
         //console.log(this.delivery)
 
-        if(this.order?.DocNum == 0)
+        if(this.order?.DocNum == 0 || this.order?.DocNum == undefined || Number.isNaN(this.order?.DocNum))
           this.cloudChange = "cloud_queue";
       }
       else
@@ -134,8 +171,18 @@ export class OrderEditComponent implements OnInit {
     //console.log(this.order!.DocNum)
     //this.OrderIndexDB = this.dataSharing.getOrderIndexDB();
     //if(this.OrderIndexDB === undefined)
+    //console.log('pasa por getOrderIndex')
     this.OrderIndexDB = await this.indexDB.getOrderLogByDocNum2(this.order!.DocNum);
     //console.log(this.OrderIndexDB)
+  }
+
+  validateOrderDraft()
+  {
+    //console.log(this.order?.DocNum)
+    if(this.order?.DocNum != 0 && this.order?.DocEntry != 0 && !Number.isNaN(this.order?.DocNum) && this.order?.DocNum != undefined)
+      return true;
+    else
+      return false;
   }
 
   ngOnInit(): void {
@@ -143,6 +190,11 @@ export class OrderEditComponent implements OnInit {
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
       console.log('Is Online: '+newWifi)
       this.isOnline = newWifi;
+    });
+
+    this.auth.tokenAzure$.subscribe((newToken) => {
+      //console.log('llego el cambio a '+newWifi)
+      this.tokenAzure = newToken;
     });
 
     this.auth.userAzure$.subscribe(
@@ -163,26 +215,31 @@ export class OrderEditComponent implements OnInit {
       }
     );
 
-    this.getOrderIndex()
+    //console.log(this.OrderIndexDB)
+    if(this.OrderIndexDB == undefined || this.indexDBNumber == undefined)
+      this.getOrderIndex()
 
     if(this.isOnline == true)
     {
 
-      if(this.order?.DocNum != 0 && this.order?.DocEntry != 0 )
+      if(this.order?.DocNum != 0 && this.order?.DocEntry != 0 && !Number.isNaN(this.order?.DocNum) )
         this.getSignalR(this.nameAzure, this.usernameAzure)
 
       this.dataSharing.usersSignal$.subscribe((newUsers) => {
         //console.log(newUsers)
-        
+        const newUsersString = JSON.stringify(newUsers)
         //console.log('pasa por el cambio')
-        if(newUsers != undefined && newUsers.DocNum != '0')
+        if(newUsers != undefined && newUsers.DocNum != '0' && newUsersString != '{}')
         {
-          if(newUsers.DocNum === this.order?.DocNum.toString() && newUsers.DocEntry === this.order?.DocEntry.toString())
+          if(this.order != undefined && this.order.DocNum != undefined  && !Number.isNaN(this.order?.DocNum))
           {
-            this.UsersConnection = newUsers.usersC!;
-            // console.log("si pasa los usuarios")
-            this.connectedUsers = (newUsers.usersC || []).filter(user => !!user?.Name).map(user => user!.Name || '');
-            this.cdr.detectChanges()
+            if(newUsers.DocNum === this.order?.DocNum.toString() && newUsers.DocEntry === this.order?.DocEntry.toString())
+            {
+              this.UsersConnection = newUsers.usersC!;
+              // console.log("si pasa los usuarios")
+              this.connectedUsers = (newUsers.usersC || []).filter(user => !!user?.Name).map(user => user!.Name || '');
+              this.cdr.detectChanges()
+            }
           }
         }
       });
@@ -233,12 +290,19 @@ export class OrderEditComponent implements OnInit {
      }
 
      this.dataSharing.OrderIndexDB$.subscribe((newOrderIndex) => {
-      this.OrderIndexDB = newOrderIndex;
+      //console.log(newOrderIndex)
+      const newOrderString = JSON.stringify(newOrderIndex)
+      if(newOrderIndex != undefined && newOrderString != '{}')
+        this.OrderIndexDB = newOrderIndex;
+
+      //console.log(this.OrderIndexDB)
     });
 
     this.dataSharing.TransactionIndexDB$.subscribe((newTransIndex) => {
       this.TransactionIndexDB = newTransIndex;
     });
+
+    //console.log(this.OrderIndexDB)
 
   }
 
@@ -479,7 +543,8 @@ export class OrderEditComponent implements OnInit {
     if(this.order !== this.orderOld)
     {
       this.obtainUser()
-      //console.log(this.usernameAzure)
+      console.log(this.OrderIndexDB)
+      this.errorStatus = '...';
       this.cloudChange = "cloud_queue";
 
       var DocumentLinesP: DocLinePost[];
@@ -545,20 +610,20 @@ export class OrderEditComponent implements OnInit {
         //Add in Cosmos the Create Order 
         var idCosmos = await PublishToCosmosDB(OrderReviewCopy, 'transaction_log')
         if(idCosmos != undefined) //Change the status in index 
-              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'cosmos')
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'cosmos', '')
       }
           
       OrderPost.NumAtCard = this.OrderIndexDB.id;
       let idTransaction;
 
       if(this.order?.DocNum)
-        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,this.order?.DocNum, this.order?.DocEntry, OrderPost, "index", this.usernameAzure)
+        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,this.order?.DocNum, this.order?.DocEntry, OrderPost, "index", this.usernameAzure,'')
       else
-        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0, OrderPost, "index", this.usernameAzure)
+        idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0, OrderPost, "index", this.usernameAzure, '')
       
       //Add the change for the change in Index status
       this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id, action, OrderPost, this.usernameAzure)
-      this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost, this.usernameAzure)
+      this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost, this.usernameAzure,'')
       //const idTransaction = "0";
       //console.log(JSON.stringify(this.orderOld, null, 3));
       //console.log('aqui pasa el id transaction '+ idTransaction)
@@ -606,35 +671,40 @@ export class OrderEditComponent implements OnInit {
           {
             this.cloudChange = 'cloud_done';
 
-            // webWorker('postOrder',OrderPost).then((data) => {
-            //   //console.log('Valor devuelto por el Web Worker:', data);
-            //   if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
-            //   {
-            //     const orderPublish: Order = JSON.parse(data.response);
-            //     this.order!.DocNum = orderPublish!.DocNum;
-            //     this.order!.DocEntry = orderPublish!.DocEntry
+            webWorker('postOrder',OrderPost, this.tokenAzure).then((data) => {
+              //console.log('Valor devuelto por el Web Worker:', data);
+              if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+              {
+                const orderPublish: Order = JSON.parse(data.response);
+                this.order!.DocNum = orderPublish!.DocNum;
+                this.order!.DocEntry = orderPublish!.DocEntry
     
-            //     OrderPost.DocNum = orderPublish!.DocNum;
-            //     OrderPost.DocEntry = orderPublish!.DocEntry.toString()
+                OrderPost.DocNum = orderPublish!.DocNum;
+                OrderPost.DocEntry = orderPublish!.DocEntry.toString()
 
-            //     this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'complete')
-            //     this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
-            //      //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
-            //     //this.indexDB.editOrderIndex(this.OrderIndexDB.id, orderPublish!.DocNum, orderPublish!.DocEntry, OrderPost, this.order!.CardCode, this.order!.DocumentLines, [])
-            //      //this.actualicon = 'cloud_done';
-            //     this.cloudChange = 'cloud_done';
-            //   }
-            //   else{
-            //     //this.actualicon = 'cloud_off';
-            //     this.cloudChange = 'cloud_off';
-            //     console.error('Error:', data.response)
-            //   }
-            // })
-            // .catch((error) => {
-            //   //this.actualicon = 'cloud_off';
-            //   this.cloudChange = 'cloud_off';
-            //   console.error('Error:', error);
-            // });
+                this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(OrderPost!.DocNum!), Number(OrderPost.DocEntry!), this.order!, 'complete', '')
+                this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost, this.usernameAzure,'')
+                 //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
+                //this.indexDB.editOrderIndex(this.OrderIndexDB.id, orderPublish!.DocNum, orderPublish!.DocEntry, OrderPost, this.order!.CardCode, this.order!.DocumentLines, [])
+                 //this.actualicon = 'cloud_done';
+                this.cloudChange = 'cloud_done';
+                this.errorStatus = '';
+              }
+              else{
+                //this.actualicon = 'cloud_off';
+                this.cloudChange = 'cloud_off';
+                this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'cosmos', data.response)
+                this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost, this.usernameAzure, data.response)
+                const ErrorString =  JSON.parse(data.response);
+                this.errorStatus = ErrorString.error.message.value
+                console.error('Error:', data.response)
+              }
+            })
+            .catch((error) => {
+              //this.actualicon = 'cloud_off';
+              this.cloudChange = 'cloud_off';
+              console.error('Error:', error);
+            });
           }
           
         }
@@ -658,7 +728,7 @@ export class OrderEditComponent implements OnInit {
   returnPage()
   {
     //console.log(this.order)
-    if(this.order != undefined && this.order.DocNum != undefined)
+    if(this.order != undefined && this.order.DocNum != undefined && !Number.isNaN(this.order?.DocNum))
       this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum, this.order!.DocEntry)
     // else
     //   this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
@@ -682,10 +752,15 @@ export class OrderEditComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
-    var orderString = JSON.stringify(this.order)
+
+    //console.log('esta es mi indexDB',this.OrderIndexDB)
+    
+    localStorage.removeItem('OrderSave');
+    var OrderComplete = {order: JSON.stringify(this.order), error: this.errorStatus, indexDB: JSON.stringify(this.OrderIndexDB)}
+    var orderString = JSON.stringify(OrderComplete)
     localStorage.setItem('OrderSave', orderString);
 
-    if(this.order != undefined && this.order.DocNum != undefined)
+    if(this.order != undefined && this.order.DocNum != undefined  && !Number.isNaN(this.order?.DocNum))
       this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, this.order!.DocNum, this.order!.DocEntry)
     else
       this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')

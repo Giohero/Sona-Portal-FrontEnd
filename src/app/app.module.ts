@@ -45,6 +45,7 @@ import { SnackbarsComponent } from './snackbars/snackbars.component';
 import { OrderIndexComponent } from './order-index/order-index.component';
 import { OrderEditComponent } from './order-edit/order-edit.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { DialogRechargeComponent } from './dialog-recharge/dialog-recharge.component';
 
 const isIE =
   window.navigator.userAgent.indexOf("MSIE ") > -1 ||

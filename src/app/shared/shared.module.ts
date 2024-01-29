@@ -32,7 +32,7 @@ import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { IconModule } from './svg/icon.module';
-
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [],
@@ -68,7 +68,8 @@ import { IconModule } from './svg/icon.module';
     MatListModule,
     MatButtonModule,
     NgxChartsModule,
-    IconModule
+    IconModule,
+    MatProgressBarModule
   ],
 
  exports: [
@@ -102,7 +103,8 @@ import { IconModule } from './svg/icon.module';
     MatListModule,
     MatButtonModule,
     MatRadioModule,
-    NgxChartsModule
+    NgxChartsModule,
+    MatProgressBarModule
  ]
 })
 

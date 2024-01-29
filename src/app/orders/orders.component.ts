@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { Value } from '../models/items';
 import { ServiceService } from '../service/service.service';
 import { BPAddresses, BusinessPartner } from '../models/customer';
@@ -19,6 +19,7 @@ import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { IndexCustomersService } from '../service/index-customers.service';
 import { IndexItemsService } from '../service/index-items.service';
+import { AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-orders',
@@ -85,7 +86,7 @@ export class OrdersComponent {
 
   //Add status: index, cloud, complete
 
-  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService, private custService:IndexCustomersService, private itemsService:IndexItemsService) 
+  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService, private custService:IndexCustomersService, private itemsService:IndexItemsService, private cdr: ChangeDetectorRef) 
   {
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
@@ -177,6 +178,7 @@ export class OrdersComponent {
       });
 
       this.OrderReview!.DocumentLines = DocumentLinesP;
+      this.isLoading = false;
 
     }
     else
@@ -271,6 +273,19 @@ export class OrdersComponent {
   }
  //////////////////////////////////////////////////
 
+  ngAfterViewInit(): void {
+    this.adjustImageVisibility();
+  }
+  private adjustImageVisibility() {
+    const element = document.getElementById('Cart');
+    if (element) {
+      if (this.Cart && this.Cart.length === 0) {
+        element.classList.add('image-card');
+      } else {
+        element.classList.remove('image-card');
+      }
+    }
+  }
 
   ngOnInit(): void {
     //this.ShowEdit = "none"
@@ -308,6 +323,7 @@ export class OrdersComponent {
 
             this.ListItems = JSON.parse(retData.response!);
             //console.log(this.ListItems)
+            this.adjustImageVisibility();
           }
         }
       );
@@ -351,6 +367,7 @@ export class OrdersComponent {
     else
     {
       this.getInformationByIndex();
+      this.adjustImageVisibility();
     }
 
     this.dataSharing.cartData$.subscribe((newCart) => {
@@ -1047,7 +1064,7 @@ export class OrdersComponent {
           else
             this.idCosmos = await PublishToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             if(this.idCosmos != undefined)
-              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '')
         }
 
         //console.log(this.idCosmos)
@@ -1055,7 +1072,7 @@ export class OrdersComponent {
       else
       {
         //console.log('editamos solo index db')
-        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index')
+        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index', '')
         this.OrderReviewCopy = {};
         this.OrderReviewCopy.id = this.idCosmos;
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
@@ -1078,7 +1095,7 @@ export class OrdersComponent {
           {
             var publishCosmos = await EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             if(publishCosmos == true)
-              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '')
           }
         }
       }
@@ -1118,7 +1135,7 @@ export class OrdersComponent {
           {
             this.idCosmos = await PublishToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             if(this.idCosmos != undefined)
-              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '')
           }
         }
         ////there was the procces to publish order in cosmos and SAP
@@ -1156,7 +1173,7 @@ export class OrdersComponent {
 
         this.OrderReview!.DocumentLines = DocumentLinesP;
         
-        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index')
+        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index', '')
         this.OrderReviewCopy = {};
         this.OrderReviewCopy.id = this.idCosmos;
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
@@ -1179,7 +1196,7 @@ export class OrdersComponent {
           {
             publishCosmos = await EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             if(publishCosmos == true)
-              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '')
           }
         }
         //console.log(this.OrderIndexDB)
@@ -1210,7 +1227,7 @@ export class OrdersComponent {
       {
         var publishCosmos = await EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
         if(publishCosmos == true)
-          this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos')
+          this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '')
       }
       else
       {
@@ -1238,17 +1255,21 @@ export class OrdersComponent {
             this.OrderReviewCopy.DocNum = Number(this.OrderReview!.DocNum!);
             this.OrderReviewCopy.DocEntry = Number(this.OrderReview!.DocEntry!);
             this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
+            this.OrderReviewCopy.ErrorSAP = '';
 
             EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             ///editToCosmosDB(this.OrderReviewCopy)
             //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
-            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete')
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
             //this.actualicon = 'cloud_done';
             this.Cart![0].Icon= 'cloud_done';
           }
           else{
             //this.actualicon = 'cloud_off';
             this.Cart![0].Icon = 'cloud_off';
+            this.OrderReviewCopy.ErrorSAP =  data.response;
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', data.response)
+            EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             console.error('Error:', data.response)
           }
         })
@@ -1260,7 +1281,6 @@ export class OrdersComponent {
     }
     else
     {
-      EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
         //console.log('Este es el del index en editar')
         //console.log(this.OrderIndexDB)
 
@@ -1273,14 +1293,19 @@ export class OrdersComponent {
             // console.log(orderEdit)
             //this.DocNumPublish = orderPublish!.DocNum;
             //this.actualicon = 'cloud_done';
+            this.OrderReviewCopy.ErrorSAP = '';
             if(index != undefined)
               order[index].Icon = 'cloud_done';
-            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete')
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
+            EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
           }
           else{
             if(index != undefined)
               order[index].Icon = 'cloud_off';
             //this.actualicon = 'cloud_off';
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '')
+            this.OrderReviewCopy.ErrorSAP =  data.response;
+            EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             console.error('Error:', data.response)
           }
         })

@@ -107,7 +107,7 @@ export class TransactionlogService {
 
   }
 
-  async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number, orderChange:Order, status: string, userAzure:string) {
+  async addTransactionToIndex(action: string, id: number, docNum:number, docEntry:number, orderChange:Order, status: string, userAzure:string, error:string) {
     const idChange = uuidv4()
 
     const log =  {
@@ -119,6 +119,7 @@ export class TransactionlogService {
       DocNum: docNum,
       DocEntry: docEntry,
       Status: status,
+      error: error,
       order:  
       {
         ...orderChange
@@ -142,7 +143,7 @@ export class TransactionlogService {
       return idChange;
   }
 
-  async editTransactionToIndex(id: string, idChange: string, action: string, docNum: number, docEntry: number, status:string, orderChange:Order, userAzure:string) {
+  async editTransactionToIndex(id: string, idChange: string, action: string, docNum: number, docEntry: number, status:string, orderChange:Order, userAzure:string, error:string) {
     
     const log =  {
       IdIndex: id,
@@ -153,6 +154,7 @@ export class TransactionlogService {
       DocNum: docNum,
       DocEntry: docEntry,
       Status: status,
+      ErrorSap: error,
       order:  
       {
         ...orderChange

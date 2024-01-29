@@ -32,6 +32,10 @@ export class DataSharingService {
   orderSignal$: Observable<any> = this.orderSignal.asObservable();
   private usersSignal: BehaviorSubject<UsersAzure> = new BehaviorSubject<UsersAzure>({});
   usersSignal$: Observable<UsersAzure> = this.usersSignal.asObservable();
+  private updateOrder: BehaviorSubject<{}> = new BehaviorSubject<{}>({});
+  updateOrder$: Observable<{}> = this.updateOrder.asObservable();
+  private updateRecharge: BehaviorSubject<{}> = new BehaviorSubject<{}>({});
+  updateRecharge$: Observable<{}> = this.updateRecharge.asObservable();
 
   constructor() { }
 
@@ -45,6 +49,14 @@ export class DataSharingService {
 
   setCartData(cart: any) {
     this.cartData = cart;
+  }
+
+  updateMessageRecharge(message: {}): void {
+    this.updateRecharge.next(message);
+  }
+
+  updateOrderRecharge(order: {}): void {
+    this.updateOrder.next(order);
   }
 
   updateCart(cart: DocumentLines[]): void {

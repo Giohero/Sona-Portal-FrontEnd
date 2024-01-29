@@ -29,7 +29,7 @@ export class IndexDbService {
 
   
   //async editToDB(id: number, DocNum: string = '12345', DocDate: string = '0001-01-01', DocDueDate: string = '0001-01-01', TaxDate: string = '0001-01-01', CardCode: string, DocumentLines: DocumentLines[], AddressExtension: AddressExtension = {}): Promise<void> {
-  async editOrderIndex(id: number, DocNum: number, DocEntry: number, OrderComplete: Order | OrderComplete, status: string): Promise<void> {
+  async editOrderIndex(id: number, DocNum: number, DocEntry: number, OrderComplete: Order | OrderComplete, status: string, error: string): Promise<void> {
     try {
 
       //console.log(OrderComplete)
@@ -41,7 +41,7 @@ export class IndexDbService {
       const Timestamp = new Date().toISOString();
       const Order = OrderComplete;
 
-      const orderId = await  this.Db!.table('orders').put({ id, Action, Timestamp, DocNum, DocEntry, Order, status});
+      const orderId = await  this.Db!.table('orders').put({ id, Action, Timestamp, DocNum, DocEntry, Order, status, error});
       //console.log(orderId)
       const retrievedOrder = await this.Db!.table('orders').get(orderId);
       //console.log(retrievedOrder)
@@ -194,7 +194,7 @@ export class IndexDbService {
           //const transaction_order = record.transaction_order;
 
           console.log('estamos editando la orden para agregar el cambio '+ idIndex)
-          this.editOrderIndex(id, order.DocNum!, Number(order.DocEntry!), orderOrigin, '');
+          this.editOrderIndex(id, order.DocNum!, Number(order.DocEntry!), orderOrigin, '', '');
         }
         else
         {
@@ -262,22 +262,14 @@ export class IndexDbService {
 
 
   async getOrderLogByIdIndex(idIndex: number) {
-    //console.log(this.logs);
-    // const serializedLogs = JSON.stringify(this.logs);
-    // console.log(serializedLogs);
-
-    this.Db!.table('orders').where('id').equals(idIndex).first().then(async (record) => {
-
+    try {
+      const record = await this.Db!.table('orders').where('id').equals(idIndex).first();
       console.log(record);
-      if(record)
-        return record.transaction_order;
-      else
-        return null;
-      
-      
-    })
-    //const allOrders = await this.Db!.table('transactions').toArray();
-    return null;
+      return record ? record : null;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
   }
 
   async getOrderLogByDocNum(DocNum: number) {

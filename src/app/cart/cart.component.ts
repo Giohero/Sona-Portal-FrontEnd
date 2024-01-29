@@ -399,7 +399,7 @@ obtainUser() {
 
         this.OrderReview!.DocumentLines = DocumentLinesP;
         
-        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index')
+        this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index', '')
         this.OrderReviewCopy = JSON.parse(JSON.stringify(this.OrderReview));
         this.OrderReviewCopy.id = this.idCosmos;
         this.OrderReviewCopy.User = this.obtainUser();
@@ -450,7 +450,7 @@ obtainUser() {
             this.OrderReviewCopy.id = this.idCosmos;
             editToCosmosDB(this.OrderReviewCopy)
             //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
-            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, "complete")
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, "complete", '')
             //this.actualicon = 'cloud_done';
             this.Cart![0].Icon= 'cloud_done';
           }
@@ -483,7 +483,7 @@ obtainUser() {
             //this.actualicon = 'cloud_done';
             if(index != undefined)
               order[index].Icon = 'cloud_done';
-            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete')
+            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
           }
           else{
             if(index != undefined)
