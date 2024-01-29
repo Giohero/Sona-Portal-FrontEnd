@@ -1,8 +1,10 @@
 import { ChangeDetectorRef, Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DataSharingService } from '../service/data-sharing.service';
 import { indexOrder } from '../models/indexDB';
 import { IndexDbService } from '../service/index-db.service';
+import { SnackbarsComponent } from '../snackbars/snackbars.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dialog-recharge',
@@ -22,7 +24,9 @@ export class DialogRechargeComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataSharing : DataSharingService,
     private cdr:ChangeDetectorRef,
-    private indexDB: IndexDbService
+    private indexDB: IndexDbService,
+    private dialog:MatDialog,
+    private myRouter: Router,
     ) {}
 
   onNoClick(): void {
@@ -58,7 +62,7 @@ export class DialogRechargeComponent {
 
     this.dataSharing.updateOrder$.subscribe((data:indexOrder) => {
       this.indexOrder = data;
-      console.log(data)
+      //console.log(data)
 
       const OrderIndexFound =  this.indexList.find(x => x.id == data.id)
       if(OrderIndexFound == undefined)
@@ -71,25 +75,65 @@ export class DialogRechargeComponent {
     });
 
     this.dataSharing.updateRecharge$.subscribe((data:any) =>{
-      console.log(data)
+      //console.log(data)
 
       if(data != undefined)
       {
         const OrderIndexFound =  this.indexList.find(x => x.id == data.idIndex)
         if(OrderIndexFound != undefined)
+        {
           OrderIndexFound.message?.push(data.message);
+          OrderIndexFound.orderSAP = data.orderSAP;
+        }
+          
       }
     })
   }
 
-  async searchIndex(index:number){
+  async searchIndex(index:number, indexComplete:indexOrder ){
     const indexFound = await this.indexDB.getOrderLogByIdIndex(index);
-    console.log(indexFound)
+    //console.log(indexFound)
     if(indexFound != null)
-      console.log(indexFound)
+    {
+      console.log(indexComplete)
+      if(indexFound.DocNum != undefined && indexFound.DocNum != 0 && !Number.isNaN(indexFound.DocNum))
+      {
+        this.dataSharing.setOrderIndexDB(undefined)
+        this.dataSharing.setOrderCReview(indexComplete.orderSAP)
+      }
+      else
+      {
+        this.dataSharing.setOrderCReview(undefined)
+        this.dataSharing.setOrderIndexDB(indexFound)
+      }
+      this.myRouter.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.myRouter.navigate(['dashboard/order-edit']);
+      });
+      //this.myRouter.navigate(['dashboard/order-edit']);
+    }
     else
-      console.log('Not Found')
+      this.openSnackBar("Not found, try again.", "warning", "Warning", "darkorange");
 
+  }
+
+  openSnackBar(message: string, icon: string, type: string, color: string) {
+    const dialogRef = this.dialog.open(SnackbarsComponent, {
+      hasBackdrop: false,
+      width: '300px',
+      position: {
+        top: '10px',   
+        right: '20px',
+      },
+      data: { 
+        message: message,
+        icon: icon,
+        type: type,
+        color: color
+      },
+    })
+    setTimeout(() => {
+      dialogRef.close();
+    })
   }
 
   

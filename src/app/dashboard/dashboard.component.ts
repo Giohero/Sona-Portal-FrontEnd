@@ -74,25 +74,29 @@ export class DashboardComponent {
 
       var getOrdersNotUpdated = await indexDB.getAllOrdersWithoutUpdate(); //obtain since index db
 
+      //console.log(getOrdersNotUpdated)
       if(getOrdersNotUpdated != undefined)
       {
 
         //Create the dialog
         const dialogRef = this.dialog.closeAll();
-        this.dialog.open(DialogRechargeComponent, {
-          //width: '400px',
-          //height: "auto",
-          position: {
-            bottom: '20px',
-            right: '20px'
-          },
-          data: {NumberOrders: getOrdersNotUpdated.length},
-          hasBackdrop: false
-        });
+        if(getOrdersNotUpdated.length > 0)
+        {
+          this.dialog.open(DialogRechargeComponent, {
+            //width: '400px',
+            //height: "auto",
+            position: {
+              bottom: '20px',
+              right: '20px'
+            },
+            data: {NumberOrders: getOrdersNotUpdated.length},
+            hasBackdrop: false
+          });
+        }
 
         for (const orderIndex of getOrdersNotUpdated) {
 
-          console.log(orderIndex)
+          //console.log(orderIndex)
           //console.log(orderIndex.Order.DocumentLines)
           dataSharing.updateOrderRecharge(orderIndex)
 
@@ -120,7 +124,7 @@ export class DashboardComponent {
                 indexDB.EditOrderLogDirectToCosmos(orderIndex.id, orderCosmos);
                 //console.log(orderCosmos)
                 
-                if(orderCosmos.DocEntry === undefined || orderCosmos.DocEntry === 0)
+                if(orderCosmos.DocEntry === undefined || orderCosmos.DocEntry === 0 || Number.isNaN(orderCosmos.DocEntry))
                 {
                   dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Publish in SAP'})
                   delete orderIndex.Order.DocNum;
@@ -149,7 +153,7 @@ export class DashboardComponent {
                 if(orderCopyIndex.id != undefined)
                     this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos', '')
                 
-                if(orderIndex.DocEntry === undefined || orderIndex.DocEntry === 0)
+                if(orderIndex.DocEntry === undefined || orderIndex.DocEntry === 0 || Number.isNaN(orderCosmos.DocEntry))
                 {
                   delete orderIndex.Order.DocNum;
                   delete orderIndex.Order.DocEntry;
@@ -178,7 +182,7 @@ export class DashboardComponent {
               if(orderCopyIndex.id != undefined)
                   this.indexDB.editOrderIndex(orderIndex.id,Number(orderIndex.DocNum), Number(orderIndex.DocEntry!), orderIndex.Order, 'cosmos', '')
               
-              if(orderIndex.DocEntry === undefined || orderIndex.DocEntry === 0)
+              if(orderIndex.DocEntry === undefined || orderIndex.DocEntry === 0 || Number.isNaN(orderCosmos.DocEntry))
               {
                 this.PublishOrderSAP(orderIndex.Order,orderCopyIndex,orderIndex)
                 dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Publish in SAP'})
@@ -281,8 +285,8 @@ export class DashboardComponent {
         //dataSharing.setOrderReview(orderPublish)
         // console.log("Pasan los document del cloud")
         console.log(data.response)
-        console.log({idIndex: orderIndex.id, message: 'Complete: DocNum: ' +  orderPublish.DocNum})
-        this.dataSharing.updateMessageRecharge({idIndex: orderIndex.id, message: 'Complete: DocNum - ' +  orderPublish.DocNum + ' DocEntry - ' + orderPublish.DocEntry})
+        console.log({idIndex: orderIndex.id, orderSAP: orderPublish ,message: 'Complete: DocNum - ' +  orderPublish.DocNum + ' DocEntry - ' + orderPublish.DocEntry})
+        this.dataSharing.updateMessageRecharge({idIndex: orderIndex.id, orderSAP: orderPublish ,message: 'Complete: DocNum - ' +  orderPublish.DocNum + ' DocEntry - ' + orderPublish.DocEntry})
       }
       else{
         orderCopyIndex.ErrorSap = data.response;

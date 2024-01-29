@@ -72,8 +72,8 @@ export class OrderEditComponent implements OnInit {
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
 
-    //console.log('Esta es mi order', this.order)
-    //console.log('esta es mi indexDB',this.OrderIndexDB)
+    console.log('Esta es mi order', this.order)
+    console.log('esta es mi indexDB',this.OrderIndexDB)
     //console.log(this.OrderIndexDB)
     if(this.order != undefined)
     {

@@ -21,7 +21,7 @@
                             <tr *ngFor="let message of element.message">
                                 {{message}}
                             </tr>
-                            <button class="view" (click)="searchIndex(element.id!)">View</button>
+                            <button class="view" (click)="searchIndex(element.id!, element)">View</button>
                     </mat-expansion-panel>
                 </tr>
             </tbody>

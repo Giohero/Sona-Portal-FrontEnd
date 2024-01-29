@@ -1,3 +1,5 @@
+import { Order } from "./order"
+
 export class indexOrder {
     id?: number
     Action?: string
@@ -8,4 +10,5 @@ export class indexOrder {
     status?: string
     error?: string
     message?: string[]
+    orderSAP?: Order
 }
