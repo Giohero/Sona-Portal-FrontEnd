@@ -885,6 +885,7 @@ export class OrdersComponent {
           UnitPrice: Number(this.Price),
           LineTotal: Number(this.Price) * this.Quantity,
           U_Comments: "",
+          DiscountPercent: '0.0',
           Icon: 'cloud_queue'
         };
         
@@ -1001,6 +1002,7 @@ export class OrdersComponent {
     const dateDefault = this.pipe.transform(today, 'yyyy-MM-dd');
     this.OrderReview!.DocDate = dateDefault?.toString();
     this.OrderReview!.TaxDate = dateDefault?.toString();
+    this.OrderReview.DiscountPercent = 0.0;
     //Add Ddefault delivery date
     const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
     this.OrderReview!.DocDueDate = dateDelivery?.toString();
@@ -1054,6 +1056,7 @@ export class OrdersComponent {
         this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
         this.OrderReviewCopy.User = this.obtainUser();
         this.OrderReviewCopy.Timestamp =  new Date().toISOString();
+        //this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
         this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
         
         if(this.isOnline == true)
@@ -1114,6 +1117,7 @@ export class OrdersComponent {
 
       if(this.Cart!.length! === 1 && this.OrderIndexDB === undefined)
       {
+        //this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
         //console.log('agregamos index db, SAP y Cosmos')
         this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, 'index')
 
@@ -1166,8 +1170,11 @@ export class OrdersComponent {
             ItemCode: element.ItemCode,
             Quantity: element.Quantity,
             TaxCode: 'EX',
+            LineTotal: element.LineTotal,
+            UnitPrice: element.UnitPrice,
             U_Comments: element.U_Comments,
-            LineNum:element.LineNum
+            LineNum:element.LineNum,
+            DiscountPercent: element.DiscountPercent
           })
         });
 
@@ -1222,6 +1229,7 @@ export class OrdersComponent {
 
     if(type == 'publish')
     {
+      console.log(this.OrderReview)
       //editToCosmosDB(this.OrderReviewCopy)
       if(this.idCosmos !== undefined)
       {
@@ -1233,7 +1241,7 @@ export class OrdersComponent {
       {
         this.idCosmos = await PublishToCosmosDB(this.OrderReviewCopy, 'transaction_log')
       }
-        //console.log(this.idCosmos)
+        console.log(this.OrderReview)
         
         webWorker('postOrder',this.OrderReview!, this.tokenAzure).then((data) => {
           //console.log('Valor devuelto por el Web Worker:', data);

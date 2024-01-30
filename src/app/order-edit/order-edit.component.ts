@@ -19,6 +19,7 @@ import { BehaviorSubject, Observable, catchError, mergeMap, retryWhen, throwErro
 import { UsersSR } from '../models/userSignalR';
 import { IndexCustomersService } from '../service/index-customers.service';
 import { IndexItemsService } from '../service/index-items.service';
+import { BusinessPartner } from '../models/customer';
 
 @Component({
   selector: 'app-order-edit',
@@ -48,6 +49,10 @@ export class OrderEditComponent implements OnInit {
   errorStatus: string = ''
   tokenAzure: string = ''
   indexDBNumber: string | number = ''
+  blockStatus = false;
+  ListCustomers?: BusinessPartner[] ;
+  inputSearchCutomer = false
+  searchText = '';
 
   constructor( private route: ActivatedRoute,
     private pipe: DatePipe, 
@@ -72,8 +77,8 @@ export class OrderEditComponent implements OnInit {
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
 
-    console.log('Esta es mi order', this.order)
-    console.log('esta es mi indexDB',this.OrderIndexDB)
+    //console.log('Esta es mi order', this.order)
+    //console.log('esta es mi indexDB',this.OrderIndexDB)
     //console.log(this.OrderIndexDB)
     if(this.order != undefined)
     {
@@ -88,6 +93,8 @@ export class OrderEditComponent implements OnInit {
       DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
       this.delivery = new FormControl(DocDueDate);
       //console.log(this.delivery)
+      if(this.order.DocumentStatus == 'bost_Close')
+        this.blockStatus = true
     }
     else if(this.OrderIndexDB != undefined)
     {
@@ -154,11 +161,21 @@ export class OrderEditComponent implements OnInit {
         //console.log(this.orderOld)
         const DocDueDate = new Date(this.order!.DocDueDate);
         DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
-        this.delivery = new FormControl(DocDueDate);
+        
         //console.log(this.delivery)
 
         if(this.order?.DocNum == 0 || this.order?.DocNum == undefined || Number.isNaN(this.order?.DocNum))
           this.cloudChange = "cloud_queue";
+
+        if(this.order?.DocumentStatus == 'bost_Close')
+        {
+          this.blockStatus = true
+          this.delivery.disable();
+          this.delivery = new FormControl({value:DocDueDate, disabled: true});
+        }
+        else
+        this.delivery = new FormControl(DocDueDate);
+        
       }
       else
       {
@@ -263,6 +280,29 @@ export class OrderEditComponent implements OnInit {
           this.openSnackBar(retData.response!, "error", "Error", "red");
         }
        });
+
+       this.orderService.getCustomer()
+       .pipe(
+         retryWhen(errors =>
+           errors.pipe(
+             mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+           )
+         ),
+         catchError(error => {
+           this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+           //this.isLoading = false;
+           return throwError(error);
+         })
+       )
+       .subscribe(
+         (retData) => {
+ 
+           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+     
+             this.ListCustomers = JSON.parse(retData.response!);
+             //console.log(this.ListCustomers)
+         }}
+       );
 
       this.dataSharing.orderSignal$.subscribe((newOrder) => {
         //console.log(newOrder)
@@ -373,6 +413,18 @@ export class OrderEditComponent implements OnInit {
       // item.UnitPrice = itemFound!.ItemPrices[0].Price.toString();
       item.UnitPrice = parseFloat(itemFound!.ItemPrices[0].Price.toString());
     }
+  }
+
+  onSelectCustomer(selectedData:any, order : Order){
+    console.log(selectedData)
+    var CurrentCustomer = this.ListCustomers!.find(x => x.CardName === selectedData || x.CardCode === selectedData);
+    //console.log(this.CurrentSellsItem);
+    if(CurrentCustomer != undefined)
+      order.CardCode = CurrentCustomer!.CardCode;
+      this.inputSearchCutomer = true;
+   
+    this.updateOrder('Change_Customer')
+    //this.changeOrder(undefined, undefined, 'customer')
   }
 
   status(status:string)
@@ -493,6 +545,11 @@ export class OrderEditComponent implements OnInit {
     }
   }
 
+  changeCustomer(order:Order){
+    order.CardCode = ''
+    order.CardName = ''
+  }
+
   // updateOrder()
   // {
   //   console.log(this.order)
@@ -543,7 +600,7 @@ export class OrderEditComponent implements OnInit {
     if(this.order !== this.orderOld)
     {
       this.obtainUser()
-      console.log(this.OrderIndexDB)
+      //console.log(this.OrderIndexDB)
       this.errorStatus = '...';
       this.cloudChange = "cloud_queue";
 
@@ -581,6 +638,7 @@ export class OrderEditComponent implements OnInit {
         DocumentLines: DocumentLinesP!,
         CardCode: this.order?.CardCode,
         CardName: this.order?.CardName,
+        DiscountPercent: 0.00
       }
 
 
@@ -641,31 +699,35 @@ export class OrderEditComponent implements OnInit {
         {
           if(this.order!.DocNum !== undefined)
           {
-            //console.log(OrderPost)
+            console.log(OrderPost)
             this.cloudChange = "cloud_done";
             this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
 
-            // webWorker('editOrder',OrderPost).then((data) => {
-            //   if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
-            //   {
-            //     console.log(data)
-            //     this.cloudChange = "cloud_done";
-            //     this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost)
-            //     // const orderEdit: Order = JSON.parse(data.response);
-            //     // console.log(orderEdit)
-            //     //this.DocNumPublish = orderPublish!.DocNum;
-            //     this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
-            //   }
-            //   else
-            //   {
-            //     this.cloudChange = "cloud_off";
-            //     console.error('Error:', data.response)
-            //   }
-            // })
-            // .catch((error) => {
-            //   this.cloudChange = "cloud_off";
-            //   console.error('Error:', error);
-            // });
+            webWorker('editOrder',OrderPost,this.tokenAzure).then((data) => {
+              if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+              {
+                console.log(data)
+                this.cloudChange = "cloud_done";
+                this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost, this.usernameAzure,'')
+                // const orderEdit: Order = JSON.parse(data.response);
+                // console.log(orderEdit)
+                //this.DocNumPublish = orderPublish!.DocNum;
+                this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
+              }
+              else
+              {
+                this.cloudChange = "cloud_off";
+                this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'cosmos', data.response)
+                this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost, this.usernameAzure, data.response)
+                const ErrorString =  JSON.parse(data.response);
+                this.errorStatus = ErrorString.error.message.value
+                console.error('Error:', data.response)
+              }
+            })
+            .catch((error) => {
+              this.cloudChange = "cloud_off";
+              console.error('Error:', error);
+            });
           }
           else
           {

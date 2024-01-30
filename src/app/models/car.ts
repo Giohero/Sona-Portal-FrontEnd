@@ -7,6 +7,7 @@ export class DocumentLines {
     LineTotal?: number;
     U_Comments?: string;
     Icon?:string;
+    DiscountPercent?:string;
     LineNum?:number;
 }
 
@@ -18,6 +19,7 @@ export class Order {
     DocEntry?:string;
     DocDate?: string;
     TaxDate?: string;
+    DiscountPercent?: number;
     NumAtCard?: string;
     DocumentLines?: DocumentLines[] | undefined;
     AddressExtension?: AddressExtension | undefined;
