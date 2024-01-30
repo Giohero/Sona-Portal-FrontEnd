@@ -25,8 +25,9 @@
 }
 
 .custom-dialog{
-    width: 400px;
-    z-index: 30;
+    width: 300px;
+    z-index: 90;
+    background-color:transparent;
 }
 
 .fixWindow{
@@ -48,28 +49,96 @@
 }
 
 :host ::ng-deep .cdk-overlay-pane {
-    z-index: -30;
+    z-index: 5;
 }
-
-@media (max-width: 430px) {
+.sticky-container{
+    padding:0px;
+    margin:0px;
+    position:fixed;
+    right:-130px;
+    top:230px;
+    width:210px;
+    z-index: 1100;
+}
+/* .floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    padding: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} */
+  
+@media (min-width: 412px) and (max-width: 914px) {
     .custom-dialog {
-      width: 100%;
-      border-radius: 0;
+        width: 300px;
+        border-radius: 0;
+        margin: 5px;
     }
 
-    .tittle{
-        font-size: calc(20px * 0.80);
+    .tittle {
+        font-size: 16px; 
         padding: 2px;
         margin-left: 10px;
         padding-left: 10px;
-        width: 100%;
+        width: 80%; 
     }
 
-    .fixWindow{
-        z-index: -30;
+    .fixWindow {
+        z-index: 5; 
+        margin: 5px;
     }
 
     :host ::ng-deep .cdk-overlay-pane {
-        z-index: -30;
+        z-index: 5; 
+        margin: 5px;
     }
-  }
+}
+@media (min-width: 375px) and (max-width: 667px) {
+    .custom-dialog {
+        width: 250px;
+        border-radius: 0;
+    }
+
+    .tittle {
+        font-size: 16px; 
+        padding: 2px;
+        margin-left: 10px;
+        padding-left: 10px;
+        width: 80%; 
+    }
+
+    .fixWindow {
+        z-index: 5;
+    }
+
+    :host ::ng-deep .cdk-overlay-pane {
+        z-index: 5; 
+    }
+}
+@media (min-width: 360px) and (max-width: 740px) {
+    .custom-dialog {
+        width: 250px;
+        border-radius: 0;
+    }
+
+    .tittle {
+        font-size: 16px; 
+        padding: 2px;
+        margin-left: 10px;
+        padding-left: 10px;
+        width: 80%; 
+    }
+
+    .fixWindow {
+        z-index: 5;
+    }
+
+    :host ::ng-deep .cdk-overlay-pane {
+        z-index: 5; 
+    }
+}

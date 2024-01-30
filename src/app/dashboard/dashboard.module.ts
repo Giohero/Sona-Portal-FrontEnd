@@ -24,7 +24,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import {MatTabsModule} from '@angular/material/tabs';
 import { CustomersEditComponent } from '../customers-edit/customers-edit.component';
 import { DialogRechargeComponent } from '../dialog-recharge/dialog-recharge.component';
-
+import {MatBadgeModule} from '@angular/material/badge';
 
 
 
@@ -55,6 +55,7 @@ import { DialogRechargeComponent } from '../dialog-recharge/dialog-recharge.comp
     DashboardRoutingModule,
     HttpClientModule,
     MatTabsModule,
+    MatBadgeModule,
   ]
 })
 export class DashboardModule { }
