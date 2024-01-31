@@ -34,6 +34,9 @@ export class DashboardComponent {
   usernameAzure = '';
   nameAzure = '';
   previousURL = '';
+  dialogStyle={
+    'margin': '3px'
+  }
 
   //checar los estados de orders, sacar los que no tengan complete, y publicarlos
   //si hay una transaccion activa, no subirlo y primero checar si existe la orden en sap para actualizarlo
@@ -46,15 +49,16 @@ export class DashboardComponent {
     //console.log(signalRService.getConnectionState())
 
     // const dialogRef = this.dialog.open(DialogRechargeComponent, {
-    //   width: '400px',
-    //   height: "auto",
-    //   panelClass: 'fixWindow',
+    //   //height:'60px',
+    //   //width:"60px",
+    //   //panelClass: 'fixWindow',
     //   position: {
-    //     bottom: '20px',
-    //     right: '20px'
+    //     bottom: '50px',
+    //     right: '60px',
     //   },
     //   data: {NumberOrders: 3},
-    //   hasBackdrop: false
+    //   hasBackdrop: false,
+    //   //panelClass: 'fixWindow'
     // });
 
     //This ejecuted when is get back the online web
@@ -86,11 +90,12 @@ export class DashboardComponent {
             //width: '400px',
             //height: "auto",
             position: {
-              bottom: '20px',
-              right: '20px'
+              bottom: '50px',
+              right: '60px'
             },
             data: {NumberOrders: getOrdersNotUpdated.length},
-            hasBackdrop: false
+            hasBackdrop: false,
+            panelClass: 'fixWindow'
           });
         }
 

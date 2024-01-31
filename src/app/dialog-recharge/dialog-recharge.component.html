@@ -1,7 +1,7 @@
 <!-- <mat-icon svgIcon="add"  [matBadge]="Notifications" class="floating-button" (click)="togglePopUp()"></mat-icon> -->
-<button>
-    <mat-icon matBadgePosition="above after" matBadgeColor="warn" [matBadge]="data.NumberOrders" class="floating-button" (click)="togglePopUp()">notifications</mat-icon>
-</button>
+<div class="floating-button-container">
+        <mat-icon matBadgePosition="above after" matBadgeColor="warn" [matBadge]="data.NumberOrders" class="floating-button" (click)="togglePopUp()">notifications</mat-icon>
+</div>
 <div *ngIf="showPopUp" class="popup">
     <div id="dialog" class="custom-dialog" style="max-height: 500px; overflow-y: auto;">
       <!-- <button class="close" (click)="onNoClick()">
@@ -30,7 +30,7 @@
                     <tr *ngFor="let message of element.message">
                       {{message}}
                     </tr>
-                    <button class="view" (click)="searchIndex(element.id!)">View</button>
+                    <button class="view" (click)="searchIndex(element.id!, element)">View</button>
                   </mat-expansion-panel>
                 </tr>
               </tbody>

@@ -92,6 +92,7 @@ export class SignalRService {
     .subscribe((token:any) => {
       //console.log(token.accessToken)
       this.updateToken(token.accessToken)
+      this.initializeSignalRConnection(token);
 
       this.itemsIndex.getItemsIndesxDB(this.itemsIndex);
       this.customerindex.getCustomersIndesxDB(this.customerindex);
@@ -110,9 +111,40 @@ export class SignalRService {
       await this.getMessages()
       //await this.sendMessage()
       })
-      .catch(err => console.error('Error inicialize connection SignalR:', err));
+      .catch(err => 
+        console.error('Error inicialize connection SignalR:', err)
+        );
+     
     })
 
+  }
+
+  initializeSignalRConnection(token: any) {
+    this.hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl(token.url, {
+        accessTokenFactory: () => token.accessToken
+      })
+      .build();
+  
+    this.hubConnection
+      .start()
+      .then(async () => {
+        console.log('Connection SignalR started');
+        // Lógica adicional después de establecer la conexión
+        await this.getMessages();
+      })
+      .catch(err => {
+        console.error('Error to connect SignalR:', err);
+        // Reintentar la conexión después de un retraso
+        setTimeout(() => this.startConnection(), 5000);
+      });
+  
+    // Manejar la reconexión automática en caso de desconexión
+    this.hubConnection.onclose(error => {
+      console.error('Close connection SignalR:', error);
+      // Reintentar la conexión inmediatamente o después de un retraso
+      setTimeout(() => this.startConnection(), 5000);
+    });
   }
 
   sendMessageAPI(message:string, type:string, user:string): void {

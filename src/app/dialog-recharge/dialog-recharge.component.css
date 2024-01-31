@@ -30,6 +30,19 @@
     background-color:transparent;
 }
 
+.floating-button-container {
+    position: fixed;
+    margin-top: -20px;
+    margin-right: 40px;
+    z-index: 100;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+}
+
+.icon-b{
+    border: 0x solid transparent;
+}
+
 .fixWindow{
     z-index: -30;
 }
