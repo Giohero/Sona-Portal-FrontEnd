@@ -90,7 +90,10 @@ export class DialogRechargeComponent {
       {
         const OrderIndexFound =  this.indexList.find(x => x.id == data.idIndex)
         if(OrderIndexFound != undefined)
+        {
           OrderIndexFound.message?.push(data.message);
+          OrderIndexFound.orderSAP = data.orderSAP;
+        }
         this.Notifications++;
       }
     })
