@@ -71,6 +71,16 @@ export class ServiceService {
     );
   }
 
+  GetOldSalesOrders(Order: string): Observable<INResponse> {
+    //console.log(this.auth.getAccessToken())
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'GetOldSalesOrders?DocNum=' + Order,
+        { headers }
+      ))
+    );
+  }
+
   getOrderByDocNum(DocNum:string): Observable<INResponse> {
     //console.log(this.auth.getAccessToken())
     return this.getHeaders().pipe(

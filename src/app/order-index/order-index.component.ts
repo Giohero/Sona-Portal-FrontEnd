@@ -20,9 +20,11 @@ export class OrderIndexComponent {
   displayedColumnsDrafts: string[] = ['Id', 'PostingDate', 'DeliveryDate', 'TaxDate', 'CardCode'];
   ListOrders: Order[] = []; 
   ListOrdersDrafts: any;
+  ListOrdersFound: Order [] = [];
   isOnline!:boolean;
   isLoading=true;
   searchOrder: number | undefined;
+  searchedOrder: any; // Variable para almacenar la orden encontrada
   statusIcon ='indexdb';
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
@@ -113,6 +115,7 @@ export class OrderIndexComponent {
         });
       }
     });
+    this.getSearchFilter();
   }
   
   reloadAll()
@@ -189,6 +192,42 @@ export class OrderIndexComponent {
     else
     this.openSnackBar("You should put Document Order", 'error', 'Error', 'red');
   }
+
+
+getSearchFilter()
+{
+  let timeoutId:any = null;
+  const element = document.getElementById('search-input');
+
+  element!.addEventListener('input', (e) => {
+    const target = e.target as HTMLInputElement; // Casting a HTMLInputElement
+    const searchText = target.value;
+    console.log(searchText)
+    // Debouncing
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+        // fetch(`https://sonafunctions01.azurewebsites.net/api/GetOldSalesOrders?DocNum=${encodeURIComponent(searchText)}`)
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         // Actualizar la UI con las sugerencias de autocompletado
+        //         console.log(data);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error fetching autocomplete suggestions:', error);
+        //     });
+        
+        this.service.GetOldSalesOrders(searchText).subscribe(retData => {
+          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+            this.searchedOrder = retData.response; // Asigna la orden encontrada a la variable
+            console.log(this.searchedOrder); // Muestra la orden en la consola (opcional)
+            this.ListOrdersFound=JSON.parse(retData.response!)
+          } else {
+            this.openSnackBar(retData.response!, "error", "Error", "red");
+          }
+        });
+    }, 3000); // Espera X ms después de la última tecla presionada para hacer la solicitud
+});
+}
 
   selectMatCard(order:any)
   {

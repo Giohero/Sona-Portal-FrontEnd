@@ -4,7 +4,18 @@
     <br>
     <h2>Orders</h2>
     <div class="labelSearch">
-      <input matInput placeholder="Document Order" type="text" class="searchOrder" [(ngModel)]="searchOrder">
+      <!-- <input matInput placeholder="Document Order" type="text" class="searchOrder" [(ngModel)]="searchOrder"> -->
+      <div class="label-container">
+        <label class="label">Search by name:</label>
+        <input type="text" class="searchOrder" id="search-input" aria-describedby="search-text" 
+        [(ngModel)]="searchOrder" placeholder="Enter text to search" 
+        autofocus [matAutocomplete]="autoItem" type="text" >
+        <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" >
+          <mat-option *ngFor="let c of ListOrdersFound"  value="{{c.DocNum}}"  class="optionList" >
+            {{c.DocNum}} - {{c.DocEntry}}
+          </mat-option>
+        </mat-autocomplete>
+      </div>
       <button class="iconsearch" (click)="searchingOrder()"><mat-icon>search</mat-icon>Search</button>
       <button class="iconsearch" (click)="reloadAll()">    
         <mat-icon>refresh</mat-icon>
@@ -23,7 +34,7 @@
       </div>
     </div>
     <!-- Sección para órdenes normales -->
-    <div *ngIf=" !isLoading && showRealOrdersFlag && ListOrders.length > 0">
+    <div *ngIf=" !isLoading && showRealOrdersFlag && ListOrders.length > 0 ">
     <!-- <div *ngIf="!isLoading && showRealOrdersFlag && ListOrders.length > 0"> -->
       <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
         <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;">
@@ -64,7 +75,6 @@
         </div>
       </div>
     </div>
-
     <!-- Sección para órdenes de borrador -->
     <div class="">
       <div *ngIf="!showRealOrdersFlag &&!isLoading && ListOrdersDrafts.length > 0">
