@@ -84,9 +84,8 @@ export class ServiceService {
   getOrderByDocNum(DocNum:string): Observable<INResponse> {
     //console.log(this.auth.getAccessToken())
     return this.getHeaders().pipe(
-      mergeMap((headers) => this.myhttp.post<INResponse>(
-        this.myappurlcosmos + this.myapiurl + 'GetSpecificSalesOrder',
-        DocNum,
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'GetSpecificSalesOrder?DocNum='+ DocNum,
         { headers }
       ))
     );

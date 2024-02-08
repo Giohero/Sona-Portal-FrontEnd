@@ -205,37 +205,32 @@ getSearchFilter()
     console.log(searchText)
     // Debouncing
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-        // fetch(`https://sonafunctions01.azurewebsites.net/api/GetOldSalesOrders?DocNum=${encodeURIComponent(searchText)}`)
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         // Actualizar la UI con las sugerencias de autocompletado
-        //         console.log(data);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error fetching autocomplete suggestions:', error);
-        //     });
-        
+    timeoutId = setTimeout(() => {       
         this.service.GetOldSalesOrders(searchText).subscribe(retData => {
           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-            this.searchedOrder = retData.response; // Asigna la orden encontrada a la variable
-            console.log(this.searchedOrder); // Muestra la orden en la consola (opcional)
+            this.searchedOrder = retData.response; 
+            console.log(this.searchedOrder); 
             this.ListOrdersFound=JSON.parse(retData.response!)
           } else {
             this.openSnackBar(retData.response!, "error", "Error", "red");
           }
         });
-    }, 3000); // Espera X ms después de la última tecla presionada para hacer la solicitud
+    }, 3000); 
 });
 }
 
   selectMatCard(order:any)
   {
+   
     console.log(order)
     if(order.DocNum === undefined || order.DocNum == 0 || Number.isNaN(order.DocNum))
       this.dataSharing.setOrderIndexDB(order)
     else
+    {
+      
       this.dataSharing.setOrderCReview(order)
+    }
+      
     
     //console.log(order)
     this.myRouter.navigate(['dashboard/order-edit']);
