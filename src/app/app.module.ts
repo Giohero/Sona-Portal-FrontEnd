@@ -46,6 +46,8 @@ import { OrderIndexComponent } from './order-index/order-index.component';
 import { OrderEditComponent } from './order-edit/order-edit.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DialogRechargeComponent } from './dialog-recharge/dialog-recharge.component';
+import { ScannerItemComponent } from './scanner-item/scanner-item.component';
+
 
 const isIE =
   window.navigator.userAgent.indexOf("MSIE ") > -1 ||
@@ -55,8 +57,9 @@ const isIE =
   declarations: [
     AppComponent,
     LoginComponent,
+    ScannerItemComponent,
     //CartComponent
-    //FilterPipe
+    // FilterPipe
     // SidenavComponent,
     // HomeComponent,
     // CostumersComponent,

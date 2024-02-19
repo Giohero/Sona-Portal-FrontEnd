@@ -104,7 +104,11 @@ export class IndexItemsService {
           itemsStore.add({
             ItemCode: itemNew.ItemCode,
             ItemName: itemNew.ItemName,
-            ItemPrices: itemNew.ItemPrices
+            ItemPrices: itemNew.ItemPrices,
+            BarCode : itemNew.BarCode,
+            U_MasterPackQty : itemNew.U_InnerPackQty,
+            U_InnerPackQty : itemNew.U_InnerPackQty,
+            SalesQtyPerPackUnit : itemNew.SalesQtyPerPackUnit
           });
         });
 
@@ -163,6 +167,41 @@ export class IndexItemsService {
             reject(null);
           };
 
+          transaction.onerror = function (event) {
+            reject(null);
+          };
+        };
+        request.onerror = function (event) {
+          reject(null);
+        };
+      } catch (error) {
+        console.error('Error:', error);
+        reject(null);
+      }
+    });
+  }
+  async GetItemIndexbyBarCode(barCode:string): Promise<Value> {
+    return new Promise((resolve, reject) => {
+      try {
+        const request = indexedDB.open('items');
+        request.onsuccess = function(event) {
+          const db = (event.target as IDBOpenDBRequest).result;
+          const transaction = db.transaction("items", "readonly");
+          const objectStore = transaction.objectStore("items");
+         
+          const getAllRequest = objectStore.getAll(); // Obtener todos los objetos
+       
+          getAllRequest.onsuccess = function() {
+            // Filtrar manualmente para encontrar objetos que coincidan con tu criterio
+            const resultFilter = getAllRequest.result.find(objeto => objeto.BarCode === barCode.toString());
+            // console.log("Objetos filtrados por CodeBars:", resultFilter);
+            resolve(resultFilter);
+          };
+ 
+          getAllRequest.onerror = function (event) {
+            reject(null);
+          };
+ 
           transaction.onerror = function (event) {
             reject(null);
           };

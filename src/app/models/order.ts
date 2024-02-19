@@ -30,7 +30,7 @@ export interface Order {
     Dummie: any
     TaxRate: any
     TaxCode: string
-    U_Comments: any
+    FreeText: any
     ItemPrices: any
     LineNum: number
   }

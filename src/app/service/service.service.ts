@@ -236,4 +236,12 @@ export class ServiceService {
       ))
     );
   }
+  GetSpecificItem(BarCode:string){
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'GetSpecificItem',
+        { headers }
+      ))
+    );
+  }
 }

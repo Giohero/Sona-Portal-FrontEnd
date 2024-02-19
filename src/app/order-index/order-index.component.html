@@ -4,33 +4,29 @@
     <br>
     <h2>Orders</h2>
     <div class="labelSearch">
-      <!-- <input matInput placeholder="Document Order" type="text" class="searchOrder" [(ngModel)]="searchOrder"> -->
       <div class="label-container">
-        <label class="label">Search by name:</label>
-        <input type="text" class="searchOrder" id="search-input" aria-describedby="search-text" 
-        [(ngModel)]="searchOrder" placeholder="Enter text to search" 
-        autofocus [matAutocomplete]="autoItem" type="text" >
+        <input type="text" id="search-input" class="searchOrder" aria-describedby="search-text" [(ngModel)]="searchOrder" placeholder="Enter text to search" autofocus [matAutocomplete]="autoItem" type="text" >
         <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" >
           <mat-option *ngFor="let c of ListOrdersFound"  value="{{c.DocNum}}"  class="optionList" >
             {{c.DocNum}} - {{c.DocEntry}}
           </mat-option>
         </mat-autocomplete>
       </div>
-      <button class="iconsearch" (click)="searchingOrder()"><mat-icon>search</mat-icon>Search</button>
-      <button class="iconsearch" (click)="reloadAll()">    
-        <mat-icon>refresh</mat-icon>
-        <div *ngIf="isLoading" class="progress-bar">
-          <div class="progress"></div>
-        </div>
+      <button class="icon-search" (click)="searchingOrder()">
+        <mat-icon>search</mat-icon>
       </button>
-    </div>
-    <div>
-      <div class="buttons-container inline-buttons">
+      <button class="icon-refresh" (click)="reloadAll()">    
+        <mat-icon>refresh</mat-icon>
+        <!-- <div  class="progress-bar">
+          <div class="progress"></div>
+        </div> -->
+      </button>
+      <div>
         <!-- Botones para filtrar entre órdenes normales y de borrador -->
-      <div class="filter-buttons" style="margin-top: -55px; margin-left: 60%; font-size: 8px;">
-        <button class="filter-button" (click)="showRealOrders()"><span>Orders SAP</span></button>
-        <button class="filter-button" (click)="showDraftOrders()"><span>Draft Orders</span></button>
-      </div>  
+        <div class="filter-buttons">
+          <button class="filter-button" (click)="showRealOrders()"><span>Orders SAP</span></button>
+          <button class="filter-button" (click)="showDraftOrders()"><span>Draft Orders</span></button>
+        </div>
       </div>
     </div>
     <!-- Sección para órdenes normales -->

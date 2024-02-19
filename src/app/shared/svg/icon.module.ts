@@ -31,5 +31,17 @@ export class IconModule {
         'assets/icons/cart.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'search',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        'assets/icons/search.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'barCode',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        'assets/icons/barCode.svg'
+      )
+    );
   }
 }

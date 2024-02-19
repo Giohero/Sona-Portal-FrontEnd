@@ -92,7 +92,7 @@
             <mat-card-content>
               <div class="button-container">
               <h2 class="h2Mat">Item list <mat-icon>shopping_cart</mat-icon></h2>
-                <button mat-raised-button color="primary" class="add-button" (click)="addItem()" [disabled]="blockStatus">
+                <button mat-raised-button color="primary" class="add-button" [disabled]="blockStatus">
                   <mat-icon>add</mat-icon> Add Item
                 </button>
               </div>
@@ -126,7 +126,7 @@
                   </div>
                   <div class="label-container">
                     <label class="label">Quantity:</label>
-                    <input  type="number"  class="boxCustom editable-input" matInput placeholder="Quantity" min="1"  [(ngModel)]="item.Quantity" (change)="changeQuantity(item)" [disabled]="blockStatus!">
+                    <input  type="number"  class="boxCustom editable-input" matInput placeholder="Quantity" min="1"  [(ngModel)]="item.Quantity" disabled="true">
                   </div>
                   <div class="label-container">
                     <label class="label">Line Total:</label>
@@ -134,13 +134,13 @@
                   </div>
                   <div class="label-container">
                     <label class="label">UDF Comments:</label>
-                    <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.U_Comments" (change)="updateOrder('Change_Comments_LineNum_'+i)" [disabled]="blockStatus">
+                    <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.FreeText" (change)="updateOrder('Change_Comments_LineNum_'+i)" [disabled]="blockStatus">
                   </div>
-                  <div class="label-container">
+                  <!-- <div class="label-container">
                     <button mat-icon-button (click)="removeItem(i)" [disabled]="blockStatus!">
                       <mat-icon >delete</mat-icon>
                     </button>
-                  </div>
+                  </div> -->
                 </div>
                 <mat-divider></mat-divider>
               </div>

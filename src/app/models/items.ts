@@ -9,6 +9,7 @@ export interface ItemPrice {
     BasePriceList: number;
     Factor: number;
     UoMPrices: object[];
+    GetSpecificItem: string;
 }
 
 export interface Value {
@@ -16,6 +17,9 @@ export interface Value {
     ItemCode: string;
     ItemName: string;
     BarCode: string;
+    U_MasterPackQty: string;
+    SalesQtyPerPackUnit: string;
+    U_InnerPackQty: string;
     ItemsGroupCode: number;
     ItemPrices: ItemPrice[];
 }

@@ -1,63 +1,42 @@
-<div class="body">
-  <div class="title"><br>
+<div class="background">
+  <div class="container">
+    <br>
     <h2>Items</h2>
-  </div>
-  <div class="table-container" [style.display]="showTable">
+    <div fxLayout="row" fxLayoutAlign="end center">
+      <button mat-raised-button color="primary">Add New Item</button>
+      <div style="width: 1.5rem;"></div>
+    </div>
+    <br>
+    <!-- buscador -->
     <mat-form-field>
       <mat-label>Search</mat-label>
       <input class="search" matInput (keyup)="applyFilter($event)" placeholder="Item" #input>
     </mat-form-field>
-    
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    
-      <!-- Position Column -->
-      <ng-container matColumnDef="selectedCustomer">
-        <th mat-header-cell *matHeaderCellDef> Item Code </th>
-        <td mat-cell *matCellDef="let customerData"> {{ customerData.ItemCode }} </td>
-      </ng-container>
-    
-      <!-- Name Column -->
-      <ng-container matColumnDef="item">
-        <th mat-header-cell *matHeaderCellDef> Item Name </th>
-        <td mat-cell *matCellDef="let customer"> {{ customer.ItemName }} </td>
-      </ng-container>
-    
-      <!-- Weight Column -->
-      <ng-container matColumnDef="orderTotal">
-        <th mat-header-cell *matHeaderCellDef> Bar Code </th>
-        <td mat-cell *matCellDef="let customer"> {{ customer.BarCode }} </td>
-      </ng-container>
-    
-      <!-- Actions Column -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Actions </th>
-        <td mat-cell *matCellDef="let customer">
-          <button mat-icon-button (click)="importOrder(customer)">
-            <mat-icon>add_shopping_cart</mat-icon>
-          </button>
-          <button mat-icon-button (click)="editCustomer(customer)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button (click)="showMoreInfo(customer)">
-            <mat-icon>info</mat-icon>
-          </button>
-          <button mat-icon-button (click)="removeCustomer(customer)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-    
-      <!-- Header and Row Definitions -->
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-      <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
-    
-      <!-- No Data Row -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="4">Data no found in the list "{{input.value}}"</td>
-      </tr>
-    </table>
-  </div>
-  <div class="table-container spinner-container">
-    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
+    <!-- Contenedor de los ítems -->
+    <div *ngIf="!isLoading">
+      <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center">
+        <div class="item-card" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let item of pagedItems; let i = index">
+          <div>
+            <mat-card class="itemSection">
+              <mat-card-header class="CardItems">
+                <mat-card-title>{{ item.ItemName }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <p>Item Code: {{ item.ItemCode }}</p>
+                <p>Bar Code <mat-icon svgIcon="barCode"></mat-icon>: {{ item.BarCode }}</p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+      <!-- Paginator -->
+      <mat-paginator [length]="totalItems" [pageSize]="itemsPerPage" [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="pageChanged($event)">
+      </mat-paginator>
+    </div>
+    <!-- Spinner -->
+    <div class="table-container spinner-container" *ngIf="isLoading">
+      <mat-progress-spinner mode="indeterminate" class="centered"></mat-progress-spinner>
+    </div>
   </div>
 </div>

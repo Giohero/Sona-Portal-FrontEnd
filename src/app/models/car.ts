@@ -5,7 +5,7 @@ export class DocumentLines {
     TaxCode?: string;
     UnitPrice?: number;
     LineTotal?: number;
-    U_Comments?: string;
+    FreeText?: string;
     Icon?:string;
     DiscountPercent?:string;
     LineNum?:number;

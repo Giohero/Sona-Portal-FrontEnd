@@ -1,0 +1,45 @@
+<!-- item-info-modal.component.html -->
+<mat-dialog-content class="mat-typography">
+  <div class="modal-header">
+    <h1 mat-dialog-title style="color: rgb(255, 255, 255);">Item Info</h1>
+    <button mat-icon-button mat-dialog-close aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Contenedor Flexbox para los campos -->
+  <div class="modal-body" style="color: black; display: flex; justify-content: space-between; flex-wrap: wrap;">
+    <!-- Columna izquierda con ajuste de ancho -->
+    <div style="width: calc(50% - 10px);">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Item Code</mat-label>
+        <input matInput [value]="Item.ItemCode" disabled>
+      </mat-form-field>
+      
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Available</mat-label>
+        <input matInput placeholder="Available" disabled="true">
+      </mat-form-field>
+    </div>
+
+    <!-- Columna derecha con ajuste de ancho -->
+    <div style="width: calc(50% - 10px);">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Item Name</mat-label>
+        <input matInput [value]="Item.ItemName" disabled>
+      </mat-form-field>
+      
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Quantity</mat-label>
+        <input matInput [value]="QuantityItem" type="number" placeholder="Quantity" min="1">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="modal-actions" style="display: flex; justify-content: space-between; padding-top: 20px;">
+    <button mat-button color="warn" (click)="AddInner()">Inner {{Item.U_InnerPackQty}}</button>
+    <button mat-button color="warn" (click)="AddMaster()">Master {{Item.U_MasterPackQty}}</button>
+    <!-- <button mat-button color="warn" mat-dialog-close (click)="CancelInfo()">Cancel</button> -->
+    <button mat-button color="warn" (click)="UpdateScanner()">Update</button>
+  </div>
+</mat-dialog-content>

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { DocumentLines, Order } from '../models/order';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -7,7 +7,7 @@ import { DataSharingService } from '../service/data-sharing.service';
 import { ServiceService } from '../service/service.service';
 import { Value } from '../models/items';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Order as OrderPost, DocumentLines as DocLinePost } from '../models/car';
 import { webWorker } from '../app.component';
 import { IndexDbService } from '../service/index-db.service';
@@ -20,6 +20,10 @@ import { UsersSR } from '../models/userSignalR';
 import { IndexCustomersService } from '../service/index-customers.service';
 import { IndexItemsService } from '../service/index-items.service';
 import { BusinessPartner } from '../models/customer';
+import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
+
+
+declare var bootstrap: any; 
 
 @Component({
   selector: 'app-order-edit',
@@ -53,12 +57,18 @@ export class OrderEditComponent implements OnInit {
   ListCustomers?: BusinessPartner[] ;
   inputSearchCutomer = false
   searchText = '';
+  captureActive= false;
+  textConcatenaded= '';
+  ItemBar:Value | undefined;
+
+
+  @ViewChild('Scanner-item') modal: any;
 
   constructor( private route: ActivatedRoute,
     private pipe: DatePipe, 
     private dataSharing:DataSharingService, 
     private orderService: ServiceService, 
-    private dialog: MatDialog, 
+    public dialog: MatDialog, 
     private indexDB: IndexDbService, 
     private transLog: TransactionlogService, 
     private myRouter: Router, 
@@ -67,12 +77,12 @@ export class OrderEditComponent implements OnInit {
     private router: Router,
     private custService:IndexCustomersService,
     private itemsService:IndexItemsService,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef
+    ) {
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
     // const currentRoute = this.router.url;
     // console.log('Ruta actual:', currentRoute);
-    // console.log("esta es la orden")
     //console.log(this.order)
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
@@ -203,6 +213,17 @@ export class OrderEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // const modalElement = document.getElementById('modal');
+    // this.modalInstance = new bootstrap.Modal(modalElement,{
+    //   keyboard: false; 
+    // })
+    // openModal(): void {
+    //   this.modalInstance.show();
+    // }
+  
+    // closeModal(): void {
+    //   this.modalInstance.hide();
+    // }
 
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
       console.log('Is Online: '+newWifi)
@@ -516,26 +537,45 @@ export class OrderEditComponent implements OnInit {
   
     return docTotal;
   }
-  addItem()
+  addItem(result: any)
   {
     const Item : DocumentLines = {
-      ItemCode: "",
+      ItemCode: result.ItemInfo.ItemCode,
       FixedItemCode: "",
-      ItemDescription: "",
-      Quantity: 0,
-      UnitPrice: 0,
-      LineTotal: 0.0,
+      ItemDescription: result.ItemInfo.ItemName,
+      Quantity: parseFloat(result.Quantity),
+      UnitPrice: parseFloat(result.ItemInfo.ItemPrices[0].Price.toString()),
+      LineTotal: 0,
       Dummie: "",
       TaxRate: "",
-      TaxCode: "",
-      U_Comments: "",
+      TaxCode: "EX",
+      FreeText: "",
       ItemPrices: "",
       LineNum:0
     }
 
+    Item.LineTotal = Item.UnitPrice * Item.Quantity;
     this.order!.DocumentLines.push(Item)
   }
 
+  OpenModal(itemFound: Value): void{
+    const dialogRef = this.dialog.open(ScannerItemComponent,{
+      width: '550px',
+      height: 'auto',
+      data: {...itemFound}
+    });
+
+    dialogRef.afterClosed().subscribe(result =>  {
+      console.log('Window closed', result)
+      
+      if(result != undefined){
+        this.addItem(result);
+      }
+
+    })
+
+    // $(this.modal.nativeElement).modal('show');
+  }
   removeItem(index: number): void {
     if (this.order && this.order.DocumentLines && this.order.DocumentLines.length > index) {
       var itemDelete = this.order.DocumentLines[index];
@@ -616,7 +656,7 @@ export class OrderEditComponent implements OnInit {
           UnitPrice: element.UnitPrice,
           LineTotal: element.LineTotal,
           TaxCode: 'EX',
-          U_Comments: element.U_Comments,
+          FreeText: element.FreeText,
           LineNum:count
         })
         count++;
@@ -671,7 +711,7 @@ export class OrderEditComponent implements OnInit {
               this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.orderOld!.DocNum!), Number(this.orderOld!.DocEntry!), this.orderOld!, 'cosmos', '')
       }
           
-      OrderPost.NumAtCard = this.OrderIndexDB.id;
+      // OrderPost.NumAtCard = this.OrderIndexDB.id;
       let idTransaction;
 
       if(this.order?.DocNum)
@@ -827,5 +867,31 @@ export class OrderEditComponent implements OnInit {
     else
       this.signalr.removeSignalRMessageUser(this.usernameAzure, this.nameAzure, '0', '0')
   }
-}
 
+  timeLastTimePressKey: any;
+  textConcatenated = '' 
+  
+ @HostListener('window:keydown', ['$event'])
+  async handleKeyDown(event: KeyboardEvent) {
+     this.textConcatenated += event.key;
+     if (this.timeLastTimePressKey !== null) {
+       clearTimeout(this.timeLastTimePressKey);
+     }
+
+     this.timeLastTimePressKey = setTimeout(async () => {
+       console.log("El texto ingresado es:", this.textConcatenated);
+       
+       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
+        console.log(this.ItemBar);
+        if (this.ItemBar != undefined){
+          this.OpenModal( this.ItemBar)
+        }
+        // else{
+        //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
+        //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+        
+       this.textConcatenated = '';
+     }, 20);
+   }
+ 
+}

@@ -1,0 +1,8 @@
+.modal-header{
+    border-top: 10px solid #0F97A6;
+    background-image: linear-gradient(30deg, #a62934, #eba881);
+    width: auto;
+}
+.mat-typography{
+    background-color:rgb(255, 254, 210);
+}

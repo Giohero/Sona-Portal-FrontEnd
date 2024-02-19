@@ -223,7 +223,9 @@ input:focus {
     /* background-image:url('https://w0.peakpx.com/wallpaper/847/51/HD-wallpaper-texture-boards-wood-fence.jpg'); */
     /* background-image:url('https://static.vecteezy.com/system/resources/previews/001/376/845/original/wood-table-top-with-blurred-background-free-photo.jpg'); */
 }
-
+.scroll-container{
+  overflow-y: scroll;
+}
 @media only screen and (max-width: 480px) {
   .mat-card-wrapper {
     flex-direction: column;
@@ -251,11 +253,17 @@ input:focus {
   mat-form-field {
     width: calc(100% - 6px); 
   }
+  .scroll-container{
+    overflow-y: scroll;
+  }
 }
 @media only screen and (max-width: 375px) {
   .mat-card-wrapper{
     position: relative;
     top: -100px;
+  }
+  .scroll-container{
+    overflow-y: scroll;
   }
 }
 @media only screen and (max-width: 768px) {
@@ -293,10 +301,16 @@ input:focus {
   .mat-card-wrapper{
     margin-top: 20vh;
   }
+  .scroll-container{
+    overflow-y: scroll;
+  }
 }
  @media only screen and (min-width: 769px) and (max-width: 820px) {
   .mat-card-wrapper {
     margin-top: 20vh;
+  }
+  .scroll-container{
+    overflow-y: scroll;
   }
 }
 
@@ -304,11 +318,17 @@ input:focus {
   .mat-card-wrapper {
     margin-top: 20vh;
   }
+  .scroll-container{
+    overflow-y: scroll;
+  }
 }
 
 @media only screen and (width: 1024px) and (max-width: 600px) {
   .mat-card-wrapper {
     margin-top: 20vh;
+  }
+  .scroll-container{
+    overflow-y: scroll;
   }
 }
 
@@ -316,17 +336,27 @@ input:focus {
   .mat-card-wrapper {
     margin-top: 20vh;
   }
+  .scroll-container{
+    overflow-y: scroll;
+  }
 }
 
 @media only screen and (min-width: 1025px) and (max-width: 1366px) {
   .mat-card-wrapper {
     margin-top: 20vh;
   }
+  .scroll-container{
+    overflow-y: scroll;
+  }
 }
 
-@media only screen and (min-width: 1367px) and (max-width: 1440px) {
+@media only screen and (min-width: 1366px) and (max-width: 1440px) {
   .mat-card-wrapper {
-    margin-top: 20vh;
+    margin-top: 10vh;
+    scroll-behavior: smooth;
+  }
+  .scroll-container{
+    overflow-y: scroll;
   }
 }
 @media only screen and (min-width: 540px) and (max-width: 720px) {
@@ -338,6 +368,23 @@ input:focus {
   }
   .mat-card-white{
     margin: 20px;
+  }
+  .scroll-container{
+    overflow-y: scroll;
+  }
+}
+@media only screen and (min-width: 412px) and (max-width: 914px) {
+  .mat-card-wrapper {
+    margin-top: 10vh;
+    /* flex-direction: column;
+    width: 80%; */
+    /* margin: 55px; */
+  }
+  .mat-card-white{
+    margin: 20px;
+  }
+  .scroll-container{
+    overflow-y: scroll;
   }
 }
 /* @media only screen and (max-width: 600px) {

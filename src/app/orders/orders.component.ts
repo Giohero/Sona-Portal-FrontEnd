@@ -172,7 +172,7 @@ export class OrdersComponent {
           ItemCode: element.ItemCode,
           Quantity: element.Quantity,
           TaxCode: 'EX',
-          U_Comments: element.U_Comments,
+          FreeText: element.FreeText,
           LineNum:element.LineNum
         })
       });
@@ -884,7 +884,7 @@ export class OrdersComponent {
           TaxCode: "EX",
           UnitPrice: Number(this.Price),
           LineTotal: Number(this.Price) * this.Quantity,
-          U_Comments: "",
+          FreeText: "",
           DiscountPercent: '0.0',
           Icon: 'cloud_queue'
         };
@@ -1172,7 +1172,7 @@ export class OrdersComponent {
             TaxCode: 'EX',
             LineTotal: element.LineTotal,
             UnitPrice: element.UnitPrice,
-            U_Comments: element.U_Comments,
+            FreeText: element.FreeText,
             LineNum:element.LineNum,
             DiscountPercent: element.DiscountPercent
           })

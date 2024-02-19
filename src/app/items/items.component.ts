@@ -18,20 +18,30 @@ import { MatDialog } from '@angular/material/dialog';
   
 })
 export class ItemsComponent {
-  ListItems!: Value[] ;
-  displayedColumns : string [] = ['selectedCustomer', 'item', 'orderTotal', 'symbol'];
-  dataSource = new MatTableDataSource(this.ListItems);
+  ListItems: Value[] = [];
+  // dataSource = new MatTableDataSource(this.ListItems);
   isLoading = false;
   isOnline = true;
   showTable = 'none';
+  pagedItems: Value[] = [];
+  totalItems = 0;
+  currentPage = 0;
+  itemsPerPage = 10;
 
   private Db?: Dexie;
   //private OrderIndexDB:any;
 
-  applyFilter(event: Event){
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    
+    this.pagedItems = this.ListItems.filter(item =>
+      item.ItemName.toLowerCase().includes(filterValue) ||
+      item.ItemCode.toLowerCase().includes(filterValue) ||
+      item.BarCode.toLowerCase().includes(filterValue)
+    );
+    this.setPage(0);
   }
+  
 
   constructor(
     private orderService: ServiceService,
@@ -44,6 +54,7 @@ export class ItemsComponent {
   }
 
   ngOnInit(): void {
+    this.getItemsC();
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
       //console.log('llego el cambio a '+newWifi)
       this.isOnline = newWifi;
@@ -54,8 +65,6 @@ export class ItemsComponent {
     else
       this.getInformationIndex();
   }
-
-  columnsToDisplay = ['selectedCustomer', 'item', 'orderTotal', 'actions'];
   
   async getInformationIndex()
   {
@@ -63,7 +72,7 @@ export class ItemsComponent {
     try
     {
       this.ListItems = await this.itemsService.RetrieveItemsIndex();
-      this.dataSource = new MatTableDataSource(this.ListItems);
+      
       //console.log(this.ListItems)
       this.isLoading = false;
       this.showTable = 'inline';
@@ -93,8 +102,8 @@ export class ItemsComponent {
       (retData) => {
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
           this.ListItems = JSON.parse(retData.response!);
-  
-          this.dataSource = new MatTableDataSource(this.ListItems);
+          this.totalItems = this.ListItems.length;
+          this.setPage(0);
           this.isLoading = false;
           this.showTable = 'inline';
         } else {
@@ -147,7 +156,15 @@ export class ItemsComponent {
   removeCustomer(customer: any) {
     // Logic to delete costumer selected
   }
+  setPage(page: number) {
+    this.currentPage = page;
+    const startIndex = this.currentPage * this.itemsPerPage;
+    this.pagedItems = this.ListItems.slice(startIndex, startIndex + this.itemsPerPage);
+  }
 
+  pageChanged(event: any) {
+    this.setPage(event.pageIndex);
+  }
 
   openSnackBar(message: string, icon: string, type: string, color: string) {
     const dialogRef = this.dialog.open(SnackbarsComponent, {

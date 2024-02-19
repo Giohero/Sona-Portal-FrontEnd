@@ -190,7 +190,7 @@ obtainUser() {
           TaxCode: "EX",
           //UnitPrice: this.Price,
           LineTotal: parseFloat(this.Price) * this.Quantity,
-          U_Comments: "",
+          FreeText: "",
           Icon: 'cloud_queue',
           LineNum:this.LineNumber
         };
@@ -392,7 +392,7 @@ obtainUser() {
             ItemCode: element.ItemCode,
             Quantity: element.Quantity,
             TaxCode: 'EX',
-            U_Comments: element.U_Comments,
+            FreeText: element.FreeText,
             LineNum:element.LineNum
           })
         });

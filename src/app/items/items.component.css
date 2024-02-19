@@ -38,7 +38,32 @@ table {
     align-items: center;
     margin-top: 100px;
 }
-
+mat-card {
+    border-top: 10px solid #0F97A6;
+    background-color: rgba(254, 254, 254, 1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+}
+mat-card:hover{
+    transform: scale(1.15); 
+    transition: transform 0.3s ease;
+}
+.CardItems{
+    font-family: 'Roboto Mono', sans-serif;
+    font-size: 15px;
+    flex: 1;
+    
+    
+}
+.itemSection{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: right;
+    font-size: 17px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    height: 250px;
+}
 @media screen and (max-width: 600px){
     .table-container{
         margin: 1px;

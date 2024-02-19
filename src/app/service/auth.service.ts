@@ -126,7 +126,7 @@ export class AuthService implements OnInit {
         this.getUser(profile!.mail!)
         this.getName(profile.givenName + ' ' + profile.surname)
         
-        //console.log(this.msalService.instance.getAccountByLocalId(profile.id!))
+        console.log(this.msalService.instance.getAccountByLocalId(profile.id!))
         var account = this.msalService.instance.getAccountByLocalId(profile.id!)
         this.getToken(account!.idToken!)
         this.msalService.instance.setActiveAccount(account)
