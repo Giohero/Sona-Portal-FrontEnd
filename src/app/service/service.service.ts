@@ -18,6 +18,7 @@ export class ServiceService {
    myappurlcosmos = "https://sonafunctions01.azurewebsites.net/";
 
   myapiurl = "api/"
+  deleteItem: any;
 
   constructor(private myhttp: HttpClient, private auth: AuthService, private router: Router) { 
     //this.msalService.initialize();

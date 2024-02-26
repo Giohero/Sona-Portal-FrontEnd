@@ -6,6 +6,51 @@
   width: 100%;
   min-height: 100vh;
 }
+/* #btnplus{
+  display: none;
+}
+.ContainerBtnFloat{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+.options i, .bi-plus-circle{
+  display: block;
+  text-decoration: none;
+  background-color:rgb(255, 129, 120);
+  color: #fff;
+  width: 55px;
+  height: 55px;
+  line-height: 55px;
+  text-align: center;
+  border-radius: 50%;
+  box-shadow:0px 1px 10px rgba(0,0,0,0.4);
+  transition: all 500ms ease;
+}
+.options i:hover{
+  background: #fff;
+  color: #ff5f6c;
+}
+.options i{
+  margin-bottom: -15px;
+  opacity: 0;
+  visibility: hidden; 
+}
+#btnplus:checked ~ .options i{
+  margin-bottom: 10px;
+  opacity: 1;
+  visibility: visible;
+}
+.bi-plus-circle{
+  cursor: pointer;
+  background: #397eac;
+  font-size: 23px;
+}
+#btnplus:checked ~ .btnbutton .bi-plus-circle{
+  transform: rotate(135deg); /* Ajuste el grado si es necesario */
+  /* font-size: 25px; */
+
+
 .doc-num-container {
   background-color: #a62934; /* Background color */
   padding: 5px 10px; 

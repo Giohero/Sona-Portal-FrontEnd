@@ -47,6 +47,7 @@ import { OrderEditComponent } from './order-edit/order-edit.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DialogRechargeComponent } from './dialog-recharge/dialog-recharge.component';
 import { ScannerItemComponent } from './scanner-item/scanner-item.component';
+import { OrderManagementService } from './service/order-management.service';
 
 
 const isIE =
@@ -130,7 +131,7 @@ const isIE =
       useClass: MsalInterceptor,
       multi: true,
     },
-    MsalGuard,SignalRService
+    MsalGuard,SignalRService, OrderManagementService
   ],
   bootstrap: [AppComponent, MsalRedirectComponent],
   

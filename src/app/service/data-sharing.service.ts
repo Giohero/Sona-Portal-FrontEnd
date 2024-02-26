@@ -37,6 +37,7 @@ export class DataSharingService {
   private updateRecharge: BehaviorSubject<{}> = new BehaviorSubject<{}>({});
   updateRecharge$: Observable<{}> = this.updateRecharge.asObservable();
 
+  private order : any;
   constructor() { }
 
   setCustomerData(customer: any) {
@@ -102,6 +103,7 @@ export class DataSharingService {
   }
 
   getOrderReview() {
+    console.log('Valor de this.order en getOrderCReview:', this.order);
     return this.OrderData;
   }
 

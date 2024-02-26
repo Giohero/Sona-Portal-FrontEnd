@@ -16,6 +16,10 @@ import { error } from 'jquery';
   styleUrls: ['./order-index.component.css']
 })
 export class OrderIndexComponent {
+isWindowMaximized: any;
+toggleWindow() {
+throw new Error('Method not implemented.');
+}
   displayedColumns: string[] = ['docNum', 'dueDate', 'total', 'numAtCard', 'cardInfo'];
   displayedColumnsDrafts: string[] = ['Id', 'PostingDate', 'DeliveryDate', 'TaxDate', 'CardCode'];
   ListOrders: Order[] = []; 

@@ -9,6 +9,7 @@ export class DocumentLines {
     Icon?:string;
     DiscountPercent?:string;
     LineNum?:number;
+    InStock?: number;
 }
 
 export class Order {

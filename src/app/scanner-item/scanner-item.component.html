@@ -1,4 +1,3 @@
-<!-- item-info-modal.component.html -->
 <mat-dialog-content class="mat-typography">
   <div class="modal-header">
     <h1 mat-dialog-title style="color: rgb(255, 255, 255);">Item Info</h1>
@@ -7,10 +6,8 @@
     </button>
   </div>
 
-  <!-- Contenedor Flexbox para los campos -->
-  <div class="modal-body" style="color: black; display: flex; justify-content: space-between; flex-wrap: wrap;">
-    <!-- Columna izquierda con ajuste de ancho -->
-    <div style="width: calc(50% - 10px);">
+  <div class="modal-body">
+    <div class="half-width">
       <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label>Item Code</mat-label>
         <input matInput [value]="Item.ItemCode" disabled>
@@ -18,12 +15,11 @@
       
       <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label>Available</mat-label>
-        <input matInput placeholder="Available" disabled="true">
+        <input matInput [value]="inStock" placeholder="Available" disabled="true">
       </mat-form-field>
     </div>
 
-    <!-- Columna derecha con ajuste de ancho -->
-    <div style="width: calc(50% - 10px);">
+    <div class="half-width">
       <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label>Item Name</mat-label>
         <input matInput [value]="Item.ItemName" disabled>
@@ -36,10 +32,27 @@
     </div>
   </div>
 
-  <div class="modal-actions" style="display: flex; justify-content: space-between; padding-top: 20px;">
-    <button mat-button color="warn" (click)="AddInner()">Inner {{Item.U_InnerPackQty}}</button>
-    <button mat-button color="warn" (click)="AddMaster()">Master {{Item.U_MasterPackQty}}</button>
-    <!-- <button mat-button color="warn" mat-dialog-close (click)="CancelInfo()">Cancel</button> -->
-    <button mat-button color="warn" (click)="UpdateScanner()">Update</button>
+  <!-- UDF COMMENTS moved outside of the modal-body -->
+  <div style="margin-top: 20px; text-align: center;">
+    <!-- <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label class="label">UDF Comments:</mat-label>
+      <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [disabled]="blockStatus">
+    </mat-form-field> -->
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Notes and remarks: </mat-label>
+      <input matInput class="boxCustom editable-input" placeholder="Notes and remarks" [(ngModel)]="udfComments">
+    </mat-form-field>
+  </div>
+  <!-- btns actions -->
+  <div>
+    <div class="modal-actions" style="display: flex; justify-content: space-between; padding-top: 20px;">
+      <button mat-button color="warn" (click)="AddInner()">Inner {{Item.U_InnerPackQty}}</button>
+      <button mat-button color="warn" (click)="AddMaster()">Master {{Item.U_MasterPackQty}}</button>
+      <button mat-button color="warn" (click)="UpdateScanner()">Update</button>
+      <button mat-button color="warn" (click)="DeleteScanner()">Delete</button>
+    </div>
+  </div>
+  <div class="label-container">
+    
   </div>
 </mat-dialog-content>

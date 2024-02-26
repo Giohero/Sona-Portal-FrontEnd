@@ -92,9 +92,9 @@
             <mat-card-content>
               <div class="button-container">
               <h2 class="h2Mat">Item list <mat-icon>shopping_cart</mat-icon></h2>
-                <button mat-raised-button color="primary" class="add-button" [disabled]="blockStatus">
+                <!-- <button mat-raised-button color="primary" class="add-button" (click)="OpenModal()" [disabled]="blockStatus">
                   <mat-icon>add</mat-icon> Add Item
-                </button>
+                </button> -->
               </div>
               <!-- Utiliza ngFor para recorrer todos los elementos de DocumentLines -->
               <div *ngFor="let item of order.DocumentLines; let i = index">
@@ -132,15 +132,15 @@
                     <label class="label">Line Total:</label>
                     <input  type="number"  class="boxCustom" matInput placeholder="LineTotal" [(ngModel)]="item.LineTotal" disabled="true">
                   </div>
-                  <div class="label-container">
+                  <!-- <div class="label-container">
                     <label class="label">UDF Comments:</label>
                     <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.FreeText" (change)="updateOrder('Change_Comments_LineNum_'+i)" [disabled]="blockStatus">
-                  </div>
-                  <!-- <div class="label-container">
-                    <button mat-icon-button (click)="removeItem(i)" [disabled]="blockStatus!">
-                      <mat-icon >delete</mat-icon>
-                    </button>
                   </div> -->
+                  <div class="label-container">
+                    <button mat-icon-button (click)="OpenModalEdit(item, i)" [disabled]="blockStatus!">
+                      <mat-icon >edit</mat-icon>
+                    </button>
+                  </div>
                 </div>
                 <mat-divider></mat-divider>
               </div>
@@ -150,10 +150,10 @@
             </div> 
             <br>
           </mat-card>
-         
         </ng-container>
         <br><br>
       </ng-container>
     </div>
   </div>
+  
 </div>

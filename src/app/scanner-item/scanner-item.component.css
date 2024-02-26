@@ -6,3 +6,17 @@
 .mat-typography{
     background-color:rgb(255, 254, 210);
 }
+.full-width {
+    width: 100%;
+  }
+  
+  .half-width {
+    width: calc(50% - 10px);
+  }
+  
+  .modal-body {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  

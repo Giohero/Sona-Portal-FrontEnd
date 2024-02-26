@@ -193,7 +193,7 @@ export class IndexItemsService {
        
           getAllRequest.onsuccess = function() {
             // Filtrar manualmente para encontrar objetos que coincidan con tu criterio
-            const resultFilter = getAllRequest.result.find(objeto => objeto.BarCode === barCode.toString());
+            const resultFilter = getAllRequest.result.find(objeto => objeto.BarCode === barCode.toString() || objeto.ItemCode === barCode);
             // console.log("Objetos filtrados por CodeBars:", resultFilter);
             resolve(resultFilter);
           };

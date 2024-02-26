@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, Inject, OnInit, ViewChild, OnDestroy} from '@angular/core';
 import { DocumentLines, Order } from '../models/order';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -21,6 +21,8 @@ import { IndexCustomersService } from '../service/index-customers.service';
 import { IndexItemsService } from '../service/index-items.service';
 import { BusinessPartner } from '../models/customer';
 import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
+import { Subscription } from 'rxjs';
+import { OrderManagementService } from '../service/order-management.service';
 
 
 declare var bootstrap: any; 
@@ -31,7 +33,7 @@ declare var bootstrap: any;
   styleUrls: ['./order-edit.component.css'],
   providers: [DatePipe]
 })
-export class OrderEditComponent implements OnInit {
+export class OrderEditComponent implements OnInit, OnDestroy {
   order: Order | undefined; 
   orderOld: any | undefined; 
   post!: FormControl;
@@ -59,7 +61,8 @@ export class OrderEditComponent implements OnInit {
   searchText = '';
   captureActive= false;
   textConcatenaded= '';
-  ItemBar:Value | undefined;
+  ItemBar: Value | undefined;
+  private itemDeletedSubscription: Subscription;
 
 
   @ViewChild('Scanner-item') modal: any;
@@ -77,13 +80,21 @@ export class OrderEditComponent implements OnInit {
     private router: Router,
     private custService:IndexCustomersService,
     private itemsService:IndexItemsService,
+    private ScannerReference : OrderManagementService,
     private cdr: ChangeDetectorRef
     ) {
+    this.itemDeletedSubscription = this.ScannerReference.itemDeleted$.subscribe({
+      next: (index) => {
+        // Manejar la eliminación aquí si es necesario, por ejemplo, actualizar la UI.
+        console.log(`Item eliminado en el índice: ${index}`);
+      }
+    })
+    
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
     // const currentRoute = this.router.url;
     // console.log('Ruta actual:', currentRoute);
-    //console.log(this.order)
+    // console.log(this.order)
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
 
@@ -119,7 +130,7 @@ export class OrderEditComponent implements OnInit {
       const DocDueDate = new Date(this.order!.DocDueDate);
       DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
       this.delivery = new FormControl(DocDueDate);
-        //console.log(this.delivery)
+        //console.log(this.delivery)  
       if(this.OrderIndexDB.error != '')
       {
         const ErrorString =  JSON.parse(this.OrderIndexDB.error);
@@ -366,7 +377,9 @@ export class OrderEditComponent implements OnInit {
     //console.log(this.OrderIndexDB)
 
   }
-
+  ngOnDestroy(): void{
+    this.itemDeletedSubscription.unsubscribe();
+  }
   getSignalR(name: string, email: string): void {
     this.time = setInterval(() => {
       if (name !== ' ' && email !== ' ') {
@@ -467,7 +480,7 @@ export class OrderEditComponent implements OnInit {
     else
       return 'green'
   }
-
+  
   changeQuantity(item: DocumentLines) {
   //console.log(item);
   //console.log(this.orderOld);
@@ -576,6 +589,44 @@ export class OrderEditComponent implements OnInit {
 
     // $(this.modal.nativeElement).modal('show');
   }
+  async OpenModalEdit(itemSelect: DocumentLines, index: number){
+    const itemFound = await this.itemsService.GetItemIndexbyBarCode(itemSelect.ItemCode);
+        console.log(itemFound);
+        
+        if (itemFound != undefined) {
+          console.log(itemSelect.LineNum)
+          itemFound.LineNum = itemSelect.LineNum
+          const dialogRef = this.dialog.open(ScannerItemComponent,{
+            width: '550px',
+            height: 'auto',
+            data: {...itemFound}
+          });
+      
+          dialogRef.afterClosed().subscribe(result =>  {
+            console.log('Window closed', result)
+            
+            if(result != undefined){
+              if(itemSelect.Quantity != result.Quantity){
+                itemSelect.Quantity = result.Quantity 
+                this.changeQuantity(itemSelect)
+                // console.log("se cambia cantidad")
+              }
+              if(result.FreeText != "" && result.FreeText != undefined){
+                itemSelect.FreeText = result.FreeText
+                this.updateOrder('ChangeComments_LineNum'+ itemSelect.LineNum);
+                // console.log("se cambia los comentarios")
+              }
+              if(result.ItemInfo.LineNum != -1){
+                this.removeItem(index)
+                // console.log("se borra el item")
+              }
+            }
+      
+          })
+        }
+    
+    // $(this.modal.nativeElement).modal('show');
+  }
   removeItem(index: number): void {
     if (this.order && this.order.DocumentLines && this.order.DocumentLines.length > index) {
       var itemDelete = this.order.DocumentLines[index];
@@ -585,6 +636,7 @@ export class OrderEditComponent implements OnInit {
     }
   }
 
+  
   changeCustomer(order:Order){
     order.CardCode = ''
     order.CardName = ''
@@ -872,26 +924,59 @@ export class OrderEditComponent implements OnInit {
   textConcatenated = '' 
   
  @HostListener('window:keydown', ['$event'])
-  async handleKeyDown(event: KeyboardEvent) {
-     this.textConcatenated += event.key;
-     if (this.timeLastTimePressKey !== null) {
-       clearTimeout(this.timeLastTimePressKey);
-     }
+  // async handleKeyDown(event: KeyboardEvent) {
+  //    this.textConcatenated += event.key;
+  //    if (this.timeLastTimePressKey !== null) {
+  //      clearTimeout(this.timeLastTimePressKey);
+  //    }
 
-     this.timeLastTimePressKey = setTimeout(async () => {
-       console.log("El texto ingresado es:", this.textConcatenated);
+  //    this.timeLastTimePressKey = setTimeout(async () => {
+  //      console.log("El texto ingresado es:", this.textConcatenated);
        
-       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
-        console.log(this.ItemBar);
-        if (this.ItemBar != undefined){
-          this.OpenModal( this.ItemBar)
-        }
-        // else{
-        //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
-        //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+  //      this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
+  //       console.log(this.ItemBar);
+  //       if (this.ItemBar != undefined){
+  //         // this.OpenModal( this.ItemBar)
+  //       }
+  //       // else{
+  //       //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
+  //       //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
         
-       this.textConcatenated = '';
-     }, 20);
-   }
- 
+  //      this.textConcatenated = '';
+  //    }, 20);
+  //  }
+  @HostListener('window:keydown', ['$event'])
+  async handleKeyDown(event: KeyboardEvent) {
+    // Ignora la entrada si no es una tecla imprimible (ej. teclas de control)
+    if (event.key.length === 1) {
+      this.textConcatenated += event.key;
+    }
+    
+    if (this.timeLastTimePressKey !== null) {
+      clearTimeout(this.timeLastTimePressKey);
+    }
+  
+    this.timeLastTimePressKey = setTimeout(async () => {
+      console.log("El texto ingresado es:", this.textConcatenated);
+      
+      // Verifica si el texto concatenado comienza con '.' y tiene una longitud mayor a 1 (indicando que hay algo después del '.')
+      if (this.textConcatenated.startsWith('.') && this.textConcatenated.length > 1) {
+        const code = this.textConcatenated.slice(1); // Obtiene el código sin el punto inicial
+        
+        // Intenta obtener el ítem por el código
+        this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(code);
+        console.log(this.ItemBar);
+        
+        if (this.ItemBar != undefined) {
+          this.OpenModal(this.ItemBar);
+        } else {
+          // Opcional: Mostrar un mensaje si el código de barras no existe
+          // this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+        }
+      }
+      // Restablece el texto concatenado para la próxima entrada
+      this.textConcatenated = '';
+    }, 20); // Puedes ajustar este tiempo según necesites
+  }
+  
 }
