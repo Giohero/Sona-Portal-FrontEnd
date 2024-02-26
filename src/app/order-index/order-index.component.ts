@@ -9,6 +9,7 @@ import { IndexDbService } from '../service/index-db.service';
 import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { error } from 'jquery';
+import { OrderWindowComponent } from '../order-window/order-window.component';
 
 @Component({
   selector: 'app-order-index',
@@ -265,5 +266,11 @@ getSearchFilter()
     setTimeout(() => {
       dialogRef.close();
     }, 5000); 
+  }
+  OrderWindow() {
+    this.dialog.open(OrderWindowComponent, {
+      width: '400px', // ajusta el ancho según sea necesario
+      height: '600px', // ajusta el alto según sea necesario
+    });
   }
 }

@@ -20,6 +20,8 @@ import { MatTableModule } from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; /* component for us an api  */
 import { SignalRService } from './service/signalr.service';
+import { OrderWindowComponent } from './order-window/order-window.component';
+
 /**default */
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -47,7 +49,6 @@ import { OrderEditComponent } from './order-edit/order-edit.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DialogRechargeComponent } from './dialog-recharge/dialog-recharge.component';
 import { ScannerItemComponent } from './scanner-item/scanner-item.component';
-import { OrderManagementService } from './service/order-management.service';
 
 
 const isIE =
@@ -59,6 +60,7 @@ const isIE =
     AppComponent,
     LoginComponent,
     ScannerItemComponent,
+    OrderWindowComponent
     //CartComponent
     // FilterPipe
     // SidenavComponent,
@@ -131,7 +133,7 @@ const isIE =
       useClass: MsalInterceptor,
       multi: true,
     },
-    MsalGuard,SignalRService, OrderManagementService
+    MsalGuard,SignalRService
   ],
   bootstrap: [AppComponent, MsalRedirectComponent],
   

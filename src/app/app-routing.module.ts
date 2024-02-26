@@ -13,6 +13,8 @@ import { AuthGuardService } from './service/auth-guard.service';
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component:LoginComponent},
+  { path: 'order-edit',
+  loadChildren: () => import('./order-edit/order-edit.component').then(m => m.OrderEditComponent)},
   //Creating canActive for routes when is logged 
   { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(x => x.DashboardModule),canActivate: [MsalGuard]},
 ];

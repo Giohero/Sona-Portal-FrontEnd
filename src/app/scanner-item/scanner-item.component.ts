@@ -10,7 +10,7 @@ import { DocumentLines, Order } from '../models/car';
 import { Pipe, PipeTransform } from '@angular/core';
 import { MatInput } from '@angular/material/input';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
-import { OrderManagementService } from '../service/order-management.service';
+
 
 @Component({
   selector: 'app-scanner-item',
@@ -29,7 +29,7 @@ export class ScannerItemComponent implements OnInit {
   itemSelect : DocumentLines | undefined;
   
 
-  constructor (private cdr: ChangeDetectorRef, private itemsService: IndexItemsService, private dataSharing: DataSharingService, private orderService: ServiceService, private orderManagementService : OrderManagementService,
+  constructor (private cdr: ChangeDetectorRef, private itemsService: IndexItemsService, private dataSharing: DataSharingService, private orderService: ServiceService, 
     public ScannerReference: MatDialogRef<ScannerItemComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: ItemValue){
       console.log(data);
@@ -87,7 +87,7 @@ export class ScannerItemComponent implements OnInit {
   DeleteScanner(): void {
     var ItemAdd = {ItemInfo : this.Item, Quantity : this.QuantityItem}
     this.ScannerReference.close(ItemAdd);
-}
+  }
 
   Available(){
     return this.inStock;

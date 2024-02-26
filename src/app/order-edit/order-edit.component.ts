@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, Inject, OnInit, ViewChild, OnDestroy} from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
 import { DocumentLines, Order } from '../models/order';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -22,7 +22,6 @@ import { IndexItemsService } from '../service/index-items.service';
 import { BusinessPartner } from '../models/customer';
 import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
 import { Subscription } from 'rxjs';
-import { OrderManagementService } from '../service/order-management.service';
 
 
 declare var bootstrap: any; 
@@ -33,7 +32,7 @@ declare var bootstrap: any;
   styleUrls: ['./order-edit.component.css'],
   providers: [DatePipe]
 })
-export class OrderEditComponent implements OnInit, OnDestroy {
+export class OrderEditComponent implements OnInit {
   order: Order | undefined; 
   orderOld: any | undefined; 
   post!: FormControl;
@@ -62,7 +61,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
   captureActive= false;
   textConcatenaded= '';
   ItemBar: Value | undefined;
-  private itemDeletedSubscription: Subscription;
+
 
 
   @ViewChild('Scanner-item') modal: any;
@@ -80,15 +79,9 @@ export class OrderEditComponent implements OnInit, OnDestroy {
     private router: Router,
     private custService:IndexCustomersService,
     private itemsService:IndexItemsService,
-    private ScannerReference : OrderManagementService,
     private cdr: ChangeDetectorRef
     ) {
-    this.itemDeletedSubscription = this.ScannerReference.itemDeleted$.subscribe({
-      next: (index) => {
-        // Manejar la eliminación aquí si es necesario, por ejemplo, actualizar la UI.
-        console.log(`Item eliminado en el índice: ${index}`);
-      }
-    })
+  
     
     this.order = dataSharing.getOrderCReview();
     this.OrderIndexDB = dataSharing.getOrderIndexDB();
@@ -377,9 +370,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
     //console.log(this.OrderIndexDB)
 
   }
-  ngOnDestroy(): void{
-    this.itemDeletedSubscription.unsubscribe();
-  }
+ 
   getSignalR(name: string, email: string): void {
     this.time = setInterval(() => {
       if (name !== ' ' && email !== ' ') {
