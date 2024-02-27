@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input,Injectable,Type, ViewChild, ViewContainerRef } from '@angular/core';// ComponentFactoryResolver es ambiguo desde Angular 13
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-order-window',
@@ -6,7 +7,18 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./order-window.component.css']
 })
 export class OrderWindowComponent {
-  @Input() window!: OrderWindowComponent;
+  @ViewChild('orderEditContainer', { read: ViewContainerRef }) orderEditContainer: ViewContainerRef | undefined;//Apunto al componente padre o hijo
+  private componentRef: Type<any> | undefined; //
+
+  setComponent(component: Type<any>) {
+    this.componentRef = component;
+  }
+
+  getComponent(): Type<any> {
+   return this.componentRef!;
+  }
+
+  @Input() window!: OrderWindowComponent; //Mostrar o contraer ventana 
   minimized: boolean = false;
   maximized: boolean = true;
   

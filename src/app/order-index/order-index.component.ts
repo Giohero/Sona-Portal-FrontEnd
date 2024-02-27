@@ -1,4 +1,4 @@
-import { Component, Renderer2 } from '@angular/core';
+import { Component, Renderer2,ViewChild, ViewContainerRef } from '@angular/core';
 import { ServiceService } from '../service/service.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +10,8 @@ import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { error } from 'jquery';
 import { OrderWindowComponent } from '../order-window/order-window.component';
+import { OrderWindowService } from '../service/order-window.service';
+import { OrderEditComponent } from '../order-edit/order-edit.component';
 
 @Component({
   selector: 'app-order-index',
@@ -17,6 +19,7 @@ import { OrderWindowComponent } from '../order-window/order-window.component';
   styleUrls: ['./order-index.component.css']
 })
 export class OrderIndexComponent {
+@ViewChild('orderEditContainer', { read: ViewContainerRef }) container: ViewContainerRef | undefined;//Apunto al componente padre o hijo
 isWindowMaximized: any;
 toggleWindow() {
 throw new Error('Method not implemented.');
@@ -39,7 +42,8 @@ throw new Error('Method not implemented.');
     private dataSharing: DataSharingService,
     private indexDB: IndexDbService, 
     private auth:AuthService, 
-    private service:ServiceService)
+    private service:ServiceService,
+    private orderWindowService: OrderWindowService)
   {
     window.addEventListener('online', async () => {
       this.renderer.removeClass(document.body, 'offline');
@@ -121,8 +125,22 @@ throw new Error('Method not implemented.');
       }
     });
     this.getSearchFilter();
+    this.loadComponent();
   }
-  
+
+  loadComponent() {//Aqui hago la carga del componente
+    const component = this.orderWindowService.getComponent();
+    if (component) {
+      this.container!.clear();
+      this.container!.createComponent(component); // Aquí transformo el componente cargado, creo es donde se simplifica la creacion del componente.
+    }
+  }
+
+  cargarOrderEdit() {//Aqui ya busco llamar al componente cargado
+    this.orderWindowService.setComponent(OrderEditComponent);
+    this.loadComponent(); // Aqui invoco la carga del componente.
+  }
+
   reloadAll()
   {
     this.searchOrder = undefined;
@@ -267,10 +285,18 @@ getSearchFilter()
       dialogRef.close();
     }, 5000); 
   }
+ 
   OrderWindow() {
-    this.dialog.open(OrderWindowComponent, {
-      width: '400px', // ajusta el ancho según sea necesario
-      height: '600px', // ajusta el alto según sea necesario
+    // Creo que no es necesario configurar el componente OrderWindowService si vamos a mostar solamente el componente OrderEdit
+    const dialogRef = this.dialog.open(OrderEditComponent, {
+      width: '400px',/* Nos [permite cambiar tamanio chat]*/
+      height: '600px',
+    });
+  
+    // manejo del dialogo y el cierre del dialogo y tambien recibir datos
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      
     });
   }
 }
