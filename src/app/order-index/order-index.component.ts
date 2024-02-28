@@ -1,4 +1,4 @@
-import { Component, Renderer2,ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, Renderer2 } from '@angular/core';
 import { ServiceService } from '../service/service.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,9 +7,8 @@ import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
 import { AuthService } from '../service/auth.service';
-import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { catchError, mergeMap, retryWhen, throwError, timer,retry, of } from 'rxjs';//retrywhen is deprecated retry is better from v10
 import { error } from 'jquery';
-import { OrderWindowService } from '../service/order-window.service';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
 
 @Component({
@@ -42,7 +41,7 @@ export class OrderIndexComponent {
     private indexDB: IndexDbService, 
     private auth:AuthService, 
     private service:ServiceService,
-    private orderWindowService: OrderWindowService)
+    )
   {
     window.addEventListener('online', async () => {
       this.renderer.removeClass(document.body, 'offline');
@@ -143,35 +142,64 @@ export class OrderIndexComponent {
       });
   }
   
+  // async reload() {
+  //   return new Promise<void>((resolve, reject) => {
+  //     this.orderService.getOrders()
+  //     .pipe(
+  //       retryWhen(errors =>
+  //         errors.pipe(
+  //           mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+  //         )
+  //       ),
+  //       catchError(error => {
+  //         this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+  //         this.isLoading = false;
+  //         return throwError(error);
+  //       })
+  //     )
+  //     .subscribe(
+  //       retData => {
+  //         this.ListOrders = JSON.parse(retData.response!);
+  //         //console.log('ListOrders:', this.ListOrders);
+  //         this.sortOrders();
+  //         // this.ListOrders.forEach(order => {
+  //         //   //console.log(`Order ${order.DocNum}: Total - ${order.DocTotal}`);
+  //         // });
+  //         resolve();
+  //       },
+  //       error => {
+  //         reject(error);
+  //       }
+  //     );      
+  //   });
+  // }
+
   async reload() {
     return new Promise<void>((resolve, reject) => {
       this.orderService.getOrders()
-      .pipe(
-        retryWhen(errors =>
-          errors.pipe(
-            mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-          )
-        ),
-        catchError(error => {
-          this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-          this.isLoading = false;
-          return throwError(error);
-        })
-      )
-      .subscribe(
-        retData => {
-          this.ListOrders = JSON.parse(retData.response!);
-          //console.log('ListOrders:', this.ListOrders);
-          this.sortOrders();
-          // this.ListOrders.forEach(order => {
-          //   //console.log(`Order ${order.DocNum}: Total - ${order.DocTotal}`);
-          // });
-          resolve();
-        },
-        error => {
-          reject(error);
-        }
-      );      
+        .pipe(
+          retry({
+            count: 3, // Maximum number of retry attempts
+            delay: (retryCount, error) => retryCount < 3 ? of(retryCount * 5000) : throwError(() => new Error('Retry limit reached'))
+          }),
+          catchError(error => {
+            this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
+            this.isLoading = false;
+            return throwError(() => new Error('An error occurred'));
+          })
+        )
+        .subscribe({
+          next: retData => {
+            this.ListOrders = JSON.parse(retData.response!);
+             //console.log('ListOrders:', this.ListOrders);
+            this.sortOrders();
+             // this.ListOrders.forEach(order => {
+             //   //console.log(`Order ${order.DocNum}: Total - ${order.DocTotal}`);
+             // });
+            resolve();
+          },
+          error: error => reject(error)
+        });
     });
   }
   
