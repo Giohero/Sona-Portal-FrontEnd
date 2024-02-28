@@ -9,7 +9,6 @@ import { IndexDbService } from '../service/index-db.service';
 import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { error } from 'jquery';
-import { OrderWindowComponent } from '../order-window/order-window.component';
 import { OrderWindowService } from '../service/order-window.service';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
 
@@ -19,11 +18,11 @@ import { OrderEditComponent } from '../order-edit/order-edit.component';
   styleUrls: ['./order-index.component.css']
 })
 export class OrderIndexComponent {
-@ViewChild('orderEditContainer', { read: ViewContainerRef }) container: ViewContainerRef | undefined;//Apunto al componente padre o hijo
-isWindowMaximized: any;
-toggleWindow() {
-throw new Error('Method not implemented.');
+  isWindowMaximized: any;
+  toggleWindow() {
+  throw new Error('Method not implemented.');
 }
+
   displayedColumns: string[] = ['docNum', 'dueDate', 'total', 'numAtCard', 'cardInfo'];
   displayedColumnsDrafts: string[] = ['Id', 'PostingDate', 'DeliveryDate', 'TaxDate', 'CardCode'];
   ListOrders: Order[] = []; 
@@ -125,21 +124,10 @@ throw new Error('Method not implemented.');
       }
     });
     this.getSearchFilter();
-    this.loadComponent();
+    
   }
 
-  loadComponent() {//Aqui hago la carga del componente
-    const component = this.orderWindowService.getComponent();
-    if (component) {
-      this.container!.clear();
-      this.container!.createComponent(component); // Aquí transformo el componente cargado, creo es donde se simplifica la creacion del componente.
-    }
-  }
 
-  cargarOrderEdit() {//Aqui ya busco llamar al componente cargado
-    this.orderWindowService.setComponent(OrderEditComponent);
-    this.loadComponent(); // Aqui invoco la carga del componente.
-  }
 
   reloadAll()
   {
@@ -217,30 +205,30 @@ throw new Error('Method not implemented.');
   }
 
 
-getSearchFilter()
-{
-  let timeoutId:any = null;
-  const element = document.getElementById('search-input');
+  getSearchFilter()
+  {
+    let timeoutId:any = null;
+    const element = document.getElementById('search-input');
 
-  element!.addEventListener('input', (e) => {
-    const target = e.target as HTMLInputElement; // Casting a HTMLInputElement
-    const searchText = target.value;
-    console.log(searchText)
-    // Debouncing
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {       
-        this.service.GetOldSalesOrders(searchText).subscribe(retData => {
-          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-            this.searchedOrder = retData.response; 
-            console.log(this.searchedOrder); 
-            this.ListOrdersFound=JSON.parse(retData.response!)
-          } else {
-            this.openSnackBar(retData.response!, "error", "Error", "red");
-          }
-        });
-    }, 3000); 
-});
-}
+    element!.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement; // Casting a HTMLInputElement
+      const searchText = target.value;
+      console.log(searchText)
+      // Debouncing
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {       
+          this.service.GetOldSalesOrders(searchText).subscribe(retData => {
+            if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+              this.searchedOrder = retData.response; 
+              console.log(this.searchedOrder); 
+              this.ListOrdersFound=JSON.parse(retData.response!)
+            } else {
+              this.openSnackBar(retData.response!, "error", "Error", "red");
+            }
+          });
+      }, 3000); 
+  });
+  }
 
   selectMatCard(order:any)
   {
@@ -286,17 +274,4 @@ getSearchFilter()
     }, 5000); 
   }
  
-  OrderWindow() {
-    // Creo que no es necesario configurar el componente OrderWindowService si vamos a mostar solamente el componente OrderEdit
-    const dialogRef = this.dialog.open(OrderEditComponent, {
-      width: '400px',/* Nos [permite cambiar tamanio chat]*/
-      height: '600px',
-    });
-  
-    // manejo del dialogo y el cierre del dialogo y tambien recibir datos
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed', result);
-      
-    });
-  }
 }

@@ -20,7 +20,6 @@ import { MatTableModule } from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; /* component for us an api  */
 import { SignalRService } from './service/signalr.service';
-import { OrderWindowComponent } from './order-window/order-window.component';
 
 /**default */
 import { AppRoutingModule } from './app-routing.module';
@@ -59,8 +58,7 @@ const isIE =
   declarations: [
     AppComponent,
     LoginComponent,
-    ScannerItemComponent,
-    OrderWindowComponent
+    ScannerItemComponent
     //CartComponent
     // FilterPipe
     // SidenavComponent,
