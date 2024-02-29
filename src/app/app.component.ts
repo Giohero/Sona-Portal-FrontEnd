@@ -76,7 +76,7 @@ export class AppComponent implements OnInit {
 //   });
 // }
 
-export function webWorker(pType: string, pOrder: Order, pToken: string): Promise<any> {
+export function webWorker(pType: string, pOrder: Order | null, pToken: string): Promise<any> {
   return new Promise((resolve, reject) => {
     if (typeof Worker !== 'undefined') {
       const worker = new Worker(new URL('./app.worker', import.meta.url));

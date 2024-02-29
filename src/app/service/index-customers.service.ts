@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ServiceService } from './service.service';
 import Dexie from 'dexie';
-import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { BehaviorSubject, catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { BusinessPartner } from '../models/customer';
+import { webWorker } from '../app.component';
+import { Value } from '../models/items';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,7 @@ export class IndexCustomersService {
     });
   }
 
-  async getCustomersIndesxDB(itemService:IndexCustomersService) {
+  async getCustomersIndesxDB(itemService:IndexCustomersService, tokenAzure:string) {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('customers', 3);
       console.log("Check the index db customers")
@@ -34,7 +36,7 @@ export class IndexCustomersService {
           db.createObjectStore('customers', { keyPath: 'CardCode' });
 
           console.log('Add the customers to Index DB')
-          itemService.getCustomersToIndexDB(db)
+          itemService.getCustomersToIndexDB(tokenAzure,db)
         }
       };
   
@@ -43,7 +45,7 @@ export class IndexCustomersService {
         const db = (event.target as IDBOpenDBRequest).result;
         //console.log('Update the customers to Index DB')
 
-        itemService.getCustomersToIndexDB(db)
+        itemService.getCustomersToIndexDB(tokenAzure,db)
         resolve(db);
       };
   
@@ -53,7 +55,55 @@ export class IndexCustomersService {
     });
   }
 
-  getCustomersToIndexDB(db: IDBDatabase){
+  getCustomersToIndexDB(tokenAzure: string, db: IDBDatabase){
+    webWorker('customers',null,tokenAzure).then((data) => {
+      console.log(data)
+      if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+      {
+        //Initialize the transaction
+        const transaction = db.transaction('customers', 'readwrite');
+        const itemsStore = transaction.objectStore('customers');
+
+        let itemsData : BusinessPartner[] = JSON.parse(data.response);
+        
+        // Add element to Index DB 
+        itemsData.forEach((CustomNew) => {
+          itemsStore.add({
+            CardCode: CustomNew.CardCode,
+            CardName: CustomNew.CardName,
+            CardType: CustomNew.CardType,
+            ContactPerson: CustomNew.ContactPerson,
+            EmailAddress: CustomNew.EmailAddress,
+            Phone1: CustomNew.Phone1,
+            VatLiable: CustomNew.VatLiable,
+            BankCountry: CustomNew.BankCountry,
+            ShippingType: CustomNew.ShippingType,
+            GTSBillingAddrTel: CustomNew.GTSBillingAddrTel,
+            FederalTaxId: CustomNew.FederalTaxId,
+            Notes: CustomNew.Notes,
+            ValidRemarks: CustomNew.ValidRemarks,
+            BPAddresses: CustomNew.BPAddresses,
+            ContactEmployees: CustomNew.ContactEmployees,
+          });
+        });
+
+        this.UpdateDatabase('customers',itemsData)
+
+        console.log('Finish the process of customers');
+       
+      }
+      else
+      {
+        console.error('Error:', data.response)
+      }
+         
+    })
+    .catch((error) => {
+      //this.cloudChange = "cloud_off";
+      console.error('Error:', error);
+    });
+    
+    
     this.service.getCustomer().pipe(
       retryWhen(errors =>
         errors.pipe(

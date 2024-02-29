@@ -155,6 +155,8 @@ export class SidenavComponent implements OnInit {
     this.dataSharing.setCustomerData(null);
     this.myRouter.navigate(['dashboard/items']);
   }
-
+  toggleSidebar() {
+    this.isSidebarClosed = !this.isSidebarClosed;
+  }
 
 }

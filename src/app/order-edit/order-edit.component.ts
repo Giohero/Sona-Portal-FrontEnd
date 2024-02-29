@@ -107,7 +107,7 @@ export class OrderEditComponent implements OnInit {
       DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
       this.delivery = new FormControl(DocDueDate);
       //console.log(this.delivery)
-      if(this.order.DocumentStatus == 'bost_Close')
+      if(this.order.DocumentStatus == 'C')
         this.blockStatus = true
     }
     else if(this.OrderIndexDB != undefined)
@@ -454,7 +454,7 @@ export class OrderEditComponent implements OnInit {
 
   status(status:string)
   {
-    if(status === 'bost_Close')
+    if(status === 'C')
     {
       this.colorStatus = "2px solid #e15567";
       return 'Closed'
@@ -466,7 +466,7 @@ export class OrderEditComponent implements OnInit {
 
   statusCircle(status:string)
   {
-    if(status === 'bost_Close')
+    if(status === 'C')
       return 'red'
     else
       return 'green'

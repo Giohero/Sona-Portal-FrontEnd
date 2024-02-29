@@ -19,6 +19,7 @@ export class SignalRService {
   private tokenSignal: BehaviorSubject<string> = new BehaviorSubject<string>('');
   tokenSignal$: Observable<string> = this.tokenSignal.asObservable();
   tokenSignalR='';
+  tokenAzure='';
 
   constructor(private authService: AuthService, private service: ServiceService, private myhttp: HttpClient, private router: Router, private dataSharing: DataSharingService, private itemsIndex: IndexItemsService, private customerindex: IndexCustomersService) {
 
@@ -26,7 +27,11 @@ export class SignalRService {
       //console.log('ya paso por aqui el token '+ tokenR)
       this.tokenSignalR = tokenR;
     } )
-
+    this.authService.tokenAzure$.subscribe((newToken) => {
+      console.log(newToken);
+      this.tokenAzure = newToken;
+    });
+  
     this.startConnection();
     //this.getMessageStream();
   }
@@ -94,8 +99,8 @@ export class SignalRService {
       this.updateToken(token.accessToken)
       this.initializeSignalRConnection(token);
 
-      this.itemsIndex.getItemsIndesxDB(this.itemsIndex);
-      this.customerindex.getCustomersIndesxDB(this.customerindex);
+      this.itemsIndex.getItemsIndesxDB(this.itemsIndex,this.tokenAzure);
+      this.customerindex.getCustomersIndesxDB(this.customerindex,this.tokenAzure);
   
       this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(token.url, {

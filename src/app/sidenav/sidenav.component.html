@@ -1,3 +1,16 @@
+<div class="menu-bar" (click)="toggleSidebar()">
+  <div class="menu-title">
+    <div class="menu-icon">
+      <i class="bi bi-list"></i>
+    </div>
+    <div class="title">
+      <p>Sona Enterprises</p>
+    </div>
+    <div class="img">
+      <img src="/assets/images/SonaLogo.png" alt="Sona Logo"/>
+    </div>
+  </div>
+</div>
 <aside class="sidebar close" [ngClass]="{'close': isSidebarClosed}" (mouseenter)="expandSidebar()" (mouseleave)="collapseSidebar()">
   <div class="logo">
     <img src="/assets/images/SonaLogo.png" alt="Sona Logo" style="width: 50px; height:50px; margin: 15px;"/>

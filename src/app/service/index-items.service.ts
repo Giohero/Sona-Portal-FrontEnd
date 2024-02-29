@@ -4,6 +4,7 @@ import { Value } from '../models/items';
 import { ServiceService } from './service.service';
 import { Observable, catchError, map, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { Item } from '@azure/cosmos';
+import { webWorker } from '../app.component';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,7 @@ export class IndexItemsService {
     }
   }
 
-  async getItemsIndesxDB(itemService:IndexItemsService) {
+  async getItemsIndesxDB(itemService:IndexItemsService,tokenAzure: string) {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('items', 3);
       console.log("Check the index db items")
@@ -57,7 +58,7 @@ export class IndexItemsService {
           db.createObjectStore('items', { keyPath: 'ItemCode' });
 
           console.log('Add the items to Index DB')
-          itemService.getItemsToIndexDB(db)
+          itemService.getItemsToIndexDB(db,tokenAzure)
         }
       };
   
@@ -66,7 +67,7 @@ export class IndexItemsService {
         const db = (event.target as IDBOpenDBRequest).result;
         //console.log('Update the items to Index DB')
 
-        itemService.getItemsToIndexDB(db)
+        itemService.getItemsToIndexDB(db,tokenAzure)
         resolve(db);
       };
   
@@ -76,46 +77,44 @@ export class IndexItemsService {
     });
   }
 
-  getItemsToIndexDB(db: IDBDatabase){
-    this.service.getItems().pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-        )
-      ),
-      catchError(error => {
-        console.log(error)
-        return throwError(error);
-      })
-    ).subscribe(
-      (response) => {
-        //console.log("Carga los datos", response.response);
-  
-        //Initialize the transaction
-        const transaction = db.transaction('items', 'readwrite');
-        const itemsStore = transaction.objectStore('items');
-        
-        let itemsData : Value[] = JSON.parse(response.response!);
-        //console.log(itemsData)
-        
-        // Add element to Index DB 
-        itemsData.forEach((itemNew) => {
-          //console.log(itemNew)
-          itemsStore.add({
-            ItemCode: itemNew.ItemCode,
-            ItemName: itemNew.ItemName,
-            ItemPrices: itemNew.ItemPrices,
-            BarCode : itemNew.BarCode,
-            U_MasterPackQty : itemNew.U_InnerPackQty,
-            U_InnerPackQty : itemNew.U_InnerPackQty,
-            SalesQtyPerPackUnit : itemNew.SalesQtyPerPackUnit
-          });
-        });
+  getItemsToIndexDB(db: IDBDatabase,tokenAzure:string){
+    webWorker('items',null,tokenAzure).then((data) => {
+      console.log(data)
+      if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
+      {
+       //Initialize the transaction
+       const transaction = db.transaction('items', 'readwrite');
+       const itemsStore = transaction.objectStore('items');
 
-        this.UpdateDatabase('items', itemsData)
-        console.log('Finish the process the items');
-    }
-    );
+       let itemsData : Value[] = JSON.parse(data.response);
+       //console.log(itemsData)
+       
+       // Add element to Index DB 
+       itemsData.forEach((itemNew) => {
+         //console.log(itemNew)
+         itemsStore.add({
+           ItemCode: itemNew.ItemCode,
+           ItemName: itemNew.ItemName,
+           ItemPrices: itemNew.ItemPrices,
+           BarCode : itemNew.BarCode,
+           U_MasterPackQty : itemNew.U_InnerPackQty,
+           U_InnerPackQty : itemNew.U_InnerPackQty,
+           SalesQtyPerPackUnit : itemNew.SalesQtyPerPackUnit
+         });
+       });
+
+       this.UpdateDatabase('items', itemsData)
+       console.log('Finish the process the items');
+      }
+      else
+      {
+        console.error('Error:', data.response)
+      }}
+      ).catch((error) => {
+        //this.cloudChange = "cloud_off";
+        console.error('Error:', error);
+      });
+     
   }
 
   UpdateDatabase(database:string, itemListAPI: Value[]){

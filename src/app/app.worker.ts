@@ -29,7 +29,23 @@ addEventListener('message', async (event: MessageEvent) => {
       const responseIn: INResponse = data;
       const customers: BusinessPartner[] = JSON.parse(responseIn.response!);
       //console.log(customers)
-      self.postMessage(customers);
+      self.postMessage( responseIn);
+    } catch (error) {
+      self.postMessage({ error: error });
+    }
+  }
+  else if (messageData === 'items') {
+    try {
+      const response = await fetch(myappurlcetos + myapiurl + 'RetrieveItems',{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json', 
+          Authorization: `Bearer ${event.data.tokenAzure}`
+        },
+      }); 
+      const data = await response.json();
+      const responseIn: INResponse = data;
+      self.postMessage( responseIn);
     } catch (error) {
       self.postMessage({ error: error });
     }
