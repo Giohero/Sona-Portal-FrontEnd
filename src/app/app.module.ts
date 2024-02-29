@@ -102,6 +102,7 @@ const isIE =
         clientId: 'ce0b913e-f335-43eb-ae81-f5556733590b',
         authority: 'https://login.microsoftonline.com/26e6cc6b-2157-4879-a8f3-f2fc5a6a1bfd',
         redirectUri: 'http://localhost:4200/dashboard'
+        //redirectUri: 'https://sonaportal.azurewebsites.net/dashboard'
       },
       cache: {
         cacheLocation: "localStorage",

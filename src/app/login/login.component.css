@@ -224,7 +224,7 @@ input:focus {
     /* background-image:url('https://static.vecteezy.com/system/resources/previews/001/376/845/original/wood-table-top-with-blurred-background-free-photo.jpg'); */
 }
 .scroll-container{
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 @media only screen and (max-width: 480px) {
   .mat-card-wrapper {
@@ -263,7 +263,7 @@ input:focus {
     top: -100px;
   }
   .scroll-container{
-    overflow-y: scroll;
+    overflow-y: hidden;
   }
 }
 @media only screen and (max-width: 768px) {
@@ -302,7 +302,8 @@ input:focus {
     margin-top: 20vh;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
  @media only screen and (min-width: 769px) and (max-width: 820px) {
@@ -310,7 +311,8 @@ input:focus {
     margin-top: 20vh;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
 
@@ -319,7 +321,8 @@ input:focus {
     margin-top: 20vh;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
 
@@ -328,7 +331,8 @@ input:focus {
     margin-top: 20vh;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
 
@@ -337,7 +341,8 @@ input:focus {
     margin-top: 20vh;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
 
@@ -346,7 +351,8 @@ input:focus {
     margin-top: 20vh;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
 
@@ -356,7 +362,8 @@ input:focus {
     scroll-behavior: smooth;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
 @media only screen and (min-width: 540px) and (max-width: 720px) {
@@ -370,7 +377,8 @@ input:focus {
     margin: 20px;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
 @media only screen and (min-width: 412px) and (max-width: 914px) {
@@ -384,7 +392,8 @@ input:focus {
     margin: 20px;
   }
   .scroll-container{
-    overflow-y: scroll;
+    max-height: 100vh; 
+    overflow-y: auto;
   }
 }
 /* @media only screen and (max-width: 600px) {

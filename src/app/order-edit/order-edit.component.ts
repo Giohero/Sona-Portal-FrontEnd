@@ -744,8 +744,8 @@ export class OrderEditComponent implements OnInit {
           if(this.order!.DocNum !== undefined)
           {
             console.log(OrderPost)
-            this.cloudChange = "cloud_done";
-            this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
+            //this.cloudChange = "cloud_done";
+            //this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
 
             webWorker('editOrder',OrderPost,this.tokenAzure).then((data) => {
               if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
@@ -877,60 +877,60 @@ export class OrderEditComponent implements OnInit {
   timeLastTimePressKey: any;
   textConcatenated = '' 
   
-//  @HostListener('window:keydown', ['$event'])
-//   async handleKeyDown(event: KeyboardEvent) {
-//      this.textConcatenated += event.key;
-//      if (this.timeLastTimePressKey !== null) {
-//        clearTimeout(this.timeLastTimePressKey);
-//      }
-
-//      this.timeLastTimePressKey = setTimeout(async () => {
-//        console.log("El texto ingresado es:", this.textConcatenated);
-       
-//        this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
-//         console.log(this.ItemBar);
-//         if (this.ItemBar != undefined){
-//           this.OpenModal(this.ItemBar)
-//         }
-//         // else{
-//         //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
-//         //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
-        
-//        this.textConcatenated = '';
-//      }, 20);
-//    }
-  @HostListener('window:keydown', ['$event'])
+ @HostListener('window:keydown', ['$event'])
   async handleKeyDown(event: KeyboardEvent) {
-    // Ignora la entrada si no es una tecla imprimible (ej. teclas de control)
-    if (event.key.length === 1) {
-      this.textConcatenated += event.key;
-    }
-    
-    if (this.timeLastTimePressKey !== null) {
-      clearTimeout(this.timeLastTimePressKey);
-    }
-  
-    this.timeLastTimePressKey = setTimeout(async () => {
-      console.log("El texto ingresado es:", this.textConcatenated);
-      
-      // Verifica si el texto concatenado comienza con '.' y tiene una longitud mayor a 1 (indicando que hay algo después del '.')
-      if (this.textConcatenated.startsWith('.') && this.textConcatenated.length > 1) {
-        const code = this.textConcatenated.slice(1); // Obtiene el código sin el punto inicial
-        
-        // Intenta obtener el ítem por el código
-        this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(code);
+     this.textConcatenated += event.key;
+     if (this.timeLastTimePressKey !== null) {
+       clearTimeout(this.timeLastTimePressKey);
+     }
+
+     this.timeLastTimePressKey = setTimeout(async () => {
+       console.log("El texto ingresado es:", this.textConcatenated);
+       
+       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
         console.log(this.ItemBar);
-        
-        if (this.ItemBar != undefined) {
-          this.OpenModal(this.ItemBar);
-        } else {
-          // Opcional: Mostrar un mensaje si el código de barras no existe
-          // this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+        if (this.ItemBar != undefined){
+          this.OpenModal(this.ItemBar)
         }
-      }
-      // Restablece el texto concatenado para la próxima entrada
-      this.textConcatenated = '';
-    }, 20); // Puedes ajustar este tiempo según necesites
-  }
+        // else{
+        //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
+        //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+        
+       this.textConcatenated = '';
+     }, 20);
+   }
+  // @HostListener('window:keydown', ['$event'])
+  // async handleKeyDown(event: KeyboardEvent) {
+  //   // Ignora la entrada si no es una tecla imprimible (ej. teclas de control)
+  //   if (event.key.length === 1) {
+  //     this.textConcatenated += event.key;
+  //   }
+    
+  //   if (this.timeLastTimePressKey !== null) {
+  //     clearTimeout(this.timeLastTimePressKey);
+  //   }
+  
+  //   this.timeLastTimePressKey = setTimeout(async () => {
+  //     console.log("El texto ingresado es:", this.textConcatenated);
+      
+  //     // Verifica si el texto concatenado comienza con '.' y tiene una longitud mayor a 1 (indicando que hay algo después del '.')
+  //     if (this.textConcatenated.startsWith('.') && this.textConcatenated.length > 1) {
+  //       const code = this.textConcatenated.slice(1); // Obtiene el código sin el punto inicial
+        
+  //       // Intenta obtener el ítem por el código
+  //       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(code);
+  //       console.log(this.ItemBar);
+        
+  //       if (this.ItemBar != undefined) {
+  //         this.OpenModal(this.ItemBar);
+  //       } else {
+  //         // Opcional: Mostrar un mensaje si el código de barras no existe
+  //         // this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+  //       }
+  //     }
+  //     // Restablece el texto concatenado para la próxima entrada
+  //     this.textConcatenated = '';
+  //   }, 20); // Puedes ajustar este tiempo según necesites
+  // }
   
 }
