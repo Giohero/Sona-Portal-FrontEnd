@@ -79,7 +79,7 @@ export class IndexItemsService {
 
   getItemsToIndexDB(db: IDBDatabase,tokenAzure:string){
     webWorker('items',null,tokenAzure).then((data) => {
-      console.log(data)
+      //console.log(data)
       if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
       {
        //Initialize the transaction

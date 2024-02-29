@@ -28,7 +28,7 @@ export class SignalRService {
       this.tokenSignalR = tokenR;
     } )
     this.authService.tokenAzure$.subscribe((newToken) => {
-      console.log(newToken);
+      //console.log(newToken);
       this.tokenAzure = newToken;
     });
   

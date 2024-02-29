@@ -171,7 +171,7 @@ export class OrdersComponent {
         DocumentLinesP.push({
           ItemCode: element.ItemCode,
           Quantity: element.Quantity,
-          TaxCode: 'EX',
+          TaxCode: '',
           FreeText: element.FreeText,
           LineNum:element.LineNum
         })
@@ -881,7 +881,7 @@ export class OrdersComponent {
           ItemCode: this.searchTextItem,
           ItemDescription: this.ItemName,
           Quantity: this.Quantity,
-          TaxCode: "EX",
+          TaxCode: "",
           UnitPrice: Number(this.Price),
           LineTotal: Number(this.Price) * this.Quantity,
           FreeText: "",
@@ -1169,7 +1169,7 @@ export class OrdersComponent {
           DocumentLinesP.push({
             ItemCode: element.ItemCode,
             Quantity: element.Quantity,
-            TaxCode: 'EX',
+            TaxCode: '',
             LineTotal: element.LineTotal,
             UnitPrice: element.UnitPrice,
             FreeText: element.FreeText,

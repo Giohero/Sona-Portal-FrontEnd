@@ -181,7 +181,7 @@ export class OrderEditComponent implements OnInit {
         if(this.order?.DocNum == 0 || this.order?.DocNum == undefined || Number.isNaN(this.order?.DocNum))
           this.cloudChange = "cloud_queue";
 
-        if(this.order?.DocumentStatus == 'bost_Close')
+        if(this.order?.DocumentStatus == 'C')
         {
           this.blockStatus = true
           this.delivery.disable();
@@ -286,48 +286,7 @@ export class OrderEditComponent implements OnInit {
         }
       });
 
-      this.orderService.getItems()
-      .pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-        )
-      ),
-      catchError(error => {
-        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-        return throwError(error);
-        })
-      )
-      .subscribe((retData) => {
-        if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-          this.ListItems = JSON.parse(retData.response!);
-        } else {
-          this.openSnackBar(retData.response!, "error", "Error", "red");
-        }
-       });
-
-       this.orderService.getCustomer()
-       .pipe(
-         retryWhen(errors =>
-           errors.pipe(
-             mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-           )
-         ),
-         catchError(error => {
-           this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-           //this.isLoading = false;
-           return throwError(error);
-         })
-       )
-       .subscribe(
-         (retData) => {
- 
-           if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-     
-             this.ListCustomers = JSON.parse(retData.response!);
-             //console.log(this.ListCustomers)
-         }}
-       );
+      this.getInformationByIndex();
 
       this.dataSharing.orderSignal$.subscribe((newOrder) => {
         //console.log(newOrder)
@@ -552,7 +511,7 @@ export class OrderEditComponent implements OnInit {
       LineTotal: 0,
       Dummie: "",
       TaxRate: "",
-      TaxCode: "EX",
+      TaxCode: "",
       FreeText: "",
       ItemPrices: "",
       LineNum:0
@@ -560,19 +519,20 @@ export class OrderEditComponent implements OnInit {
 
     Item.LineTotal = Item.UnitPrice * Item.Quantity;
     this.order!.DocumentLines.push(Item)
+    this.updateOrder('Add_New_Item_' + Item.ItemCode);
   }
 
   OpenModal(itemFound: Value): void{
     const dialogRef = this.dialog.open(ScannerItemComponent,{
       width: '550px',
       height: 'auto',
-      data: {...itemFound}
+      data: {Item:itemFound, FreeText:''}
     });
 
     dialogRef.afterClosed().subscribe(result =>  {
       console.log('Window closed', result)
       
-      if(result != undefined){
+      if(result != undefined && !Number.isNaN(result) && result != ''){
         this.addItem(result);
       }
 
@@ -587,29 +547,30 @@ export class OrderEditComponent implements OnInit {
         if (itemFound != undefined) {
           console.log(itemSelect.LineNum)
           itemFound.LineNum = itemSelect.LineNum
+          //itemFound.FreeText = itemSelect.FreeText
           const dialogRef = this.dialog.open(ScannerItemComponent,{
             width: '550px',
             height: 'auto',
-            data: {...itemFound}
+            data: {Item:itemFound, FreeText: itemSelect.FreeText}
           });
       
           dialogRef.afterClosed().subscribe(result =>  {
             console.log('Window closed', result)
             
-            if(result != undefined){
+            if(result != undefined && !Number.isNaN(result) && result != ''){
               if(itemSelect.Quantity != result.Quantity){
                 itemSelect.Quantity = result.Quantity 
                 this.changeQuantity(itemSelect)
-                // console.log("se cambia cantidad")
+                //console.log("se cambia cantidad")
               }
-              if(result.FreeText != "" && result.FreeText != undefined){
+              if(result.FreeText != "" && result.FreeText != undefined && result.FreeText != itemSelect.FreeText){
                 itemSelect.FreeText = result.FreeText
                 this.updateOrder('ChangeComments_LineNum'+ itemSelect.LineNum);
-                // console.log("se cambia los comentarios")
+                //console.log("se cambia los comentarios")
               }
               if(result.ItemInfo.LineNum != -1){
                 this.removeItem(index)
-                // console.log("se borra el item")
+                //console.log("se borra el item")
               }
             }
       
@@ -698,7 +659,7 @@ export class OrderEditComponent implements OnInit {
           Quantity: element.Quantity,
           UnitPrice: element.UnitPrice,
           LineTotal: element.LineTotal,
-          TaxCode: 'EX',
+          TaxCode: '',
           FreeText: element.FreeText,
           LineNum:count
         })
@@ -792,9 +753,11 @@ export class OrderEditComponent implements OnInit {
                 console.log(data)
                 this.cloudChange = "cloud_done";
                 this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'complete',OrderPost, this.usernameAzure,'')
+                this.errorStatus = ''
                 // const orderEdit: Order = JSON.parse(data.response);
                 // console.log(orderEdit)
                 //this.DocNumPublish = orderPublish!.DocNum;
+
                 this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
               }
               else
@@ -914,28 +877,28 @@ export class OrderEditComponent implements OnInit {
   timeLastTimePressKey: any;
   textConcatenated = '' 
   
- @HostListener('window:keydown', ['$event'])
-  // async handleKeyDown(event: KeyboardEvent) {
-  //    this.textConcatenated += event.key;
-  //    if (this.timeLastTimePressKey !== null) {
-  //      clearTimeout(this.timeLastTimePressKey);
-  //    }
+//  @HostListener('window:keydown', ['$event'])
+//   async handleKeyDown(event: KeyboardEvent) {
+//      this.textConcatenated += event.key;
+//      if (this.timeLastTimePressKey !== null) {
+//        clearTimeout(this.timeLastTimePressKey);
+//      }
 
-  //    this.timeLastTimePressKey = setTimeout(async () => {
-  //      console.log("El texto ingresado es:", this.textConcatenated);
+//      this.timeLastTimePressKey = setTimeout(async () => {
+//        console.log("El texto ingresado es:", this.textConcatenated);
        
-  //      this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
-  //       console.log(this.ItemBar);
-  //       if (this.ItemBar != undefined){
-  //         // this.OpenModal( this.ItemBar)
-  //       }
-  //       // else{
-  //       //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
-  //       //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+//        this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
+//         console.log(this.ItemBar);
+//         if (this.ItemBar != undefined){
+//           this.OpenModal(this.ItemBar)
+//         }
+//         // else{
+//         //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
+//         //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
         
-  //      this.textConcatenated = '';
-  //    }, 20);
-  //  }
+//        this.textConcatenated = '';
+//      }, 20);
+//    }
   @HostListener('window:keydown', ['$event'])
   async handleKeyDown(event: KeyboardEvent) {
     // Ignora la entrada si no es una tecla imprimible (ej. teclas de control)
