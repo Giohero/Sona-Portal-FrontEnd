@@ -1,49 +1,11 @@
 <div class="background">
   <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between center">
     <h2 class="title">New Order</h2> 
-    <button (click)="finishOrder()" [disabled]="idIndex === 0">Finish Order</button>
-  </div>
-  <div fxLayout="row" fxLayout.xs="column">
-    <h2 class="h2Order">DocNum: {{DocNumPublish}}</h2>
-    <h2 class="h2Order">ID Index: {{idIndex}}</h2>
-  </div>
-  
-  <div fxLayout="row-reverse" fxLayout.xs="column">
-    <div class="label-container" disabled fxFlex="25" fxLayoutAlign="end">
-      <mat-form-field class="example-full-width">
-        <mat-label class="label">Posting Date:</mat-label>
-        <input matInput [matDatepicker]="postingDate" [formControl]="tax">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
-        <mat-datepicker #postingDate></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <div class="label-container" fxFlex="25" fxLayoutAlign="end">
-      <mat-form-field class="example-full-width">
-          <mat-label class="label">Tax Date:</mat-label>
-          <input matInput [matDatepicker]="taxDate" [formControl]="tax">
-          <mat-hint>MM/DD/YYYY</mat-hint>
-          <mat-datepicker-toggle matIconSuffix [for]="taxDate"></mat-datepicker-toggle>
-          <mat-datepicker #taxDate></mat-datepicker>
-        </mat-form-field>
-    </div>
-    <div class="label-container" fxFlex="25" fxLayoutAlign="end">
-      <mat-form-field class="example-full-width">
-        <mat-label class="label">Delivery Date:</mat-label>
-        <input matInput [min]="minDate" [matDatepicker]="deliveryDate" [formControl]="delivery" (dateChange)="changeOrder(undefined, undefined, 'delivery')">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="deliveryDate"></mat-datepicker-toggle>
-        <mat-datepicker #deliveryDate></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <!-- <div class="label-container" disabled fxFlex="25" fxLayoutAlign="end">
-      <h2 style="margin-left: auto;"  id="DocNum">DocNum: {{DocNumPublish}}</h2>
-    </div> -->
   </div>
 
   <mat-tab-group color="warn"  mat-stretch-tabs="false" mat-align-tabs="start">
     <br>
-    <mat-tab label="Order Details">
+    <mat-tab label="Customer">
       <br>
       <div class="grid-container-customerd">
         <mat-card class="mat-card expansion"> 
@@ -51,17 +13,17 @@
             <h2 class="h2Mat">Customer <mat-icon>person_outline</mat-icon></h2>
           </mat-card-header>
           <mat-card-content class="grid-container">
-              <div class="label-container">
+              <!-- <div class="label-container">
                 <label class="label">Id Customer: </label>
                 <input type="text" class="boxCustom" id="idcustomer" aria-describedby="Id Customer" [(ngModel)]="idcustomer" [disabled]="inputSearchCutomer || (ShowEdit === false)" >
-              </div>            
+              </div> -->
               <div class="label-container">
                 <label class="label">Customer Name:</label>
                 <input type="text" class="boxCustom" id="search-text" aria-describedby="search-text" 
                 [(ngModel)]="searchText" placeholder="Enter text to search" 
                 autofocus [matAutocomplete]="auto" [disabled]="inputSearchCutomer">
                 <button mat-raised-button class="custom-button" [disabled]="searchText.length == 0" *ngIf="showAddButton && ShowEdit" (click)="CreateCustomer()">Add New Customer</button>
-                <button  class="custom-button" *ngIf="inputSearchCutomer && (ShowEdit === false)" (click)="changeCustomer()">Change Customer</button>
+                <!-- <button  class="custom-button" *ngIf="inputSearchCutomer && (ShowEdit === false)" (click)="changeCustomer()">Change Customer</button> -->
                 <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectCustomer($event.option.value, false)">
                   <mat-option *ngFor="let c of ListCustomers| appFilterC: searchText"  value="{{c.CardName}}"  class="optionList" >
                     {{c.CardCode}} - {{c.CardName}}
@@ -97,21 +59,22 @@
                   <button mat-raised-button class="edit-custom-button" *ngIf="inputSearchCutomer" (click)="DeleteAddress('bo_ShipTo', rowShip)" [disabled]="shippingAddress === ''"><mat-icon class="icon" fxFlex="33%">delete</mat-icon></button>
                 </div>
               </div> -->
-              <div class="label-container">
-                <label class="label">Phone 1:</label>
-                <input type="text" class="boxCustom" matInput placeholder="Phone 1" [disabled]="showEditInputs"
-                [(ngModel)]="phone1">
+              <div class="customer-info-container" fxLayout="column">
+                <div class="label-container">
+                  <label class="label">Phone 1:</label>
+                  <span class="value">{{phone1}}</span>
+                </div>
+                <div class="label-container">
+                  <label class="label">Email:</label>
+                  <span class="value">{{email}}</span>
+                </div>
               </div>
-              <div class="label-container">
-                <label class="label">Email:</label>
-                <input type="text" class="boxCustom" matInput placeholder="Email" [disabled]="showEditInputs"
-                [(ngModel)]="email">
+              
+              <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px">
+                <button mat-raised-button class="custom-button" (click)="changeCustomer()" style="color: rgb(255, 255, 255);">Change Customer</button>
+                <button mat-raised-button class="add-button1" (click)="toggle()" style="color: rgb(255, 255, 255);">Show Address</button>
               </div>
-              <div class="label-container">
-                <label class="label">Notes and Remarks:</label>
-                <input type="text" class="boxCustomNotes" matInput placeholder="Notes and Remarks"  [disabled]="showEditInputs"
-                [(ngModel)]="notes">
-              </div>
+              
               <!-- <div class="label-container">
                 <label class="label">Shipping Type:</label>
                 <input type="text" class="boxCustom" matInput placeholder="Shipping Type" [disabled]="showEditInputs"
@@ -129,7 +92,7 @@
               </div>
           </mat-card-content>
         </mat-card>
-        <mat-card class="mat-card expansion"> 
+        <mat-card class="mat-card expansion" *ngIf="!isHidden"> 
           <mat-card-header>
             <mat-card-title class="h2Mat"><h2 >Address <mat-icon>business</mat-icon></h2></mat-card-title>
             <mat-card-subtitle>You have to choose a Customer for choose a address</mat-card-subtitle>
@@ -151,97 +114,88 @@
             </mat-radio-group>
             </div>
           </mat-card-content>
-        </mat-card>
+    </mat-card>
       </div>
-    </mat-tab>
-    <mat-tab label="Cart">
+  </mat-tab>
+    <mat-tab label="List Items">
       <br>
-      <div class="grid-container-customerd">
-        <mat-card class="mat-card expansion">
-          <mat-card-header>
-            <h2 class="h2Mat">Add Item <mat-icon> local_mall</mat-icon></h2>
-          </mat-card-header>
-          <mat-card-content class="grid-container">
-              <div class="label-container">
-                <label class="label">Search by name:</label>
-                <input type="text" class="boxCustom" id="search-text-item" aria-describedby="search-text" 
-                [(ngModel)]="searchTextItem" placeholder="Enter text to search" 
-                autofocus [matAutocomplete]="autoItem" >
-                <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" (optionSelected)="onSelectItem($event.option.value)">
-                  <mat-option *ngFor="let c of ListItems| appFilter: searchTextItem"  value="{{c.ItemCode}}"  class="optionList" >
-                    {{c.ItemCode}} - {{c.ItemName}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-              <div class="label-container">
-                <label  class="label">Item:</label>
-                <input type="text" class="boxCustom" matInput placeholder="Item" disabled="true" [(ngModel)]="ItemName">
-              </div>
-              <div class="label-container" *ngIf="ItemName">
-                <label class="label">Quantity:</label>
-                <input type="number" class="boxCustom" matInput placeholder="Quantity" disabled="false" [(ngModel)]="Quantity" >
-              </div>
-              <div class="label-container" *ngIf="ItemName">
-                <label class="label">Price:</label>
-                <input type="number" class="boxCustom" matInput placeholder="Price" disabled="true" [(ngModel)]="Price" >
-              </div>
-              <!-- <div class="input-container" *ngIf="ItemName">
-                <label><b>Comments: </b></label>
-                <input type="text" class="boxCart" matInput placeholder="Add Comments"  [(ngModel)]="item.Comments" >
-              </div> -->
-              <br>
-          </mat-card-content> 
-          <button class="add-button" (click)="addToCart()">Add</button>
-          <!-- <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutAlign.xs="center center">
-            <a mat-raised-button color="primary" class="mobile-button"  (click)="backWindow()">Back</a>
-            <a mat-raised-button color="primary" class="mobile-button" (click)="nextWindow()">Review Order</a>
-          </div> -->
-        </mat-card>
-
-        <mat-card id="Cart" class="image-card info-card mat-card expansion" [class.image-card]="Cart && Cart.length ===0">
-          <mat-card-header>
-            <h1 class="h2Mat">Shopping Cart <mat-icon>shopping_cart</mat-icon></h1>
-          </mat-card-header>
-          <mat-card-content >
-              <div class="cart-items" *ngFor="let Item of Cart; let listIndex=index;" >
-                <div class="label-container-cart">
-                  <label class="label" for="ItemName">Item:</label>
-                  <input type="text" matInput class="boxCustom" for="ItemName"  id="ItemName" readonly [value]="Item.ItemDescription">
+      <div class="">
+        <div class="grid-container-customerd">
+          <mat-card class="mat-card expansion">
+            <mat-card-header>
+              <h2 class="h2Mat">Add Item <mat-icon> local_mall</mat-icon></h2>
+            </mat-card-header>
+            <mat-card-content class="grid-container">
+                <div class="label-container">
+                  <label class="label">Search by name:</label>
+                  <input type="text" class="boxCustom" id="search-text-item" aria-describedby="search-text" 
+                  [(ngModel)]="searchTextItem" placeholder="Enter text to search" 
+                  autofocus [matAutocomplete]="autoItem" >
+  
+                  <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" (optionSelected)="onSelectItem($event.option.value)">
+                    <mat-option *ngFor="let c of ListItems| appFilter: searchTextItem"  value="{{c.ItemCode}}"  class="optionList" >
+                      {{c.ItemCode}} - {{c.ItemName}}
+                    </mat-option>
+                  </mat-autocomplete> 
                 </div>
-                <div class="label-container-cart-s">
-                  <label class="label" for="Quantity">Quantity:</label>
-                  <input type="number" matInput class="boxCustomShort" for="Quantity" min="1" max="1000"
-                    [(ngModel)]="Item.Quantity" (change)="updateTotal(listIndex,Item)">
+                <br>
+                <button class="add-button" (click)="OpenModal()">Add</button>
+            </mat-card-content> 
+          </mat-card>
+          <mat-card id="Cart" class="mat-card expansion" >
+            <div *ngFor="let Item of Cart; let listIndex=index;" >
+              <mat-card-content class="info-card">
+                <div class="left-column">
+                  <div class="label-container-cart-s">
+                    <label class="label" for="ItemName">Item Code:</label>
+                    <br>
+                    <label  for="ItemName"  id="ItemName" readonly>{{Item.ItemCode}}</label>
+                  </div>
+                  <div class="label-container-cart-s">
+                    <label class="label" for="ItemName">Item:</label>
+                    <br>
+                    <label  for="ItemName"  id="ItemName" readonly>{{Item.ItemDescription}}</label>
+                  </div>
+                  <div class="label-container-cart-s">
+                    <mat-icon  class="iconC">{{Item.Icon}}</mat-icon>
+                  </div>
                 </div>
-                <div class="label-container-cart-s">
-                  <label class="label" for="Total">Total:</label>
-                  <input type="number" matInput class="boxCustomShort" for="Price" min="1" readonly  [value]="Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'">
-                </div>
-                <div class="label-container-cart">
-                  <label class="label" for="Comments">Comments:</label>
-                  <input type="text" class="boxCustom" matInput placeholder="Add Comments" [(ngModel)]="Item.FreeText"
-                  (change)="updateComment(listIndex)">
-                </div>
-                <div class="label-container-cart-s">
-                  <button mat-raised-button class="btnInfo" color="warn" (click)="RemoveToCart(listIndex)" [disabled]="Cart!.length === 1 && DocNumPublish !== 0">
-                    <mat-icon>delete</mat-icon>
+                
+                <div class="right-column">
+                  <div class="label-container-cart-s">
+                    <label class="label" for="Quantity">Quantity:</label>
+                    <br>
+                    <label type="number" matInput for="Quantity" min="1" max="1000"> 
+                      {{Item.Quantity}}
+                      </label>
+                  </div>
+                  <div class="label-container-cart-s">
+                    <label class="label" for="Total">Total:</label>
+                    <br>
+                    <label type="number" matInput for="Price" min="1" readonly>
+                      {{Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'}}
+                    </label>
+                  </div>
+                  <button mat-icon-button (click)="editOpenModal(Item, listIndex)">
+                    <mat-icon >edit</mat-icon>
                   </button>
                 </div>
-                <div class="label-container-cart-s">
-                  <mat-icon  class="iconC">{{Item.Icon}}</mat-icon>
-                </div>
-                <mat-divider class="mdivider"></mat-divider>
-              </div>
-          </mat-card-content>
-          <mat-card-actions align="end">
-            <mat-divider></mat-divider>
-            <div style="margin: 10px; text-align: right;">Total: ${{subTotal()}}</div>
-          </mat-card-actions>
-        </mat-card>
+              </mat-card-content>
+              <mat-divider class="mdivider"></mat-divider>
+            </div>
+            <mat-card-actions align="end">
+              <mat-divider></mat-divider>
+              <div style="margin: 10px; text-align: right;">Total: ${{subTotal()}}</div>
+            </mat-card-actions>
+          </mat-card>
+        </div>
       </div>
     </mat-tab>
   </mat-tab-group>
+
+  <button class="button-container" *ngIf="Cart!.length > 0" (click)="finishOrder()" [disabled]="idIndex === 0">Finish Order</button>
 </div>
+
 <div *ngIf="isLoading" class="custom-spinner" fxLayoutAlign="center center">
   <mat-spinner [diameter]="120"></mat-spinner>
   Charging Order...

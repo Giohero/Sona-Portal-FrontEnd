@@ -34,17 +34,22 @@ export class ScannerItemComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any){
       console.log(data);
       this.Item = data.Item;
-      this.QuantityItem = Number(this.Item.U_InnerPackQty);
       console.log(this.Item);
       this.udfComments =data.FreeText;
       if (this.Item.ItemWarehouseInfoCollection && this.Item.ItemWarehouseInfoCollection.length > 0) {
         this.inStock = this.Item.ItemWarehouseInfoCollection[0].InStock;
       }
 
-      if('LineNum' in this.Item)
+      if('LineNum' in data.Item)
+      {
+        this.QuantityItem = Number(data.Quantity);
         this.AddItem = false
+      }
       else 
+      {
+        this.QuantityItem = Number(data.Item.U_InnerPackQty);
         this.AddItem = true;
+      }
   }
   ngOnInit(): void {
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
@@ -56,11 +61,12 @@ export class ScannerItemComponent implements OnInit {
     this.QuantityItem += Number(this.Item.U_InnerPackQty);
   }
   AddMaster(){
-    this.QuantityItem += Number(this.Item.U_InnerPackQty);
+    this.QuantityItem *= Number(this.Item.U_InnerPackQty);
   }
 
   UpdateScanner(){
     this.Item.LineNum=-1;
+    console.log(this.QuantityItem)
     var ItemAdd = {ItemInfo : this.Item, Quantity : this.QuantityItem, FreeText: this.udfComments}
     this.ScannerReference.close(ItemAdd);
   }

@@ -20,6 +20,7 @@ import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
 import { IndexCustomersService } from '../service/index-customers.service';
 import { IndexItemsService } from '../service/index-items.service';
 import { AfterViewInit } from '@angular/core';
+import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
 
 @Component({
   selector: 'app-orders',
@@ -81,7 +82,7 @@ export class OrdersComponent {
   idCosmos = '';
   LineNumber=0;
   isOnline=true;
-
+  isHidden: boolean = true;
   tokenAzure='';
 
   //Add status: index, cloud, complete
@@ -301,74 +302,8 @@ export class OrdersComponent {
       this.tokenAzure = newToken;
     });
 
-    //console.log(this.isOnline)
-    if(this.isOnline == true)
-    {
-      this.orderService.getItems()
-      .pipe(
-        retryWhen(errors =>
-          errors.pipe(
-            mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-          )
-        ),
-        catchError(error => {
-          this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-          this.isLoading = false;
-          return throwError(error);
-        })
-      )
-      .subscribe(
-        (retData) => {
-          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-
-            this.ListItems = JSON.parse(retData.response!);
-            //console.log(this.ListItems)
-            this.adjustImageVisibility();
-          }
-        }
-      );
-
-      this.orderService.getCustomer()
-      .pipe(
-        retryWhen(errors =>
-          errors.pipe(
-            mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
-          )
-        ),
-        catchError(error => {
-          this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-          this.isLoading = false;
-          return throwError(error);
-        })
-      )
-      .subscribe(
-        (retData) => {
-
-          if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-    
-            this.ListCustomers = JSON.parse(retData.response!);
-            //console.log(this.ListCustomers)
-            if(this.customerBack != undefined)
-            {
-              if(this.customerBack.CardName === undefined)
-              {
-                this.onSelectCustomer(this.customerBack, false)
-                //this.searchText = this.customerBack.CardName
-              }
-              else
-              {
-                this.searchText = this.customerBack.CardName
-                this.onSelectCustomer(this.customerBack.CardName, false)
-              }
-            }
-        }}
-      );
-    }
-    else
-    {
-      this.getInformationByIndex();
-      this.adjustImageVisibility();
-    }
+    this.getInformationByIndex();
+    this.adjustImageVisibility();
 
     this.dataSharing.cartData$.subscribe((newCart) => {
       this.Cart = newCart;
@@ -869,14 +804,78 @@ export class OrdersComponent {
       this.changeOrder(index,this.Cart!,'');
   }
 
+editOpenModal(itemSelect:DocumentLines, index: number){
+  var ItemFound = this.ListItems.find(x => x.ItemCode == itemSelect.ItemCode)
+  if (ItemFound != undefined) {
+    console.log(itemSelect.LineNum)
+    ItemFound.LineNum = itemSelect.LineNum!
+    //itemFound.FreeText = itemSelect.FreeText
+    const dialogRef = this.dialog.open(ScannerItemComponent,{
+      width: '550px',
+      height: 'auto',
+      data: {Item:ItemFound, FreeText: itemSelect.FreeText, Quantity:itemSelect.Quantity}
+    });
+
+    dialogRef.afterClosed().subscribe(result =>  {
+      console.log('Window closed', result)
+      
+      if(result != undefined && !Number.isNaN(result) && result != ''){
+        if(itemSelect.Quantity != result.Quantity){
+          itemSelect.Quantity = result.Quantity 
+          this.updateTotal(index,itemSelect)
+          //console.log("se cambia cantidad")
+        }
+        if(result.FreeText != "" && result.FreeText != undefined && result.FreeText != itemSelect.FreeText){
+          itemSelect.FreeText = result.FreeText
+          this.updateComment(index);
+          //console.log("se cambia los comentarios")
+        }
+        if(result.ItemInfo.LineNum != -1){
+          this.RemoveToCart(index)
+          //console.log("se borra el item")
+        }
+      }
+
+    })
+  }
+}
+
+OpenModal(){
+    if(this.searchTextItem != "")
+    {
+      var ItemBar = this.ListItems.find(x => x.ItemCode === this.searchTextItem);
+      console.log(ItemBar);
+      if (ItemBar != undefined){
+        const dialogRef = this.dialog.open(ScannerItemComponent,{
+          width: '550px',
+          height: 'auto',
+          data: {Item:ItemBar, FreeText:''}
+        });
+    
+        dialogRef.afterClosed().subscribe(result =>  {
+          console.log('Window closed', result)
+          
+          if(result != undefined && !Number.isNaN(result) && result != ''){
+            this.ItemName = result.ItemInfo.ItemName;
+            this.Quantity = parseFloat(result.Quantity);
+            this.Price = result.ItemInfo.ItemPrices[0].Price;
+            this.addToCart();
+          }
+        })
+      }
+      else
+      {
+        this.openSnackBar("You have to select an Item", "warning", "Warning", "darkorange");
+      }
+    }
+  }
+
+
   addToCart(){
     if(this.ItemName != "")
     {
       if(this.Quantity > 0)
       {
-        const element = document.getElementById('Cart');
-        element!.classList.remove('image-card');
-        
         const newDocumentLine: DocumentLines = {
           ItemCode: this.searchTextItem,
           ItemDescription: this.ItemName,
@@ -993,6 +992,10 @@ export class OrdersComponent {
 
     var orderNewString = JSON.stringify(OrderNewCache)
     localStorage.setItem('OrderNewSave', orderNewString);
+  }
+
+  toggle() {
+    this.isHidden = !this.isHidden;
   }
 
   async changeOrder(index:number | undefined,order:DocumentLines[] | undefined, action : string)

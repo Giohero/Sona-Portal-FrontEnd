@@ -8,52 +8,50 @@
 
   <div class="modal-body">
     <div class="half-width">
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Item Code</mat-label>
-        <input matInput [value]="Item.ItemCode" disabled>
-      </mat-form-field>
-      
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Available</mat-label>
-        <input matInput [value]="inStock" placeholder="Available" disabled="true">
-      </mat-form-field>
+      <div class="form-field-container">
+        <span class="label" style="color: rgb(255, 108, 108);">Item Code: </span><br>
+        <span class="value">{{Item.ItemCode}}</span>
+      </div>
     </div>
 
     <div class="half-width">
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Item Name</mat-label>
-        <input matInput [value]="Item.ItemName" disabled>
-      </mat-form-field>
-      
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Quantity</mat-label>
-        <input matInput [value]="QuantityItem" type="number" placeholder="Quantity" min="1">
-      </mat-form-field>
+      <div class="form-field-container">
+        <span class="label" style="color: rgb(255, 108, 108);">Item Name: </span><br>
+        <span class="value">{{Item.ItemName}}</span>
+      </div>
+    </div>
+
+    <div class="half-width">
+      <div class="form-field-container">
+        <span class="label" style="color: rgb(255, 108, 108);">Available: </span><br>
+        <span class="value">{{inStock}}</span>
+      </div>
+    </div>
+
+    <div class="half-width" style="margin-top: 5px;">
+      <div class="form-field-container" style="width: 100%;">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Quantity:</mat-label>
+          <input matInput placeholder="Quantity" [(ngModel)]="QuantityItem">
+        </mat-form-field>      
+      </div>
     </div>
   </div>
 
-  <!-- UDF COMMENTS moved outside of the modal-body -->
-  <div style="margin-top: 20px; text-align: center;">
-    <!-- <mat-form-field appearance="fill" style="width: 100%;">
-      <mat-label class="label">UDF Comments:</mat-label>
-      <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [disabled]="blockStatus">
-    </mat-form-field> -->
-    <mat-form-field appearance="fill" style="width: 100%;">
-      <mat-label>Notes and remarks: </mat-label>
-      <input matInput class="boxCustom editable-input" placeholder="Notes and remarks" [(ngModel)]="udfComments">
-    </mat-form-field>
-  </div>
-  <!-- btns actions -->
-  <div>
-    <div class="modal-actions" style="display: flex; justify-content: space-between; padding-top: 20px;">
-      <button mat-button color="warn" (click)="AddInner()">Inner {{Item.U_InnerPackQty}}</button>
-      <button mat-button color="warn" (click)="AddMaster()">Master {{Item.U_MasterPackQty}}</button>
-      <button mat-button color="warn" (click)="UpdateScanner()" *ngIf="AddItem == false">Update</button>
-      <button mat-button color="warn" (click)="DeleteScanner()" *ngIf="AddItem == false">Delete</button>
-      <button mat-button color="warn" (click)="UpdateScanner()" *ngIf="AddItem == true">Add</button>
+  <div style="width: 100%;">
+    <div class="form-field-container" style="width: 100%;">
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>Notes and remarks</mat-label>
+        <input matInput placeholder="Notes and remarks" [(ngModel)]="udfComments">
+      </mat-form-field>      
     </div>
   </div>
-  <div class="label-container">
-    
+  
+  <div class="modal-actions">
+    <button mat-button color="warn" (click)="AddInner()">Inner {{Item.U_InnerPackQty}}</button>
+    <button mat-button color="warn" (click)="AddMaster()">Master {{Item.U_MasterPackQty}}</button>
+    <button mat-button color="warn" (click)="UpdateScanner()" *ngIf="AddItem == false">Update</button>
+    <button mat-button color="warn" (click)="DeleteScanner()" *ngIf="AddItem == false">Delete</button>
+    <button mat-button color="warn" (click)="UpdateScanner()" *ngIf="AddItem == true">Add</button>
   </div>
 </mat-dialog-content>

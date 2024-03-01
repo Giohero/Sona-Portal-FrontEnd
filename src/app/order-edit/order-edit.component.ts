@@ -551,7 +551,7 @@ export class OrderEditComponent implements OnInit {
           const dialogRef = this.dialog.open(ScannerItemComponent,{
             width: '550px',
             height: 'auto',
-            data: {Item:itemFound, FreeText: itemSelect.FreeText}
+            data: {Item:itemFound, FreeText: itemSelect.FreeText, Quantity: itemSelect.Quantity}
           });
       
           dialogRef.afterClosed().subscribe(result =>  {

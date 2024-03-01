@@ -1,6 +1,9 @@
 .label-container{
-  width: 250px;
+  display: block;
+  flex-direction: column; /* Organiza los hijos en columna */
   margin: 5px;
+  align-items: flex-start; /* Alinea los elementos al inicio del contenedor */
+  width: 100%;
 }
 
 button {
@@ -50,11 +53,22 @@ button {
   flex-direction: column;
 }
 
-.label-container-cart-s{
-  width: 100px;
-  margin: 5px;
+
+.left-column, .right-column {
   display: flex;
   flex-direction: column;
+  width: 50%;
+  
+}
+
+.right-column{
+  margin-right: 50px;
+}
+
+.label-container-cart-s{
+  width: auto;
+  margin: 10px;
+  margin-top:0px ;
 }
 
 mat-tab{
@@ -86,7 +100,7 @@ mat-tab{
   font-size: 20px;
 }
 .grid-container-customerd{
-  grid-template-columns: 9fr 10fr;
+  grid-template-columns: 5fr 10fr;
   /* grid-template-columns: repeat(2, 1fr); */
   grid-gap: 10px;
   display: grid;
@@ -187,10 +201,12 @@ mat-tab{
 
 .info-card {
   display: flex;
-  flex-direction: column;
-  color:darkcyan;
- 
+  justify-content: space-between; 
+  align-items: flex-start;
+  padding: 5px;
+  margin: 20px;
 }
+
 
 .cart-items {
   display: grid;
@@ -199,7 +215,7 @@ mat-tab{
 }
 
 .mdivider{
-  width: 198%;
+  width: auto;
 }
 
 .info-content {
@@ -287,7 +303,16 @@ html, body {
   font-size: 1.1em;
   margin-bottom: 3px;
   color: #e77155;
-  width: 200px;
+  /* width: 200px; */
+  display: block;
+}
+.custom-button, .add-button1 {
+  flex: 1 1 auto; 
+  margin: 0 5px; 
+}
+
+.custom-button, .add-button1 {
+  min-width: 140px; 
 }
 
 .boxCustom {
@@ -295,6 +320,7 @@ html, body {
   border-radius: 10px;
   border: 1px solid #ccc;
   padding: 10px;
+  width: 400px;
 }
 
 .boxCustomShort {
@@ -309,7 +335,7 @@ html, body {
   border-radius: 10px;
   border: 1px solid #ccc;
   padding: 10px;
-  width: 400px;
+  width: 250px;
 }
 
 body {
@@ -332,7 +358,14 @@ body {
   margin: 5px;
   margin-left: 20px;
 }
-
+.add-button1{
+  background-color: rgb(255, 117, 83);
+  color: white; 
+  width: 100%;
+  margin: 5px;
+  margin-left: 10px;
+  height: 40px;
+}
 /* para celulares */
 @media screen and (max-width: 767px) {
   .grid-container,
@@ -374,6 +407,18 @@ body {
     display: flex;
     flex-direction: column;
   }
+
+  .left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    margin-right: 0px;
+  }
+
+  .boxCustom {
+
+    width: auto;
+  }
   
 }
 /* para tablets o ipads */
@@ -394,6 +439,10 @@ body {
     width: 80%;
   }
 
+  .boxCustom {
+
+    width: auto;
+  }
   /* .label-container,
   .label-containerC {
     margin-bottom: 20px;
@@ -419,4 +468,11 @@ body {
   .cartnext {
     margin-left: 0; 
   } 
+
+  .left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    margin-right: 0px;
+  }
 }
