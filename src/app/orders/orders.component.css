@@ -34,7 +34,7 @@ button {
 
  @keyframes pulse512 {
   0% {
-   box-shadow: 0 0 0 0 #05bada66;
+    box-shadow: 0 0 0 0 #2c02c3bd;
   }
  
   70% {
@@ -53,14 +53,12 @@ button {
   flex-direction: column;
 }
 
-
 .left-column, .right-column {
   display: flex;
   flex-direction: column;
   width: 50%;
   
 }
-
 .right-column{
   margin-right: 50px;
 }
@@ -105,7 +103,9 @@ mat-tab{
   grid-gap: 10px;
   display: grid;
   margin: 5px;
+ 
 }
+
 
 .grid-container-customerd button{
   align-items: center;
@@ -204,7 +204,7 @@ mat-tab{
   justify-content: space-between; 
   align-items: flex-start;
   padding: 5px;
-  margin: 20px;
+  margin: 20px; 
 }
 
 
@@ -366,6 +366,48 @@ body {
   margin-left: 10px;
   height: 40px;
 }
+
+
+mat-card expansion {
+  width: 100% !important;
+  border-top: 8px solid darkcyan;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+.footer{
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #85b4ff;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  z-index: 50;
+  border-radius: 30px 30px 0 0; /* Redondea las esquinas superiores */
+} 
+
+.DocNum{
+  margin-right: 10px;
+  font-weight: bold;
+}
+.CustomName{
+  font-weight: bold;
+}
+.doc-entry {
+  display: flex;
+  flex-direction: row;
+  font-size: 18px;
+  justify-content: space-between;
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+}
+
+grid-container-items {
+  width: 100%; 
+}
+/* .iconC{
+  display: inline;
+  justify-content: space-between;
+} */
 /* para celulares */
 @media screen and (max-width: 767px) {
   .grid-container,
@@ -418,6 +460,10 @@ body {
   .boxCustom {
 
     width: auto;
+  }
+
+  .DocNum, .CustomName {
+    margin-right: 20px; /* Aumenta el margen en escritorio */
   }
   
 }
@@ -475,4 +521,33 @@ body {
     width: auto;
     margin-right: 0px;
   }
+/* 
+  .mat-card-container-items {
+    display: block;
+    flex-wrap: wrap;
+    justify-content: space-between;  
+  } */
+
+   .mat-card.expansion2 {
+    width: 100vh;
+    border-top: 8px solid darkcyan;
+    opacity: 0.9;
+    margin-bottom: 20px;
+  }
+
+/*   
+.mat-card.expansion-items2 {
+  width: 100%;
+  border-top: 8px solid darkcyan;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+.mat-card.expansion-items3 {
+  width: 100%;
+  border-top: 8px solid darkcyan;
+  opacity: 0.9;
+  margin-bottom: 20px;
+} */
+
+  
 }

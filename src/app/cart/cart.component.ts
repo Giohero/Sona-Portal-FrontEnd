@@ -191,7 +191,7 @@ obtainUser() {
           //UnitPrice: this.Price,
           LineTotal: parseFloat(this.Price) * this.Quantity,
           FreeText: "",
-          Icon: 'cloud_queue',
+          IconSap: false,
           LineNum:this.LineNumber
         };
         
@@ -338,7 +338,7 @@ obtainUser() {
     {
       //this.actualicon = 'cloud_queue'
       if(index != undefined)
-        order[index].Icon = 'cloud_queue'
+        order[index].IconSap = false;
 
       this.OrderReview = new Order();
       const today = new Date();
@@ -363,9 +363,8 @@ obtainUser() {
         this.OrderReviewCopy.IdIndex = String(this.OrderIndexDB.id);
 
         if(this.isOnline == true)
-          this.updateOrderCloud('publish', index,order);
+        this.updateOrderCloud('publish', index,order);
         ////there was the procces to publish order in cosmos and SAP
-
         // this.OrderReviewCopy = this.OrderReview;
         // this.OrderReviewCopy.id = this.idCosmos;
         // this.OrderReview!.DocNum = '12345'
@@ -408,8 +407,7 @@ obtainUser() {
         
         ////there was the procces to publish order in cosmos and SAP
         if(this.isOnline == true)
-          this.updateOrderCloud('', index,order);
-
+        this.updateOrderCloud('', index,order);
         //console.log(this.OrderIndexDB)
         //console.log(this.OrderIndexDB.id)
         //Cuando pase el webworker, agregue el docnum
@@ -452,17 +450,17 @@ obtainUser() {
             //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, "complete", '')
             //this.actualicon = 'cloud_done';
-            this.Cart![0].Icon= 'cloud_done';
+            this.Cart![0].IconSap= true;
           }
           else{
             //this.actualicon = 'cloud_off';
-            this.Cart![0].Icon = 'cloud_off';
+            this.Cart![0].IconSap= false;
             console.error('Error:', data.response)
           }
         })
         .catch((error) => {
           //this.actualicon = 'cloud_off';
-          this.Cart![0].Icon = 'cloud_off';
+          this.Cart![0].IconSap= false;
           console.error('Error:', error);
         });
     }
@@ -482,12 +480,12 @@ obtainUser() {
             //this.DocNumPublish = orderPublish!.DocNum;
             //this.actualicon = 'cloud_done';
             if(index != undefined)
-              order[index].Icon = 'cloud_done';
+            this.Cart![0].IconSap= true;
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
           }
           else{
             if(index != undefined)
-              order[index].Icon = 'cloud_off';
+            this.Cart![0].IconSap= false;
             //this.actualicon = 'cloud_off';
             console.error('Error:', data.response)
           }
@@ -495,11 +493,13 @@ obtainUser() {
         .catch((error) => {
           //this.actualicon = 'cloud_off';
           if(index != undefined)
-            order[index].Icon = 'cloud_off';
+          this.Cart![0].IconSap= false;
           console.error('Error:', error);
         });
     }
   }
+
+  
 
 }
 

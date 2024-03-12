@@ -43,5 +43,11 @@ export class IconModule {
         'assets/icons/barCode.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'cancel',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        'assets/icons/cancel.svg'
+      )
+    );
   }
 }

@@ -18,6 +18,7 @@ import { OrderEditComponent } from '../order-edit/order-edit.component';
 })
 export class OrderIndexComponent {
   isWindowMaximized: any;
+  isMenuOpen: boolean = false;
   toggleWindow() {
   throw new Error('Method not implemented.');
 }
@@ -72,6 +73,16 @@ export class OrderIndexComponent {
   showDraftOrders() {
     this.showRealOrdersFlag = false;
   }
+
+  dropDownList(){
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  optionSelected(option: string) {
+    console.log('Option selected:', option);
+    
+  }
+
   sortOrders() {
     this.ListOrders.sort((a, b) => b.DocNum - a.DocNum);
   }

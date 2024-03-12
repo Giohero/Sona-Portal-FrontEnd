@@ -21,11 +21,19 @@
           <div class="progress"></div>
         </div> -->
       </button>
+      <button class="icon-drop" [matMenuTriggerFor]="menu">
+        <mat-icon>arrow_drop_down_circle</mat-icon>
+        <mat-menu #menu="matMenu">
+          <div mat-menu-item (click)="optionSelected('Option 1')">Option 1</div>
+          <div mat-menu-item (click)="optionSelected('Option 2')">Option 2</div>
+          <div mat-menu-item (click)="optionSelected('Option 3')">Option 3</div>
+        </mat-menu>
+      </button>     
       <div>
         <!-- Botones para filtrar entre órdenes normales y de borrador -->
         <div class="filter-buttons">
-          <button class="filter-button" (click)="showRealOrders()"><span>Orders SAP</span></button>
-          <button class="filter-button" (click)="showDraftOrders()"><span>Draft Orders</span></button>
+          <button class="filter-button" (click)="showRealOrders()"><mat-icon>book</mat-icon></button>
+          <button class="filter-button" (click)="showDraftOrders()"><mat-icon>description</mat-icon></button>
         </div>
       </div>
     </div>

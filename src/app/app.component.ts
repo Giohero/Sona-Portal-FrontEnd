@@ -50,6 +50,7 @@ export class AppComponent implements OnInit {
     this.signalRService.sendSignalRMessage(this.message, 'example',this.user)
   }
 
+
 }
 
 // export function webWorker(pType: string, pOrder: Order): Promise<any>  

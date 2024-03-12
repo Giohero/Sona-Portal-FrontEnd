@@ -16,11 +16,13 @@ import { webWorker } from '../app.component';
 import { MsalService } from '@azure/msal-angular';
 import { EditToCosmosDB, PublishToCosmosDB, editToCosmosDB, publishToCosmosDB } from '../service/cosmosdb.service';
 import { AuthService } from '../service/auth.service';
-import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { catchError, mergeMap, retryWhen, take, throwError, timer } from 'rxjs';
 import { IndexCustomersService } from '../service/index-customers.service';
 import { IndexItemsService } from '../service/index-items.service';
 import { AfterViewInit } from '@angular/core';
 import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+
 
 @Component({
   selector: 'app-orders',
@@ -42,6 +44,10 @@ export class OrdersComponent {
   minDate?: Date;
   maxDate?: Date;
   idIndex: number = 0;
+  currentTab: string = '';
+  itemsAdded: boolean = false;
+  
+
   
   ////Customer Data///////
   ListCustomers!: BusinessPartner[] ;
@@ -84,6 +90,9 @@ export class OrdersComponent {
   isOnline=true;
   isHidden: boolean = true;
   tokenAzure='';
+  // textConcatenated: string='';
+  // timeLastTimePressKey: any;
+  // ItemBar: Value | undefined;
 
   //Add status: index, cloud, complete
 
@@ -242,6 +251,9 @@ export class OrdersComponent {
       this.customerBack == undefined;
     }
   }
+  onTabChanged(event: MatTabChangeEvent): void {
+    this.currentTab = event.tab.textLabel;
+  }
 
   nextWindow()
   { 
@@ -304,6 +316,7 @@ export class OrdersComponent {
 
     this.getInformationByIndex();
     this.adjustImageVisibility();
+    this.updateItemsAddedStatus();
 
     this.dataSharing.cartData$.subscribe((newCart) => {
       this.Cart = newCart;
@@ -885,7 +898,7 @@ OpenModal(){
           LineTotal: Number(this.Price) * this.Quantity,
           FreeText: "",
           DiscountPercent: '0.0',
-          Icon: 'cloud_queue'
+          IconSap:false,
         };
         
         this.Cart?.push(newDocumentLine);
@@ -902,8 +915,15 @@ OpenModal(){
     {
       this.openSnackBar("You must select an Item", "error", "Error", "red");
     }
+    this.updateItemsAddedStatus();
+    // this.saveCurrentOrder();
+    this.cleanSearching();
 
     
+  }
+
+  updateItemsAddedStatus() {
+    this.itemsAdded = !!this.Cart && this.Cart.length > 0;
   }
 
   onSelectItem(selectedData: any){
@@ -936,16 +956,17 @@ OpenModal(){
 
   ////////////////// Sincronize the order in Index DB, Cosmos and SAP ////////////////////
   obtainUser() {
-    const activeAccount= this.auth.userAzure$;
-    if (activeAccount) {
-      (activeAccount: string) => {
-        return activeAccount;
-      }
-      return ''
-    } else {
-      return '';
-    }
+    let activeAccount: string | undefined;
+    // Subscribe to the observable to get the active user
+    this.auth.userAzure$.pipe(take(1)).subscribe(
+        user => {
+            activeAccount = user; // Assign the user value
+        }
+    );
+    // Return the active account after the subscription is completed
+    return activeAccount || '';
   }
+  
   async SaveOrderCache()
   {
     let OrderNewCache:any = {};
@@ -1049,6 +1070,7 @@ OpenModal(){
       {
         //console.log('agregamos solo index db y Cosmos')
         this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, 'index')
+        order![index!].IconIndexDb=true;
         this.idIndex = this.OrderIndexDB.id;
         //console.log(this.OrderReview)
         //console.log(this.OrderIndexDB.id)
@@ -1113,7 +1135,7 @@ OpenModal(){
           this.openSnackBar("You must select a customer for make the order in SAP", "warning", "Warning", "darkorange");
 
       if(index != undefined)
-        order![index].Icon = 'cloud_queue'
+      order![index!].IconSap=false;
 
       this.OrderReview!.DocumentLines = this.Cart;
       this.dataSharing.setCartData(this.Cart);
@@ -1123,7 +1145,7 @@ OpenModal(){
         //this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
         //console.log('agregamos index db, SAP y Cosmos')
         this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, 'index')
-
+        order![index!].IconIndexDb=true;
         this.idIndex = this.OrderIndexDB.id;
         this.OrderReview!.NumAtCard = this.OrderIndexDB.id;
 
@@ -1273,11 +1295,11 @@ OpenModal(){
             //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
             //this.actualicon = 'cloud_done';
-            this.Cart![0].Icon= 'cloud_done';
+            order![index!].IconSap=true;
           }
           else{
             //this.actualicon = 'cloud_off';
-            this.Cart![0].Icon = 'cloud_off';
+            order![index!].IconSap=false;
             this.OrderReviewCopy.ErrorSAP =  data.response;
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', data.response)
             EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
@@ -1286,7 +1308,7 @@ OpenModal(){
         })
         .catch((error) => {
           //this.actualicon = 'cloud_off';
-          this.Cart![0].Icon = 'cloud_off';
+          order![index!].IconSap=false;
           console.error('Error:', error);
         });
     }
@@ -1306,13 +1328,13 @@ OpenModal(){
             //this.actualicon = 'cloud_done';
             this.OrderReviewCopy.ErrorSAP = '';
             if(index != undefined)
-              order[index].Icon = 'cloud_done';
+            order![index!].IconSap=true;
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
             EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
           }
           else{
             if(index != undefined)
-              order[index].Icon = 'cloud_off';
+            order![index!].IconSap=false;
             //this.actualicon = 'cloud_off';
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '')
             this.OrderReviewCopy.ErrorSAP =  data.response;
@@ -1323,7 +1345,7 @@ OpenModal(){
         .catch((error) => {
           //this.actualicon = 'cloud_off';
           if(index != undefined)
-            order[index].Icon = 'cloud_off';
+          order![index!].IconSap=false;
           console.error('Error:', error);
         });
     }
@@ -1337,5 +1359,33 @@ OpenModal(){
       this.SaveOrderCache()
     }
   }
+
+//   @HostListener('window:keydown', ['$event'])
+//  async handleKeyDown(event: KeyboardEvent) {
+//     this.textConcatenated += event.key;
+//     if (this.timeLastTimePressKey !== null) {
+//       clearTimeout(this.timeLastTimePressKey);
+//     }
+
+//     this.timeLastTimePressKey = setTimeout(async () => {
+//       console.log("El texto ingresado es:", this.textConcatenated);
+      
+//       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
+//        console.log(this.ItemBar);
+//        if (this.ItemBar != undefined){
+//         this.searchTextItem = this.ItemBar.ItemCode;
+//          this.OpenModal()
+//        }
+//        // else{
+//        //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
+//        //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+       
+//       this.textConcatenated = '';
+//     }, 20);
+//   }
+
+ 
+ 
+
 }
 

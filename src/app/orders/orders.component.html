@@ -1,9 +1,9 @@
 <div class="background">
-  <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between center">
+  <div fxLayout="row" fxLayout.xs="column" >
     <h2 class="title">New Order</h2> 
   </div>
 
-  <mat-tab-group color="warn"  mat-stretch-tabs="false" mat-align-tabs="start">
+  <mat-tab-group (selectedTabChange)="onTabChanged($event)" color="warn"  mat-stretch-tabs="false" mat-align-tabs="start">
     <br>
     <mat-tab label="Customer">
       <br>
@@ -92,7 +92,7 @@
               </div>
           </mat-card-content>
         </mat-card>
-        <mat-card class="mat-card expansion" *ngIf="!isHidden"> 
+        <mat-card fxFlex="" class="mat-card expansion" *ngIf="!isHidden  "> 
           <mat-card-header>
             <mat-card-title class="h2Mat"><h2 >Address <mat-icon>business</mat-icon></h2></mat-card-title>
             <mat-card-subtitle>You have to choose a Customer for choose a address</mat-card-subtitle>
@@ -117,85 +117,97 @@
     </mat-card>
       </div>
   </mat-tab>
-    <mat-tab label="List Items">
+ 
+  <mat-tab label="List Items">
+    <div class="grid-container-items">
       <br>
-      <div class="">
-        <div class="grid-container-customerd">
-          <mat-card class="mat-card expansion">
-            <mat-card-header>
-              <h2 class="h2Mat">Add Item <mat-icon> local_mall</mat-icon></h2>
-            </mat-card-header>
-            <mat-card-content class="grid-container">
-                <div class="label-container">
-                  <label class="label">Search by name:</label>
-                  <input type="text" class="boxCustom" id="search-text-item" aria-describedby="search-text" 
-                  [(ngModel)]="searchTextItem" placeholder="Enter text to search" 
-                  autofocus [matAutocomplete]="autoItem" >
-  
-                  <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" (optionSelected)="onSelectItem($event.option.value)">
-                    <mat-option *ngFor="let c of ListItems| appFilter: searchTextItem"  value="{{c.ItemCode}}"  class="optionList" >
-                      {{c.ItemCode}} - {{c.ItemName}}
-                    </mat-option>
-                  </mat-autocomplete> 
-                </div>
-                <br>
-                <button class="add-button" (click)="OpenModal()">Add</button>
-            </mat-card-content> 
+      <mat-card class="mat-card expansion ">
+        <mat-card-header>
+          <h2 class="h2Mat">Add Item <mat-icon> local_mall</mat-icon></h2>
+        </mat-card-header>
+        <mat-card-content class="grid-container">
+              <div class="label-container">
+                <label class="label">Search by name:</label>
+                <input type="text" class="boxCustom" id="search-text-item" aria-describedby="search-text" 
+                [(ngModel)]="searchTextItem" placeholder="Enter text to search" 
+                autofocus [matAutocomplete]="autoItem" >
+
+                <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" (optionSelected)="onSelectItem($event.option.value)">
+                  <mat-option *ngFor="let c of ListItems| appFilter: searchTextItem"  value="{{c.ItemCode}}"  class="optionList" >
+                    {{c.ItemCode}} - {{c.ItemName}}
+                  </mat-option>
+                </mat-autocomplete> 
+              </div>
+              <br>
+              <button class="add-button" (click)="OpenModal()">Add</button>
+          </mat-card-content> 
           </mat-card>
-          <mat-card id="Cart" class="mat-card expansion" >
-            <div *ngFor="let Item of Cart; let listIndex=index;" >
-              <mat-card-content class="info-card">
-                <div class="left-column">
-                  <div class="label-container-cart-s">
-                    <label class="label" for="ItemName">Item Code:</label>
-                    <br>
-                    <label  for="ItemName"  id="ItemName" readonly>{{Item.ItemCode}}</label>
-                  </div>
-                  <div class="label-container-cart-s">
-                    <label class="label" for="ItemName">Item:</label>
-                    <br>
-                    <label  for="ItemName"  id="ItemName" readonly>{{Item.ItemDescription}}</label>
-                  </div>
-                  <div class="label-container-cart-s">
-                    <mat-icon  class="iconC">{{Item.Icon}}</mat-icon>
-                  </div>
-                </div>
-                
-                <div class="right-column">
-                  <div class="label-container-cart-s">
-                    <label class="label" for="Quantity">Quantity:</label>
-                    <br>
-                    <label type="number" matInput for="Quantity" min="1" max="1000"> 
-                      {{Item.Quantity}}
-                      </label>
-                  </div>
-                  <div class="label-container-cart-s">
-                    <label class="label" for="Total">Total:</label>
-                    <br>
-                    <label type="number" matInput for="Price" min="1" readonly>
-                      {{Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'}}
-                    </label>
-                  </div>
-                  <button mat-icon-button (click)="editOpenModal(Item, listIndex)">
-                    <mat-icon >edit</mat-icon>
-                  </button>
+          <br>
+    
+      <mat-card class="mat-card expansion" *ngIf="Cart!.length > 0" >
+        <!-- <mat-card class="mat-card expansion" *ngIf="itemsAdded" > -->
+        <div *ngFor="let Item of Cart; let listIndex=index;" >
+          <mat-card-content class="info-card">
+            <div class="left-column">
+              <div class="label-container-cart-s">
+                <label class="label"  for="ItemName ">Item Code:</label>           
+                <label style="font-weight: bold;" for="ItemName"  id="ItemName" readonly>{{Item.ItemCode}}</label>
+              </div>
+              <div class="label-container-cart-s">
+                <label class="label" for="ItemName">Item:</label>
+                <label  for="ItemName"  id="ItemName" readonly>{{Item.ItemDescription}}</label>
+              </div>
+              
+              <div class="label-container-cart-s">
+                <mat-icon svgIcon="sap" class="iconC" *ngIf="Item.IconSap==true"></mat-icon>
+                <mat-icon svgIcon="indexdb" class="iconC" *ngIf="Item.IconSap==true"></mat-icon>
+                <mat-icon svgIcon="cancel" class="iconC" *ngIf="Item.IconSap==false"></mat-icon>
+              </div>
+              <!-- <div class="label-container-cart-s">
+               
+              </div>
+              <div class="label-container-cart-s">
+            
+              </div> -->
+            </div>
+            
+            <div class="right-column">
+              <div class="label-container-cart-s">
+                <label class="label" for="Quantity">Quantity:</label>                
+                <label type="number" matInput for="Quantity" min="1" max="1000"> 
+                  {{Item.Quantity}}
+                  </label>
+              </div>
+              <div class="label-container-cart-s">
+                <label class="label" for="Total">Total:</label>               
+                <label type="number" matInput for="Price" min="1" readonly>
+                  {{Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'}}
+                </label>
+              </div>
+              <button mat-icon-button (click)="editOpenModal(Item, listIndex)">
+                <mat-icon >edit</mat-icon>
+               </button>
                 </div>
               </mat-card-content>
               <mat-divider class="mdivider"></mat-divider>
             </div>
-            <mat-card-actions align="end">
-              <mat-divider></mat-divider>
-              <div style="margin: 10px; text-align: right;">Total: ${{subTotal()}}</div>
-            </mat-card-actions>
-          </mat-card>
-        </div>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+      </mat-card>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+<br>
 
-  <button class="button-container" *ngIf="Cart!.length > 0" (click)="finishOrder()" [disabled]="idIndex === 0">Finish Order</button>
+<!-- <button class="button-container" *ngIf="Cart!.length > 0 && currentTab === 'List Items'" (click)="finishOrder()" [disabled]="idIndex === 0" >Finish Order</button> -->
+<button class="button-container" *ngIf="Cart!.length > 0 && currentTab === 'List Items'" (click)="finishOrder()"  >Finish Order</button>
 </div>
-
+<mat-card-actions class="footer"  *ngIf="itemsAdded && currentTab === 'List Items' " align="end">
+  <mat-divider></mat-divider>
+  <div class="doc-entry">
+  <div style="margin: 10px; text-align: right; font-size: 19px; font-weight: bold;" class="DocNum"><span>{{DocEntryPublish}}</span></div>
+  <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;" class="CustomName"><span>{{searchText}}</span></div>
+  <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;">Total: ${{subTotal()}}</div>
+  </div>
+</mat-card-actions>
 <div *ngIf="isLoading" class="custom-spinner" fxLayoutAlign="center center">
   <mat-spinner [diameter]="120"></mat-spinner>
   Charging Order...

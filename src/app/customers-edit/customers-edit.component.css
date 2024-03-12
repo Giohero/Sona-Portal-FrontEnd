@@ -103,11 +103,8 @@ button.mat-raised-button .icon {
 }
 
 .background {
-  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
   background-color: #fffff6;
   background-repeat: no-repeat;
   background-size: cover;
@@ -260,39 +257,48 @@ button:hover {
     width: 100% !important; 
   }
 }
-@media (max-width: 767px) {
+/* @media (max-width: 767px) {
   button {
-    font-size: 15px; /* Tamaño de fuente más pequeño para pantallas pequeñas */
-    padding: 10px; /* Aumentar el padding para una mejor accesibilidad */
-    margin-bottom: 10px; /* Añadir espacio entre botones */
+    font-size: 15px; 
+    padding: 10px; 
+    margin-bottom: 10px; 
   }
 
   .customerSection {
-    flex-direction: column; /* Cambiar la dirección del flex si es necesario */
+    flex-direction: column;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
   button {
-    font-size: 17px; /* Tamaño de fuente para tabletas */
-    /* Otros ajustes específicos para tabletas */
+    font-size: 17px; 
   }
-}
+} */
 
-@media (max-width: 767px) {
+/* @media (max-width: 767px) {
   .button mat-icon {
-    font-size: 20px; /* Tamaño de ícono para móviles */
-    margin-right: 5px; /* Ajustar espaciado si es necesario */
+    font-size: 20px;
+    margin-right: 5px;
   }
-}
+} */
 
-@media (min-width: 768px) and (max-width: 1024px) {
+/* @media (min-width: 768px) and (max-width: 1024px) {
   .button mat-icon {
-    font-size: 24px; /* Tamaño de ícono para tabletas */
-    /* Otros ajustes específicos para tabletas */
+    font-size: 24px; 
+  }
+} */
+@media (max-width: 768px) { 
+  .container, .grid-container, .mat-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 }
-
+  .mat-card {
+    padding: 10px;
+  }
 /* Reglas para iPads en modo portrait */
 @media only screen 
   and (min-device-width: 768px) 

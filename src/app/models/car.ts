@@ -6,7 +6,9 @@ export class DocumentLines {
     UnitPrice?: number;
     LineTotal?: number;
     FreeText?: string;
-    Icon?:string;
+    IconSap?:boolean;
+    IconCosmosDb?:boolean;
+    IconIndexDb?:boolean;
     DiscountPercent?:string;
     LineNum?:number;
     InStock?: number;

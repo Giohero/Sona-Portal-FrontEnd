@@ -99,8 +99,8 @@ export class SignalRService {
       this.updateToken(token.accessToken)
       this.initializeSignalRConnection(token);
 
-      // this.itemsIndex.getItemsIndesxDB(this.itemsIndex,this.tokenAzure);
-      // this.customerindex.getCustomersIndesxDB(this.customerindex,this.tokenAzure);
+      this.itemsIndex.getItemsIndesxDB(this.itemsIndex,this.tokenAzure);
+      this.customerindex.getCustomersIndesxDB(this.customerindex,this.tokenAzure);
   
       this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(token.url, {
