@@ -57,16 +57,18 @@ export class ScannerItemComponent implements OnInit {
       this.isOnline = newWifi;
     });
   }
+
   AddInner(){
-    this.QuantityItem += Number(this.Item.U_InnerPackQty);
+    this.QuantityItem = Number(this.QuantityItem) + Number(this.Item.U_InnerPackQty);
   }
+
   AddMaster(){
     this.QuantityItem *= Number(this.Item.U_InnerPackQty);
   }
 
   UpdateScanner(){
     this.Item.LineNum=-1;
-    console.log(this.QuantityItem)
+    console.log(this.QuantityItem)   
     var ItemAdd = {ItemInfo : this.Item, Quantity : this.QuantityItem, FreeText: this.udfComments}
     this.ScannerReference.close(ItemAdd);
   }
