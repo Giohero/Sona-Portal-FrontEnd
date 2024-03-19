@@ -407,7 +407,8 @@ export class OrderEditComponent implements OnInit {
       order.CardCode = CurrentCustomer!.CardCode;
       this.inputSearchCutomer = true;
    
-    this.updateOrder('Change_Customer')
+      var data = JSON.stringify({Customer: order.CardName, CustomerCode: order.CardCode});
+      this.updateOrder('Change_Customer', data)
     //this.changeOrder(undefined, undefined, 'customer')
   }
 
@@ -449,7 +450,23 @@ export class OrderEditComponent implements OnInit {
     var totalItem = parseFloat(item.UnitPrice.toString()) * item.Quantity;
     //console.log(totalItem);
     item.LineTotal = totalItem;
-    this.updateOrder('Add_New_Item_' + item.ItemCode);
+    const Item : DocumentLines = {
+      ItemCode: item.ItemCode,
+      FixedItemCode: "",
+      ItemDescription: item.ItemDescription,
+      Quantity: item.Quantity,
+      UnitPrice: item.UnitPrice,
+      LineTotal: 0,
+      Dummie: "",
+      TaxRate: "",
+      TaxCode: "",
+      FreeText: "",
+      ItemPrices: "",
+      LineNum:0
+    }
+
+    var data = JSON.stringify({...Item})
+    this.updateOrder('Add_New_Item_' + item.ItemCode, data);
   } else {
     //console.log(unitPriceOld);
 
@@ -473,7 +490,15 @@ export class OrderEditComponent implements OnInit {
         item.LineTotal = parseFloat(itemOld.LineTotal.toString());
     }
 
-    this.updateOrder('Change_Quantity_LineNum_' + item.LineNum);
+    var data = JSON.stringify({
+      ItemCode: item.ItemCode,
+      ItemDescription: item.ItemDescription,
+      Quantity: item.Quantity,
+      UnitPrice: item.UnitPrice,
+      LineTotal: item.LineTotal
+    })
+
+    this.updateOrder('Change_Quantity_LineNum_' + item.LineNum, data);
   }
    
     
@@ -519,7 +544,8 @@ export class OrderEditComponent implements OnInit {
 
     Item.LineTotal = Item.UnitPrice * Item.Quantity;
     this.order!.DocumentLines.push(Item)
-    this.updateOrder('Add_New_Item_' + Item.ItemCode);
+    var data = JSON.stringify({...Item})
+    this.updateOrder('Add_New_Item_' + Item.ItemCode, data);
   }
 
   OpenModal(itemFound: Value): void{
@@ -565,7 +591,13 @@ export class OrderEditComponent implements OnInit {
               }
               if(result.FreeText != "" && result.FreeText != undefined && result.FreeText != itemSelect.FreeText){
                 itemSelect.FreeText = result.FreeText
-                this.updateOrder('ChangeComments_LineNum'+ itemSelect.LineNum);
+                var data = JSON.stringify({
+                  ItemCode: itemSelect.ItemCode,
+                  ItemDescription: itemSelect.ItemDescription,
+                  LineNum: itemSelect.LineNum,
+                  FreeText: itemSelect.FreeText
+                })
+                this.updateOrder('ChangeComments_LineNum'+ itemSelect.LineNum, data);
                 //console.log("se cambia los comentarios")
               }
               if(result.ItemInfo.LineNum != -1){
@@ -581,10 +613,17 @@ export class OrderEditComponent implements OnInit {
   }
   removeItem(index: number): void {
     if (this.order && this.order.DocumentLines && this.order.DocumentLines.length > index) {
+
       var itemDelete = this.order.DocumentLines[index];
+      var data = JSON.stringify({
+        ItemCode: itemDelete.ItemCode,
+        ItemDescription: itemDelete.ItemDescription,
+        LineNum:itemDelete.LineNum
+      })
       this.order.DocTotal -= itemDelete.LineTotal;
       this.order.DocumentLines.splice(index, 1);
-      this.updateOrder('Remove_LineNum_'+itemDelete.LineNum)
+
+      this.updateOrder('Remove_LineNum_'+itemDelete.LineNum, data)
     }
   }
 
@@ -637,7 +676,24 @@ export class OrderEditComponent implements OnInit {
   //   });
   // }
 
-  async updateOrder(action: string)
+  ChangeDates(action:string){
+    let data = ''
+    if(action == 'ChangePostDate')
+    {
+      const docDueDate = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
+      data = JSON.stringify({ DocDueDate: docDueDate?.toString(),})
+    }
+    else
+    {
+      const docDate =  this.pipe.transform(this.post.value, 'yyyy-MM-dd');
+      data = JSON.stringify({DocDate:docDate?.toString(),})
+    }
+
+    this.updateOrder(action,data)
+    
+  }
+
+  async updateOrder(action: string, data: string)
   {
     //console.log(this.order)
 
@@ -707,7 +763,7 @@ export class OrderEditComponent implements OnInit {
         OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
         OrderReviewCopy.User = this.usernameAzure;
         OrderReviewCopy.Timestamp =  new Date().toISOString();
-        OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.orderOld));
+        OrderReviewCopy.Order = JSON.stringify(this.orderOld);
 
         //Add in Cosmos the Create Order 
         var idCosmos = await PublishToCosmosDB(OrderReviewCopy, 'transaction_log')
@@ -724,7 +780,7 @@ export class OrderEditComponent implements OnInit {
         idTransaction = await this.transLog.addTransactionToIndex(action, this.OrderIndexDB.id,0,0, OrderPost, "index", this.usernameAzure, '')
       
       //Add the change for the change in Index status
-      this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id, action, OrderPost, this.usernameAzure)
+      this.transLog.addTransactionLogToCosmos(OrderPost!.DocNum!,Number(OrderPost!.DocEntry!), idTransaction!, this.OrderIndexDB.id, action, data, this.usernameAzure)
       this.transLog.editTransactionToIndex(this.OrderIndexDB.id, idTransaction!, action, OrderPost!.DocNum!,Number(OrderPost!.DocEntry!),'cosmos',OrderPost, this.usernameAzure,'')
       //const idTransaction = "0";
       //console.log(JSON.stringify(this.orderOld, null, 3));

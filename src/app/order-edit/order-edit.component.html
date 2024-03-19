@@ -59,12 +59,12 @@
               </div>
               <div class="label-container">
                 <label class="label">Reference Number:</label>
-                <input type="text" class="boxCustom" [(ngModel)]="order.NumAtCard" (change)="updateOrder('Change_NumAtCard')" [disabled]="blockStatus">
+                <input type="text" class="boxCustom" [(ngModel)]="order.NumAtCard" (change)="updateOrder('Change_NumAtCard',order.NumAtCard)" [disabled]="blockStatus">
               </div>
               <div class="label-container">
                 <label class="label">Posting date:</label>
                 <mat-form-field class="example-full-width">
-                  <input matInput [matDatepicker]="postingDate"  [formControl]="post" (change)="updateOrder('ChangePostDate')" [value]="order.DocDate | date:'yyyy-MM-dd'">
+                  <input matInput [matDatepicker]="postingDate"  [formControl]="post" (change)="ChangeDates('ChangePostDate')" [value]="order.DocDate | date:'yyyy-MM-dd'">
                   <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
                   <mat-datepicker #postingDate></mat-datepicker>
                 </mat-form-field>
@@ -73,7 +73,7 @@
                 <label class="label">Delivery Date:</label>
                 <mat-form-field>
                   <mat-label>Choose a date</mat-label>
-                    <input matInput [matDatepicker]="deliveryDate" [min]="minDate" [formControl]="delivery" (dateChange)="updateOrder('Change_Delivery_Date')" [disabled]="blockStatus" [readonly]="blockStatus">
+                    <input matInput [matDatepicker]="deliveryDate" [min]="minDate" [formControl]="delivery" (dateChange)="ChangeDates('Change_Delivery_Date')" [disabled]="blockStatus" [readonly]="blockStatus">
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="deliveryDate" [disabled]="blockStatus"></mat-datepicker-toggle>
                     <mat-datepicker #deliveryDate></mat-datepicker>

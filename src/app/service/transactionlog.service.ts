@@ -43,7 +43,7 @@ export class TransactionlogService {
   }
 
 
-  async addTransactionLogToCosmos(docNum: number, docEntry: number, idTransaction: string, idIndex: number, action:string, orderChange:Order, userAzure:string) {
+  async addTransactionLogToCosmos(docNum: number, docEntry: number, idTransaction: string, idIndex: number, action:string, orderChange:string, userAzure:string) {
     // let log =  {
     //   IdIndex:idIndex,
     //   user: this.obtainUser(),
@@ -67,10 +67,7 @@ export class TransactionlogService {
       DocNum: docNum,
       DocEntry: docEntry,
       //DocNum: parseInt(DocNum),
-      order: 
-      {
-        ...orderChange
-      }
+      order: orderChange
       
     };
 

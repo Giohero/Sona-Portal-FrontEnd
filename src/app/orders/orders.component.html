@@ -1,4 +1,8 @@
-<div class="background">
+<div *ngIf="isLoading == true" class="custom-spinner" fxLayoutAlign="center center">
+  <mat-spinner [diameter]="120"></mat-spinner>
+  Charging Order...
+</div>
+<div  class="background">
   <div fxLayout="row" fxLayout.xs="column" >
     <h2 class="title">New Order</h2> 
   </div>
@@ -159,8 +163,8 @@
               </div>
               
               <div class="label-container-cart-s">
+                <mat-icon svgIcon="indexdb" class="iconC" *ngIf="Item.IconIndexDb==true"></mat-icon>
                 <mat-icon svgIcon="sap" class="iconC" *ngIf="Item.IconSap==true"></mat-icon>
-                <mat-icon svgIcon="indexdb" class="iconC" *ngIf="Item.IconSap==true"></mat-icon>
                 <mat-icon svgIcon="cancel" class="iconC" *ngIf="Item.IconSap==false"></mat-icon>
               </div>
               <!-- <div class="label-container-cart-s">
@@ -208,7 +212,4 @@
   <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;">Total: ${{subTotal()}}</div>
   </div>
 </mat-card-actions>
-<div *ngIf="isLoading" class="custom-spinner" fxLayoutAlign="center center">
-  <mat-spinner [diameter]="120"></mat-spinner>
-  Charging Order...
-</div>
+

@@ -19,7 +19,6 @@ import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, take, throwError, timer } from 'rxjs';
 import { IndexCustomersService } from '../service/index-customers.service';
 import { IndexItemsService } from '../service/index-items.service';
-import { AfterViewInit } from '@angular/core';
 import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 
@@ -46,7 +45,7 @@ export class OrdersComponent {
   idIndex: number = 0;
   currentTab: string = '';
   itemsAdded: boolean = false;
-  
+  usernameAzure ='';
 
   
   ////Customer Data///////
@@ -188,7 +187,7 @@ export class OrdersComponent {
       });
 
       this.OrderReview!.DocumentLines = DocumentLinesP;
-      this.isLoading = false;
+      //this.isLoading = false;
 
     }
     else
@@ -303,6 +302,8 @@ export class OrdersComponent {
   ngOnInit(): void {
     //this.ShowEdit = "none"
     this.elementCart = "info-card image-card";
+
+    this.obtainUser();
 
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
       //console.log('llego el cambio a '+newWifi)
@@ -898,6 +899,7 @@ OpenModal(){
           LineTotal: Number(this.Price) * this.Quantity,
           FreeText: "",
           DiscountPercent: '0.0',
+          IconIndexDb:false,
           IconSap:false,
         };
         
@@ -956,15 +958,14 @@ OpenModal(){
 
   ////////////////// Sincronize the order in Index DB, Cosmos and SAP ////////////////////
   obtainUser() {
-    let activeAccount: string | undefined;
-    // Subscribe to the observable to get the active user
-    this.auth.userAzure$.pipe(take(1)).subscribe(
-        user => {
-            activeAccount = user; // Assign the user value
-        }
+    this.auth.userAzure$.subscribe(
+      (username: string) => {
+        this.usernameAzure = username
+      },
+      (error: any) => {
+        this.usernameAzure = ''
+      }
     );
-    // Return the active account after the subscription is completed
-    return activeAccount || '';
   }
   
   async SaveOrderCache()
@@ -1070,7 +1071,8 @@ OpenModal(){
       {
         //console.log('agregamos solo index db y Cosmos')
         this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, 'index')
-        order![index!].IconIndexDb=true;
+        if(index != undefined)
+          order![index!].IconIndexDb=true;
         this.idIndex = this.OrderIndexDB.id;
         //console.log(this.OrderReview)
         //console.log(this.OrderIndexDB.id)
@@ -1079,7 +1081,7 @@ OpenModal(){
         this.OrderReviewCopy = {};
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
         this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
-        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.User = this.usernameAzure;
         this.OrderReviewCopy.Timestamp =  new Date().toISOString();
         //this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
         this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
@@ -1101,11 +1103,14 @@ OpenModal(){
       {
         //console.log('editamos solo index db')
         this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index', '')
+        if(index != undefined)
+          order![index!].IconIndexDb=true;
+        
         this.OrderReviewCopy = {};
         this.OrderReviewCopy.id = this.idCosmos;
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
         this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
-        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.User = this.usernameAzure;
         this.OrderReviewCopy.Timestamp =  new Date().toISOString();
         this.OrderReviewCopy.DocNum = Number(this.OrderReview!.DocNum!);
         this.OrderReviewCopy.DocEntry = Number(this.OrderReview!.DocEntry!);
@@ -1135,7 +1140,7 @@ OpenModal(){
           this.openSnackBar("You must select a customer for make the order in SAP", "warning", "Warning", "darkorange");
 
       if(index != undefined)
-      order![index!].IconSap=false;
+        order![index!].IconSap=false;
 
       this.OrderReview!.DocumentLines = this.Cart;
       this.dataSharing.setCartData(this.Cart);
@@ -1145,14 +1150,15 @@ OpenModal(){
         //this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
         //console.log('agregamos index db, SAP y Cosmos')
         this.OrderIndexDB = await this.indexDB.addOrderIndex(this.OrderReview, 'index')
-        order![index!].IconIndexDb=true;
+        if(index != undefined)
+          order![index!].IconIndexDb=true;
         this.idIndex = this.OrderIndexDB.id;
         this.OrderReview!.NumAtCard = this.OrderIndexDB.id;
 
         this.OrderReviewCopy = {};
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
         this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
-        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.User = this.usernameAzure;
         this.OrderReviewCopy.Timestamp =  new Date().toISOString();
         this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
         
@@ -1206,11 +1212,14 @@ OpenModal(){
         this.OrderReview!.DocumentLines = DocumentLinesP;
         
         this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'index', '')
+        if(index != undefined)
+          order![index!].IconIndexDb=true;
+        
         this.OrderReviewCopy = {};
         this.OrderReviewCopy.id = this.idCosmos;
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
         this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
-        this.OrderReviewCopy.User = this.obtainUser();
+        this.OrderReviewCopy.User = this.usernameAzure;
         this.OrderReviewCopy.Timestamp =  new Date().toISOString();
         this.OrderReviewCopy.DocNum = Number(this.OrderReview!.DocNum!);
         this.OrderReviewCopy.DocEntry = Number(this.OrderReview!.DocEntry!);
@@ -1247,6 +1256,7 @@ OpenModal(){
 
   async updateOrderCloud(type: string, index:number | undefined,order:DocumentLines[])
   {
+    console.log(index)
     if(this.DocNumPublish === 0)
       type = 'publish';
     else
@@ -1283,7 +1293,7 @@ OpenModal(){
             this.OrderReviewCopy.id = this.idCosmos;
             this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;
             this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
-            this.OrderReviewCopy.User = this.obtainUser();
+            this.OrderReviewCopy.User = this.usernameAzure;
             this.OrderReviewCopy.Timestamp =  new Date().toISOString();
             this.OrderReviewCopy.DocNum = Number(this.OrderReview!.DocNum!);
             this.OrderReviewCopy.DocEntry = Number(this.OrderReview!.DocEntry!);
@@ -1295,11 +1305,15 @@ OpenModal(){
             //this.transactionService.editOrderLog(this.OrderReviewCopy,this.OrderReviewCopy.id, this.OrderReviewCopy.IdIndex);
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
             //this.actualicon = 'cloud_done';
-            order![index!].IconSap=true;
+            if(index != undefined) //HAGAN PRUEBAS 
+              order![index!].IconSap=true;
+            else if(this.Cart?.length === 1)
+              this.Cart.forEach(x => { x.IconSap = true })
           }
           else{
             //this.actualicon = 'cloud_off';
-            order![index!].IconSap=false;
+            if(index != undefined)
+              order![index!].IconSap=false;
             this.OrderReviewCopy.ErrorSAP =  data.response;
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', data.response)
             EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
@@ -1308,7 +1322,8 @@ OpenModal(){
         })
         .catch((error) => {
           //this.actualicon = 'cloud_off';
-          order![index!].IconSap=false;
+          if(index != undefined)
+            order![index!].IconSap=false;
           console.error('Error:', error);
         });
     }
@@ -1328,13 +1343,14 @@ OpenModal(){
             //this.actualicon = 'cloud_done';
             this.OrderReviewCopy.ErrorSAP = '';
             if(index != undefined)
-            order![index!].IconSap=true;
-            this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
+              order![index!].IconSap=true;
+            
+              this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'complete', '')
             EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
           }
           else{
             if(index != undefined)
-            order![index!].IconSap=false;
+              order![index!].IconSap=false;
             //this.actualicon = 'cloud_off';
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '')
             this.OrderReviewCopy.ErrorSAP =  data.response;
@@ -1345,7 +1361,7 @@ OpenModal(){
         .catch((error) => {
           //this.actualicon = 'cloud_off';
           if(index != undefined)
-          order![index!].IconSap=false;
+            order![index!].IconSap=false;
           console.error('Error:', error);
         });
     }
