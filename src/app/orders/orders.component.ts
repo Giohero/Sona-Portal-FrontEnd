@@ -901,6 +901,7 @@ OpenModal(){
           DiscountPercent: '0.0',
           IconIndexDb:false,
           IconSap:false,
+          IconCosmosDb:true
         };
         
         this.Cart?.push(newDocumentLine);
@@ -910,7 +911,9 @@ OpenModal(){
       }
       else
       {
-        this.openSnackBar("You must add Quantity more than zero", "warning", "Warning", "darkorange");
+        
+       this.openSnackBar("You must add Quantity more than zero", "warning", "Warning", "darkorange");
+
       }
     }
     else
@@ -948,8 +951,8 @@ OpenModal(){
 
     if(this.Cart!.length === 0)
     {
-      const miDiv = document.getElementById('Cart');
-      miDiv!.classList.add('image-card');
+      // const miDiv = document.getElementById('Cart');
+      // miDiv!.classList.add('image-card');
     }  
   }
 
@@ -1250,6 +1253,21 @@ OpenModal(){
       this.dataSharing.setCartData(this.Cart);
       this.dataSharing.setOrderIndexDB(this.OrderIndexDB)
 
+      if (this.isOnline && this.idCosmos != undefined && index != undefined && order != undefined) {
+        if (action === 'customer' || action === 'delivery' || action === 'address') {
+            // Operación en Cosmos DB exitosa
+            order[index].IconCosmosDb = true;
+        } else {
+            var publishCosmos = await EditToCosmosDB(this.OrderReviewCopy, 'transaction_log');
+            if (publishCosmos == true) {
+                this.indexDB.editOrderIndex(this.OrderIndexDB.id, Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', '');
+
+                // Establecer el icono de Cosmos DB en true
+                order[index].IconCosmosDb = true;
+            }
+        }
+     }
+
     }
   }
   
@@ -1366,6 +1384,7 @@ OpenModal(){
         });
     }
   }
+  
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
     //localStorage.removeItem('OrderNewSave');

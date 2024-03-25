@@ -28,6 +28,7 @@ export class ScannerItemComponent implements OnInit {
   inStock: number = 0;
   itemSelect : DocumentLines | undefined;
   AddItem = false;
+  action : 'add' | 'delete';
 
   constructor (private cdr: ChangeDetectorRef, private itemsService: IndexItemsService, private dataSharing: DataSharingService, private orderService: ServiceService, 
     public ScannerReference: MatDialogRef<ScannerItemComponent>, 
@@ -36,6 +37,7 @@ export class ScannerItemComponent implements OnInit {
       this.Item = data.Item;
       console.log(this.Item);
       this.udfComments =data.FreeText;
+      this.action = data.Action;
       if (this.Item.ItemWarehouseInfoCollection && this.Item.ItemWarehouseInfoCollection.length > 0) {
         this.inStock = this.Item.ItemWarehouseInfoCollection[0].InStock;
       }
@@ -64,6 +66,13 @@ export class ScannerItemComponent implements OnInit {
 
   AddMaster(){
     this.QuantityItem *= Number(this.Item.U_InnerPackQty);
+  }
+  
+  AddScanner(){
+    this.Item.LineNum=-1;
+    console.log(this.QuantityItem)   
+    var ItemAdd = {ItemInfo : this.Item, Quantity : this.QuantityItem, FreeText: this.udfComments}
+    this.ScannerReference.close(ItemAdd);
   }
 
   UpdateScanner(){
@@ -97,8 +106,8 @@ export class ScannerItemComponent implements OnInit {
   //   this.ScanneReference.close(); 
   // }
   DeleteScanner(): void {
-    var ItemAdd = {ItemInfo : this.Item, Quantity : this.QuantityItem}
-    this.ScannerReference.close(ItemAdd);
+    var itemDelete = {ItemInfo : this.Item, Quantity : this.QuantityItem}
+    this.ScannerReference.close(itemDelete);
   }
 
   Available(){

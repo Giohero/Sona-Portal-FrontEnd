@@ -1,7 +1,7 @@
-<div *ngIf="isLoading == true" class="custom-spinner" fxLayoutAlign="center center">
+<!-- <div *ngIf="isLoading == true" class="custom-spinner" fxLayoutAlign="center center">
   <mat-spinner [diameter]="120"></mat-spinner>
   Charging Order...
-</div>
+</div> -->
 <div  class="background">
   <div fxLayout="row" fxLayout.xs="column" >
     <h2 class="title">New Order</h2> 
@@ -166,6 +166,7 @@
                 <mat-icon svgIcon="indexdb" class="iconC" *ngIf="Item.IconIndexDb==true"></mat-icon>
                 <mat-icon svgIcon="sap" class="iconC" *ngIf="Item.IconSap==true"></mat-icon>
                 <mat-icon svgIcon="cancel" class="iconC" *ngIf="Item.IconSap==false"></mat-icon>
+                <mat-icon svgIcon="cosmosdb" class="iconC" *ngIf="Item.IconCosmosDb==false"></mat-icon>
               </div>
               <!-- <div class="label-container-cart-s">
                
