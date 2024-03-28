@@ -193,6 +193,7 @@ export class OrdersComponent {
     else
       this.isLoading = false;
   }
+
   trySelectCustomer(orderSaveCache: any): void {
       setTimeout(() => {
           //console.log(orderSaveCache)
@@ -811,9 +812,44 @@ export class OrdersComponent {
       this.changeOrder(index, this.Cart!, '');
       item.LineTotal = item.UnitPrice * item.Quantity!;
     }
-      
+
+    this.updateDiscounts();
+
   }
 
+  updateDiscounts() {
+    const subtotal = this.subTotal();
+    let discountPercent = 0;
+  
+    // Reglas para el cálculo del descuento
+    if (subtotal < 500) {
+      discountPercent = 0.05; // Descuento del 5%
+    } else if (subtotal >= 500 && subtotal <= 1000) {
+      discountPercent = 0.10; // Descuento del 10%
+    } else if (subtotal > 1000) {
+      discountPercent = 0.20; // Descuento del 20%
+    }
+  
+    // Valido si el porcentaje de descuento ha cambiado
+    if (this.OrderReview.DiscountPercent !== discountPercent) {
+      this.OrderReview.DiscountPercent = discountPercent;
+      // Aplico el descuento a cada línea del documento
+      this.OrderReview.DocumentLines!.forEach(line => {
+        const lineDiscount = line.UnitPrice! * line.Quantity! * discountPercent;
+        line.LineTotal = (line.UnitPrice! * line.Quantity!) - lineDiscount;
+        line.DiscountPercent = (discountPercent * 100).toString();
+      });
+  
+      // Calcula el total después del descuento 
+      const totalAfterDiscount = this.OrderReview.DocumentLines!.reduce((acc, line) => acc + line.LineTotal!, 0);
+      this.OrderReview.TotalAfterDiscount = totalAfterDiscount;
+      
+    }
+    // this.changeOrder(undefined, undefined, 'discount');
+    //this.cdr.markForCheck();
+  }
+
+ 
   updateComment(index: number) {
       this.changeOrder(index,this.Cart!,'');
   }
@@ -906,7 +942,6 @@ OpenModal(){
         
         this.Cart?.push(newDocumentLine);
         this.changeOrder(this.Cart!.length - 1, this.Cart!, '');
-
         this.cleanSearching()
       }
       else
@@ -920,11 +955,11 @@ OpenModal(){
     {
       this.openSnackBar("You must select an Item", "error", "Error", "red");
     }
+   
     this.updateItemsAddedStatus();
     // this.saveCurrentOrder();
     this.cleanSearching();
-
-    
+    this.updateDiscounts();
   }
 
   updateItemsAddedStatus() {
@@ -948,12 +983,13 @@ OpenModal(){
     ////////this.Cart.removeItem(index);
     this.changeOrder(undefined,this.Cart!, '');
     this.cleanSearching();
-
+   
     if(this.Cart!.length === 0)
     {
       // const miDiv = document.getElementById('Cart');
       // miDiv!.classList.add('image-card');
-    }  
+    }
+    this.updateDiscounts();  
   }
 
   /////////////////////////////////////////////////////////////
@@ -1031,6 +1067,7 @@ OpenModal(){
     this.OrderReview!.DocDate = dateDefault?.toString();
     this.OrderReview!.TaxDate = dateDefault?.toString();
     this.OrderReview.DiscountPercent = 0.0;
+    this.OrderReview.TotalAfterDiscount=0.0;
     //Add Ddefault delivery date
     const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
     this.OrderReview!.DocDueDate = dateDelivery?.toString();
@@ -1068,6 +1105,10 @@ OpenModal(){
         this.OrderReview!.AddressExtension! = AddressSelect;
         //console.log("Paso en address")
       }
+      else if(action === 'discount') {  
+       this.updateDiscounts();
+      }
+      
 
       ///Update the index db////
       if(this.OrderIndexDB === undefined)
@@ -1088,6 +1129,8 @@ OpenModal(){
         this.OrderReviewCopy.Timestamp =  new Date().toISOString();
         //this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
         this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
+        this.OrderReviewCopy.Order.DiscountPercent = this.OrderReview.DiscountPercent;
+        this.OrderReviewCopy.Order.TotalAfterDiscount = this.OrderReview.TotalAfterDiscount;
         
         if(this.isOnline == true)
         {
@@ -1254,7 +1297,7 @@ OpenModal(){
       this.dataSharing.setOrderIndexDB(this.OrderIndexDB)
 
       if (this.isOnline && this.idCosmos != undefined && index != undefined && order != undefined) {
-        if (action === 'customer' || action === 'delivery' || action === 'address') {
+        if (action === 'customer' || action === 'delivery' || action === 'address'|| action ==='discount') {
             // Operación en Cosmos DB exitosa
             order[index].IconCosmosDb = true;
         } else {
@@ -1266,6 +1309,8 @@ OpenModal(){
                 order[index].IconCosmosDb = true;
             }
         }
+        
+        this.updateDiscounts();
      }
 
     }
@@ -1273,13 +1318,13 @@ OpenModal(){
   
 
   async updateOrderCloud(type: string, index:number | undefined,order:DocumentLines[])
-  {
+  {    
     console.log(index)
     if(this.DocNumPublish === 0)
       type = 'publish';
     else
       type = '';
-
+    
     if(type == 'publish')
     {
       console.log(this.OrderReview)
@@ -1294,8 +1339,10 @@ OpenModal(){
       {
         this.idCosmos = await PublishToCosmosDB(this.OrderReviewCopy, 'transaction_log')
       }
+        console.log(`DiscountPercent antes de enviar: ${this.OrderReview.DiscountPercent}`);
+        console.log(`TotalAfterDiscount antes de enviar: ${this.OrderReview.TotalAfterDiscount}`);
         console.log(this.OrderReview)
-        
+
         webWorker('postOrder',this.OrderReview!, this.tokenAzure).then((data) => {
           //console.log('Valor devuelto por el Web Worker:', data);
           if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)

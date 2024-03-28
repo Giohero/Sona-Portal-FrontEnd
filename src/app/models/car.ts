@@ -26,6 +26,7 @@ export class Order {
     NumAtCard?: string;
     DocumentLines?: DocumentLines[] | undefined;
     AddressExtension?: AddressExtension | undefined;
+    TotalAfterDiscount?: number; 
 }
 
 export class AddressExtension{

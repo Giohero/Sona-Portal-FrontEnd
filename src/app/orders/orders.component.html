@@ -166,7 +166,7 @@
                 <mat-icon svgIcon="indexdb" class="iconC" *ngIf="Item.IconIndexDb==true"></mat-icon>
                 <mat-icon svgIcon="sap" class="iconC" *ngIf="Item.IconSap==true"></mat-icon>
                 <mat-icon svgIcon="cancel" class="iconC" *ngIf="Item.IconSap==false"></mat-icon>
-                <mat-icon svgIcon="cosmosdb" class="iconC" *ngIf="Item.IconCosmosDb==false"></mat-icon>
+                <mat-icon svgIcon="cosmosdb" class="iconC" *ngIf="Item.IconCosmosDb==true"></mat-icon>
               </div>
               <!-- <div class="label-container-cart-s">
                
@@ -183,12 +183,13 @@
                   {{Item.Quantity}}
                   </label>
               </div>
-              <div class="label-container-cart-s">
-                <label class="label" for="Total">Total:</label>               
+              <div class="label-container-cart-s" (change)="updateDiscounts()">
+                <label class="label" for="Total ">Total:</label>               
                 <label type="number" matInput for="Price" min="1" readonly>
                   {{Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'}}
                 </label>
               </div>
+              <!-- <div>Total con descuento: ${{ OrderReview.TotalAfterDiscount }}</div> -->
               <button mat-icon-button (click)="editOpenModal(Item, listIndex)">
                 <mat-icon >edit</mat-icon>
                </button>
@@ -210,7 +211,9 @@
   <div class="doc-entry">
   <div style="margin: 10px; text-align: right; font-size: 19px; font-weight: bold;" class="DocNum"><span>{{DocEntryPublish}}</span></div>
   <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;" class="CustomName"><span>{{searchText}}</span></div>
-  <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;">Total: ${{subTotal()}}</div>
+  <!-- <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;">Total: ${{subTotal()}}</div> -->
+  <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;">Total: ${{OrderReview.TotalAfterDiscount}}</div>
+
   </div>
 </mat-card-actions>
 
