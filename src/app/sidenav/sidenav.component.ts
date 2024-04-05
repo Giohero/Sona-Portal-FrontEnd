@@ -9,6 +9,9 @@ import { Renderer2 } from '@angular/core';
 import { AccountInfo } from '@azure/msal-browser';
 import { Observable } from 'rxjs';
 import { SignalRService } from '../service/signalr.service';
+import { DialogRechargeComponent } from '../dialog-recharge/dialog-recharge.component';
+import { MatDialog } from '@angular/material/dialog';
+
 
 
 @Component({
@@ -75,7 +78,8 @@ export class SidenavComponent implements OnInit {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private auth: AuthService,
-    private signalr: SignalRService
+    private signalr: SignalRService,
+    private dialog: MatDialog,
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
@@ -158,5 +162,4 @@ export class SidenavComponent implements OnInit {
   toggleSidebar() {
     this.isSidebarClosed = !this.isSidebarClosed;
   }
-
 }
