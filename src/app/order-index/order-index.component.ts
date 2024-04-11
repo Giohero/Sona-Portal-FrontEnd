@@ -80,13 +80,14 @@ export class OrderIndexComponent {
 
   optionSelected(option: string) {
     console.log('Option selected:', option);
-    
+    if(option === 'Option1'){
+      this.sortOrders();
+    }
   }
 
   sortOrders() {
     this.ListOrders.sort((a, b) => b.DocNum - a.DocNum);
   }
-  // ...
 
   private updateIconsBasedOnSource() {
     this.ListOrders.forEach(order => {
@@ -203,7 +204,7 @@ export class OrderIndexComponent {
           next: retData => {
             this.ListOrders = JSON.parse(retData.response!);
              //console.log('ListOrders:', this.ListOrders);
-            this.sortOrders();
+              this.sortOrders();
              // this.ListOrders.forEach(order => {
              //   //console.log(`Order ${order.DocNum}: Total - ${order.DocTotal}`);
              // });

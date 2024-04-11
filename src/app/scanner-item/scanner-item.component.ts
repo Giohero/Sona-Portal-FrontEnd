@@ -29,7 +29,7 @@ export class ScannerItemComponent implements OnInit {
   itemSelect : DocumentLines | undefined;
   AddItem = false;
   action : 'add' | 'delete';
-
+  
   constructor (private cdr: ChangeDetectorRef, private itemsService: IndexItemsService, private dataSharing: DataSharingService, private orderService: ServiceService, 
     public ScannerReference: MatDialogRef<ScannerItemComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: any){
@@ -61,10 +61,16 @@ export class ScannerItemComponent implements OnInit {
   }
 
   AddInner(){
+    if (this.QuantityItem < 0) {
+      this.QuantityItem = 0;
+    }
     this.QuantityItem = Number(this.QuantityItem) + Number(this.Item.U_InnerPackQty);
   }
 
   AddMaster(){
+    if (this.QuantityItem < 0) {
+      this.QuantityItem = 0;
+    }
     this.QuantityItem *= Number(this.Item.U_InnerPackQty);
   }
   

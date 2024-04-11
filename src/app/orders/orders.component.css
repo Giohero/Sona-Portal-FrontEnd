@@ -204,7 +204,7 @@ mat-tab{
   justify-content: space-between; 
   align-items: flex-start;
   padding: 5px;
-  margin: 20px; 
+  margin: 20px;  
 }
 
 
@@ -248,6 +248,7 @@ mat-tab{
   background-color: rgba(254, 254, 254, 0.9);
   padding: 5px;
   padding-top: 5px;
+  /* max-width: 600px; */
 }
 
 .container {
@@ -275,7 +276,10 @@ html, body {
   height: 100%;
   margin: 0;
 }
-
+h2 {
+  margin-left: 30px;
+  color: black;
+}
 .h2Order{
   background-color: #0F97A6;
   color: white;
@@ -375,11 +379,16 @@ mat-card expansion {
   margin-bottom: 20px;
 }
 
+mat-tab-group{
+  margin-left: 30px;
+}
+
 .footer{
   position: sticky;
   bottom: 0;
   left: 0;
-  width: 100%;
+  width:97%;
+  margin-left: 35px;
   background-color: #85b4ff;
   box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
   z-index: 50;
@@ -465,7 +474,14 @@ grid-container-items {
   .DocNum, .CustomName {
     margin-right: 20px; /* Aumenta el margen en escritorio */
   }
-  
+
+  .footer {
+    width: 100%;
+    margin-left: 0; 
+  }
+  mat-tab-group{
+    margin: 0;
+  }
 }
 /* para tablets o ipads */
 @media screen and (max-width: 1024px) {
@@ -533,6 +549,11 @@ grid-container-items {
     border-top: 8px solid darkcyan;
     opacity: 0.9;
     margin-bottom: 20px;
+  }
+
+  .footer {
+    width: 100%; /* Ancho del 100% en dispositivos móviles y tablets */
+    margin-left: 0; /* No se aplica margen izquierdo en dispositivos móviles y tablets */
   }
 
 /*   

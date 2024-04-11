@@ -68,7 +68,10 @@ export class OrdersComponent {
   customerBack: any;
   rowShip=0;
   rowBill=0;
-  
+  showCustomerList: boolean = false;
+  selectedCustomer: any;
+ 
+
   /////Cart Data///////
   CartOld: DocumentLines[] | undefined;
   elementCart:any;
@@ -89,6 +92,7 @@ export class OrdersComponent {
   isOnline=true;
   isHidden: boolean = true;
   tokenAzure='';
+  SubTotal: number = 0;//Save subtotal 
   // textConcatenated: string='';
   // timeLastTimePressKey: any;
   // ItemBar: Value | undefined;
@@ -160,6 +164,7 @@ export class OrdersComponent {
       this.Cart = orderSaveCache.DocumentLines;
       this.dataSharing.updateIdsOrder(orderSaveCache.DocNum, orderSaveCache.DocEntry)
       this.dataSharing.updateCart(orderSaveCache.DocumentLines)
+      this.subTotal()
       //console.log(this.Cart)
 
       if(orderSaveCache.CardCode != '')
@@ -182,7 +187,7 @@ export class OrdersComponent {
           Quantity: element.Quantity,
           TaxCode: '',
           FreeText: element.FreeText,
-          LineNum:element.LineNum
+          LineNum: element.LineNum
         })
       });
 
@@ -417,6 +422,8 @@ export class OrdersComponent {
   onSelectCustomer(selectedData:any, bringCache : boolean){
     //console.log(this.customerBack.CardName)
     this.CurrentSellsBP = this.ListCustomers.find(x => x.CardName === selectedData || x.CardCode === selectedData);
+    this.selectedCustomer = this.CurrentSellsBP; 
+    this.showCustomerList = false;
     //console.log(this.CurrentSellsItem);
     this.inputSearchCutomer = true;
     this.showAddButton = false;
@@ -787,9 +794,9 @@ export class OrdersComponent {
     });
   }
   
-  ///////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////
 
-  //////////////////////// Methods Cart /////////////////////////
+  //////////////////////// Methods Cart /////////////////////////////
   cleanSearching()
   {
     this.ItemName = "";
@@ -801,9 +808,14 @@ export class OrdersComponent {
   subTotal()
   {
     //return this.Cart.getSumLineTotals();
-    return this.Cart!.length > 0 ? this.Cart!.reduce((acum: number, elemento: any) => acum + elemento.LineTotal, 0) : 0;
+    if (this.Cart) {
+      this.SubTotal = this.Cart.reduce((acc, item) => acc + (item?.LineTotal || 0), 0);
+    }
+    // return this.Cart!.length > 0 ? this.Cart!.reduce((acum: number, elemento: any) => acum + elemento.LineTotal, 0) : 0;
+    
     //return 0;;
   }
+
 
   updateTotal(index:number,item: DocumentLines) {
     if(item.UnitPrice)
@@ -817,44 +829,41 @@ export class OrdersComponent {
 
   }
 
+
   updateDiscounts() {
-    const subtotal = this.subTotal();
-    let discountPercent = 0;
-  
-    // Reglas para el cálculo del descuento
-    if (subtotal < 500) {
-      discountPercent = 0.05; // Descuento del 5%
-    } else if (subtotal >= 500 && subtotal <= 1000) {
-      discountPercent = 0.10; // Descuento del 10%
-    } else if (subtotal > 1000) {
-      discountPercent = 0.20; // Descuento del 20%
-    }
-  
-    // Valido si el porcentaje de descuento ha cambiado
-    if (this.OrderReview.DiscountPercent !== discountPercent) {
-      this.OrderReview.DiscountPercent = discountPercent;
-      // Aplico el descuento a cada línea del documento
-      this.OrderReview.DocumentLines!.forEach(line => {
-        const lineDiscount = line.UnitPrice! * line.Quantity! * discountPercent;
-        line.LineTotal = (line.UnitPrice! * line.Quantity!) - lineDiscount;
-        line.DiscountPercent = (discountPercent * 100).toString();
-      });
-  
-      // Calcula el total después del descuento 
-      const totalAfterDiscount = this.OrderReview.DocumentLines!.reduce((acc, line) => acc + line.LineTotal!, 0);
-      this.OrderReview.TotalAfterDiscount = totalAfterDiscount;
-      
-    }
-    // this.changeOrder(undefined, undefined, 'discount');
-    //this.cdr.markForCheck();
+    if (!this.Cart) return; // Salir si el carrito está vacío
+
+    this.Cart.forEach(item => {
+        let discountPercent = 0;
+
+        // Verificar si item es definido antes de acceder a sus propiedades
+        if (item && item.UnitPrice !== undefined && item.Quantity !== undefined) {
+            const lineTotal = item.UnitPrice * item.Quantity;
+
+            if (lineTotal < 500) {
+                discountPercent = 0.05;
+            } else if (lineTotal >= 500 && lineTotal <= 1000) {
+                discountPercent = 0.10;
+            } else if (lineTotal > 1000) {
+                discountPercent = 0.20;
+            }
+
+            const discountedTotal = lineTotal * (1 - discountPercent);
+            item.LineTotal = discountedTotal;
+            item.DiscountPercent = (discountPercent * 100).toString(); // Convertir a cadena
+        }
+    });
+
+    this.subTotal();// Calcular subtotal solo si Cart está definido y no es nulo
+    
   }
 
- 
+
   updateComment(index: number) {
       this.changeOrder(index,this.Cart!,'');
   }
 
-editOpenModal(itemSelect:DocumentLines, index: number){
+  editOpenModal(itemSelect:DocumentLines, index: number){
   var ItemFound = this.ListItems.find(x => x.ItemCode == itemSelect.ItemCode)
   if (ItemFound != undefined) {
     console.log(itemSelect.LineNum)
@@ -899,7 +908,7 @@ OpenModal(){
         const dialogRef = this.dialog.open(ScannerItemComponent,{
           width: '550px',
           height: 'auto',
-          data: {Item:ItemBar, FreeText:''}
+          data: {Item:ItemBar, FreeText:'',}
         });
     
         dialogRef.afterClosed().subscribe(result =>  {
@@ -939,8 +948,13 @@ OpenModal(){
           IconSap:false,
           IconCosmosDb:true
         };
-        
+
+        if (!this.Cart || this.Cart.length === 0) {
+        this.Cart = [newDocumentLine];
+        } else {
         this.Cart?.push(newDocumentLine);
+        }
+        this.updateDiscounts();
         this.changeOrder(this.Cart!.length - 1, this.Cart!, '');
         this.cleanSearching()
       }
@@ -959,12 +973,13 @@ OpenModal(){
     this.updateItemsAddedStatus();
     // this.saveCurrentOrder();
     this.cleanSearching();
-    this.updateDiscounts();
+   
   }
 
   updateItemsAddedStatus() {
     this.itemsAdded = !!this.Cart && this.Cart.length > 0;
   }
+
 
   onSelectItem(selectedData: any){
     //console.log(selectedData);
@@ -979,7 +994,12 @@ OpenModal(){
   }
 
   RemoveToCart(index: number){
+    
+    if(this.Cart && this.Cart.length > 1) {
     this.Cart!.splice(index, 1);
+    } else {
+      console.log("The cart cannot be left empty")
+    }
     ////////this.Cart.removeItem(index);
     this.changeOrder(undefined,this.Cart!, '');
     this.cleanSearching();
@@ -988,6 +1008,7 @@ OpenModal(){
     {
       // const miDiv = document.getElementById('Cart');
       // miDiv!.classList.add('image-card');
+     
     }
     this.updateDiscounts();  
   }
@@ -1061,13 +1082,12 @@ OpenModal(){
 
   async changeOrder(index:number | undefined,order:DocumentLines[] | undefined, action : string)
   {
-    //console.log( this.idCosmos)
+    console.log( this.OrderReview)
     const today = new Date();
     const dateDefault = this.pipe.transform(today, 'yyyy-MM-dd');
     this.OrderReview!.DocDate = dateDefault?.toString();
     this.OrderReview!.TaxDate = dateDefault?.toString();
-    this.OrderReview.DiscountPercent = 0.0;
-    this.OrderReview.TotalAfterDiscount=0.0;
+    // this.OrderReview.DiscountPercent = 0.0;
     //Add Ddefault delivery date
     const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
     this.OrderReview!.DocDueDate = dateDelivery?.toString();
@@ -1108,7 +1128,8 @@ OpenModal(){
       else if(action === 'discount') {  
        this.updateDiscounts();
       }
-      
+      console.log('Orden antes de enviar a SAP/Cosmos DB:', JSON.stringify(this.OrderReview, null, 2));
+
 
       ///Update the index db////
       if(this.OrderIndexDB === undefined)
@@ -1127,10 +1148,10 @@ OpenModal(){
         this.OrderReviewCopy.Action = "Create_Order"; //Aqui se agrega la accion
         this.OrderReviewCopy.User = this.usernameAzure;
         this.OrderReviewCopy.Timestamp =  new Date().toISOString();
-        //this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
+        // this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
         this.OrderReviewCopy.Order = JSON.parse(JSON.stringify(this.OrderReview));
-        this.OrderReviewCopy.Order.DiscountPercent = this.OrderReview.DiscountPercent;
-        this.OrderReviewCopy.Order.TotalAfterDiscount = this.OrderReview.TotalAfterDiscount;
+        //this.OrderReviewCopy.Order.DiscountPercent = this.OrderReview.DiscountPercent;
+      
         
         if(this.isOnline == true)
         {
@@ -1190,7 +1211,7 @@ OpenModal(){
 
       this.OrderReview!.DocumentLines = this.Cart;
       this.dataSharing.setCartData(this.Cart);
-
+      
       if(this.Cart!.length! === 1 && this.OrderIndexDB === undefined)
       {
         //this.OrderReview!.DocumentLines![0].DiscountPercent = '0.0';
@@ -1318,13 +1339,17 @@ OpenModal(){
   
 
   async updateOrderCloud(type: string, index:number | undefined,order:DocumentLines[])
-  {    
+  {
+    // Verificar descuentos y total
+    // Calcular total del pedido
+      
     console.log(index)
+
     if(this.DocNumPublish === 0)
       type = 'publish';
     else
       type = '';
-    
+
     if(type == 'publish')
     {
       console.log(this.OrderReview)
@@ -1340,9 +1365,9 @@ OpenModal(){
         this.idCosmos = await PublishToCosmosDB(this.OrderReviewCopy, 'transaction_log')
       }
         console.log(`DiscountPercent antes de enviar: ${this.OrderReview.DiscountPercent}`);
-        console.log(`TotalAfterDiscount antes de enviar: ${this.OrderReview.TotalAfterDiscount}`);
         console.log(this.OrderReview)
-
+        
+        
         webWorker('postOrder',this.OrderReview!, this.tokenAzure).then((data) => {
           //console.log('Valor devuelto por el Web Worker:', data);
           if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)

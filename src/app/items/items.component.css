@@ -11,6 +11,15 @@ html, body {
     width: 100%;
     flex: 1;
 }
+.background{
+    background-color: #fffff6;
+    background-repeat: no-repeat;
+    /* background-attachment: fixed; */
+    background-size: cover;
+    width: 100%;
+    min-height: 100vh;
+}
+
 .mat-mdc-form-field {
     font-size: 14px;
     width: 100%;
@@ -64,6 +73,38 @@ mat-card:hover{
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     height: 250px;
 }
+button {
+    border: none;
+    color: #fff;
+    background-image: linear-gradient(30deg, #a62934, #eba881);
+    border-radius: 20px;
+    background-size: 100% auto;
+    font-family: inherit;
+    font-size: 17px;
+    padding: 0.6em 1.5em;
+   }
+   
+   button:hover {
+    background-position: right center;
+    background-size: 200% auto;
+    -webkit-animation: pulse 2s infinite;
+    animation: pulse512 2.5s infinite;
+    background: linear-gradient(30deg, #be0c1b, #3a86ff);
+   }
+   
+   @keyframes pulse512 {
+    0% {
+     box-shadow: 0 0 0 0 #05bada66;
+    }
+   
+    70% {
+     box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+    }
+   
+    100% {
+     box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+    }
+   }
 @media screen and (max-width: 600px){
     .table-container{
         margin: 1px;

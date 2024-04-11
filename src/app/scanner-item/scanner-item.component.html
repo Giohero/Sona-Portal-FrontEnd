@@ -32,7 +32,7 @@
       <div class="form-field-container" style="width: 100%;">
         <mat-form-field appearance="outline" style="width: 100%;">
           <mat-label>Quantity:</mat-label>
-          <input matInput placeholder="Quantity" type="number" [(ngModel)]="QuantityItem">
+          <input matInput placeholder="Quantity" type="number" [(ngModel)]="QuantityItem" min="0" >
         </mat-form-field>      
       </div>
     </div>
@@ -47,11 +47,12 @@
     </div>
   </div>
   
-  <div class="modal-actions">
-    <button mat-button color="warn" (click)="AddInner()">Inner {{Item.U_InnerPackQty}}</button>
-    <button mat-button color="warn" (click)="AddMaster()">Master {{Item.U_MasterPackQty}}</button>
-    <button mat-button color="warn" (click)="UpdateScanner()" *ngIf="AddItem == false">Update</button>
-    <button mat-button color="warn" (click)="DeleteScanner()" *ngIf="AddItem == false">Delete</button>
-    <button mat-button color="warn" (click)="UpdateScanner()" *ngIf="action || 'add'">Add</button>
+  <div>
+    <div class="modal-actions" style="display: flex; justify-content: space-between; padding-top: 20px;">
+      <button mat-button color="warn" (click)="AddInner()">Inner {{Item.U_InnerPackQty}}</button>
+      <button mat-button color="warn" (click)="AddMaster()">Master {{Item.U_MasterPackQty}}</button>
+      <button mat-button color="warn" (click)="UpdateScanner()">Update</button>
+      <button mat-button color="warn" (click)="DeleteScanner()">Delete</button>
+    </div>
   </div>
 </mat-dialog-content>
