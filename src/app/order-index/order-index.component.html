@@ -68,7 +68,8 @@
                 <br>
                 <div class="label-card">
                   <mat-icon class="label-icon">local_offer</mat-icon>
-                  Total: ${{ Order.DocTotal }}
+                  <!-- Total: ${{ Order.DocTotal }} -->
+                  Total: ${{ calculateOrderTotal(Order) }}
                 </div>
               </div>
             </mat-card-header>
@@ -81,11 +82,11 @@
             <div class="icon-container">
               <!-- <img src="assets/icons/icons8-sap-48.png" alt="SAP icon">
               <img src="assets/icons/icons8-database-48.png" alt="IndexDB Icon">
-              <img src="assets/icons/icons8-planet-50.png" alt="CosmosDB icon">              -->
+              <img src="assets/icons/icons8-planet-50.png" alt="CosmosDB icon"> -->
               <br>
               <mat-icon svgIcon="indexdb"></mat-icon>
-              <mat-icon svgIcon="sap"></mat-icon>
-              <mat-icon svgIcon="cosmosdb"></mat-icon>  
+              <mat-icon svgIcon="cosmosdb"></mat-icon> 
+              <mat-icon svgIcon="sap"></mat-icon>              
             </div>
           </mat-card>
         </div>

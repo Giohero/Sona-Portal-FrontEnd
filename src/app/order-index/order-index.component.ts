@@ -96,6 +96,27 @@ export class OrderIndexComponent {
     });
   }
   
+  // Método para calcular el total de los line total y mostrarlos en los Matcards
+  calculateOrderTotal(order: Order) {
+    let orderTotal = 0;
+    if (order && order.DocumentLines) {
+      orderTotal = order.DocumentLines.reduce((total, line) => {
+        if (typeof line.LineTotal === 'string') {
+          const lineTotalNumber: number = parseFloat(line.LineTotal);
+          if (!isNaN(lineTotalNumber)) {
+            return total + lineTotalNumber;
+          } else {
+            console.error('LineTotal is not a valid number:', line.LineTotal);
+            return total; // Si LineTotal no es un número válido, no sumamos nada
+          }
+        } else {
+          console.error('LineTotal is not a string:', line.LineTotal);
+          return total; // Si LineTotal no es una cadena, no sumamos nada
+        }
+      }, 0);
+    }
+    return orderTotal.toFixed(2);
+  }
 
   // ngOnInit(): void {
   //     Promise.all([this.reloadDrafts(), this.reload()])
