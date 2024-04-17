@@ -14,6 +14,13 @@ import { OrderEditComponent } from '../order-edit/order-edit.component';
 
 @Component({
   selector: 'app-scanner-item',
+  template: `
+     <div>
+      <button *ngIf="action === 'add'" mat-button color="warn" (click)="addScanner()">Add</button>
+      <button *ngIf="action === 'update'" mat-button color="warn" (click)="updateScanner()">Update</button>
+      <button *ngIf="action === 'delete'" mat-button color="warn" (click)="deleteScanner()">Delete</button>
+    </div>
+  `,
   templateUrl: './scanner-item.component.html',
   styleUrls: ['./scanner-item.component.css']
 })
@@ -28,11 +35,13 @@ export class ScannerItemComponent implements OnInit {
   inStock: number = 0;
   itemSelect : DocumentLines | undefined;
   AddItem = false;
-  action : 'add' | 'delete';
+  action : 'add' | 'update';
   
   constructor (private cdr: ChangeDetectorRef, private itemsService: IndexItemsService, private dataSharing: DataSharingService, private orderService: ServiceService, 
     public ScannerReference: MatDialogRef<ScannerItemComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: any){
+      this.action = data.Action;
+      console.log('Action:', this.action); 
       console.log(data);
       this.Item = data.Item;
       console.log(this.Item);

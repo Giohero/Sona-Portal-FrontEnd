@@ -21,10 +21,13 @@ import { IndexCustomersService } from '../service/index-customers.service';
 import { IndexItemsService } from '../service/index-items.service';
 import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 
 @Component({
   selector: 'app-orders',
+  // template: `
+  // <button class="add-button" (click)="OpenModal('add')">Add</button>`,
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
   providers: [DatePipe]
@@ -899,7 +902,7 @@ export class OrdersComponent {
   }
 }
 
-OpenModal(){
+OpenModal(action: 'add' | 'update'){
     if(this.searchTextItem != "")
     {
       var ItemBar = this.ListItems.find(x => x.ItemCode === this.searchTextItem);
@@ -908,7 +911,7 @@ OpenModal(){
         const dialogRef = this.dialog.open(ScannerItemComponent,{
           width: '550px',
           height: 'auto',
-          data: {Item:ItemBar, FreeText:'',}
+          data: {Item:ItemBar, FreeText:'', Action: action}
         });
     
         dialogRef.afterClosed().subscribe(result =>  {
@@ -928,6 +931,7 @@ OpenModal(){
       }
     }
   }
+  
 
 
   addToCart(){

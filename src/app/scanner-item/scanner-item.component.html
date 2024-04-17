@@ -51,7 +51,11 @@
     <div class="modal-actions" style="display: flex; justify-content: space-between; padding-top: 20px;">
       <button mat-button color="warn" (click)="AddInner()">Inner {{Item.U_InnerPackQty}}</button>
       <button mat-button color="warn" (click)="AddMaster()">Master {{Item.U_MasterPackQty}}</button>
-      <button mat-button color="warn" (click)="UpdateScanner()">Update</button>
+      <button *ngIf="action === 'add'" mat-button color="warn" (click)="AddScanner()">Add</button>
+      <!-- <button *ngIf="action === 'update'" mat-button color="warn" (click)="UpdateScanner()">Update</button> -->
+      <!-- <button *ngIf="action === 'update' || action === 'add'" mat-button color="warn" (click)="UpdateScanner()">Update</button> -->
+      <!-- <button mat-button color="warn" (click)="DeleteScanner()">Delete</button> -->
+      <button mat-button color="warn" *ngIf="action != 'add'" (click)="UpdateScanner()">Update</button>
       <button mat-button color="warn" (click)="DeleteScanner()">Delete</button>
     </div>
   </div>

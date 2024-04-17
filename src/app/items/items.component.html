@@ -9,9 +9,10 @@
     <br>
     <!-- buscador -->
     <mat-form-field>
-      <mat-label>Search</mat-label>
-      <input class="search" matInput (keyup)="applyFilter($event)" placeholder="Item" #input>
+      <mat-label>Search by Code</mat-label>
+      <input class="search" matInput (keyup)="applyCodeFilter($event)" placeholder="Item Code" #codeInput>
     </mat-form-field>
+    
     <!-- Contenedor de los ítems -->
     <div *ngIf="!isLoading">
       <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center">

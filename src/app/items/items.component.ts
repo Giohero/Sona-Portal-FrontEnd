@@ -31,14 +31,30 @@ export class ItemsComponent {
   private Db?: Dexie;
   //private OrderIndexDB:any;
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+  // applyFilter(event: Event) {
+  //   const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
     
-    this.pagedItems = this.ListItems.filter(item =>
-      item.ItemName.toLowerCase().includes(filterValue) ||
-      item.ItemCode.toLowerCase().includes(filterValue) ||
-      item.BarCode.toLowerCase().includes(filterValue)
-    );
+  //   this.pagedItems = this.ListItems.filter(item =>
+  //     item.ItemName.toLowerCase().includes(filterValue) ||
+  //     item.ItemCode.toLowerCase().includes(filterValue) ||
+  //     item.BarCode.toLowerCase().includes(filterValue)
+  //   );
+  //   this.setPage(0);
+  // }
+  applyCodeFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  
+    console.log('Filter value:', filterValue); // Verificar el valor del filtro
+  
+    if (filterValue) {
+      this.pagedItems = this.ListItems.filter(item =>
+        item.ItemCode.toLowerCase().includes(filterValue)
+      );
+  
+      console.log('Filtered items:', this.pagedItems); // Verificar los elementos filtrados
+    } else {
+      this.pagedItems = this.ListItems.slice(); // Si el filtro está vacío, mostrar todos los elementos
+    }
     this.setPage(0);
   }
   
