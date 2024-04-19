@@ -223,9 +223,17 @@ input:focus {
     /* background-image:url('https://w0.peakpx.com/wallpaper/847/51/HD-wallpaper-texture-boards-wood-fence.jpg'); */
     /* background-image:url('https://static.vecteezy.com/system/resources/previews/001/376/845/original/wood-table-top-with-blurred-background-free-photo.jpg'); */
 }
+/* 
 .scroll-container{
   overflow-y: hidden;
+} */
+
+.scroll-container {
+  overflow-y: auto; 
+  max-height: 100vh; 
+  padding-right: 20px; 
 }
+
 @media only screen and (max-width: 480px) {
   .mat-card-wrapper {
     flex-direction: column;
