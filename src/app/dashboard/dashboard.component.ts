@@ -67,7 +67,7 @@ export class DashboardComponent {
       this.isOnline = true;
       dataSharing.updateWifi(this.isOnline)
 
-      //console.log(this.usernameAzure)
+      console.log(this.usernameAzure)
       //restart the connection of Signal 
       if(this.usernameAzure != undefined)
         this.signalRService.startConnection();

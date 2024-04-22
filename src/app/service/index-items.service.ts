@@ -64,11 +64,32 @@ export class IndexItemsService {
   
       request.onsuccess = function(event) {
         //Update the index db
+        // const db = (event.target as IDBOpenDBRequest).result;
+        // itemService.getItemsToIndexDB(db,tokenAzure)
+        // resolve(db);
         const db = (event.target as IDBOpenDBRequest).result;
-        //console.log('Update the items to Index DB')
+        const transaction = db.transaction(['items'], 'readonly');
+        const store = transaction.objectStore('items');
+        const request = store.openCursor();
 
-        itemService.getItemsToIndexDB(db,tokenAzure)
-        resolve(db);
+        request.onsuccess = function(event) {
+          const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      
+          if (cursor) {
+              console.log('There are records in Items Database');
+              var passTime = checkTime()
+              const now = new Date();
+              localStorage.setItem('savedTime', now.toISOString());  
+              console.log('Current time saved:', now.toISOString());
+              if(passTime == true)
+                itemService.getItemsToIndexDB(db,tokenAzure)
+          }
+          else
+          {
+            console.log('Update Database');
+            itemService.getItemsToIndexDB(db,tokenAzure)
+          }
+      };
       };
   
       request.onerror = function(event) {
@@ -217,3 +238,27 @@ export class IndexItemsService {
 
 }
 
+function checkTime() {
+  const savedTime = localStorage.getItem('savedTime');  
+  if (!savedTime) {
+      console.log('No time saved.');
+      const now = new Date();
+      localStorage.setItem('savedTime', now.toISOString());  
+      console.log('Current time saved:', now.toISOString());
+      return;
+  }
+
+  const savedDate = new Date(savedTime).getTime();  
+  const now = new Date().getTime();                
+  const difference = now - savedDate;              
+
+  const hoursPassed = difference / (1000 * 60 * 60); 
+
+  if (hoursPassed >= 24) {
+      console.log('24 hours have passed.');
+      return true; 
+  } else {
+      console.log(`Only ${hoursPassed.toFixed(2)} hours have passed. Not yet 24 hours.`);
+      return false; 
+  }
+}

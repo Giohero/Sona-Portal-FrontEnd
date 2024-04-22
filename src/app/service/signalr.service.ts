@@ -32,6 +32,7 @@ export class SignalRService {
       this.tokenAzure = newToken;
     });
   
+    console.log('Pasa por aqui')
     this.startConnection();
     //this.getMessageStream();
   }

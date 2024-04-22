@@ -21,13 +21,15 @@ export class AppComponent implements OnInit {
   messages:string[] = [];
   tokenSignalR='';
 
-  constructor(private auth: AuthService,private signalRService: SignalRService, private service: ServiceService){}
+  constructor(private auth: AuthService, private service: ServiceService){}
 
   ngOnInit(): void {
     if (this.auth.isLoggedIn()) {
       this.auth.getProfile();
+      console.log('pasa por aqui')
+      //this.signalRService.startConnection();
     }
-    this.signalRService.startConnection();
+    
 
     //Subscribe to receive message
     // this.signalRService.getMessageStream().subscribe(
@@ -41,14 +43,14 @@ export class AppComponent implements OnInit {
    //this.signalRService.getMessages();
   }
 
-  ngOnDestroy(): void {
-    this.signalRService.stopConnection(); // Ensure SignalR connection is stopped
-  }
+//   ngOnDestroy(): void {
+//     this.signalRService.stopConnection(); // Ensure SignalR connection is stopped
+//   }
 
-  sendMessage()
-  {
-    this.signalRService.sendSignalRMessage(this.message, 'example',this.user)
-  }
+//   sendMessage()
+//   {
+//     this.signalRService.sendSignalRMessage(this.message, 'example',this.user)
+//   }
 
 }
 

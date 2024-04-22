@@ -12,19 +12,19 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
-            <input matInput formControlName="username" placeholder="example@sona.com" >
+            <input matInput title="username" placeholder="example@sona.com" >
             <mat-icon matSuffix class="icon">email</mat-icon>
           </mat-form-field>
           
           <mat-form-field appearance="outline">
             <mat-label>Password</mat-label>
-            <input matInput [type]="hide ? 'password' : 'text'" class="" placeholder="Password"  formControlName="password">
+            <input matInput [type]="hide ? 'password' : 'text'" class="" placeholder="Password" >
             <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide" >
                 <mat-icon class="icon">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
           </mat-form-field>
 
-          <button mat-button class="button">
+          <button mat-button class="button" disabled="true">
             <span style="color: white;">Login</span> 
           </button>
 
