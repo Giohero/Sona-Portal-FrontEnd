@@ -6,7 +6,7 @@ import Dexie from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
 import { IndexItemsService } from '../service/index-items.service';
 import { DataSharingService } from '../service/data-sharing.service';
-import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { catchError, mergeMap, retryWhen, switchMap, throwError, timer } from 'rxjs';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -105,7 +105,10 @@ export class ItemsComponent {
     .pipe(
       retryWhen(errors =>
         errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+          //tap(val => console.log(`Value ${val} was too high!`)), // Para depurar
+          switchMap((error, index) =>
+            index < 3 ? timer(index * 5000) : throwError(() => new Error('Retry limit reached'))
+          )
         )
       ),
       catchError(error => {

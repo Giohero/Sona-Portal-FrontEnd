@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServiceService } from './service.service';
 import Dexie from 'dexie';
-import { BehaviorSubject, catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { BehaviorSubject, catchError, mergeMap, retryWhen, switchMap, throwError, timer } from 'rxjs';
 import { BusinessPartner } from '../models/customer';
 import { webWorker } from '../app.component';
 import { Value } from '../models/items';
@@ -130,7 +130,10 @@ export class IndexCustomersService {
     this.service.getCustomer().pipe(
       retryWhen(errors =>
         errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+          //tap(val => console.log(`Value ${val} was too high!`)), // Para depurar
+          switchMap((error, index) =>
+            index < 3 ? timer(index * 5000) : throwError(() => new Error('Retry limit reached'))
+          )
         )
       ),
       catchError(error => {

@@ -7,7 +7,7 @@ import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
 import { AuthService } from '../service/auth.service';
-import { catchError, mergeMap, retryWhen, throwError, timer,retry, of } from 'rxjs';//retrywhen is deprecated retry is better from v10
+import { catchError, mergeMap, retryWhen, throwError, timer,retry, of, switchMap } from 'rxjs';//retrywhen is deprecated retry is better from v10
 import { error } from 'jquery';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
 
@@ -211,14 +211,17 @@ export class OrderIndexComponent {
     return new Promise<void>((resolve, reject) => {
       this.orderService.getOrders()
         .pipe(
-          retry({
-            count: 3, // Maximum number of retry attempts
-            delay: (retryCount, error) => retryCount < 3 ? of(retryCount * 5000) : throwError(() => new Error('Retry limit reached'))
-          }),
+          retryWhen(errors =>
+            errors.pipe(
+              //tap(val => console.log(`Value ${val} was too high!`)), // Para depurar
+              switchMap((error, index) =>
+                index < 3 ? timer(index * 5000) : throwError(() => new Error('Retry limit reached'))
+              )
+            )
+          ),
           catchError(error => {
-            this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-            this.isLoading = false;
-            return throwError(() => new Error('An error occurred'));
+            console.error('An error occurred', error);
+            return throwError(() => new Error('An error occurred')); // Aquí puedes manejar cómo finalmente emitir el error
           })
         )
         .subscribe({

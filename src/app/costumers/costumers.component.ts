@@ -9,7 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DialogAddressComponent } from '../dialog-address/dialog-address.component';
 import { TransactionCostumerService } from '../service/transaction-costumer.service';
-import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { catchError, mergeMap, retryWhen, switchMap, throwError, timer } from 'rxjs';
 import { IndexCustomersService } from '../service/index-customers.service';
 
 @Component({
@@ -256,7 +256,9 @@ export class CostumersComponent implements OnInit {
     .pipe(
       retryWhen(errors =>
         errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+          switchMap((error, index) =>
+            index < 3 ? timer(index * 5000) : throwError(() => new Error('Retry limit reached'))
+          )
         )
       ),
       catchError(error => {

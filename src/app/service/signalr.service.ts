@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { BehaviorSubject, Observable, Subject, catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, mergeMap, retryWhen, switchMap, throwError, timer } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ServiceService } from './service.service';
 import { HttpClient } from '@angular/common/http';
@@ -88,7 +88,10 @@ export class SignalRService {
     .pipe(
       retryWhen(errors =>
         errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+          //tap(val => console.log(`Value ${val} was too high!`)), // Para depurar
+          switchMap((error, index) =>
+            index < 3 ? timer(index * 5000) : throwError(() => new Error('Retry limit reached'))
+          )
         )
       ),
       catchError(error => {

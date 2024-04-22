@@ -3,7 +3,7 @@ import { Value } from '../models/items';
 import { ServiceService } from '../service/service.service';
 import {MatTabsModule} from '@angular/material/tabs';
 import { Color, ScaleType } from '@swimlane/ngx-charts';
-import { catchError, mergeMap, retryWhen, throwError, timer } from 'rxjs';
+import { catchError, mergeMap, of, retry, retryWhen, switchMap, tap, throwError, timer } from 'rxjs';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -107,17 +107,22 @@ export class HomeComponent {
     .pipe(
       retryWhen(errors =>
         errors.pipe(
-          mergeMap((error, attemptNumber) => (attemptNumber < 3) ? timer(5000) : throwError(error))
+          //tap(val => console.log(`Value ${val} was too high!`)), // Para depurar
+          switchMap((error, index) =>
+            index < 3 ? timer(index * 5000) : throwError(() => new Error('Retry limit reached'))
+          )
         )
       ),
       catchError(error => {
-        this.openSnackBar('Cannot retrieve information, try again', 'error', 'Error', 'red');
-        return throwError(error);
+        console.error('An error occurred', error);
+        return throwError(() => new Error('An error occurred')); // Aquí puedes manejar cómo finalmente emitir el error
       })
     )
     .subscribe(
       (retData) => {
+        console.log(retData)
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
+          console.log(retData)
           const orderCountCurrentMonth = retData.orderCountCurrentMonth;
           const orderCountPreviousMonth = retData.orderCountLastMonth;
           const orderCountTwoMonthsAgo = retData.orderCountTwoMonthsAgo;
