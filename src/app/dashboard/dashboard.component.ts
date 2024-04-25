@@ -397,7 +397,7 @@ export class DashboardComponent {
       else if(this.previousURL == '/dashboard/order-customer/new-order' && this.isOnline == true)
       {
         localStorage.removeItem('OrderNewSave');
-        console.log('ya quedo')
+        // console.log('ya quedo')
       }
       else
         this.previousURL = event.url

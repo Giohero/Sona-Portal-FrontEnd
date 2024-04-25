@@ -1,6 +1,9 @@
 <mat-card *ngIf="dataReq.viewEdit == true" class="modal-content">
   <mat-card-header class="modal-header">
     <mat-card-title class="modal-title">Edit Address</mat-card-title>
+    <button mat-dialog-close aria-label="Close" class="button-no-style">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-card-header>
   <mat-card-content>
     <form [formGroup]="AddressForm" (ngSubmit)="updateAddress()" class="form-grid">
@@ -41,16 +44,21 @@
       </div>
       <div class="form-actions">
         <button mat-raised-button color="primary" [mat-dialog-close]="AddressForm.value">Save</button>
-        <button mat-raised-button color="warn"  (click)="close()">Cancel</button>
+        <!-- <button mat-raised-button color="warn" (click)="close()">Cancel</button> -->
       </div>
     </form>
   </mat-card-content>
 </mat-card>
 
+<!-- Dialog Addaddres Customer -->
 <mat-card *ngIf="dataReq.viewAdd == true"  class="modal-content">
   <mat-card-header class="modal-header">
     <mat-card-title class="modal-title">Add Address</mat-card-title>
+    <button mat-dialog-close aria-label="Close" class="button-no-style">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-card-header>
+  <br>
   <mat-card-content>
     <form [formGroup]="AddressForm" (ngSubmit)="updateAddress()" class="form-grid">
       <div class="form-column">
@@ -90,7 +98,8 @@
       </div>
       <div class="form-actions">
         <button mat-raised-button color="primary" [mat-dialog-close]="AddressForm.value">Save</button>
-        <button mat-raised-button color="warn"  (click)="close()">Cancel</button>
+        <br>
+        <!-- <button mat-raised-button color="warn"  (click)="close()">Cancel</button> -->
       </div>
     </form>
   </mat-card-content>
@@ -99,6 +108,9 @@
 <mat-card *ngIf="dataReq.viewList == true"  class="modal-content">
   <mat-card-header class="modal-header">
     <mat-card-title class="modal-title">List Addresses</mat-card-title>
+    <button mat-dialog-close aria-label="Close" class="button-no-style">
+      <mat-icon>close</mat-icon>
+    </button>
     <mat-card-subtitle class="modal-title">Choose One</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
@@ -166,7 +178,8 @@
       </div>
       <div  class="form-actions">
         <button *ngIf="dataReq.addressesList!.length > 0" mat-raised-button color="primary" [mat-dialog-close]="option">Choose</button>
-        <button mat-raised-button color="warn"  (click)="close()">Cancel</button>
+        <!-- <button mat-raised-button color="warn"  (click)="close()">Cancel</button> -->
       </div>
   </mat-card-content>
 </mat-card>
+

@@ -12,17 +12,17 @@
           </mat-option>
         </mat-autocomplete>
       </div>
-      <button class="icon-search" (click)="searchingOrder()">
+      <!-- <button class="icon-search" (click)="searchingOrder()">
         <mat-icon>search</mat-icon>
-      </button>
-      <button class="icon-refresh" (click)="reloadAll()">    
+      </button> -->
+      <!-- <button class="icon-refresh" (click)="reloadAll()">    
         <mat-icon>refresh</mat-icon>
-        <!-- <div  class="progress-bar">
+         <div  class="progress-bar">
           <div class="progress"></div>
-        </div> -->
-      </button>
-      <button class="icon-drop" [matMenuTriggerFor]="menu">
-        <mat-icon>arrow_drop_down_circle</mat-icon>
+        </div> 
+      </button> -->
+      <button class="tradeshow-button" [matMenuTriggerFor]="menu">
+        <mat-icon>arrow_drop_down_circle</mat-icon><span *ngIf="!isSmallScreen">Tradeshow</span>
         <mat-menu #menu="matMenu">
           <div mat-menu-item (click)="optionSelected('Option 1')">Option 1</div>
           <div mat-menu-item (click)="optionSelected('Option 2')">Option 2</div>
@@ -32,8 +32,8 @@
       <div>
         <!-- Botones para filtrar entre órdenes normales y de borrador -->
         <div class="filter-buttons">
-          <button class="filter-button" (click)="showRealOrders()"><mat-icon>book</mat-icon></button>
-          <button class="filter-button" (click)="showDraftOrders()"><mat-icon>description</mat-icon></button>
+          <button class="orders-button" (click)="showRealOrders()"><mat-icon>book</mat-icon><span *ngIf="!isSmallScreen">Orders</span></button>
+          <button class="drafts-button" (click)="showDraftOrders()"><mat-icon>description</mat-icon><span *ngIf="!isSmallScreen">Drafts</span></button>
         </div>
       </div>
     </div>

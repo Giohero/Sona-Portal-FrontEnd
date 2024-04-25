@@ -5,6 +5,33 @@ body {
   background-color: #ede8de;
 }
 
+.h1Sona{
+  font-family: Arial, Helvetica, sans-serif;
+  color: #ab3548;
+  font-size: 25px;
+}
+
+.card-text{
+  display: flex;
+  text-align: center;
+  align-items: center;
+  height: 200px;
+  width: 400px;
+}
+
+image-container img {
+  width: 100%; 
+  height: auto; 
+  display: block;
+  margin: 0 auto; 
+}
+
+.fs-5{
+  color: #4b4b4b;
+}
+
+
+
 .carousel-control-prev-icon{
   color: #333;
   background-color: #333;
@@ -91,9 +118,18 @@ body {
     grid-template-columns: 1fr; 
     padding: 10px;
   }
-
   .mat-card {
     margin-bottom: 10px;
+  }
+  .row {
+    flex-direction: column; 
+  }
+  .col-md-6 {
+      width: 100%; 
+  }
+  .fs-5 {
+      text-align: center; 
+      font-size: 10px;
   }
 }
 @media screen and (max-width: 767px) {

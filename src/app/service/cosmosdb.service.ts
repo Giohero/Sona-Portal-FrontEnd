@@ -147,3 +147,23 @@ export async function getFromCosmosDBByDocNum(docNum: any, type: string) {
   }
 }
 
+export async function getTradeshowLogs(){
+  const databaseId='SONA';
+  const containerId='DataContainer';
+  const database = client.database(databaseId);
+  const container = database.container(containerId);
+
+  try {
+    const querySpec ='SELECT * FROM c WHERE c.type = \'tradeshow_log\'';
+    const {resources} = await container.items.query(querySpec).fetchAll();
+    
+    if (resources == null)
+    return null;
+    return resources;
+  
+  } catch(error) {
+    console.error('Error getting transaction logs',error);
+    return null;
+  }
+}
+

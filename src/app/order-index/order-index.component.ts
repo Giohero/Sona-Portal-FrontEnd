@@ -33,6 +33,8 @@ export class OrderIndexComponent {
   searchOrder: number | undefined;
   searchedOrder: any; // Variable para almacenar la orden encontrada
   statusIcon ='indexdb';
+  isSmallScreen = false;
+
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
     private myRouter: Router, 
@@ -58,6 +60,10 @@ export class OrderIndexComponent {
     })
     window.addEventListener('offline', () => {
       this.renderer.addClass(document.body, 'offline');
+      this.renderer.listen('window', 'resize', () => {
+        this.isSmallScreen = window.innerWidth < 268; // Puedes ajustar este valor según tus necesidades
+      });
+    
       //console.log("ESTAS EN FUERA DE LINEA")
       this.openSnackBar('You\'re offline.', "wifi_off", "Disconnected", "darkorange");
     });

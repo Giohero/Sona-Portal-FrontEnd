@@ -6,6 +6,9 @@ import { Color, ScaleType } from '@swimlane/ngx-charts';
 import { catchError, mergeMap, of, retry, retryWhen, switchMap, tap, throwError, timer } from 'rxjs';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { MatDialog } from '@angular/material/dialog';
+import {getTradeshowLogs } from '../service/cosmosdb.service';
+import { AuthService } from '../service/auth.service';
+import { IndexDbService } from '../service/index-db.service';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +25,9 @@ export class HomeComponent {
   single:any;
   multi:any;
   singleBar:any;
+  showIndex = false;
+  nameAzure = '';
+
 
   // options
   showXAxis = false;
@@ -55,7 +61,7 @@ export class HomeComponent {
   };
   
 
-  constructor(private orderService: ServiceService, private dialog: MatDialog,) {
+  constructor(private orderService: ServiceService, private dialog: MatDialog,private auth: AuthService, private indexDB: IndexDbService) {
     const single1 = this.single;
     const multi1 = this.multi;
     Object.assign(this, {single1, multi1}) 
@@ -72,7 +78,7 @@ export class HomeComponent {
     //console.log(event);
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     // this.orderService.getItems().subscribe((retData) => {
     //   if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
     //     this.ListItems = JSON.parse(retData.response!);
@@ -83,7 +89,26 @@ export class HomeComponent {
     //     console.log('Error');
     //   }
     // });
+    this.auth.nameAzure$.subscribe(
+      (username: string) => {
+        this.nameAzure = username.split(' ')[0]
+        //console.log('Es nameazure '+this.nameAzure)
+      },
+      (error: any) => {
+        this.nameAzure = ''
+      }
+    );
+
+    var resultsIndex = await this.indexDB.getDataOrdersInformation()
+    if(resultsIndex != null)
+    {
+      this.single = resultsIndex.map((item:any) => ({ name: item.name, value: item.value }));
+    }
+    else
+      this.showIndex = true
     this.getOrderLogDataComparation()
+    var ListTradeshows = await getTradeshowLogs()
+    console.log(ListTradeshows);
   }
 
   onSelectMaterial(selectedData: any){
@@ -147,8 +172,8 @@ export class HomeComponent {
             }
           ];
   
-          // Ahora, puedes asignar estos valores a tus gráficos ngx-charts
-          this.single = this.ordersData.map(item => ({ name: item.name, value: item.value }));
+          // Now,you can assign this values for this ngx-charts
+          // this.single = this.ordersData.map(item => ({ name: item.name, value: item.value }));
           this.singleBar = this.ordersData.map(item => ({ name: item.name, value: item.value }));
   
           //console.log("data", this.ordersData);

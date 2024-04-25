@@ -312,4 +312,34 @@ export class IndexDbService {
     }
     //const allOrders = await this.Db!.table('transactions').toArray();
   }
+
+  async getDataOrdersInformation(): Promise<any> {
+    try {
+      const allOrders = await this.Db!.table('orders').toArray();
+      if (allOrders.length > 0) {
+        //const lastRecords = allOrders.filter(x => x.status != "complete");
+        const Records = [
+          {
+            name: 'Complete',
+            value: allOrders.filter(x => x.status == "complete").length
+          },
+          {
+            name: 'Cosmos', 
+            value: allOrders.filter(x => x.status == "cosmos").length 
+          },
+          {
+            name: 'Local', 
+            value: allOrders.filter(x => x.status == "index").length 
+          }
+        ];
+        //console.log(lastRecords)
+        return Records;
+      }
+      else
+        return null;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  }
 }

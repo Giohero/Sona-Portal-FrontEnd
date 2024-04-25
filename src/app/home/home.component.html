@@ -1,8 +1,9 @@
 <mat-tab-group color="warn" animationDuration="2000ms">
-  <mat-tab label="Welcome">
+  <mat-tab label="Home">
     <div class="container mt-5">
       <div class="jumbotron text-center">
-        <h1 >Welcome to Sona!</h1>
+        <h1 class="h1Sona"><b>Sona Enterprises Portal</b></h1>
+        <h3>Welcome {{nameAzure}}!</h3>
         <!-- <p class="lead">OUR THANKS TO YOU <br>
           Sona Enterprises would like to take this chance to thank you for your interest in our products and company. 
           We promise to try our best to provide you with the best service at even better prices! We would like to express our sincere appreciation to our returning customers for your continued patronage of our business. 
@@ -35,8 +36,9 @@
         <div class="col-lg-4 mb-4">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Orders</h5>
-              <div class="Circlechart">
+              <h5 class="card-title"><b>Orders Local</b></h5>
+              <p class="card-text" *ngIf="showIndex == true" fxLayoutAlign="center center">No information yet.</p>
+              <div class="Circlechart" *ngIf="showIndex == false">
                 <ngx-charts-pie-chart
                 [view]=" [400, 200]"
                 [scheme]="colorScheme"
@@ -55,8 +57,8 @@
         </div>
         <div class="col-lg-7 mb-5">
           <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Orders</h5>
+            <div class="card-body">             
+              <h5 class="card-title"><b>Orders</b></h5>
               <div class="barChart">
                 <ngx-charts-bar-vertical
                 [view]="[700, 200]"
@@ -78,6 +80,33 @@
             </div>
           </div>
         </div>
+        <div class="col-lg-11 mb-2">
+          <mat-accordion>
+            <mat-expansion-panel hideToggle>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  About us...
+                </mat-panel-title>
+                <mat-panel-description>
+                  History of Sona
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <div class="container mt-5">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="image-container">
+                            <img src="/assets/images/SE1.png" alt="Imagen 1">
+                        </div>
+                    </div>
+                    <div class="col-md-6 fs-5">
+                      <br>
+                        <p>Established in 1989, Sona Enterprises is a family-run operation that started in a garage and is now located in Santa Fe Springs, California. Sudhir and Sadhana Mundhra built the company on the ideals of competitive pricing, value items, and excellent customer service. Ideals are still closely followed today. Every day as a family and a company we strive to improve our efficiency, become more environmentally responsible, and improve the experience for our customers.</p>
+                    </div>
+                </div>
+            </div>
+            </mat-expansion-panel>
+            </mat-accordion>
+        </div>
         <!-- <div class="col-lg-4 mb-4">
           <div class="card">
             <div class="card-body">
@@ -89,37 +118,5 @@
         </div> -->
       </div>
     </div>    
-  </mat-tab>
-  <mat-tab label="About us">
-    <div class="container mt-5">
-      <div>
-        <h1 class="text-center display-4">About us</h1>
-        <p class="text-center fs-5">
-          Established in 1989, Sona Enterprises is a family-run operation that started in a garage and is now located in Santa Fe Springs, California. Sudhir and Sadhana Mundhra built the company on the ideals of competitive pricing, value items, and excellent customer service. Ideals are still closely followed today. Every day as a family and a company we strive to improve our efficiency, become more environmentally responsible, and improve the experience for our customers.
-        </p>
-      </div>
-    </div>
-    <!-- Pics Carousel -->
-    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active text-center">
-          <img src="/assets/images/SE1.png" class="d-block mx-auto" alt="Imagen 1">
-        </div>
-        <div class="carousel-item text-center">
-          <img src="/assets/images/Sona2.jpg" class="d-block mx-auto img-little" alt="Imagen 2">
-        </div>
-        <div class="carousel-item text-center">
-          <img src="/assets/images/Sona4.jpg" class="d-block mx-auto img-little" alt="Imagen 3">
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
   </mat-tab>
 </mat-tab-group>
