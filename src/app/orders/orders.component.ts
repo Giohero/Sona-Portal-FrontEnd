@@ -430,46 +430,53 @@ export class OrdersComponent {
     //console.log(this.CurrentSellsItem);
     this.inputSearchCutomer = true;
     this.showAddButton = false;
-    if(this.CurrentSellsBP!.BPAddresses.length > 0)
-    {
-      var GetBill = this.CurrentSellsBP?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
-      var GetShip = this.CurrentSellsBP?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
-      this.AddressData = this.CurrentSellsBP?.BPAddresses.filter(x => x.AddressType == 'bo_ShipTo');
-      this.rowBill = parseFloat(GetBill!.RowNum)
-      this.rowShip = parseFloat(GetShip!.RowNum)
-
-      //console.log(this.rowBill)
-      //console.log(this.rowShip)
-
-      if(GetBill != undefined)
-      {
-        this.billingAddress = 
-        (GetBill?.AddressName ?? '') +
-        (GetBill?.Street ? ' ' + GetBill.Street : '') +
-        (GetBill?.City ? ' ' + GetBill.City : '') +
-        (GetBill?.State ? ' ' + GetBill.State : '') +
-        (GetBill?.Country ? ' ' + GetBill.Country : '') +
-        (GetBill?.ZipCode ? ' ' + GetBill.ZipCode : '');
-      }
-      
-      
-      if(GetShip != undefined)
-      {
-        this.shippingAddress =
-        (GetShip?.AddressName ?? '') +
-        (GetShip?.Street ? ' ' + GetShip.Street : '') +
-        (GetShip?.City ? ' ' + GetShip.City : '') +
-        (GetShip?.State ? ' ' + GetShip.State : '') +
-        (GetShip?.Country ? ' ' + GetShip.Country : '') +
-        (GetShip?.ZipCode ? ' ' + GetShip.ZipCode : '');
-      }
+    if(this.CurrentSellsBP!.BPAddresses != null){
+      if(this.CurrentSellsBP!.BPAddresses.length > 0)
+        {
+          var GetBill = this.CurrentSellsBP?.BPAddresses.find(x => x.AddressType == 'bo_BillTo');
+          var GetShip = this.CurrentSellsBP?.BPAddresses.find(x => x.AddressType == 'bo_ShipTo');
+          this.AddressData = this.CurrentSellsBP?.BPAddresses.filter(x => x.AddressType == 'bo_ShipTo');
+          this.rowBill = parseFloat(GetBill!.RowNum)
+          this.rowShip = parseFloat(GetShip!.RowNum)
+    
+          //console.log(this.rowBill)
+          //console.log(this.rowShip)
+    
+          if(GetBill != undefined)
+          {
+            this.billingAddress = 
+            (GetBill?.AddressName ?? '') +
+            (GetBill?.Street ? ' ' + GetBill.Street : '') +
+            (GetBill?.City ? ' ' + GetBill.City : '') +
+            (GetBill?.State ? ' ' + GetBill.State : '') +
+            (GetBill?.Country ? ' ' + GetBill.Country : '') +
+            (GetBill?.ZipCode ? ' ' + GetBill.ZipCode : '');
+          }
+          
+          
+          if(GetShip != undefined)
+          {
+            this.shippingAddress =
+            (GetShip?.AddressName ?? '') +
+            (GetShip?.Street ? ' ' + GetShip.Street : '') +
+            (GetShip?.City ? ' ' + GetShip.City : '') +
+            (GetShip?.State ? ' ' + GetShip.State : '') +
+            (GetShip?.Country ? ' ' + GetShip.Country : '') +
+            (GetShip?.ZipCode ? ' ' + GetShip.ZipCode : '');
+          }
+        }
+        else
+        {
+          this.billingAddress = '';
+          this.shippingAddress = '';
+        }
     }
     else
     {
       this.billingAddress = '';
       this.shippingAddress = '';
     }
-
+    
     this.searchText = this.CurrentSellsBP!.CardName;
     this.notes = this.CurrentSellsBP?.Notes;
     this.shippingType = this.CurrentSellsBP?.ShippingType;

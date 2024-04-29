@@ -26,14 +26,16 @@ export class OrderIndexComponent {
   displayedColumns: string[] = ['docNum', 'dueDate', 'total', 'numAtCard', 'cardInfo'];
   displayedColumnsDrafts: string[] = ['Id', 'PostingDate', 'DeliveryDate', 'TaxDate', 'CardCode'];
   ListOrders: Order[] = []; 
-  ListOrdersDrafts: any;
+  ListOrdersDrafts: any[] = [];
   ListOrdersFound: Order [] = [];
   isOnline!:boolean;
   isLoading=true;
-  searchOrder: number | undefined;
+  searchOrder: string | undefined;
   searchedOrder: any; // Variable para almacenar la orden encontrada
   statusIcon ='indexdb';
   isSmallScreen = false;
+  pagedItems: Order[] = [];
+  pagedDraft: any[] = [];
 
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
@@ -74,10 +76,14 @@ export class OrderIndexComponent {
   // Métodos
   showRealOrders() {
     this.showRealOrdersFlag = true;
+    this.searchOrder = ""
+    this.pagedItems = this.ListOrders
   }
 
   showDraftOrders() {
     this.showRealOrdersFlag = false;
+    this.searchOrder = ""
+    this.pagedDraft = this.ListOrdersDrafts
   }
 
   dropDownList(){
@@ -161,7 +167,7 @@ export class OrderIndexComponent {
         });
       }
     });
-    this.getSearchFilter();
+    //this.getSearchFilter();
     
   }
 
@@ -233,6 +239,7 @@ export class OrderIndexComponent {
         .subscribe({
           next: retData => {
             this.ListOrders = JSON.parse(retData.response!);
+            this.pagedItems = this.ListOrders
              //console.log('ListOrders:', this.ListOrders);
               this.sortOrders();
              // this.ListOrders.forEach(order => {
@@ -249,6 +256,7 @@ export class OrderIndexComponent {
     return new Promise<void>((resolve, reject) => {
       setTimeout(async () => {
         this.ListOrdersDrafts = await this.indexDB.getAllIndexWDocNumDB();
+        this.pagedDraft = this.ListOrdersDrafts;
         resolve(); // Resuelve la promesa cuando se completan las órdenes de IndexedDB
       }, 2000);
     });
@@ -283,14 +291,14 @@ export class OrderIndexComponent {
     element!.addEventListener('input', (e) => {
       const target = e.target as HTMLInputElement; // Casting a HTMLInputElement
       const searchText = target.value;
-      console.log(searchText)
+      //console.log(searchText)
       // Debouncing
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {       
           this.service.GetOldSalesOrders(searchText).subscribe(retData => {
             if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
               this.searchedOrder = retData.response; 
-              console.log(this.searchedOrder); 
+              //console.log(this.searchedOrder); 
               this.ListOrdersFound=JSON.parse(retData.response!)
             } else {
               this.openSnackBar(retData.response!, "error", "Error", "red");
@@ -299,6 +307,44 @@ export class OrderIndexComponent {
       }, 3000); 
   });
   }
+
+  applyCodeFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  
+    console.log('Filter value:', filterValue);
+  
+    if (filterValue) {
+
+      if(this.showRealOrdersFlag == true)
+      {
+        this.pagedItems = this.ListOrders.filter(item =>
+          (item.CardCode && item.CardCode.toLowerCase().includes(filterValue)) ||
+          (item.DocNum && item.DocNum.toString().includes(filterValue)) ||
+          (item.CardName && item.CardName.toLowerCase().includes(filterValue)) ||
+          (item.DocDate && item.DocDate.toLowerCase().includes(filterValue))
+        );
+      }
+      else
+      {
+        this.pagedDraft = this.ListOrdersDrafts.filter(item =>
+          (item.id && item.id.toString().toLowerCase().includes(filterValue)) ||
+          (item.Order.CardCode && item.Order.CardCode.toLowerCase().includes(filterValue)) ||
+          (item.Order.CardName && item.Order.CardName.toLowerCase().includes(filterValue)) ||
+          (item.Order.DocDate && item.Order.DocDate.toLowerCase().includes(filterValue))
+        );
+
+        //console.log(this.ListOrdersDrafts)
+        //console.log(this.pagedDraft)
+      }
+  
+      //console.log('Filtered items:', this.pagedItems); 
+    } else {
+      this.pagedItems = this.ListOrders.slice(); 
+      this.pagedDraft = this.ListOrdersDrafts.slice();
+    }
+    //this.setPage(0);
+  }
+
 
   selectMatCard(order:any)
   {

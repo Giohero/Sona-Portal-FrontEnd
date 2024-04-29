@@ -2,15 +2,15 @@
   <div class="container">
     <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner> 
     <br>
-    <h2>Orders</h2>
+    <!-- <h2>Orders</h2> -->
     <div class="labelSearch">
       <div class="label-container">
-        <input type="text" id="search-input" class="searchOrder" aria-describedby="search-text" [(ngModel)]="searchOrder" placeholder="Enter text to search" autofocus [matAutocomplete]="autoItem" type="text" >
-        <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" >
+        <input type="text" id="search-input" (keyup)="applyCodeFilter($event)" class="searchOrder" aria-describedby="search-text" [(ngModel)]="searchOrder" placeholder="Enter text to search" autofocus type="text" >
+        <!-- <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" >
           <mat-option *ngFor="let c of ListOrdersFound"  value="{{c.DocNum}}"  class="optionList" >
             {{c.DocNum}} - {{c.DocEntry}}
           </mat-option>
-        </mat-autocomplete>
+        </mat-autocomplete> -->
       </div>
       <!-- <button class="icon-search" (click)="searchingOrder()">
         <mat-icon>search</mat-icon>
@@ -50,10 +50,10 @@
   </div>
 </div> -->
     <!-- Sección para órdenes normales -->
-    <div *ngIf=" !isLoading && showRealOrdersFlag && ListOrders.length > 0 ">
+    <div *ngIf=" !isLoading && showRealOrdersFlag && pagedItems.length > 0 ">
     <!-- <div *ngIf="!isLoading && showRealOrdersFlag && ListOrders.length > 0"> -->
       <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
-        <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrders; let listIndex=index;">
+        <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of pagedItems; let listIndex=index;">
           <mat-card class="Cart" style="display: flex;" (click)="selectMatCard(Order)">
             <!-- Contenido de la tarjeta para órdenes normales -->
             <mat-card-header>
@@ -94,10 +94,10 @@
     </div>
     <!-- Sección para órdenes de borrador -->
     <div class="">
-      <div *ngIf="!showRealOrdersFlag &&!isLoading && ListOrdersDrafts.length > 0">
+      <div *ngIf="!showRealOrdersFlag &&!isLoading && pagedDraft.length > 0">
       <!-- <div *ngIf="!isLoading && !showRealOrdersFlag && ListOrdersDrafts.length > 0"> -->
         <div fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="center center" class="orderSection">
-          <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of ListOrdersDrafts; let listIndex=index;">
+          <div class="orders" fxFlex.gt-sm="20%" fxFlex.gt-xs="25%" *ngFor="let Order of pagedDraft; let listIndex=index;">
             <div class="draft-orders">
               <mat-card class="CartB" style="display: flex;" (click)="selectMatCard(Order)">
                 <!-- Contenido de la tarjeta para órdenes de borrador -->
@@ -116,9 +116,10 @@
                 </mat-card-header>
                 <mat-card-content class="left-align">
                   <br>
-                  <label>{{ Order.DocDueDate }}</label> <!-- Asegúrate de usar las propiedades correctas para las órdenes de borrador -->
-                  <br>
-                  <label>{{Order.CardCode}}</label>
+                  <label>{{ Order.Order.DocDate ? Order.Order.DocDate : ' ' }}</label>
+                  <br> <br>
+                  <label>{{Order.Order.CardCode ? Order.Order.CardCode : ' ' }} - {{Order.Order.CardName ? Order.Order.CardName : ' ' }}</label>
+                  <br> <br>
                   <mat-icon *ngIf="Order.status === 'index'" svgIcon="indexdb"></mat-icon>
                   <ng-container *ngIf="Order.status === 'cosmos'">
                     <mat-icon svgIcon="indexdb"></mat-icon>
