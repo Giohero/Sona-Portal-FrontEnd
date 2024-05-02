@@ -46,7 +46,8 @@ export class CostumersComponent implements OnInit {
   ShowEdit = false;
   title=""
   isOnline!:boolean;
-
+  titleloaded : boolean = false;
+  
   constructor(
     private transactionCustomer: TransactionCostumerService,
     private customerService: ServiceService,

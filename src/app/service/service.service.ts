@@ -236,7 +236,8 @@ export class ServiceService {
       ))
     );
   }
-  GetSpecificItem(BarCode:string){
+  GetSpecificItem(ItemCode:string){
+    const body = {ItemCode};
     return this.getHeaders().pipe(
       mergeMap((headers) => this.myhttp.get<INResponse>(
         this.myappurlcosmos + this.myapiurl + 'GetSpecificItem',

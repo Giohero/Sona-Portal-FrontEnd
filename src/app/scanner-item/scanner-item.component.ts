@@ -14,13 +14,6 @@ import { OrderEditComponent } from '../order-edit/order-edit.component';
 
 @Component({
   selector: 'app-scanner-item',
-  template: `
-     <div>
-      <button *ngIf="action === 'add'" mat-button color="warn" (click)="addScanner()">Add</button>
-      <button *ngIf="action === 'update'" mat-button color="warn" (click)="updateScanner()">Update</button>
-      <button *ngIf="action === 'delete'" mat-button color="warn" (click)="deleteScanner()">Delete</button>
-    </div>
-  `,
   templateUrl: './scanner-item.component.html',
   styleUrls: ['./scanner-item.component.css']
 })
@@ -34,7 +27,6 @@ export class ScannerItemComponent implements OnInit {
   udfComments: string = '';
   inStock: number = 0;
   itemSelect : DocumentLines | undefined;
-  AddItem = false;
   action : 'add' | 'update';
   
   constructor (private cdr: ChangeDetectorRef, private itemsService: IndexItemsService, private dataSharing: DataSharingService, private orderService: ServiceService, 
@@ -51,16 +43,10 @@ export class ScannerItemComponent implements OnInit {
         this.inStock = this.Item.ItemWarehouseInfoCollection[0].InStock;
       }
 
-      if('LineNum' in data.Item)
-      {
-        this.QuantityItem = Number(data.Quantity);
-        this.AddItem = false
-      }
-      else 
-      {
+      if(this.action == 'add')
         this.QuantityItem = Number(data.Item.U_InnerPackQty);
-        this.AddItem = true;
-      }
+      else
+        this.QuantityItem = Number(data.Quantity);
   }
   ngOnInit(): void {
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
@@ -85,14 +71,14 @@ export class ScannerItemComponent implements OnInit {
   
   AddScanner(){
     this.Item.LineNum=-1;
-    console.log(this.QuantityItem)   
+    // console.log(this.QuantityItem)
     var ItemAdd = {ItemInfo : this.Item, Quantity : this.QuantityItem, FreeText: this.udfComments}
     this.ScannerReference.close(ItemAdd);
   }
 
   UpdateScanner(){
     this.Item.LineNum=-1;
-    console.log(this.QuantityItem)   
+    // console.log(this.QuantityItem)   
     var ItemAdd = {ItemInfo : this.Item, Quantity : this.QuantityItem, FreeText: this.udfComments}
     this.ScannerReference.close(ItemAdd);
   }

@@ -2,7 +2,8 @@
   <div class="container">
     <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner>
     <br>
-    <h2>Customers</h2>
+    <h2 [ngClass]="{ 'loaded': titleloaded }" class="title">Customers</h2>
+    <h2 [ngClass]="{ 'loaded': titleloaded }" class="wave">Customers</h2>
     <div fxLayout="row" fxLayoutAlign="end center">
       <button mat-raised-button color="primary" (click)="AddNewCustomer()">Add New Customer</button>
       <div style="width: 1.5rem;"></div>

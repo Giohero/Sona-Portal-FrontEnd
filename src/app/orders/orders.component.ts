@@ -49,7 +49,7 @@ export class OrdersComponent {
   currentTab: string = '';
   itemsAdded: boolean = false;
   usernameAzure ='';
-
+  errorStatus = '';
   
   ////Customer Data///////
   ListCustomers!: BusinessPartner[] ;
@@ -99,6 +99,7 @@ export class OrdersComponent {
   // textConcatenated: string='';
   // timeLastTimePressKey: any;
   // ItemBar: Value | undefined;
+  titleloaded : boolean = false;
 
   //Add status: index, cloud, complete
 
@@ -164,6 +165,7 @@ export class OrdersComponent {
       this.idcustomer = orderSaveCache.CardCode;
       this.DocNumPublish = orderSaveCache.DocNum;
       this.DocEntryPublish = orderSaveCache.DocEntry;
+      this.errorStatus = orderSaveCache.ErrorStatus;
       this.Cart = orderSaveCache.DocumentLines;
       this.dataSharing.updateIdsOrder(orderSaveCache.DocNum, orderSaveCache.DocEntry)
       this.dataSharing.updateCart(orderSaveCache.DocumentLines)
@@ -309,6 +311,10 @@ export class OrdersComponent {
   }
 
   ngOnInit(): void {
+    setTimeout(() =>{
+      this.titleloaded = true;
+      console.log("cargó");
+    }, 1000);
     //this.ShowEdit = "none"
     this.elementCart = "info-card image-card";
 
@@ -882,7 +888,7 @@ export class OrdersComponent {
     const dialogRef = this.dialog.open(ScannerItemComponent,{
       width: '550px',
       height: 'auto',
-      data: {Item:ItemFound, FreeText: itemSelect.FreeText, Quantity:itemSelect.Quantity}
+      data: {Item:ItemFound, FreeText: itemSelect.FreeText, Quantity:itemSelect.Quantity,  Action: 'update', QuantityItems: this.Cart?.length}
     });
 
     dialogRef.afterClosed().subscribe(result =>  {
@@ -1054,6 +1060,7 @@ OpenModal(action: 'add' | 'update'){
 
     OrderNewCache.DocNum = this.DocNumPublish;
     OrderNewCache.DocEntry = this.DocEntryPublish;
+    OrderNewCache.ErrorStatus = this.errorStatus;
     OrderNewCache.DocumentLines = this.Cart;
 
     if(this.option != undefined)
@@ -1139,7 +1146,7 @@ OpenModal(action: 'add' | 'update'){
       else if(action === 'discount') {  
        this.updateDiscounts();
       }
-      console.log('Orden antes de enviar a SAP/Cosmos DB:', JSON.stringify(this.OrderReview, null, 2));
+      // console.log('Orden antes de enviar a SAP/Cosmos DB:', JSON.stringify(this.OrderReview, null, 2));
 
 
       ///Update the index db////
@@ -1419,6 +1426,8 @@ OpenModal(action: 'add' | 'update'){
             this.indexDB.editOrderIndex(this.OrderIndexDB.id,Number(this.OrderReview!.DocNum!), Number(this.OrderReview!.DocEntry!), this.OrderReview!, 'cosmos', data.response)
             EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             console.error('Error:', data.response)
+            var error = JSON.parse(data.response)
+            this.errorStatus = error.error.message.value;
           }
         })
         .catch((error) => {
@@ -1426,6 +1435,7 @@ OpenModal(action: 'add' | 'update'){
           if(index != undefined)
             order![index!].IconSap=false;
           console.error('Error:', error);
+          this.errorStatus = error;
         });
     }
     else
@@ -1442,6 +1452,7 @@ OpenModal(action: 'add' | 'update'){
             // console.log(orderEdit)
             //this.DocNumPublish = orderPublish!.DocNum;
             //this.actualicon = 'cloud_done';
+            this.errorStatus = '';
             this.OrderReviewCopy.ErrorSAP = '';
             if(index != undefined)
               order![index!].IconSap=true;
@@ -1457,6 +1468,8 @@ OpenModal(action: 'add' | 'update'){
             this.OrderReviewCopy.ErrorSAP =  data.response;
             EditToCosmosDB(this.OrderReviewCopy, 'transaction_log')
             console.error('Error:', data.response)
+            var error = JSON.parse(data.response)
+            this.errorStatus = error.error.message.value;
           }
         })
         .catch((error) => {
@@ -1464,6 +1477,7 @@ OpenModal(action: 'add' | 'update'){
           if(index != undefined)
             order![index!].IconSap=false;
           console.error('Error:', error);
+          this.errorStatus = error;
         });
     }
   }

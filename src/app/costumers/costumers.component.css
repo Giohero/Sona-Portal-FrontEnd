@@ -6,7 +6,64 @@
   width: 100%;
   min-height: 100vh;
 }
-
+.title{
+  font-size: 23px;
+  font-family: "Anton", sans-serif;
+  letter-spacing: 10px;
+  transition: opacity 0.5s ease;
+  position: absolute;
+  color: #000000;
+  text-shadow: -1px -1px 0 white,
+  1px -1px 0 white,
+  1px 1px 0 white,
+  -1px 1px 0 white
+  ;
+}
+.wave{
+  font-size: 23px;
+  font-family: "Anton", sans-serif;
+  letter-spacing: 10px;
+  transition: opacity 0.5s ease;
+  animation: wave 3s ease-in-out infinite;
+  color: #0F97A6;
+}
+@keyframes wave{
+  0%, 100%{
+    clip-path: polygon(
+      0% 47%,
+      10% 48%,
+      33% 54%,
+      54% 60%,
+      70% 61%,
+      84% 59%,
+      100% 52%,
+      100% 100%,
+      0% 100%
+    );
+  }
+  50%{
+    clip-path: polygon(
+      0% 60%,
+      15% 65%,
+      34% 66%,
+      51% 62%,
+      67% 50%,
+      84% 45%,
+      100% 46%,
+      100% 100%,
+      0% 100%
+    );
+  }
+}
+.header-title h1.loaded {
+  opacity: 1;
+}
+.btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+}
 .LabelCardCode {
   font-family: 'Roboto Mono', sans-serif;
   font-size: 20px;

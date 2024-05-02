@@ -4,9 +4,12 @@
 </div> -->
 <div  class="background" >
   <div fxLayout="row" fxLayout.xs="column" >
-    <h2 class="title">New Order</h2> 
+    <h2 class="title" [ngClass]="{ 'loaded': titleloaded }">New Order</h2> 
+    <h2 class="wave" [ngClass]="{ 'loaded': titleloaded }">New Order</h2>
   </div>
-
+  <div style="margin-left: 35px;">
+    <span *ngIf="errorStatus != ''" style="color: rgb(177, 0, 0);"><b>Error Sap:</b> {{errorStatus}}</span>
+  </div>
   <mat-tab-group (selectedTabChange)="onTabChanged($event)" color="warn"  mat-stretch-tabs="false" mat-align-tabs="start" >
     <br>
     <mat-tab label="Customer">
@@ -223,9 +226,9 @@
 <br>
 
 <!-- <button class="button-container" *ngIf="Cart!.length > 0 && currentTab === 'List Items'" (click)="finishOrder()" [disabled]="idIndex === 0" >Finish Order</button> -->
-<button class="button-container" *ngIf="Cart!.length > 0 && currentTab === 'List Items'" (click)="finishOrder()" style="margin-left: 35px;" >Finish Order</button>
+<button class="button-container" *ngIf="Cart!.length > 0" (click)="finishOrder()" style="margin-left: 35px;" >Finish Order</button>
 </div>
-<mat-card-actions class="footer"  *ngIf="itemsAdded && currentTab === 'List Items' " align="end" >
+<mat-card-actions class="footer"  *ngIf="itemsAdded" align="end" >
   <mat-divider></mat-divider>
   <div class="doc-entry">
   <div style="margin: 10px; text-align: right; font-size: 19px; font-weight: bold;" class="DocNum"><span>{{DocNumPublish}}</span></div>

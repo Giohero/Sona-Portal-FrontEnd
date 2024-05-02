@@ -1,5 +1,11 @@
 <div class="background">
   <div class="container">
+    <header class="header-title">
+      <h1 [ngClass]="{ 'loaded': titleloaded }" class="border1">Orders</h1>
+      <h1 [ngClass]="{ 'loaded': titleloaded }" class="wave">Orders</h1>
+    </header>
+    <!-- <h2 class="border">Wavy</h2>
+    <h2 class="wave">Wavy</h2> -->
     <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="centered"></mat-progress-spinner> 
     <br>
     <!-- <h2>Orders</h2> -->
@@ -22,13 +28,14 @@
         </div> 
       </button> -->
       <button class="tradeshow-button" [matMenuTriggerFor]="menu">
-        <mat-icon>arrow_drop_down_circle</mat-icon><span *ngIf="!isSmallScreen">Tradeshow</span>
+        <mat-icon>arrow_drop_down_circle</mat-icon>
+        <span *ngIf="!isSmallScreen">Tradeshow</span>
         <mat-menu #menu="matMenu">
-          <div mat-menu-item (click)="optionSelected('Option 1')">Option 1</div>
-          <div mat-menu-item (click)="optionSelected('Option 2')">Option 2</div>
-          <div mat-menu-item (click)="optionSelected('Option 3')">Option 3</div>
+          <div *ngFor="let tradeshow of tradeshowList" mat-menu-item (click)="optionSelected(tradeshow.name)">
+            {{ tradeshow.name }}
+          </div>
         </mat-menu>
-      </button>     
+      </button>           
       <div>
         <!-- Botones para filtrar entre órdenes normales y de borrador -->
         <div class="filter-buttons">

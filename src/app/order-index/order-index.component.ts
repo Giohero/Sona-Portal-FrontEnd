@@ -10,6 +10,7 @@ import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, throwError, timer,retry, of, switchMap } from 'rxjs';//retrywhen is deprecated retry is better from v10
 import { error } from 'jquery';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
+import { getTradeshowLogs } from '../service/cosmosdb.service';
 
 @Component({
   selector: 'app-order-index',
@@ -36,6 +37,8 @@ export class OrderIndexComponent {
   isSmallScreen = false;
   pagedItems: Order[] = [];
   pagedDraft: any[] = [];
+  tradeshowList: any[] = [];
+  titleloaded : boolean = false;
 
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
@@ -145,7 +148,13 @@ export class OrderIndexComponent {
   //     // }
   //     // );
   // }
-  ngOnInit(): void {
+  async ngOnInit(){
+    setTimeout(() =>{
+      this.titleloaded = true;
+      console.log("cargó");
+    }, 1000);
+    this.tradeshowList = await getTradeshowLogs();
+    console.log(this.tradeshowList);
     //icons index and cosmos
     this.dataSharing.statusWifi$.subscribe((isOnline) => {
       this.isOnline = isOnline;
