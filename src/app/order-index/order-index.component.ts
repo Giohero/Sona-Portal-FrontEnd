@@ -151,7 +151,7 @@ export class OrderIndexComponent {
   async ngOnInit(){
     setTimeout(() =>{
       this.titleloaded = true;
-      console.log("cargó");
+      //console.log("cargó");
     }, 1000);
     this.tradeshowList = await getTradeshowLogs();
     console.log(this.tradeshowList);

@@ -1,9 +1,14 @@
 .label-container{
   display: block;
-  flex-direction: column; /* Organiza los hijos en columna */
+  flex-direction: column;
+  grid-template-columns: 1fr; 
   margin: 5px;
-  align-items: flex-start; /* Alinea los elementos al inicio del contenedor */
+  align-items: flex-start; 
   width: 100%;
+}
+
+.discount{
+  color:#185f8f
 }
 
 button {
@@ -98,12 +103,10 @@ mat-tab{
   font-size: 20px;
 }
 .grid-container-customerd{
-  grid-template-columns: 5fr 10fr;
-  /* grid-template-columns: repeat(2, 1fr); */
   grid-gap: 10px;
-  display: grid;
+  display: flex;
   margin: 5px;
- 
+  
 }
 .grid-container-customerd button{
   align-items: center;
@@ -117,7 +120,7 @@ mat-tab{
 .h2Mat {
   display: block;
   text-align: left;
-  color: darkcyan;
+  color: #0F97A6;
   display: inline-block;
   margin-right: 10px;
 }
@@ -134,14 +137,14 @@ mat-tab{
   -1px 1px 0 white
   ;
 }
-h2{
+/* h2{
     font-family: "Anton", sans-serif;
     font-size: 25px;
     opacity: 0;
     letter-spacing: 10px;
     transition: opacity 0.5s ease;
     position: absolute;
-}
+} */
 mat-tab-group{
   padding: 40px;
 }
@@ -218,14 +221,14 @@ h2.loaded {
   width: 100%;
   margin-top: 10px;
   color: #ffffff;
-  background-color: darkcyan;
+  background-color: #0F97A6;
 }
 
 .list-custom-button {
   width: 100%;
   margin-top: 10px;
   color: #ffffff;
-  background-color: darkcyan;
+  background-color: #0F97A6;
 }
 
 .custom-snackbar {
@@ -237,15 +240,15 @@ h2.loaded {
     size: 15px;
 }
 .mat-card2 {
-  border-top: 8px solid darkcyan;
+  border-top: 8px solid #0F97A6;
   background-color: rgba(254, 254, 254, 0.9);
   
   margin-top: 20px;
 }
 .grid-container {
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 5px;
   display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns for desktop */
+  gap: 20px; /* Space between the cards */
 }
 
 .grid-container-date {
@@ -298,13 +301,12 @@ h2.loaded {
   padding: 5px;
  
 }
-.mat-card {
-  /* border-top: 8px solid darkcyan; */
-  background-color: rgba(254, 254, 254, 0.9);
-  padding: 5px;
-  padding-top: 5px;
-  /* max-width: 600px; */
-}
+/* .mat-card {
+  background-color: #f4f4f4;
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+} */
 
 .container {
   max-width: 1200px;
@@ -313,7 +315,7 @@ h2.loaded {
   color:rgb(255, 255, 255);
 }
 .expansion{
-  border-top: 8px solid darkcyan;
+  border-top: 8px solid #0F97A6;
   opacity: 0.9;
 }
 .background {
@@ -426,12 +428,12 @@ body {
   height: 40px;
 }
 
-
-mat-card expansion {
+.mat-card-expansion {
   width: 100% !important;
-  border-top: 8px solid darkcyan;
+  border-top: 8px solid #0F97A6;
   opacity: 0.9;
   margin-bottom: 20px;
+  max-width: calc(50% - 10px);
 }
 
 mat-tab-group{
@@ -447,7 +449,7 @@ mat-tab-group{
   background-color: #85b4ff;
   box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
   z-index: 50;
-  border-radius: 30px 30px 0 0; /* Redondea las esquinas superiores */
+  border-radius: 30px 30px 0 0;
 } 
 
 .DocNum{
@@ -462,7 +464,7 @@ mat-tab-group{
   flex-direction: row;
   font-size: 18px;
   justify-content: space-between;
-  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+  width: 100%;
 }
 
 grid-container-items {
@@ -476,75 +478,83 @@ grid-container-items {
 @media screen and (max-width: 767px) {
   .grid-container,
   .grid-container-date {
-    grid-template-columns: 1fr; 
-    grid-gap: 5px;
-
-    margin: 3px;
+      flex-direction: column !important;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 20px; 
   }
 
   .label-container{
-    width: 250px;
-    margin: 3px;
+      width: 250px;
+      margin: 3px;
   }
   .boxCustomNotes{
-    width: 80%;
+      width: 80%;
   }
-  .custom-button,
-  .edit-custom-button,
-  .add-custom-button,
-  .list-custom-button {
-    width: auto; 
-    margin: 10px 0; 
-  }
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra los botones horizontalmente */
+}
+
+.custom-button,
+.add-button1 {
+    width: auto;
+    margin: 10px 0;
+}
 
   .label {
-    font-size: 1em; 
+      font-size: 1em; 
   }
 
   .boxCustom {
-    height: auto; 
-    padding: 8px; 
+      height: auto; 
+      padding: 8px; 
   }
 
   .cartnext {
-    margin-left: 0; 
+      margin-left: 0; 
   }
-  .grid-container-customerd{
-    display: flex;
+  .grid-container-customerd {
     flex-direction: column;
+  }
+  .mat-card-expansion {
+    max-width: 100%;
   }
 
   .left-column, .right-column {
-    display: flex;
-    flex-direction: column;
-    width: auto;
-    margin-right: 0px;
+      display: flex;
+      flex-direction: column;
+      width: auto;
+      margin-right: 0px;
   }
 
   .boxCustom {
-
-    width: auto;
+      width: auto;
   }
 
   .DocNum, .CustomName {
-    margin-right: 20px; /* Aumenta el margen en escritorio */
+      margin-right: 20px; 
   }
 
   .footer {
-    width: 100%;
-    margin-left: 0; 
+      width: 100%;
+      margin-left: 0; 
   }
   mat-tab-group{
-    margin: 0;
+      margin: 0;
+  }
+  .container{
+      padding: 10px;
   }
 }
+
 /* para tablets o ipads */
 @media screen and (max-width: 1024px) {
   .grid-container,
   .grid-container-date {
     grid-template-columns: 1fr; 
     grid-gap: 5px;
-
     margin: 3px;
   }
 
@@ -557,7 +567,6 @@ grid-container-items {
   }
 
   .boxCustom {
-
     width: auto;
   }
   /* .label-container,
@@ -599,16 +608,12 @@ grid-container-items {
     justify-content: space-between;  
   } */
 
-   .mat-card.expansion2 {
-    width: 100vh;
-    border-top: 8px solid darkcyan;
-    opacity: 0.9;
-    margin-bottom: 20px;
-  }
-
   .footer {
     width: 100%; /* Ancho del 100% en dispositivos móviles y tablets */
     margin-left: 0; /* No se aplica margen izquierdo en dispositivos móviles y tablets */
+  }
+  .mat-card-expansion{
+    grid-template-columns: repeat(3, 1fr); 
   }
 
 /*   

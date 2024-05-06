@@ -738,7 +738,8 @@ export class OrderEditComponent implements OnInit {
         DocumentLines: DocumentLinesP!,
         CardCode: this.order?.CardCode,
         CardName: this.order?.CardName,
-        DiscountPercent: 0.00
+        DiscountPercent: 0.00,
+        NumAtCard: this.order?.NumAtCard
       }
 
 

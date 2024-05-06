@@ -10,7 +10,7 @@ import { AddressExtension, DocumentLines, Order } from '../models/car';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { DataSharingService } from '../service/data-sharing.service';
 import { IndexDbService } from '../service/index-db.service';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { webWorker } from '../app.component';
 import { MsalService } from '@azure/msal-angular';
@@ -22,7 +22,10 @@ import { IndexItemsService } from '../service/index-items.service';
 import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Action } from 'rxjs/internal/scheduler/Action';
-
+import { getTradeshowLogs } from '../service/cosmosdb.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-orders',
@@ -50,6 +53,8 @@ export class OrdersComponent {
   itemsAdded: boolean = false;
   usernameAzure ='';
   errorStatus = '';
+  selectedOption: string = '';
+  tradeshowList: any[] = [];
   
   ////Customer Data///////
   ListCustomers!: BusinessPartner[] ;
@@ -166,6 +171,7 @@ export class OrdersComponent {
       this.DocNumPublish = orderSaveCache.DocNum;
       this.DocEntryPublish = orderSaveCache.DocEntry;
       this.errorStatus = orderSaveCache.ErrorStatus;
+      this.selectedOption = orderSaveCache.U_Tradeshow;
       this.Cart = orderSaveCache.DocumentLines;
       this.dataSharing.updateIdsOrder(orderSaveCache.DocNum, orderSaveCache.DocEntry)
       this.dataSharing.updateCart(orderSaveCache.DocumentLines)
@@ -310,11 +316,15 @@ export class OrdersComponent {
     }
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     setTimeout(() =>{
       this.titleloaded = true;
-      console.log("cargó");
+      //console.log("cargó");
     }, 1000);
+    this.tradeshowList = await getTradeshowLogs();
+    this.tradeshowList.unshift({name: "None"})
+    //console.log(this.tradeshowList);
+
     //this.ShowEdit = "none"
     this.elementCart = "info-card image-card";
 
@@ -379,6 +389,13 @@ export class OrdersComponent {
     setTimeout(() => {
       dialogRef.close();
     }, 5000); 
+  }
+
+  changeTradeShow(tradeshow:any ,action:string)
+  {
+    console.log(action)
+    console.log(tradeshow)
+    this.changeOrder(undefined, undefined, action)
   }
 
   finishOrder(){
@@ -882,8 +899,8 @@ export class OrdersComponent {
   editOpenModal(itemSelect:DocumentLines, index: number){
   var ItemFound = this.ListItems.find(x => x.ItemCode == itemSelect.ItemCode)
   if (ItemFound != undefined) {
-    console.log(itemSelect.LineNum)
-    ItemFound.LineNum = itemSelect.LineNum!
+    // console.log(itemSelect.LineNum)
+    // ItemFound.LineNum = itemSelect.LineNum!
     //itemFound.FreeText = itemSelect.FreeText
     const dialogRef = this.dialog.open(ScannerItemComponent,{
       width: '550px',
@@ -905,7 +922,7 @@ export class OrdersComponent {
           this.updateComment(index);
           //console.log("se cambia los comentarios")
         }
-        if(result.ItemInfo.LineNum != -1){
+        if(result.Status == 'Delete'){
           this.RemoveToCart(index)
           //console.log("se borra el item")
         }
@@ -1060,6 +1077,7 @@ OpenModal(action: 'add' | 'update'){
 
     OrderNewCache.DocNum = this.DocNumPublish;
     OrderNewCache.DocEntry = this.DocEntryPublish;
+    OrderNewCache.U_Tradeshow = this.selectedOption;
     OrderNewCache.ErrorStatus = this.errorStatus;
     OrderNewCache.DocumentLines = this.Cart;
 
@@ -1146,8 +1164,15 @@ OpenModal(action: 'add' | 'update'){
       else if(action === 'discount') {  
        this.updateDiscounts();
       }
+      else if(action === "tradeshow")
+      {
+        if(this.selectedOption != "None")
+          this.OrderReview!.U_Tradeshow =this.selectedOption;
+        else
+          this.OrderReview!.U_Tradeshow = ''
+      }
       // console.log('Orden antes de enviar a SAP/Cosmos DB:', JSON.stringify(this.OrderReview, null, 2));
-
+      //delete this.OrderReview!.U_Tradeshow;
 
       ///Update the index db////
       if(this.OrderIndexDB === undefined)
@@ -1441,7 +1466,7 @@ OpenModal(action: 'add' | 'update'){
     else
     {
         //console.log('Este es el del index en editar')
-        //console.log(this.OrderIndexDB)
+        console.log(this.OrderReview)
 
        // this.indexDB.editToDB(this.OrderIndexDB.id,this.OrderReview!.DocNum!.toString(), this.OrderReview!, this.customer.CardCode, this.Cart!)
         webWorker('editOrder',this.OrderReview!, this.tokenAzure).then((data) => {

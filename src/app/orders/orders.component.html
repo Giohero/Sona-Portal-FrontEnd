@@ -3,23 +3,23 @@
   Charging Order...
 </div> -->
 <div  class="background" >
-  <div fxLayout="row" fxLayout.xs="column" >
-    <h2 class="title" [ngClass]="{ 'loaded': titleloaded }">New Order</h2> 
+  <div>
+    <h2 class="title"  [ngClass]="{ 'loaded': titleloaded }">New Order</h2> 
     <h2 class="wave" [ngClass]="{ 'loaded': titleloaded }">New Order</h2>
   </div>
-  <div style="margin-left: 35px;">
+  <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start center" fxLayoutGap="10px" style="padding: 30px; padding-bottom: 0 !important; padding-top: 0;">
     <span *ngIf="errorStatus != ''" style="color: rgb(177, 0, 0);"><b>Error Sap:</b> {{errorStatus}}</span>
   </div>
-  <mat-tab-group (selectedTabChange)="onTabChanged($event)" color="warn"  mat-stretch-tabs="false" mat-align-tabs="start" >
+  <mat-tab-group (selectedTabChange)="onTabChanged($event)" color="warn"  mat-stretch-tabs="false" mat-align-tabs="start" style="padding-top: 0;">
     <br>
     <mat-tab label="Customer">
       <br>
       <div class="grid-container-customerd">
-        <mat-card class="mat-card expansion"> 
+        <mat-card class="mat-card-expansion"> 
           <mat-card-header>
             <h2 class="h2Mat">Customer <mat-icon>person_outline</mat-icon></h2>
           </mat-card-header>
-          <mat-card-content class="grid-container">
+          <mat-card-content>
               <!-- <div class="label-container">
                 <label class="label">Id Customer: </label>
                 <input type="text" class="boxCustom" id="idcustomer" aria-describedby="Id Customer" [(ngModel)]="idcustomer" [disabled]="inputSearchCutomer || (ShowEdit === false)" >
@@ -88,7 +88,7 @@
                 </div>
               </div>
               
-              <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px">
+              <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px" fxLayout.xs="column" fxLayoutAlign.xs="center start">
                 <button mat-raised-button class="custom-button" (click)="changeCustomer()" style="color: rgb(255, 255, 255);">Change Customer</button>
                 <button mat-raised-button class="add-button1" (click)="toggle()" style="color: rgb(255, 255, 255);">Show Address</button>
               </div>
@@ -110,9 +110,9 @@
               </div>
           </mat-card-content>
         </mat-card>
-        <mat-card fxFlex="" class="mat-card expansion" *ngIf="!isHidden  "> 
+        <mat-card class="mat-card-expansion" *ngIf="!isHidden"> 
           <mat-card-header>
-            <mat-card-title class="h2Mat"><h2 >Address <mat-icon>business</mat-icon></h2></mat-card-title>
+            <mat-card-title><h2 class="h2Mat">Address <mat-icon>business</mat-icon></h2></mat-card-title>
             <mat-card-subtitle>You have to choose a Customer for choose a address</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content class="grid-container-customerd">
@@ -133,6 +133,21 @@
             </div>
           </mat-card-content>
     </mat-card>
+      </div>
+      <!-- SELECT TRADESHOW -->
+      <div fxFlex="49" fxFlex.xs="100">
+        <mat-card class="mat-card2">
+          <mat-card-header> 
+            <mat-card-title><h2 class="h2Mat">Tradeshow <i class="fas fa-handshake"></i></h2></mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <select matNativeControl class="form-select" aria-label="Default select example" [(ngModel)]="selectedOption" (change)="changeTradeShow(selectedOption, 'tradeshow')">
+              <option value="" disabled selected hidden>{{ selectedOption || 'Select Tradeshow' }}</option>
+              <option *ngFor="let tradeshow of tradeshowList" [value]="tradeshow.name">{{ tradeshow.name }}</option>
+            </select>
+            <!-- <p> Selected car: {{selectedOption}} </p> -->
+          </mat-card-content>
+        </mat-card>
       </div>
   </mat-tab>
  
@@ -208,7 +223,7 @@
               <div class="label-container-cart-s">
                 <label class="label" for="Total">Total:</label>               
                 <label type="number" matInput for="Price" min="0" readonly>
-                  {{Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'}}
+                  {{Item.LineTotal! % 1 === 0 ? Item.LineTotal : Item.LineTotal | number:'1.2-2'}} <label class="discount">(-{{Item.DiscountPercent}}%)</label>
                 </label>
             </div>
               <!-- <div>Total con descuento: ${{ OrderReview.TotalAfterDiscount }}</div> -->
@@ -235,7 +250,5 @@
   <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;" class="CustomName"><span>{{searchText}}</span></div>
   <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;">Total: ${{SubTotal | number:'1.2-2'}}</div>
   <!-- <div style="margin: 10px; text-align: right; font-size: 18px; font-weight: bold;">Total: ${{OrderReview.TotalAfterDiscount}}</div> -->
-
   </div>
 </mat-card-actions>
-

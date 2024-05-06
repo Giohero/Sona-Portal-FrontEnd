@@ -107,8 +107,8 @@ export class HomeComponent {
     else
       this.showIndex = true
     this.getOrderLogDataComparation()
-    var ListTradeshows = await getTradeshowLogs()
-    console.log(ListTradeshows);
+    // var ListTradeshows = await getTradeshowLogs()
+    // console.log(ListTradeshows);
   }
 
   onSelectMaterial(selectedData: any){
@@ -145,9 +145,9 @@ export class HomeComponent {
     )
     .subscribe(
       (retData) => {
-        console.log(retData)
+        //console.log(retData)
         if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-          console.log(retData)
+          //console.log(retData)
           const orderCountCurrentMonth = retData.orderCountCurrentMonth;
           const orderCountPreviousMonth = retData.orderCountLastMonth;
           const orderCountTwoMonthsAgo = retData.orderCountTwoMonthsAgo;

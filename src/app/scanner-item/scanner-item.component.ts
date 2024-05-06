@@ -33,10 +33,10 @@ export class ScannerItemComponent implements OnInit {
     public ScannerReference: MatDialogRef<ScannerItemComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: any){
       this.action = data.Action;
-      console.log('Action:', this.action); 
-      console.log(data);
+      //console.log('Action:', this.action); 
+      //console.log(data);
       this.Item = data.Item;
-      console.log(this.Item);
+      //console.log(this.Item);
       this.udfComments =data.FreeText;
       this.action = data.Action;
       if (this.Item.ItemWarehouseInfoCollection && this.Item.ItemWarehouseInfoCollection.length > 0) {
@@ -52,6 +52,14 @@ export class ScannerItemComponent implements OnInit {
     this.dataSharing.statusWifi$.subscribe((newWifi) => {
       //console.log('llego el cambio a '+newWifi)
       this.isOnline = newWifi;
+    });
+
+    this.orderService.GetSpecificItem(this.Item.ItemCode).subscribe((data) => {
+      var result = JSON.parse(data.response!)
+      this.inStock = result[0].ItemWarehouseInfoCollection[0].InStock
+    
+    }, (error) => {
+      console.error(error);
     });
   }
 
@@ -107,7 +115,8 @@ export class ScannerItemComponent implements OnInit {
   //   this.ScanneReference.close(); 
   // }
   DeleteScanner(): void {
-    var itemDelete = {ItemInfo : this.Item, Quantity : this.QuantityItem}
+    var itemDelete = {ItemInfo : this.Item, Quantity : this.QuantityItem, Status: 'Delete'}
+    console.log('Pase por borrar')
     this.ScannerReference.close(itemDelete);
   }
 

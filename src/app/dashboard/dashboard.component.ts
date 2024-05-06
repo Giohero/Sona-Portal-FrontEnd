@@ -67,6 +67,7 @@ export class DashboardComponent {
       this.isOnline = true;
       dataSharing.updateWifi(this.isOnline)
 
+      console.log(msalService.instance.getActiveAccount())
       console.log(this.usernameAzure)
       //restart the connection of Signal 
       if(this.usernameAzure != undefined)
@@ -81,7 +82,6 @@ export class DashboardComponent {
       //console.log(getOrdersNotUpdated)
       if(getOrdersNotUpdated != undefined)
       {
-
         //Create the dialog
         const dialogRef = this.dialog.closeAll();
         if(getOrdersNotUpdated.length > 0)
@@ -321,6 +321,7 @@ export class DashboardComponent {
         this.dataSharing.updateCart(orderIndexLastVersion.DocumentLines);
         this.dataSharing.updateIdsOrder(orderCosmos.DocNum, orderCosmos.DocEntry)
         this.dataSharing.setCartData(orderIndexLastVersion.DocumentLines);
+        this.dataSharing.updateMessageRecharge({idIndex: indexRecord.id, orderSAP: orderCosmos.DocNum ,message: '- Update Complete -'})
 
         //dataSharing.setOrderReview(orderPublish)
         // console.log("Pasan los document del cloud")
@@ -332,7 +333,9 @@ export class DashboardComponent {
         orderCosmos.ErrorSap =  data.response;
         this.transLog.addTransactionToIndex(orderCosmos.Action, indexRecord.id,orderCosmos.DocNum,orderCosmos.DocEntry, orderIndexLastVersion, "cosmos", this.usernameAzure, data.response)
         EditToCosmosDB(orderCosmos, 'transaction_log')
-        this.openSnackBar(data.response!, "error", "Error", "red");
+        var ErrorStatus = JSON.parse(data.response)
+        this.dataSharing.updateMessageRecharge({idIndex: indexRecord.id, orderSAP: orderCosmos.DocNum ,message: 'Error: '+ ErrorStatus.error.message.value})
+        //this.openSnackBar(data.response!, "error", "Error", "red");
         //console.error('Error:', data.response)
       }
     })

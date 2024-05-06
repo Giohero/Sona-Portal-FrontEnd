@@ -70,7 +70,7 @@ export class DialogRechargeComponent {
 
     this.dataSharing.updateOrder$.subscribe((data:indexOrder) => {
       this.indexOrder = data;
-      console.log(data)
+      //console.log(data)
 
       const OrderIndexFound =  this.indexList.find(x => x.id == data.id)
       if(OrderIndexFound == undefined)
@@ -84,15 +84,18 @@ export class DialogRechargeComponent {
     });
 
     this.dataSharing.updateRecharge$.subscribe((data:any) =>{
-      console.log(data)
+      //console.log(data)
 
       if(data != undefined)
       {
         const OrderIndexFound =  this.indexList.find(x => x.id == data.idIndex)
         if(OrderIndexFound != undefined)
         {
-          OrderIndexFound.message?.push(data.message);
-          OrderIndexFound.orderSAP = data.orderSAP;
+          if(OrderIndexFound.message?.includes(data.message) == false)
+          {
+            OrderIndexFound.message?.push(data.message);
+            OrderIndexFound.orderSAP = data.orderSAP;
+          }
         }
         this.Notifications++;
       }
@@ -101,20 +104,23 @@ export class DialogRechargeComponent {
 
   async searchIndex(index:number, indexComplete:indexOrder ){
     const indexFound = await this.indexDB.getOrderLogByIdIndex(index);
-    //console.log(indexFound)
+    console.log(indexFound)
     if(indexFound != null)
     {
       console.log(indexComplete)
       if(indexFound.DocNum != undefined && indexFound.DocNum != 0 && !Number.isNaN(indexFound.DocNum))
       {
         this.dataSharing.setOrderIndexDB(undefined)
-        this.dataSharing.setOrderCReview(indexComplete.orderSAP)
+        this.dataSharing.setOrderCReview(indexComplete.Order)
       }
       else
       {
         this.dataSharing.setOrderCReview(undefined)
         this.dataSharing.setOrderIndexDB(indexFound)
       }
+
+      console.log(indexComplete.orderSAP)
+      console.log(indexFound)
       this.myRouter.navigateByUrl('/', { skipLocationChange: true }).then(() => {
         this.myRouter.navigate(['dashboard/order-edit']);
       });

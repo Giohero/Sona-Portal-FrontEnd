@@ -236,13 +236,17 @@ export class ServiceService {
       ))
     );
   }
-  GetSpecificItem(ItemCode:string){
-    const body = {ItemCode};
+  GetSpecificItem(ItemCode:string): Observable<INResponse>{
+    const RealItemCode = ItemCode.replace("#","%23");
     return this.getHeaders().pipe(
-      mergeMap((headers) => this.myhttp.get<INResponse>(
-        this.myappurlcosmos + this.myapiurl + 'GetSpecificItem',
-        { headers }
-      ))
+      mergeMap((headers) => 
+        {
+         return this.myhttp.get<INResponse>(
+      
+          `${this.myappurlcosmos}api/GetSpecificItem?ItemCode=${RealItemCode}`, 
+          { headers }
+          );
+        })
     );
   }
 }
