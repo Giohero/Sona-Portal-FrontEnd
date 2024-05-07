@@ -16,9 +16,9 @@
           </div>
         </div>
         <div>
-          <h2 class="h2OrderIndex" *ngIf="OrderIndexDB !== undefined"><b>ID Index {{OrderIndexDB.id || indexDBNumber}}</b></h2>
+          <h2 class="h2OrderIndex" *ngIf="OrderIndexDB !== undefined && (order!.DocNum ==undefined || order!.DocNum == 0)" ><b>ID Index {{OrderIndexDB.id || indexDBNumber}}</b></h2>
           <button mat-raised-button color="primary" class="return" (click)="returnPage()">
-            <mat-icon>arrow_back</mat-icon> Back
+            Back
           </button>    
           <!-- <button mat-raised-button color="primary" class="mobile-button save" (click)="updateOrder()">
             <mat-icon>save</mat-icon> Updat
@@ -83,7 +83,7 @@
       </mat-card>
       <br>
       </ng-container>
-      <mat-tab label="List Order"><br>
+      <mat-tab label="Order Lines"><br>
         <ng-container>
           <ng-container *ngIf="order">
             <!-- Tarjeta para mostrar todos los elementos de DocumentLines -->
