@@ -166,5 +166,18 @@ export async function getTradeshowLogs() {
     return [];
   }
 }
-
+export async function publishTradeshowToCosmosDB(tradeshow: any): Promise<void> {
+  const databaseId = 'SONA';
+  const containerId = 'DataContainer';
+  const database = client.database(databaseId);
+  const container = database.container(containerId);
+  try {
+    tradeshow.type = 'tradeshow_log';
+    const { resource } = await container.items.create(tradeshow);
+    console.log('Tradeshow published to Cosmos DB:', resource);
+  } catch (error) {
+    console.error('Error publishing tradeshow to Cosmos DB:', error);
+  }
+  
+}
 

@@ -144,12 +144,25 @@
             <select matNativeControl class="form-select" aria-label="Default select example" [(ngModel)]="selectedOption" (change)="changeTradeShow(selectedOption, 'tradeshow')">
               <option value="" disabled selected hidden>{{ selectedOption || 'Select Tradeshow' }}</option>
               <option *ngFor="let tradeshow of tradeshowList" [value]="tradeshow.name">{{ tradeshow.name }}</option>
+              <option *ngFor="let tradeshow of tradeshowList">{{ tradeshow }}</option>
             </select>
             <!-- <p> Selected car: {{selectedOption}} </p> -->
-          </mat-card-content>
-        </mat-card>
-      </div>
-  </mat-tab>
+            <br>
+           
+              <!-- Add New TRADESHOW -->
+                <div *ngIf="showNewTradeshowForm">
+                  <div class="label-container">
+                    <label class="label">Tradeshow Name:</label>
+                    <input type="text" class="boxCustom" [(ngModel)]="newTradeshowName" placeholder="Enter New TradeShow Name">
+                  </div>
+                </div>
+                <!-- Toggle button to show/hide the Add Tradeshow form -->
+              <br>  
+              <button (click)="toggleNewTradeshowForm()">{{ addNewTradeshowButtonText }}</button>
+              </mat-card-content>
+            </mat-card>
+        </div>
+    </mat-tab>
  
   <mat-tab label="List Items">
     <div class="grid-container-items">

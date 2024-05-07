@@ -236,6 +236,7 @@ export class ServiceService {
       ))
     );
   }
+  
   GetSpecificItem(ItemCode:string): Observable<INResponse>{
     const RealItemCode = ItemCode.replace("#","%23");
     return this.getHeaders().pipe(

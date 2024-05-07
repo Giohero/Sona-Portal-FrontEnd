@@ -14,7 +14,7 @@ import { FormControl, FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { webWorker } from '../app.component';
 import { MsalService } from '@azure/msal-angular';
-import { EditToCosmosDB, PublishToCosmosDB, editToCosmosDB, publishToCosmosDB } from '../service/cosmosdb.service';
+import { EditToCosmosDB, PublishToCosmosDB, editToCosmosDB, publishToCosmosDB, publishTradeshowToCosmosDB } from '../service/cosmosdb.service';
 import { AuthService } from '../service/auth.service';
 import { catchError, mergeMap, retryWhen, take, throwError, timer } from 'rxjs';
 import { IndexCustomersService } from '../service/index-customers.service';
@@ -55,6 +55,7 @@ export class OrdersComponent {
   errorStatus = '';
   selectedOption: string = '';
   tradeshowList: any[] = [];
+  newTradeshowName: string = '';
   
   ////Customer Data///////
   ListCustomers!: BusinessPartner[] ;
@@ -104,6 +105,8 @@ export class OrdersComponent {
   // textConcatenated: string='';
   // timeLastTimePressKey: any;
   // ItemBar: Value | undefined;
+  showNewTradeshowForm: boolean = false;
+  addNewTradeshowButtonText: string = 'Add New TradeShow';
   titleloaded : boolean = false;
 
   //Add status: index, cloud, complete
@@ -390,6 +393,33 @@ export class OrdersComponent {
       dialogRef.close();
     }, 5000); 
   }
+
+  
+  toggleNewTradeshowForm(): void {
+    if (this.showNewTradeshowForm) {
+      if (this.newTradeshowName.trim() !== '') {
+        // Llamar a publishTradeshowToCosmosDB 
+        publishTradeshowToCosmosDB({ 
+          name: this.newTradeshowName, 
+          created_date: new Date(),
+          email: this.usernameAzure,  
+          type: 'tradeshow_log'
+        }).then(() => {
+          this.tradeshowList.push(this.newTradeshowName);
+          this.newTradeshowName = '';
+        }).catch(error => {
+          // Si la publicación en Cosmos DB falló, mostramos un mensaje de error
+          console.error('Failed to publish tradeshow to Cosmos DB:', error);
+        });
+      }
+      this.showNewTradeshowForm = false;
+      this.addNewTradeshowButtonText = 'Add New TradeShow';
+    } else {
+      this.showNewTradeshowForm = true;
+      this.addNewTradeshowButtonText = 'Save TradeShow';
+    }
+  }
+
 
   changeTradeShow(tradeshow:any ,action:string)
   {

@@ -33,126 +33,129 @@
           <i class="bi bi-person-raised-hand" style="color: black;"></i>
         </div>
       </div>
+<mat-tab-group color="warn">
+  <mat-tab label="Order Information"><br>
+    <ng-container *ngIf="order">
+      <!-- First Card -->
+      <mat-card  class="mat-card">
+        <mat-card-content>
+          <h2 class="h2Mat">Order Information <mat-icon>description</mat-icon></h2>
+          <div class="grid-container">
+            <div class="label-container">
+              <label class="label">Card Code:</label>
+              <input type="text" class="boxCustom" [(ngModel)]="order.CardCode" [disabled]="true">
+            </div>
+            <div class="label-container">
+              <label class="label">Card Name:</label>
+              <input type="text" class="boxCustom" [matAutocomplete]="autoC" [(ngModel)]="order.CardName" [disabled]="true">
+              <!-- <button  class="custom-button" *ngIf="inputSearchCutomer" (click)="changeCustomer(order)">Change Customer</button> -->
+              <mat-autocomplete #autoC="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectCustomer($event.option.value, order)">
+                <mat-option *ngFor="let c of ListCustomers!| appFilterC: order.CardName"  value="{{c.CardName}}"  class="optionList" >
+                  {{c.CardCode}} - {{c.CardName}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+            <div class="label-container">
+              <label class="label">Reference Number:</label>
+              <input type="text" class="boxCustom" [(ngModel)]="order.NumAtCard" (change)="updateOrder('Change_NumAtCard',order.NumAtCard)" [disabled]="blockStatus">
+            </div>
+            <div class="label-container">
+              <label class="label">Posting date:</label>
+              <mat-form-field class="example-full-width">
+                <input matInput [matDatepicker]="postingDate"  [formControl]="post" (change)="ChangeDates('ChangePostDate')" [value]="order.DocDate | date:'yyyy-MM-dd'">
+                <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
+                <mat-datepicker #postingDate></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="label-container">
+              <label class="label">Delivery Date:</label>
+              <mat-form-field>
+                <mat-label>Choose a date</mat-label>
+                  <input matInput [matDatepicker]="deliveryDate" [min]="minDate" [formControl]="delivery" (dateChange)="ChangeDates('Change_Delivery_Date')" [disabled]="blockStatus" [readonly]="blockStatus">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matIconSuffix [for]="deliveryDate" [disabled]="blockStatus"></mat-datepicker-toggle>
+                  <mat-datepicker #deliveryDate></mat-datepicker>
+                </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions></mat-card-actions>
+      </mat-card>
+      <br>
+      </ng-container>
+      <mat-tab label="List Order"><br>
+        <ng-container>
+          <ng-container *ngIf="order">
+            <!-- Tarjeta para mostrar todos los elementos de DocumentLines -->
+            <mat-card class="mat-card">
+              <mat-card-content>
+                <div class="button-container">
+                <h2 class="h2Mat">Item list <mat-icon>shopping_cart</mat-icon></h2>
+                  <!-- <button mat-raised-button color="primary" class="add-button" (click)="OpenModal()" [disabled]="blockStatus">
+                    <mat-icon>add</mat-icon> Add Item
+                  </button> -->
+                </div>
+                <!-- Utiliza ngFor para recorrer todos los elementos de DocumentLines -->
+                <div *ngFor="let item of order.DocumentLines; let i = index">
+                  <br>
+                  <h3 class="h3Mat"><b>Item #{{ i + 1 }}</b></h3>
+                  <div class="grid-container">
+                    <!-- <div class="label-container">
+                      <label class="label">Item Code:</label>
+                      <input type="text" class="boxCustom" [(ngModel)]="item.ItemCode" [disabled]="item.ItemCode !== ''">
+                    </div> -->
+                    <div class="label-container">
+                      <label class="label"  for="ItemName ">Item Code:</label>           
+                      <label  style="font-weight: bold; color: rgb(56, 56, 56);" for="ItemName"  id="ItemName" readonly>{{item.ItemCode}}</label>
+                    </div>
+                    <div class="label-container">
+                      <label class="label">Item Description:</label>
+                      <label  style="color: rgb(56, 56, 56);" [(ngModel)]="item.ItemDescription" disabled="true">{{item.ItemDescription}}</label> 
+                    </div>
+                    <div class="label-container">
+                      <label class="label">Unit Price:</label>
+                      <label style="color: rgb(56, 56, 56);" matInput placeholder="Unit Price" [(ngModel)]="item.UnitPrice" disabled="true">{{item.UnitPrice}}</label>
+                    </div>
+                    <div class="label-container">
+                      <label class="label">Quantity:</label>
+                      <label style="color: rgb(56, 56, 56);" matInput placeholder="Quantity" min="1"  [(ngModel)]="item.Quantity" disabled="true">{{item.Quantity}}</label>
+                    </div>
+                    <div class="label-container">
+                      <label class="label">Line Total:</label>
+                      <label style="color: rgb(56, 56, 56);" matInput placeholder="LineTotal" [(ngModel)]="item.LineTotal" disabled="true">{{item.LineTotal}}</label>
+                    </div>
+                    <!-- <div class="label-container">
+                      <label class="label">UDF Comments:</label>
+                      <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.FreeText" (change)="updateOrder('Change_Comments_LineNum_'+i)" [disabled]="blockStatus">
+                    </div> -->
+                    <div class="label-container">
+                      <button mat-icon-button (click)="OpenModalEdit(item, i)" [disabled]="blockStatus!">
+                        <mat-icon >edit</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <mat-divider></mat-divider>
+                </div>
+              </mat-card-content>
+              <div class="label-total">
+                <label><b>Total: ${{ totalOrder() | number:'1.2-2' }}</b></label>
+              </div> 
+              <br>
+            </mat-card>
+          </ng-container>
+          <br><br>
+        </ng-container>
+      </mat-tab>
+  </mat-tab>
 
+</mat-tab-group>
       <div>
         <span *ngIf="errorStatus != ''" style="color: rgb(177, 0, 0);"><b>Error Sap:</b> {{errorStatus}}</span>
       </div>
-      <ng-container *ngIf="order">
-        <!-- First Card -->
-        <mat-card  class="mat-card">
-          <mat-card-content>
-            <h2 class="h2Mat">Order Information <mat-icon>description</mat-icon></h2>
-            <div class="grid-container">
-              <div class="label-container">
-                <label class="label">Card Code:</label>
-                <input type="text" class="boxCustom" [(ngModel)]="order.CardCode" [disabled]="true">
-              </div>
-              <div class="label-container">
-                <label class="label">Card Name:</label>
-                <input type="text" class="boxCustom" [matAutocomplete]="autoC" [(ngModel)]="order.CardName" [disabled]="blockStatus">
-                <!-- <button  class="custom-button" *ngIf="inputSearchCutomer" (click)="changeCustomer(order)">Change Customer</button> -->
-                <mat-autocomplete #autoC="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectCustomer($event.option.value, order)">
-                  <mat-option *ngFor="let c of ListCustomers!| appFilterC: order.CardName"  value="{{c.CardName}}"  class="optionList" >
-                    {{c.CardCode}} - {{c.CardName}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-              <div class="label-container">
-                <label class="label">Reference Number:</label>
-                <input type="text" class="boxCustom" [(ngModel)]="order.NumAtCard" (change)="updateOrder('Change_NumAtCard',order.NumAtCard)" [disabled]="blockStatus">
-              </div>
-              <div class="label-container">
-                <label class="label">Posting date:</label>
-                <mat-form-field class="example-full-width">
-                  <input matInput [matDatepicker]="postingDate"  [formControl]="post" (change)="ChangeDates('ChangePostDate')" [value]="order.DocDate | date:'yyyy-MM-dd'">
-                  <mat-datepicker-toggle matIconSuffix [for]="postingDate"></mat-datepicker-toggle>
-                  <mat-datepicker #postingDate></mat-datepicker>
-                </mat-form-field>
-              </div>
-              <div class="label-container">
-                <label class="label">Delivery Date:</label>
-                <mat-form-field>
-                  <mat-label>Choose a date</mat-label>
-                    <input matInput [matDatepicker]="deliveryDate" [min]="minDate" [formControl]="delivery" (dateChange)="ChangeDates('Change_Delivery_Date')" [disabled]="blockStatus" [readonly]="blockStatus">
-                    <mat-hint>MM/DD/YYYY</mat-hint>
-                    <mat-datepicker-toggle matIconSuffix [for]="deliveryDate" [disabled]="blockStatus"></mat-datepicker-toggle>
-                    <mat-datepicker #deliveryDate></mat-datepicker>
-                  </mat-form-field>
-              </div>
-            </div>
-          </mat-card-content>
-          <mat-card-actions></mat-card-actions>
-        </mat-card>
-        <br>
+     
         <!-- Tarjetas para elementos de DocumentLines -->
-        <!-- Verificar si order está definido antes de mostrarlo -->
-        <ng-container *ngIf="order">
-          <!-- Tarjeta para mostrar todos los elementos de DocumentLines -->
-          <mat-card class="mat-card">
-            <mat-card-content>
-              <div class="button-container">
-              <h2 class="h2Mat">Item list <mat-icon>shopping_cart</mat-icon></h2>
-                <!-- <button mat-raised-button color="primary" class="add-button" (click)="OpenModal()" [disabled]="blockStatus">
-                  <mat-icon>add</mat-icon> Add Item
-                </button> -->
-              </div>
-              <!-- Utiliza ngFor para recorrer todos los elementos de DocumentLines -->
-              <div *ngFor="let item of order.DocumentLines; let i = index">
-                <br>
-                <h3 class="h3Mat"><b>Item #{{ i + 1 }}</b></h3>
-                <div class="grid-container">
-                  <!-- <div class="label-container">
-                    <label class="label">Item Code:</label>
-                    <input type="text" class="boxCustom" [(ngModel)]="item.ItemCode" [disabled]="item.ItemCode !== ''">
-                  </div> -->
-                  <div class="label-container">
-                    <label class="label"><b>Item Code:</b></label>
-                    <input type="text" class="boxCustom" id="search-text" aria-describedby="search-text" 
-                    [(ngModel)]="item.ItemCode" placeholder="Enter text to search" 
-                    autofocus [matAutocomplete]="auto" [disabled]="item.ItemDescription !== ''">
-                    <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectItem($event.option.value, item)">
-                      <mat-option *ngFor="let c of ListItems| appFilter: item.ItemCode"  value="{{c.ItemCode}}">
-                        {{c.ItemCode}} - {{c.ItemName}}
-                      </mat-option>
-                    </mat-autocomplete>
-                  </div>
-                  <div class="label-container">
-                    <label class="label">Item Description:</label>
-                    <input type="text" class="boxCustom" [(ngModel)]="item.ItemDescription" disabled="true">
-                  </div>
-                  <div class="label-container">
-                    <label class="label">Unit Price:</label>
-                    <input type="text" class="boxCustom" matInput placeholder="Unit Price" [(ngModel)]="item.UnitPrice" disabled="true">
-                  </div>
-                  <div class="label-container">
-                    <label class="label">Quantity:</label>
-                    <input  type="number"  class="boxCustom editable-input" matInput placeholder="Quantity" min="1"  [(ngModel)]="item.Quantity" disabled="true">
-                  </div>
-                  <div class="label-container">
-                    <label class="label">Line Total:</label>
-                    <input  type="number"  class="boxCustom" matInput placeholder="LineTotal" [(ngModel)]="item.LineTotal" disabled="true">
-                  </div>
-                  <!-- <div class="label-container">
-                    <label class="label">UDF Comments:</label>
-                    <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.FreeText" (change)="updateOrder('Change_Comments_LineNum_'+i)" [disabled]="blockStatus">
-                  </div> -->
-                  <div class="label-container">
-                    <button mat-icon-button (click)="OpenModalEdit(item, i)" [disabled]="blockStatus!">
-                      <mat-icon >edit</mat-icon>
-                    </button>
-                  </div>
-                </div>
-                <mat-divider></mat-divider>
-              </div>
-            </mat-card-content>
-            <div class="label-total">
-              <label><b>Total: ${{ totalOrder() | number:'1.2-2' }}</b></label>
-            </div> 
-            <br>
-          </mat-card>
-        </ng-container>
-        <br><br>
-      </ng-container>
+        <!-- Verificar si order estÃ¡ definido antes de mostrarlo -->
+        
     </div>
   </div>
 

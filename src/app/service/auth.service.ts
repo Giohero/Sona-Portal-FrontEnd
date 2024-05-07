@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
-import { PublicClientApplication, AuthenticationResult, AccountInfo, ITokenCache, InteractionStatus, RedirectRequest } from '@azure/msal-browser';
+import { PublicClientApplication, AuthenticationResult, AccountInfo, ITokenCache, InteractionStatus, RedirectRequest, InteractionRequiredAuthError } from '@azure/msal-browser';
 import { BehaviorSubject, Observable, filter, from, map, of, takeUntil } from 'rxjs';
 import { Profile } from '../models/loginAccount';
 import { SignalRService } from './signalr.service';
@@ -101,6 +101,7 @@ export class AuthService implements OnInit {
   //   // )
     
   // }
+
   login() {
     this.msalService.loginPopup({
       scopes: ['openid', 'profile', 'user.read']
@@ -109,6 +110,7 @@ export class AuthService implements OnInit {
         if (result.account) {
           this.msalService.instance.setActiveAccount(result.account);
           this.getProfile();
+          this.getTokenMSAL();
           this.myRouter.navigate(['/dashboard']);
         }
       },
@@ -136,11 +138,25 @@ export class AuthService implements OnInit {
   }
 
   getTokenMSAL(){
-    this.msalService.acquireTokenSilent({ scopes: ["User.Read"] }).subscribe(
+    const tokenRequest = {
+      scopes: ["User.Read"],
+      forceRefresh : false
+    };
+    console.log('new token...'); 
+    
+    this.msalService.acquireTokenSilent(tokenRequest).subscribe(
       response => {
-      //console.log(response)
-
-      this.getToken(response.idToken!)
+        console.log('recieved new token:', response.idToken!); 
+        this.getToken(response.idToken!)
+      },
+      error => {
+        console.log("fallo de nuevo token, recargar pagina");
+        if(error instanceof InteractionRequiredAuthError){
+          console.log("error debido a la necesidad de interacción del usuario o expiración del token")
+          this.msalService.acquireTokenRedirect(tokenRequest);
+        } else {
+          console.error(error);
+        }
       }
     )
   }
