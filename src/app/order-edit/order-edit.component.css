@@ -112,11 +112,42 @@ a{
   }
   
   /* Cuadros de texto y etiquetas */
-  .label-container {
+  .item-block {
     display: flex;
     flex-direction: column;
-    margin-top: 1px;
-    color: red;
+    margin-bottom: 10px;
+    background-color: #f9f9f9; 
+    border-radius: 5px; 
+    padding: 10px; 
+  }
+  
+  .item-details {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    color: #333; 
+  }
+  
+  .item-details strong {
+    color: #e77155; 
+  }
+  
+  .item-description {
+    padding-left: 10px;
+    padding-bottom: 10px;
+    color: #666; 
+  }
+  
+  .item-description strong {
+    color: #e77155; 
+  }
+  
+  button.mat-icon-button {
+    margin-top: 10px; 
+  }
+  
+  .mat-divider {
+    margin-top: 10px;
   }
   
   .label {
@@ -124,7 +155,6 @@ a{
     margin-bottom: 5px;
     color: #e77155;
   }
-  
   .boxCustom {
     height: 45px;
     border-radius: 11px;
@@ -133,7 +163,7 @@ a{
   }
   
   .editable-input {
-    background-color: #ffffff; /* Cambiar el color de fondo para indicar que es editable */
+    background-color: #ffffff; 
   }
   
   /* Botones */
@@ -156,8 +186,8 @@ a{
   }
   
   .content-wrapper {
-    padding: 20px; /* Ajusta el espaciado interno de la tarjeta */
-    min-height: 300px; /* Ajusta la altura mínima de la tarjeta según tus necesidades */
+    padding: 20px; 
+    min-height: 300px; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -170,7 +200,7 @@ a{
   }
   
   .small-button {
-    margin-right: 10px; /* Ajusta el margen según tu preferencia */
+    margin-right: 10px;
   }
   
   .mat-divider {

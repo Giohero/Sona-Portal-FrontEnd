@@ -99,41 +99,22 @@
                 <div *ngFor="let item of order.DocumentLines; let i = index">
                   <br>
                   <h3 class="h3Mat"><b>Item #{{ i + 1 }}</b></h3>
-                  <div class="grid-container">
-                    <!-- <div class="label-container">
-                      <label class="label">Item Code:</label>
-                      <input type="text" class="boxCustom" [(ngModel)]="item.ItemCode" [disabled]="item.ItemCode !== ''">
-                    </div> -->
-                    <div class="label-container">
-                      <label class="label"  for="ItemName ">Item Code:</label>           
-                      <label  style="font-weight: bold; color: rgb(56, 56, 56);" for="ItemName"  id="ItemName" readonly>{{item.ItemCode}}</label>
+                  <div *ngFor="let item of order.DocumentLines; let i = index" class="item-block">
+                    <div class="item-details">
+                      <span><strong>Item Code:</strong> {{item.ItemCode}}</span>
+                      <span><strong>Unit Price:</strong> {{item.UnitPrice}}</span>
+                      <span><strong>Quantity:</strong> {{item.Quantity}}</span>
+                      <span><strong>Line Total:</strong> {{item.LineTotal}}</span>
                     </div>
-                    <div class="label-container">
-                      <label class="label">Item Description:</label>
-                      <label  style="color: rgb(56, 56, 56);" [(ngModel)]="item.ItemDescription" disabled="true">{{item.ItemDescription}}</label> 
+                    <div class="item-description">
+                      <strong>Item Description:</strong> {{item.ItemDescription}}
                     </div>
-                    <div class="label-container">
-                      <label class="label">Unit Price:</label>
-                      <label style="color: rgb(56, 56, 56);" matInput placeholder="Unit Price" [(ngModel)]="item.UnitPrice" disabled="true">{{item.UnitPrice}}</label>
-                    </div>
-                    <div class="label-container">
-                      <label class="label">Quantity:</label>
-                      <label style="color: rgb(56, 56, 56);" matInput placeholder="Quantity" min="1"  [(ngModel)]="item.Quantity" disabled="true">{{item.Quantity}}</label>
-                    </div>
-                    <div class="label-container">
-                      <label class="label">Line Total:</label>
-                      <label style="color: rgb(56, 56, 56);" matInput placeholder="LineTotal" [(ngModel)]="item.LineTotal" disabled="true">{{item.LineTotal}}</label>
-                    </div>
-                    <!-- <div class="label-container">
-                      <label class="label">UDF Comments:</label>
-                      <input type="text" class="boxCustom editable-input" matInput placeholder="UDF Comments" [(ngModel)]="item.FreeText" (change)="updateOrder('Change_Comments_LineNum_'+i)" [disabled]="blockStatus">
-                    </div> -->
-                    <div class="label-container">
-                      <button mat-icon-button (click)="OpenModalEdit(item, i)" [disabled]="blockStatus!">
-                        <mat-icon >edit</mat-icon>
-                      </button>
-                    </div>
+                    <button mat-icon-button (click)="OpenModalEdit(item, i)" [disabled]="blockStatus">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <mat-divider></mat-divider>
                   </div>
+                  
                   <mat-divider></mat-divider>
                 </div>
               </mat-card-content>
