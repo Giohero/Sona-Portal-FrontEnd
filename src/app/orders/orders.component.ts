@@ -1547,29 +1547,33 @@ OpenModal(action: 'add' | 'update'){
     }
   }
 
-//   @HostListener('window:keydown', ['$event'])
-//  async handleKeyDown(event: KeyboardEvent) {
-//     this.textConcatenated += event.key;
-//     if (this.timeLastTimePressKey !== null) {
-//       clearTimeout(this.timeLastTimePressKey);
-//     }
+  timeLastTimePressKey: any;
+  textConcatenated = '' 
+  ItemBar: Value | undefined;
+  
+ @HostListener('window:keydown', ['$event'])
+  async handleKeyDown(event: KeyboardEvent) {
+     this.textConcatenated += event.key;
+     if (this.timeLastTimePressKey !== null) {
+       clearTimeout(this.timeLastTimePressKey);
+     }
 
-//     this.timeLastTimePressKey = setTimeout(async () => {
-//       console.log("El texto ingresado es:", this.textConcatenated);
-      
-//       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
-//        console.log(this.ItemBar);
-//        if (this.ItemBar != undefined){
-//         this.searchTextItem = this.ItemBar.ItemCode;
-//          this.OpenModal()
-//        }
-//        // else{
-//        //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
-//        //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
+     this.timeLastTimePressKey = setTimeout(async () => {
+       console.log("El texto ingresado es:", this.textConcatenated);
        
-//       this.textConcatenated = '';
-//     }, 20);
-//   }
+      if(this.currentTab != 'List Items')
+      {
+       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
+        console.log(this.ItemBar);
+        if (this.ItemBar != undefined){
+          this.searchTextItem = this.ItemBar.ItemCode;
+          this.OpenModal('add')
+        }
+      }
+
+       this.textConcatenated = '';
+     }, 20);
+   }
 
  
  

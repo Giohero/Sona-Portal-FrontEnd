@@ -33,7 +33,7 @@
           <i class="bi bi-person-raised-hand" style="color: black;"></i>
         </div>
       </div>
-<mat-tab-group color="warn">
+<mat-tab-group (selectedTabChange)="onTabChanged($event)" color="warn">
   <mat-tab label="Order Information"><br>
     <ng-container *ngIf="order">
       <!-- First Card -->
@@ -57,7 +57,7 @@
             </div>
             <div class="label-container">
               <label class="label">Reference Number:</label>
-              <input type="text" class="boxCustom" [(ngModel)]="order.NumAtCard" (change)="updateOrder('Change_NumAtCard',order.NumAtCard)" [disabled]="blockStatus">
+              <input type="text" class="boxCustom" [(ngModel)]="order.NumAtCard" (change)="ChangeNumAtCard()" [disabled]="blockStatus">
             </div>
             <div class="label-container">
               <label class="label">Posting date:</label>
@@ -99,7 +99,7 @@
                 <div *ngFor="let item of order.DocumentLines; let i = index">
                   <br>
                   <h3 class="h3Mat"><b>Item #{{ i + 1 }}</b></h3>
-                  <div *ngFor="let item of order.DocumentLines; let i = index" class="item-block">
+                  <div class="item-block">
                     <div class="item-details">
                       <span><strong>Item Code:</strong> {{item.ItemCode}}</span>
                       <span><strong>Unit Price:</strong> {{item.UnitPrice}}</span>

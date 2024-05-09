@@ -22,6 +22,7 @@ import { IndexItemsService } from '../service/index-items.service';
 import { BusinessPartner } from '../models/customer';
 import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
 import { Subscription } from 'rxjs';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 
 declare var bootstrap: any; 
@@ -61,7 +62,7 @@ export class OrderEditComponent implements OnInit {
   captureActive= false;
   textConcatenaded= '';
   ItemBar: Value | undefined;
-
+  currentTab: string = '';
 
 
   @ViewChild('Scanner-item') modal: any;
@@ -214,6 +215,10 @@ export class OrderEditComponent implements OnInit {
       return true;
     else
       return false;
+  }
+
+  onTabChanged(event: MatTabChangeEvent): void {
+    this.currentTab = event.tab.textLabel;
   }
 
   ngOnInit(): void {
@@ -577,7 +582,7 @@ export class OrderEditComponent implements OnInit {
           const dialogRef = this.dialog.open(ScannerItemComponent,{
             width: '550px',
             height: 'auto',
-            data: {Item:itemFound, FreeText: itemSelect.FreeText, Quantity: itemSelect.Quantity}
+            data: {Item:itemFound, FreeText: itemSelect.FreeText, Quantity: itemSelect.Quantity,Action: 'update', QuantityItems: this.order!.DocumentLines.length}
           });
       
           dialogRef.afterClosed().subscribe(result =>  {
@@ -615,18 +620,19 @@ export class OrderEditComponent implements OnInit {
     if (this.order && this.order.DocumentLines && this.order.DocumentLines.length > index) {
 
       var itemDelete = this.order.DocumentLines[index];
-      var data = JSON.stringify({
-        ItemCode: itemDelete.ItemCode,
-        ItemDescription: itemDelete.ItemDescription,
-        LineNum:itemDelete.LineNum
-      })
       this.order.DocTotal -= itemDelete.LineTotal;
       this.order.DocumentLines.splice(index, 1);
-
+      
+      var data = JSON.stringify({ DocumentLines: this.order.DocumentLines })
+     
       this.updateOrder('Remove_LineNum_'+itemDelete.LineNum, data)
     }
   }
 
+  ChangeNumAtCard(){
+    var data = JSON.stringify({NumAtCard: this.order!.NumAtCard,})
+    this.updateOrder('Change_NumAtCard',data)
+  }
   
   changeCustomer(order:Order){
     order.CardCode = ''
@@ -701,6 +707,7 @@ export class OrderEditComponent implements OnInit {
     {
       this.obtainUser()
       //console.log(this.OrderIndexDB)
+      console.log(data)
       this.errorStatus = '...';
       this.cloudChange = "cloud_queue";
 
@@ -800,11 +807,16 @@ export class OrderEditComponent implements OnInit {
         {
           if(this.order!.DocNum !== undefined)
           {
-            console.log(OrderPost)
+            //console.log(OrderPost)
             //this.cloudChange = "cloud_done";
             //this.signalr.sendMessageAPI(JSON.stringify(OrderPost),'order', this.usernameAzure)
+            var OrderEdit = JSON.parse(data)
+            OrderEdit.DocNum = this.order?.DocNum
+            OrderEdit.DocEntry = this.order?.DocEntry.toString()
+            var OrderEditString = JSON.stringify(OrderEdit);
+            //console.log(OrderEditString)
 
-            webWorker('editOrder',OrderPost,this.tokenAzure).then((data) => {
+            webWorker('editOrder',OrderEdit,this.tokenAzure).then((data) => {
               if(parseInt(data.statusCode!) >= 200 && parseInt(data.statusCode!) < 300)
               {
                 console.log(data)
@@ -943,51 +955,19 @@ export class OrderEditComponent implements OnInit {
 
      this.timeLastTimePressKey = setTimeout(async () => {
        console.log("El texto ingresado es:", this.textConcatenated);
-       
+       console.log("Elmat-group texto ingresado es:", this.currentTab);
+      if(this.currentTab == 'Order Lines')
+      {
        this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
         console.log(this.ItemBar);
         if (this.ItemBar != undefined){
           this.OpenModal(this.ItemBar)
         }
-        // else{
-        //   if(this.textConcatenated!= undefined && this.textConcatenated!=  )
-        //     this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
-        
+      }
+
        this.textConcatenated = '';
      }, 20);
    }
-  // @HostListener('window:keydown', ['$event'])
-  // async handleKeyDown(event: KeyboardEvent) {
-  //   // Ignora la entrada si no es una tecla imprimible (ej. teclas de control)
-  //   if (event.key.length === 1) {
-  //     this.textConcatenated += event.key;
-  //   }
-    
-  //   if (this.timeLastTimePressKey !== null) {
-  //     clearTimeout(this.timeLastTimePressKey);
-  //   }
-  
-  //   this.timeLastTimePressKey = setTimeout(async () => {
-  //     console.log("El texto ingresado es:", this.textConcatenated);
-      
-  //     // Verifica si el texto concatenado comienza con '.' y tiene una longitud mayor a 1 (indicando que hay algo después del '.')
-  //     if (this.textConcatenated.startsWith('.') && this.textConcatenated.length > 1) {
-  //       const code = this.textConcatenated.slice(1); // Obtiene el código sin el punto inicial
-        
-  //       // Intenta obtener el ítem por el código
-  //       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(code);
-  //       console.log(this.ItemBar);
-        
-  //       if (this.ItemBar != undefined) {
-  //         this.OpenModal(this.ItemBar);
-  //       } else {
-  //         // Opcional: Mostrar un mensaje si el código de barras no existe
-  //         // this.openSnackBar("Doesn´t exist Bar Code, try again", "warning", "Warning", "darkorange");
-  //       }
-  //     }
-  //     // Restablece el texto concatenado para la próxima entrada
-  //     this.textConcatenated = '';
-  //   }, 20); // Puedes ajustar este tiempo según necesites
-  // }
+
   
 }
