@@ -927,8 +927,9 @@ export class OrdersComponent {
   }
 
   editOpenModal(itemSelect:DocumentLines, index: number){
-  var ItemFound = this.ListItems.find(x => x.ItemCode == itemSelect.ItemCode)
-  if (ItemFound != undefined) {
+    if (this.currentTab === 'List Items') {
+      var ItemFound = this.ListItems.find(x => x.ItemCode == itemSelect.ItemCode)
+      if (ItemFound != undefined) {
     // console.log(itemSelect.LineNum)
     // ItemFound.LineNum = itemSelect.LineNum!
     //itemFound.FreeText = itemSelect.FreeText
@@ -960,9 +961,11 @@ export class OrdersComponent {
 
     })
   }
+  }
 }
 
 OpenModal(action: 'add' | 'update'){
+  if (this.currentTab === 'List Items') {
     if(this.searchTextItem != "")
     {
       var ItemBar = this.ListItems.find(x => x.ItemCode === this.searchTextItem);
@@ -991,6 +994,7 @@ OpenModal(action: 'add' | 'update'){
       }
     }
   }
+}
   
 
 
@@ -1561,7 +1565,7 @@ OpenModal(action: 'add' | 'update'){
      this.timeLastTimePressKey = setTimeout(async () => {
        console.log("El texto ingresado es:", this.textConcatenated);
        
-      if(this.currentTab != 'List Items')
+      if(this.currentTab == 'List Items')
       {
        this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
         console.log(this.ItemBar);

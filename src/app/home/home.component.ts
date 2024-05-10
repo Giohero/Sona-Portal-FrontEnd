@@ -9,15 +9,17 @@ import { MatDialog } from '@angular/material/dialog';
 import {getTradeshowLogs } from '../service/cosmosdb.service';
 import { AuthService } from '../service/auth.service';
 import { IndexDbService } from '../service/index-db.service';
+import { GeolocationService } from '../service/geolocation.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
+  template: `<p>Your location: {{ location | json }}</p>`,
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
   ListItems!: Value[] ;
-  
+  location: GeolocationPosition | null = null;
   searchText = '';
   isSidebarExpanded: boolean = false;
   ordersData: { name: any; value: any; }[] | undefined;
@@ -61,7 +63,7 @@ export class HomeComponent {
   };
   
 
-  constructor(private orderService: ServiceService, private dialog: MatDialog,private auth: AuthService, private indexDB: IndexDbService) {
+  constructor(private orderService: ServiceService, private dialog: MatDialog,private auth: AuthService, private indexDB: IndexDbService, private geoService: GeolocationService) {
     const single1 = this.single;
     const multi1 = this.multi;
     Object.assign(this, {single1, multi1}) 
@@ -78,7 +80,18 @@ export class HomeComponent {
     //console.log(event);
   }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
+    try {
+      this.location = await this.geoService.getLocation();
+      const { latitude, longitude } = this.location.coords;
+      const address = await this.geoService.getAddress(latitude, longitude).toPromise();
+      console.log('Location:', address.display_name);
+      console.log(address)
+      console.log(address.address.country + ', ' + address.address.state)
+
+    } catch (error) {
+      console.error('Error obtaining location or address', error);
+    }
     // this.orderService.getItems().subscribe((retData) => {
     //   if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
     //     this.ListItems = JSON.parse(retData.response!);
@@ -140,7 +153,7 @@ export class HomeComponent {
       ),
       catchError(error => {
         console.error('An error occurred', error);
-        return throwError(() => new Error('An error occurred')); // Aquí puedes manejar cómo finalmente emitir el error
+        return throwError(() => new Error('An error occurred')); 
       })
     )
     .subscribe(
