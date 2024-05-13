@@ -422,7 +422,10 @@ export class DashboardComponent {
       //console.log('Location:', address.display_name);
       console.log(address)
       //console.log(address.address.country + ', ' + address.address.state)
-      this.tradeshow = address.address.country + ', ' + address.address.city
+      if(address.address.city != undefined)
+        this.tradeshow = address.address.country + ', ' + address.address.city
+      else
+        this.tradeshow = address.address.country + ', ' + address.address.state
       
       if (this.tradeshow.trim() !== '') {
         publishTradeshowToCosmosDB({ 
