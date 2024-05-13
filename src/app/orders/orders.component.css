@@ -124,6 +124,9 @@ mat-tab{
   display: inline-block;
   margin-right: 10px;
 }
+.tradeshow-text {
+  color: black;
+}
 .title{
   font-size: 25px;
   font-family: "Anton", sans-serif;
@@ -242,7 +245,6 @@ h2.loaded {
 .mat-card2 {
   border-top: 8px solid #0F97A6;
   background-color: rgba(254, 254, 254, 0.9);
-  
   margin-top: 20px;
 }
 .grid-container {

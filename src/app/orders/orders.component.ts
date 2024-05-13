@@ -26,6 +26,7 @@ import { getTradeshowLogs } from '../service/cosmosdb.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { GeolocationService } from '../service/geolocation.service';
 
 @Component({
   selector: 'app-orders',
@@ -54,8 +55,8 @@ export class OrdersComponent {
   usernameAzure ='';
   errorStatus = '';
   selectedOption: string = '';
-  
   newTradeshowName: string = '';
+  tradeshow ='';
   
   ////Customer Data///////
   ListCustomers!: BusinessPartner[] ;
@@ -111,7 +112,7 @@ export class OrdersComponent {
 
   //Add status: index, cloud, complete
 
-  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService, private custService:IndexCustomersService, private itemsService:IndexItemsService, private cdr: ChangeDetectorRef) 
+  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService, private custService:IndexCustomersService, private itemsService:IndexItemsService, private cdr: ChangeDetectorRef, private geoService: GeolocationService) 
   {
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
@@ -358,6 +359,10 @@ export class OrdersComponent {
     this.dataSharing.docEntry$.subscribe((newDocEntry) => {
       this.DocEntryPublish = newDocEntry.toString();
     });
+
+    this.geoService.tradeshow$.subscribe((newTradeshowLocation) => {
+      this.tradeshow = newTradeshowLocation
+    })
   }
 
   async getInformationByIndex()

@@ -110,40 +110,11 @@ export class HomeComponent {
     else
       this.showIndex = true
     this.getOrderLogDataComparation()
-    this.tradeShowChecking()
     // var ListTradeshows = await getTradeshowLogs()
     // console.log(ListTradeshows);
   }
 
-  async tradeShowChecking(){
-    try {
-      this.location = await this.geoService.getLocation();
-      const { latitude, longitude } = this.location.coords;
-      const address = await this.geoService.getAddress(latitude, longitude).toPromise();
-      //console.log('Location:', address.display_name);
-      //console.log(address)
-      //console.log(address.address.country + ', ' + address.address.state)
-      this.tradeshow = address.address.country + ', ' + address.address.state
-      
-      if (this.tradeshow.trim() !== '') {
-        publishTradeshowToCosmosDB({ 
-          name: this.tradeshow, 
-          created_date: new Date(),
-          email: this.usernameAzure,  
-          type: 'tradeshow_log'
-        }).then(() => {
-          console.log('ready')
-        }).catch(error => {
-          console.error('Failed to publish tradeshow to Cosmos DB:', error);
-        });
-      }
-
-
-    } catch (error) {
-      console.error('Error obtaining location or address', error);
-    }
-  }
-
+  
   onSelectMaterial(selectedData: any){
     //console.log(selectedData);
     //console.log('pasa por aqui');

@@ -134,6 +134,17 @@
           </mat-card-content>
     </mat-card>
       </div>
+       <!-- SELECT TRADESHOW -->
+       <div fxFlex="45" fxFlex.xs="100" >
+            <mat-card class="mat-card2">
+              <mat-card-header> 
+                <mat-card-title><h2 class="h2Mat">Tradeshow <i class="fas fa-handshake"></i></h2></mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <label class="label">Tradeshow: <span class="tradeshow-text">{{tradeshow}}</span> </label>
+              </mat-card-content>
+           </mat-card>
+       </div>
     </mat-tab>
  
   <mat-tab label="List Items">
@@ -150,7 +161,7 @@
                 [(ngModel)]="searchTextItem" placeholder="Enter text to search" 
                 autofocus [matAutocomplete]="autoItem" >
 
-                <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" (optionSelected)="onSelectItem($event.option.value)">
+                <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'">
                   <mat-option *ngFor="let c of ListItems| appFilter: searchTextItem"  value="{{c.ItemCode}}"  class="optionList" >
                     {{c.ItemCode}} - {{c.ItemName}}
                   </mat-option>
