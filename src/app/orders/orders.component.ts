@@ -54,7 +54,7 @@ export class OrdersComponent {
   usernameAzure ='';
   errorStatus = '';
   selectedOption: string = '';
-  tradeshowList: any[] = [];
+  
   newTradeshowName: string = '';
   
   ////Customer Data///////
@@ -324,8 +324,8 @@ export class OrdersComponent {
       this.titleloaded = true;
       //console.log("cargó");
     }, 1000);
-    this.tradeshowList = await getTradeshowLogs();
-    this.tradeshowList.unshift({name: "None"})
+    // this.tradeshowList = await getTradeshowLogs();
+    // this.tradeshowList.unshift({name: "None"})
     //console.log(this.tradeshowList);
 
     //this.ShowEdit = "none"
@@ -393,34 +393,6 @@ export class OrdersComponent {
       dialogRef.close();
     }, 5000); 
   }
-
-  
-  toggleNewTradeshowForm(): void {
-    if (this.showNewTradeshowForm) {
-      if (this.newTradeshowName.trim() !== '') {
-        // Llamar a publishTradeshowToCosmosDB 
-        publishTradeshowToCosmosDB({ 
-          name: this.newTradeshowName, 
-          created_date: new Date(),
-          email: this.usernameAzure,  
-          type: 'tradeshow_log'
-        }).then(() => {
-          this.tradeshowList.push(this.newTradeshowName);
-          this.newTradeshowName = '';
-        }).catch(error => {
-          // Si la publicación en Cosmos DB falló, mostramos un mensaje de error
-          console.error('Failed to publish tradeshow to Cosmos DB:', error);
-        });
-      }
-      this.showNewTradeshowForm = false;
-      this.addNewTradeshowButtonText = 'Add New TradeShow';
-    } else {
-      this.showNewTradeshowForm = true;
-      this.addNewTradeshowButtonText = 'Save TradeShow';
-    }
-  }
-
-
   changeTradeShow(tradeshow:any ,action:string)
   {
     console.log(action)

@@ -166,15 +166,45 @@ export async function getTradeshowLogs() {
     return [];
   }
 }
+
+
+export async function searchTradeshowLog(tradeshow:any) {
+  const databaseId = 'SONA';
+  const containerId = 'DataContainer';
+  const database = client.database(databaseId);
+  const container = database.container(containerId);
+
+  try {
+    console.log(tradeshow)
+    const querySpec = 'SELECT * FROM c WHERE c.type = \'tradeshow_log\' AND c.name = \''+ tradeshow.name + '\'';
+    const { resources } = await container.items.query(querySpec).fetchAll();
+
+    if (!resources) {
+      return [];
+    }
+    return resources;
+  } catch(error) {
+    console.error('Error getting tradeshow logs', error);
+    return [];
+  }
+}
+
 export async function publishTradeshowToCosmosDB(tradeshow: any): Promise<void> {
   const databaseId = 'SONA';
   const containerId = 'DataContainer';
   const database = client.database(databaseId);
   const container = database.container(containerId);
   try {
-    tradeshow.type = 'tradeshow_log';
-    const { resource } = await container.items.create(tradeshow);
-    console.log('Tradeshow published to Cosmos DB:', resource);
+    const tradeshowFound = await searchTradeshowLog(tradeshow);
+    //console.log(tradeshowFound)
+    if(tradeshowFound.length > 0)
+      console.log('Tradeshow Found')
+    else
+    {
+      tradeshow.type = 'tradeshow_log';
+      const { resource } = await container.items.create(tradeshow);
+      console.log('Tradeshow published to Cosmos DB:', resource);
+    }
   } catch (error) {
     console.error('Error publishing tradeshow to Cosmos DB:', error);
   }

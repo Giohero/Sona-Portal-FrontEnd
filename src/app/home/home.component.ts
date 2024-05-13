@@ -6,7 +6,7 @@ import { Color, ScaleType } from '@swimlane/ngx-charts';
 import { catchError, mergeMap, of, retry, retryWhen, switchMap, tap, throwError, timer } from 'rxjs';
 import { SnackbarsComponent } from '../snackbars/snackbars.component';
 import { MatDialog } from '@angular/material/dialog';
-import {getTradeshowLogs } from '../service/cosmosdb.service';
+import {getTradeshowLogs, publishTradeshowToCosmosDB } from '../service/cosmosdb.service';
 import { AuthService } from '../service/auth.service';
 import { IndexDbService } from '../service/index-db.service';
 import { GeolocationService } from '../service/geolocation.service';
@@ -29,7 +29,8 @@ export class HomeComponent {
   singleBar:any;
   showIndex = false;
   nameAzure = '';
-
+  usernameAzure = ''
+  tradeshow = '';
 
   // options
   showXAxis = false;
@@ -81,27 +82,16 @@ export class HomeComponent {
   }
 
   async ngOnInit(): Promise<void> {
-    try {
-      this.location = await this.geoService.getLocation();
-      const { latitude, longitude } = this.location.coords;
-      const address = await this.geoService.getAddress(latitude, longitude).toPromise();
-      console.log('Location:', address.display_name);
-      console.log(address)
-      console.log(address.address.country + ', ' + address.address.state)
 
-    } catch (error) {
-      console.error('Error obtaining location or address', error);
-    }
-    // this.orderService.getItems().subscribe((retData) => {
-    //   if (parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) < 300) {
-    //     this.ListItems = JSON.parse(retData.response!);
-    //     // Llama a getOrderLogDataComparation aquí después de obtener los items
-    //     this.getOrderLogDataComparation();
-    //   } else {
-    //     console.log(retData.response);
-    //     console.log('Error');
-    //   }
-    // });
+    this.auth.userAzure$.subscribe(
+      (username: string) => {
+        this.usernameAzure = username
+      },
+      (error: any) => {
+        this.usernameAzure = ''
+      }
+    );
+
     this.auth.nameAzure$.subscribe(
       (username: string) => {
         this.nameAzure = username.split(' ')[0]
@@ -120,8 +110,38 @@ export class HomeComponent {
     else
       this.showIndex = true
     this.getOrderLogDataComparation()
+    this.tradeShowChecking()
     // var ListTradeshows = await getTradeshowLogs()
     // console.log(ListTradeshows);
+  }
+
+  async tradeShowChecking(){
+    try {
+      this.location = await this.geoService.getLocation();
+      const { latitude, longitude } = this.location.coords;
+      const address = await this.geoService.getAddress(latitude, longitude).toPromise();
+      //console.log('Location:', address.display_name);
+      //console.log(address)
+      //console.log(address.address.country + ', ' + address.address.state)
+      this.tradeshow = address.address.country + ', ' + address.address.state
+      
+      if (this.tradeshow.trim() !== '') {
+        publishTradeshowToCosmosDB({ 
+          name: this.tradeshow, 
+          created_date: new Date(),
+          email: this.usernameAzure,  
+          type: 'tradeshow_log'
+        }).then(() => {
+          console.log('ready')
+        }).catch(error => {
+          console.error('Failed to publish tradeshow to Cosmos DB:', error);
+        });
+      }
+
+
+    } catch (error) {
+      console.error('Error obtaining location or address', error);
+    }
   }
 
   onSelectMaterial(selectedData: any){
