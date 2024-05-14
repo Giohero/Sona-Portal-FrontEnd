@@ -11,6 +11,8 @@ import { catchError, mergeMap, retryWhen, throwError, timer,retry, of, switchMap
 import { error } from 'jquery';
 import { OrderEditComponent } from '../order-edit/order-edit.component';
 import { getTradeshowLogs } from '../service/cosmosdb.service';
+import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
+
 
 @Component({
   selector: 'app-order-index',
@@ -79,10 +81,11 @@ export class OrderIndexComponent {
   // Métodos
   showRealOrders() {
     this.showRealOrdersFlag = true;
-    this.searchOrder = ""
+    this.searchOrder = undefined
     this.pagedItems = this.ListOrders
+    this.reloadAll();
   }
-
+  
   showDraftOrders() {
     this.showRealOrdersFlag = false;
     this.searchOrder = ""
@@ -93,12 +96,12 @@ export class OrderIndexComponent {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  optionSelected(option: string) {
-    console.log('Option selected:', option);
-    if(option === 'Option1'){
-      this.sortOrders();
-    }
-  }
+  // optionSelected(option: string) {
+  //   console.log('Option selected:', option);
+  //   if(option === 'Option1'){
+  //     this.sortOrders();
+  //   }
+  // }
 
   sortOrders() {
     this.ListOrders.sort((a, b) => b.DocNum - a.DocNum);
@@ -398,5 +401,22 @@ export class OrderIndexComponent {
       dialogRef.close();
     }, 5000); 
   }
- 
+
+  GetTradeshow(tradeshowName: string) {
+    console.log('Tradeshow seleccionado:', tradeshowName);
+    this.service.GetTradeshowByOrders(tradeshowName).subscribe(
+      retData => {
+        if(parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) <= 300){
+          this.ListOrders = JSON.parse(retData.response!);
+            this.pagedItems = this.ListOrders
+             //console.log('ListOrders:', this.ListOrders);
+              this.sortOrders();
+        }else{
+          console.log(retData.response)
+        }
+        console.log(retData)
+      }
+    );
+  }
+
 }

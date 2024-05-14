@@ -250,4 +250,15 @@ export class ServiceService {
         })
     );
   }
+
+  GetTradeshowByOrders(U_Tradeshow:string): Observable<INResponse> {
+    //console.log(this.auth.getAccessToken())
+    // console.log(U_Tradeshow)
+    return this.getHeaders().pipe(
+      mergeMap((headers) => this.myhttp.get<INResponse>(
+        this.myappurlcosmos + this.myapiurl + 'GetOrdersByTradeshow?Tradeshow=\'' + U_Tradeshow + '\'',
+        { headers }
+      ))
+    );
+  }
 }

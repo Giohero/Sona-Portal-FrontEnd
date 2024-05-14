@@ -31,7 +31,7 @@
         <mat-icon>arrow_drop_down_circle</mat-icon>
         <span *ngIf="!isSmallScreen">Tradeshow</span>
         <mat-menu #menu="matMenu">
-          <div *ngFor="let tradeshow of tradeshowList" mat-menu-item (click)="optionSelected(tradeshow.name)">
+          <div *ngFor="let tradeshow of tradeshowList" mat-menu-item (click)="GetTradeshow(tradeshow.name)">
             {{ tradeshow.name }}
           </div>
         </mat-menu>
