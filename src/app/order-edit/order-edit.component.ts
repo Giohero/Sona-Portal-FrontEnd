@@ -23,6 +23,7 @@ import { BusinessPartner } from '../models/customer';
 import { ScannerItemComponent } from '../scanner-item/scanner-item.component';
 import { Subscription } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { GeolocationService } from '../service/geolocation.service';
 
 
 declare var bootstrap: any; 
@@ -64,6 +65,7 @@ export class OrderEditComponent implements OnInit {
   textConcatenaded= '';
   ItemBar: Value | undefined;
   currentTab: string = '';
+  tradeshow ='';
 
 
   @ViewChild('Scanner-item') modal: any;
@@ -81,7 +83,8 @@ export class OrderEditComponent implements OnInit {
     private router: Router,
     private custService:IndexCustomersService,
     private itemsService:IndexItemsService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private geoService: GeolocationService
     ) {
   
     
@@ -262,6 +265,10 @@ export class OrderEditComponent implements OnInit {
         this.nameAzure = ''
       }
     );
+
+    this.geoService.tradeshow$.subscribe((newTradeshowLocation) => {
+      this.tradeshow = newTradeshowLocation
+    })
 
     //console.log(this.OrderIndexDB)
     if(this.OrderIndexDB == undefined || this.indexDBNumber == undefined)
@@ -975,6 +982,7 @@ export class OrderEditComponent implements OnInit {
       }
     );
   }
+
 
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
