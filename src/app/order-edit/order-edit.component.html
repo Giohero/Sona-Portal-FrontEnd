@@ -87,6 +87,28 @@
         <ng-container>
           <ng-container *ngIf="order">
             <!-- Tarjeta para mostrar todos los elementos de DocumentLines -->
+            <mat-card class="mat-card expansion ">
+              <mat-card-header>
+                <h2 class="h2Mat">Add Item <mat-icon> local_mall</mat-icon></h2>
+              </mat-card-header>
+              <mat-card-content class="grid-container">
+                    <div class="label-container">
+                      <label class="label">Search by name:</label>
+                      <input type="text" class="boxCustom" id="search-text-item" aria-describedby="search-text" 
+                      [(ngModel)]="searchTextItem" placeholder="Enter text to search" 
+                      autofocus [matAutocomplete]="autoItem" >
+      
+                      <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" >
+                        <mat-option *ngFor="let c of ListItems| appFilter: searchTextItem"  value="{{c.ItemCode}}"  class="optionList" >
+                          {{c.ItemCode}} - {{c.ItemName}}
+                        </mat-option>
+                      </mat-autocomplete> 
+                    </div>
+                    <br>
+                    <button class="add-button" (click)="OpenModal('add')">Add</button>
+                </mat-card-content> 
+            </mat-card>
+            <br>
             <mat-card class="mat-card">
               <mat-card-content>
                 <div class="button-container">

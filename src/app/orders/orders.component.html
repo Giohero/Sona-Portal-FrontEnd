@@ -134,34 +134,17 @@
           </mat-card-content>
     </mat-card>
       </div>
-      <!-- SELECT TRADESHOW -->
-      <div fxFlex="49" fxFlex.xs="100">
-        <mat-card class="mat-card2">
-          <mat-card-header> 
-            <mat-card-title><h2 class="h2Mat">Tradeshow <i class="fas fa-handshake"></i></h2></mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <select matNativeControl class="form-select" aria-label="Default select example" [(ngModel)]="selectedOption" (change)="changeTradeShow(selectedOption, 'tradeshow')">
-              <option value="" disabled selected hidden>{{ selectedOption || 'Select Tradeshow' }}</option>
-              <option *ngFor="let tradeshow of tradeshowList" [value]="tradeshow.name">{{ tradeshow.name }}</option>
-              <option *ngFor="let tradeshow of tradeshowList">{{ tradeshow }}</option>
-            </select>
-            <!-- <p> Selected car: {{selectedOption}} </p> -->
-            <br>
-           
-              <!-- Add New TRADESHOW -->
-                <div *ngIf="showNewTradeshowForm">
-                  <div class="label-container">
-                    <label class="label">Tradeshow Name:</label>
-                    <input type="text" class="boxCustom" [(ngModel)]="newTradeshowName" placeholder="Enter New TradeShow Name">
-                  </div>
-                </div>
-                <!-- Toggle button to show/hide the Add Tradeshow form -->
-              <br>  
-              <button (click)="toggleNewTradeshowForm()">{{ addNewTradeshowButtonText }}</button>
+       <!-- SELECT TRADESHOW -->
+       <div fxFlex="45" fxFlex.xs="100" >
+            <mat-card class="mat-card2">
+              <mat-card-header> 
+                <mat-card-title><h2 class="h2Mat">Tradeshow <i class="fas fa-handshake"></i></h2></mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <label class="label">Tradeshow: <span class="tradeshow-text">{{tradeshow}}</span> </label>
               </mat-card-content>
-            </mat-card>
-        </div>
+           </mat-card>
+       </div>
     </mat-tab>
  
   <mat-tab label="List Items">
@@ -178,7 +161,7 @@
                 [(ngModel)]="searchTextItem" placeholder="Enter text to search" 
                 autofocus [matAutocomplete]="autoItem" >
 
-                <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'" (optionSelected)="onSelectItem($event.option.value)">
+                <mat-autocomplete #autoItem="matAutocomplete" [panelWidth]="'autoItem'">
                   <mat-option *ngFor="let c of ListItems| appFilter: searchTextItem"  value="{{c.ItemCode}}"  class="optionList" >
                     {{c.ItemCode}} - {{c.ItemName}}
                   </mat-option>

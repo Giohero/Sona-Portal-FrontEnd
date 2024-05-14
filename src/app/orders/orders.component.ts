@@ -26,6 +26,7 @@ import { getTradeshowLogs } from '../service/cosmosdb.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { GeolocationService } from '../service/geolocation.service';
 
 @Component({
   selector: 'app-orders',
@@ -54,8 +55,8 @@ export class OrdersComponent {
   usernameAzure ='';
   errorStatus = '';
   selectedOption: string = '';
-  tradeshowList: any[] = [];
   newTradeshowName: string = '';
+  tradeshow ='';
   
   ////Customer Data///////
   ListCustomers!: BusinessPartner[] ;
@@ -111,7 +112,7 @@ export class OrdersComponent {
 
   //Add status: index, cloud, complete
 
-  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService, private custService:IndexCustomersService, private itemsService:IndexItemsService, private cdr: ChangeDetectorRef) 
+  constructor(private router: Router, private orderService: ServiceService, private route: ActivatedRoute, private dialog: MatDialog,private myRouter: Router, private _snackBar: MatSnackBar, private dataSharing: DataSharingService, private indexDB:IndexDbService, private pipe: DatePipe, private msalService: MsalService, private auth: AuthService, private custService:IndexCustomersService, private itemsService:IndexItemsService, private cdr: ChangeDetectorRef, private geoService: GeolocationService) 
   {
     const currentYear = new Date();
     this.minDate = new Date(currentYear);
@@ -324,8 +325,8 @@ export class OrdersComponent {
       this.titleloaded = true;
       //console.log("cargó");
     }, 1000);
-    this.tradeshowList = await getTradeshowLogs();
-    this.tradeshowList.unshift({name: "None"})
+    // this.tradeshowList = await getTradeshowLogs();
+    // this.tradeshowList.unshift({name: "None"})
     //console.log(this.tradeshowList);
 
     //this.ShowEdit = "none"
@@ -358,6 +359,10 @@ export class OrdersComponent {
     this.dataSharing.docEntry$.subscribe((newDocEntry) => {
       this.DocEntryPublish = newDocEntry.toString();
     });
+
+    this.geoService.tradeshow$.subscribe((newTradeshowLocation) => {
+      this.tradeshow = newTradeshowLocation
+    })
   }
 
   async getInformationByIndex()
@@ -393,34 +398,6 @@ export class OrdersComponent {
       dialogRef.close();
     }, 5000); 
   }
-
-  
-  toggleNewTradeshowForm(): void {
-    if (this.showNewTradeshowForm) {
-      if (this.newTradeshowName.trim() !== '') {
-        // Llamar a publishTradeshowToCosmosDB 
-        publishTradeshowToCosmosDB({ 
-          name: this.newTradeshowName, 
-          created_date: new Date(),
-          email: this.usernameAzure,  
-          type: 'tradeshow_log'
-        }).then(() => {
-          this.tradeshowList.push(this.newTradeshowName);
-          this.newTradeshowName = '';
-        }).catch(error => {
-          // Si la publicación en Cosmos DB falló, mostramos un mensaje de error
-          console.error('Failed to publish tradeshow to Cosmos DB:', error);
-        });
-      }
-      this.showNewTradeshowForm = false;
-      this.addNewTradeshowButtonText = 'Add New TradeShow';
-    } else {
-      this.showNewTradeshowForm = true;
-      this.addNewTradeshowButtonText = 'Save TradeShow';
-    }
-  }
-
-
   changeTradeShow(tradeshow:any ,action:string)
   {
     console.log(action)

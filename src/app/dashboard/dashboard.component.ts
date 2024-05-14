@@ -15,6 +15,8 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { UsersAzure, UsersSR } from '../models/userSignalR';
 import { DialogRechargeComponent } from '../dialog-recharge/dialog-recharge.component';
+import { GeolocationService } from '../service/geolocation.service';
+import {getTradeshowLogs, publishTradeshowToCosmosDB } from '../service/cosmosdb.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,6 +35,8 @@ export class DashboardComponent {
   UsersAzure: UsersAzure = {};
   usernameAzure = '';
   nameAzure = '';
+  location: GeolocationPosition | null = null;
+  tradeshow = '';
   previousURL = '';
   dialogStyle={
     'margin': '3px'
@@ -40,7 +44,7 @@ export class DashboardComponent {
 
   //checar los estados de orders, sacar los que no tengan complete, y publicarlos
   //si hay una transaccion activa, no subirlo y primero checar si existe la orden en sap para actualizarlo
-  constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService, private auth: AuthService,private signalRService: SignalRService, private serviceItem:IndexItemsService, private router: Router, private signalr: SignalRService){
+  constructor(private msalService: MsalService, private dialog: MatDialog,private renderer: Renderer2, private indexDB: IndexDbService,private dataSharing: DataSharingService,private transLog: TransactionlogService, private auth: AuthService,private signalRService: SignalRService, private serviceItem:IndexItemsService, private router: Router, private signalr: SignalRService, private geoService: GeolocationService){
     //auth.getProfile()
     //auth.getTokenMSAL()
     //console.log("Rectificando si existe los items")
@@ -380,6 +384,8 @@ export class DashboardComponent {
         this.UsersAzure = newUsers;
     });
 
+    this.tradeShowChecking();
+
     this.router.events
     .pipe(filter(event => event instanceof NavigationEnd))
     .subscribe((event: any) => {
@@ -406,6 +412,38 @@ export class DashboardComponent {
         this.previousURL = event.url
     });
     //this.auth.initializeAuthState()
+  }
+
+  async tradeShowChecking(){
+    try {
+      this.location = await this.geoService.getLocation();
+      const { latitude, longitude } = this.location.coords;
+      const address = await this.geoService.getAddress(latitude, longitude).toPromise();
+      //console.log('Location:', address.display_name);
+      console.log(address)
+      //console.log(address.address.country + ', ' + address.address.state)
+      if(address.address.city != undefined)
+        this.tradeshow = address.address.country + ', ' + address.address.city
+      else
+        this.tradeshow = address.address.country + ', ' + address.address.state
+      
+      if (this.tradeshow.trim() !== '') {
+        publishTradeshowToCosmosDB({ 
+          name: this.tradeshow, 
+          created_date: new Date(),
+          email: this.usernameAzure,  
+          type: 'tradeshow_log'
+        }).then(() => {
+          console.log('ready')
+          this.geoService.getTradeshowLocation(this.tradeshow)
+        }).catch(error => {
+          console.error('Failed to publish tradeshow to Cosmos DB:', error);
+        });
+      }
+
+    } catch (error) {
+      console.error('Error obtaining location or address', error);
+    }
   }
 
   @HostListener('window:beforeunload', ['$event'])

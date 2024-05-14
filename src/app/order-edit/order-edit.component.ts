@@ -59,6 +59,7 @@ export class OrderEditComponent implements OnInit {
   ListCustomers?: BusinessPartner[] ;
   inputSearchCutomer = false
   searchText = '';
+  searchTextItem = '';
   captureActive= false;
   textConcatenaded= '';
   ItemBar: Value | undefined;
@@ -553,24 +554,64 @@ export class OrderEditComponent implements OnInit {
     this.updateOrder('Add_New_Item_' + Item.ItemCode, data);
   }
 
-  OpenModal(itemFound: Value): void{
-    const dialogRef = this.dialog.open(ScannerItemComponent,{
-      width: '550px',
-      height: 'auto',
-      data: {Item:itemFound, FreeText:''}
-    });
-
-    dialogRef.afterClosed().subscribe(result =>  {
-      console.log('Window closed', result)
-      
-      if(result != undefined && !Number.isNaN(result) && result != ''){
-        this.addItem(result);
-      }
-
-    })
-
-    // $(this.modal.nativeElement).modal('show');
+  cleanSearching()
+  {
+    // this.ItemName = ""; Descomentar despues
+    // this.Quantity = 0;
+    // this.Price = "";
+    this.searchTextItem = "";
   }
+
+  // OpenModal(itemFound: Value): void{
+    
+  //   const dialogRef = this.dialog.open(ScannerItemComponent,{
+  //     width: '550px',
+  //     height: 'auto',
+  //     data: {Item:itemFound, FreeText:''}
+  //   });
+
+  //   dialogRef.afterClosed().subscribe(result =>  {
+  //     console.log('Window closed', result)
+      
+  //     if(result != undefined && !Number.isNaN(result) && result != ''){
+  //       this.addItem(result);
+  //     }
+
+  //   })
+
+  //   // $(this.modal.nativeElement).modal('show');
+  // }
+
+  OpenModal(action: 'add' | 'update'){
+    if (this.currentTab === 'Order Lines') {
+      if(this.searchTextItem != "")
+      {
+          var ItemBar = this.ListItems.find(x => x.ItemCode === this.searchTextItem);
+          console.log(ItemBar);
+          if (ItemBar != undefined){
+            const dialogRef = this.dialog.open(ScannerItemComponent,{
+              width: '550px',
+              height: 'auto',
+              data: {Item:ItemBar, FreeText:'', Action: action}
+            });
+        
+            dialogRef.afterClosed().subscribe(result =>  {
+              console.log('Window closed', result)
+              
+              if(result != undefined && !Number.isNaN(result) && result != ''){
+              this.addItem(result);
+              }
+            })
+          }
+          else
+          {
+            this.openSnackBar("You have to select an Item", "warning", "Warning", "darkorange");
+          }
+      }
+    }
+  }
+
+
   async OpenModalEdit(itemSelect: DocumentLines, index: number){
     const itemFound = await this.itemsService.GetItemIndexbyBarCode(itemSelect.ItemCode);
         console.log(itemFound);
@@ -958,11 +999,12 @@ export class OrderEditComponent implements OnInit {
        console.log("Elmat-group texto ingresado es:", this.currentTab);
       if(this.currentTab == 'Order Lines')
       {
-       this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
-        console.log(this.ItemBar);
-        if (this.ItemBar != undefined){
-          this.OpenModal(this.ItemBar)
-        }
+      //  this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
+      //   console.log(this.ItemBar);
+      //   if (this.ItemBar != undefined){
+          
+      //   }
+      this.OpenModal('add')
       }
 
        this.textConcatenated = '';
