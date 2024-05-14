@@ -582,6 +582,12 @@ export class OrderEditComponent implements OnInit {
   //   // $(this.modal.nativeElement).modal('show');
   // }
 
+  isAnyDialogOpen(): boolean {
+    console.log(this.dialog.openDialogs.length > 0)
+    return this.dialog.openDialogs.length > 0;
+  }
+  
+
   OpenModal(action: 'add' | 'update'){
     if (this.currentTab === 'Order Lines') {
       if(this.searchTextItem != "")
@@ -600,13 +606,15 @@ export class OrderEditComponent implements OnInit {
               
               if(result != undefined && !Number.isNaN(result) && result != ''){
               this.addItem(result);
+              this.searchTextItem = ''
               }
             })
           }
-          else
-          {
-            this.openSnackBar("You have to select an Item", "warning", "Warning", "darkorange");
-          }
+          // else
+          // {
+          //   console.log('pasa por aqui')
+          //   this.openSnackBar("You have to select an Item", "warning", "Warning", "darkorange");
+          // }
       }
     }
   }
@@ -997,7 +1005,7 @@ export class OrderEditComponent implements OnInit {
      this.timeLastTimePressKey = setTimeout(async () => {
        console.log("El texto ingresado es:", this.textConcatenated);
        console.log("Elmat-group texto ingresado es:", this.currentTab);
-      if(this.currentTab == 'Order Lines')
+      if(this.currentTab == 'Order Lines' && this.isAnyDialogOpen() == false)
       {
       //  this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
       //   console.log(this.ItemBar);

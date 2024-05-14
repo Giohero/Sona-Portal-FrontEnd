@@ -55,7 +55,6 @@ export class OrdersComponent {
   usernameAzure ='';
   errorStatus = '';
   selectedOption: string = '';
-  newTradeshowName: string = '';
   tradeshow ='';
   
   ////Customer Data///////
@@ -106,8 +105,6 @@ export class OrdersComponent {
   // textConcatenated: string='';
   // timeLastTimePressKey: any;
   // ItemBar: Value | undefined;
-  showNewTradeshowForm: boolean = false;
-  addNewTradeshowButtonText: string = 'Add New TradeShow';
   titleloaded : boolean = false;
 
   //Add status: index, cloud, complete
@@ -175,7 +172,7 @@ export class OrdersComponent {
       this.DocNumPublish = orderSaveCache.DocNum;
       this.DocEntryPublish = orderSaveCache.DocEntry;
       this.errorStatus = orderSaveCache.ErrorStatus;
-      this.selectedOption = orderSaveCache.U_Tradeshow;
+      //this.selectedOption = orderSaveCache.U_Tradeshow;
       this.Cart = orderSaveCache.DocumentLines;
       this.dataSharing.updateIdsOrder(orderSaveCache.DocNum, orderSaveCache.DocEntry)
       this.dataSharing.updateCart(orderSaveCache.DocumentLines)
@@ -202,7 +199,8 @@ export class OrdersComponent {
           Quantity: element.Quantity,
           TaxCode: '',
           FreeText: element.FreeText,
-          LineNum: element.LineNum
+          LineNum: element.LineNum,
+          UnitPrice: element.UnitPrice
         })
       });
 
@@ -397,12 +395,6 @@ export class OrdersComponent {
     setTimeout(() => {
       dialogRef.close();
     }, 5000); 
-  }
-  changeTradeShow(tradeshow:any ,action:string)
-  {
-    console.log(action)
-    console.log(tradeshow)
-    this.changeOrder(undefined, undefined, action)
   }
 
   finishOrder(){
@@ -941,6 +933,11 @@ export class OrdersComponent {
   }
 }
 
+isAnyDialogOpen(): boolean {
+  console.log(this.dialog.openDialogs.length > 0)
+  return this.dialog.openDialogs.length > 0;
+}
+
 OpenModal(action: 'add' | 'update'){
   if (this.currentTab === 'List Items') {
     if(this.searchTextItem != "")
@@ -972,8 +969,6 @@ OpenModal(action: 'add' | 'update'){
     }
   }
 }
-  
-
 
   addToCart(){
     if(this.ItemName != "")
@@ -1088,7 +1083,7 @@ OpenModal(action: 'add' | 'update'){
 
     OrderNewCache.DocNum = this.DocNumPublish;
     OrderNewCache.DocEntry = this.DocEntryPublish;
-    OrderNewCache.U_Tradeshow = this.selectedOption;
+    OrderNewCache.U_Tradeshow = this.tradeshow;
     OrderNewCache.ErrorStatus = this.errorStatus;
     OrderNewCache.DocumentLines = this.Cart;
 
@@ -1134,6 +1129,7 @@ OpenModal(action: 'add' | 'update'){
     const dateDefault = this.pipe.transform(today, 'yyyy-MM-dd');
     this.OrderReview!.DocDate = dateDefault?.toString();
     this.OrderReview!.TaxDate = dateDefault?.toString();
+    this.OrderReview!.U_Tradeshow = this.tradeshow
     // this.OrderReview.DiscountPercent = 0.0;
     //Add Ddefault delivery date
     const dateDelivery = this.pipe.transform(this.delivery.value, 'yyyy-MM-dd');
@@ -1174,13 +1170,6 @@ OpenModal(action: 'add' | 'update'){
       }
       else if(action === 'discount') {  
        this.updateDiscounts();
-      }
-      else if(action === "tradeshow")
-      {
-        if(this.selectedOption != "None")
-          this.OrderReview!.U_Tradeshow =this.selectedOption;
-        else
-          this.OrderReview!.U_Tradeshow = ''
       }
       // console.log('Orden antes de enviar a SAP/Cosmos DB:', JSON.stringify(this.OrderReview, null, 2));
       //delete this.OrderReview!.U_Tradeshow;
@@ -1264,6 +1253,9 @@ OpenModal(action: 'add' | 'update'){
         order![index!].IconSap=false;
 
       this.OrderReview!.DocumentLines = this.Cart;
+      this.OrderReview!.DocumentLines?.forEach((x) => {
+        delete x.LineTotal;
+      })
       this.dataSharing.setCartData(this.Cart);
       
       if(this.Cart!.length! === 1 && this.OrderIndexDB === undefined)
@@ -1322,7 +1314,6 @@ OpenModal(action: 'add' | 'update'){
             ItemCode: element.ItemCode,
             Quantity: element.Quantity,
             TaxCode: '',
-            LineTotal: element.LineTotal,
             UnitPrice: element.UnitPrice,
             FreeText: element.FreeText,
             LineNum:element.LineNum,
@@ -1542,7 +1533,7 @@ OpenModal(action: 'add' | 'update'){
      this.timeLastTimePressKey = setTimeout(async () => {
        console.log("El texto ingresado es:", this.textConcatenated);
        
-      if(this.currentTab == 'List Items')
+      if(this.currentTab == 'List Items' && this.isAnyDialogOpen() == false)
       {
        this.ItemBar = await this.itemsService.GetItemIndexbyBarCode(this.textConcatenated);
         console.log(this.ItemBar);

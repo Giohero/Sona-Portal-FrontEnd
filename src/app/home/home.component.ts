@@ -102,6 +102,10 @@ export class HomeComponent {
       }
     );
 
+    this.geoService.tradeshow$.subscribe((newTradeshowLocation) => {
+      this.tradeshow = newTradeshowLocation
+    })
+
     var resultsIndex = await this.indexDB.getDataOrdersInformation()
     if(resultsIndex != null)
     {

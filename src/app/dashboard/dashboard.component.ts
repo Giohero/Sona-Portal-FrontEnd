@@ -427,6 +427,8 @@ export class DashboardComponent {
       else
         this.tradeshow = address.address.country + ', ' + address.address.state
       
+      this.tradeshow = this.tradeshow.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+
       if (this.tradeshow.trim() !== '') {
         publishTradeshowToCosmosDB({ 
           name: this.tradeshow, 
