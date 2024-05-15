@@ -41,6 +41,7 @@ export class OrderIndexComponent {
   pagedDraft: any[] = [];
   tradeshowList: any[] = [];
   titleloaded : boolean = false;
+  title : string = 'Orders';
 
   constructor(private orderService: ServiceService, 
     private renderer: Renderer2,
@@ -84,12 +85,17 @@ export class OrderIndexComponent {
     this.searchOrder = undefined
     this.pagedItems = this.ListOrders
     this.reloadAll();
+    this.title = 'Orders';
+  }
+  changeTitle(newTtitle: string){
+    this.title = newTtitle;
   }
   
   showDraftOrders() {
     this.showRealOrdersFlag = false;
     this.searchOrder = ""
     this.pagedDraft = this.ListOrdersDrafts
+    this.title = 'Draft Orders'
   }
 
   dropDownList(){
@@ -404,6 +410,7 @@ export class OrderIndexComponent {
 
   GetTradeshow(tradeshowName: string) {
     console.log('Tradeshow seleccionado:', tradeshowName);
+    this.isLoading = true;
     this.service.GetTradeshowByOrders(tradeshowName).subscribe(
       retData => {
         if(parseInt(retData.statusCode!) >= 200 && parseInt(retData.statusCode!) <= 300){
@@ -415,8 +422,9 @@ export class OrderIndexComponent {
           console.log(retData.response)
         }
         console.log(retData)
+        this.isLoading = false;
       }
     );
+    this.title = tradeshowName;
   }
-
 }
