@@ -1266,7 +1266,7 @@ OpenModal(action: 'add' | 'update'){
         if(index != undefined)
           order![index!].IconIndexDb=true;
         this.idIndex = this.OrderIndexDB.id;
-        this.OrderReview!.NumAtCard = this.OrderIndexDB.id;
+        //this.OrderReview!.NumAtCard = this.OrderIndexDB.id;
 
         this.OrderReviewCopy = {};
         this.OrderReviewCopy.IdIndex = this.OrderIndexDB.id;

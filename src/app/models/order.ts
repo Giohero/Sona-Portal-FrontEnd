@@ -15,6 +15,7 @@ export interface Order {
     DocTotal: number 
     Comments: any
     U_INN_Cust_Portal: any
+    U_Tradeshow: string
     DocumentLines: DocumentLines[]
     ShipToCode: any
     AddressExtension: any

@@ -175,7 +175,7 @@ export async function searchTradeshowLog(tradeshow:any) {
   const container = database.container(containerId);
 
   try {
-    console.log(tradeshow)
+    //console.log(tradeshow)
     const querySpec = 'SELECT * FROM c WHERE c.type = \'tradeshow_log\' AND c.name = \''+ tradeshow.name + '\'';
     const { resources } = await container.items.query(querySpec).fetchAll();
 

@@ -132,7 +132,7 @@ export class AuthService implements OnInit {
         var account = this.msalService.instance.getAccountByLocalId(profile.id!)
         this.getToken(account!.idToken!)
         this.msalService.instance.setActiveAccount(account)
-        this.getTokenMSAL()
+        //this.getTokenMSAL()
         //this.signalRService.startConnection();
       });
   }

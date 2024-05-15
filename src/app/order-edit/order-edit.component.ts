@@ -128,8 +128,8 @@ export class OrderEditComponent implements OnInit {
       const DocDueDate = new Date(this.order!.DocDueDate);
       DocDueDate.setMinutes(DocDueDate.getMinutes() + DocDueDate.getTimezoneOffset());
       this.delivery = new FormControl(DocDueDate);
-        //console.log(this.delivery)  
-      if(this.OrderIndexDB.error != '')
+      console.log(JSON.stringify(this.OrderIndexDB.error))  
+      if(this.OrderIndexDB.error != '' && this.OrderIndexDB.error != undefined)
       {
         const ErrorString =  JSON.parse(this.OrderIndexDB.error);
         this.errorStatus = ErrorString.error.message.value
@@ -147,7 +147,7 @@ export class OrderEditComponent implements OnInit {
     else
     {
       var orderSave = localStorage.getItem('OrderSave');
-      //console.log(orderSave)
+      console.log(orderSave)
       if(orderSave != null)
       {
         const OrderComplete = JSON.parse(orderSave)
@@ -371,7 +371,7 @@ export class OrderEditComponent implements OnInit {
   {
     try
     {
-      //this.ListCustomers = await this.custService.RetrieveCustomersIndex();
+      this.ListCustomers = await this.custService.RetrieveCustomersIndex();
       //console.log(this.ListCustomers)
       this.ListItems = await this.itemsService.RetrieveItemsIndex();
       //console.log(this.ListItems)
@@ -401,6 +401,14 @@ export class OrderEditComponent implements OnInit {
     }, 5000); 
   }
 
+  customerDisable(order: Order)
+  {
+    if(order.CardCode == '' || order.CardCode == undefined)
+      return false;
+    else
+      return true;
+  }
+
   onSelectItem(selectedData: any, item: DocumentLines)
   {
     if (selectedData != undefined)
@@ -421,6 +429,7 @@ export class OrderEditComponent implements OnInit {
       this.inputSearchCutomer = true;
    
       var data = JSON.stringify({Customer: order.CardName, CustomerCode: order.CardCode});
+      this.cloudChange = "cloud_queue";
       this.updateOrder('Change_Customer', data)
     //this.changeOrder(undefined, undefined, 'customer')
   }
@@ -524,7 +533,16 @@ export class OrderEditComponent implements OnInit {
     let sumLines = this.order && this.order.DocumentLines ? this.order.DocumentLines
       .reduce((acum: number, elemento: any) => {
         const unitPrice = elemento.UnitPrice !== undefined ? parseFloat(elemento.UnitPrice.toString()) : 0;
-        const lineTotal = unitPrice > 0 ? parseFloat(elemento.LineTotal.toString()) : 0;
+        //console.log(elemento.LineTotal)
+        let lineTotal = 0;
+        if(elemento.LineTotal != undefined)
+          lineTotal = unitPrice > 0 ? parseFloat(elemento.LineTotal.toString()) : 0;
+        else
+        {
+          lineTotal = unitPrice * elemento.Quantity;
+          elemento.LineTotal = unitPrice * elemento.Quantity;
+        }
+
         return acum + lineTotal;
       }, 0) : 0;
   
@@ -898,11 +916,12 @@ export class OrderEditComponent implements OnInit {
             .catch((error) => {
               this.cloudChange = "cloud_off";
               console.error('Error:', error);
+              this.auth.getTokenMSAL()
             });
           }
           else
           {
-            this.cloudChange = 'cloud_done';
+           // this.cloudChange = 'cloud_done';
 
             webWorker('postOrder',OrderPost, this.tokenAzure).then((data) => {
               //console.log('Valor devuelto por el Web Worker:', data);
@@ -936,6 +955,7 @@ export class OrderEditComponent implements OnInit {
             .catch((error) => {
               //this.actualicon = 'cloud_off';
               this.cloudChange = 'cloud_off';
+              this.auth.getTokenMSAL()
               console.error('Error:', error);
             });
           }

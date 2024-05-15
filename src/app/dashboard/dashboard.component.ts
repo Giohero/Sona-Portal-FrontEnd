@@ -421,13 +421,13 @@ export class DashboardComponent {
       const address = await this.geoService.getAddress(latitude, longitude).toPromise();
       //console.log('Location:', address.display_name);
       console.log(address)
-      //console.log(address.address.country + ', ' + address.address.state)
+      console.log(address.address.country + ', ' + address.address.state)
       if(address.address.city != undefined)
         this.tradeshow = address.address.country + ', ' + address.address.city
       else
         this.tradeshow = address.address.country + ', ' + address.address.state
       
-      this.tradeshow = this.tradeshow.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      //this.tradeshow = this.tradeshow.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 
       if (this.tradeshow.trim() !== '') {
         publishTradeshowToCosmosDB({ 
@@ -436,7 +436,7 @@ export class DashboardComponent {
           email: this.usernameAzure,  
           type: 'tradeshow_log'
         }).then(() => {
-          console.log('ready')
+          //console.log('ready')
           this.geoService.getTradeshowLocation(this.tradeshow)
         }).catch(error => {
           console.error('Failed to publish tradeshow to Cosmos DB:', error);

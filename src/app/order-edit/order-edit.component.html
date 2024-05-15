@@ -33,6 +33,7 @@
           <i class="bi bi-person-raised-hand" style="color: black;"></i>
         </div>
       </div>
+      <span *ngIf="errorStatus != ''" style="color: rgb(177, 0, 0);"><b>Error Sap:</b> {{errorStatus}}</span>
 <mat-tab-group (selectedTabChange)="onTabChanged($event)" color="warn">
   <mat-tab label="Order Information"><br>
     <ng-container *ngIf="order">
@@ -47,7 +48,7 @@
             </div>
             <div class="label-container">
               <label class="label">Card Name:</label>
-              <input type="text" class="boxCustom" [matAutocomplete]="autoC" [(ngModel)]="order.CardName" [disabled]="true">
+              <input type="text" class="boxCustom" [matAutocomplete]="autoC" [(ngModel)]="order.CardName" [disabled]="customerDisable(order)">
               <!-- <button  class="custom-button" *ngIf="inputSearchCutomer" (click)="changeCustomer(order)">Change Customer</button> -->
               <mat-autocomplete #autoC="matAutocomplete" [panelWidth]="'auto'" (optionSelected)="onSelectCustomer($event.option.value, order)">
                 <mat-option *ngFor="let c of ListCustomers!| appFilterC: order.CardName"  value="{{c.CardName}}"  class="optionList" >
@@ -88,7 +89,7 @@
             <mat-card-title><h2 class="h2Mat">Tradeshow <i class="fas fa-handshake"></i></h2></mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <label class="label">Tradeshow: <span class="tradeshow-text">{{tradeshow}}</span> </label>
+            <label class="label">Tradeshow: <span class="tradeshow-text">{{order.U_Tradeshow}}</span> </label>
           </mat-card-content>
        </mat-card>
    </div>
@@ -163,13 +164,6 @@
   </mat-tab>
 
 </mat-tab-group>
-      <div>
-        <span *ngIf="errorStatus != ''" style="color: rgb(177, 0, 0);"><b>Error Sap:</b> {{errorStatus}}</span>
-      </div>
-     
-        <!-- Tarjetas para elementos de DocumentLines -->
-        <!-- Verificar si order estÃ¡ definido antes de mostrarlo -->
-        
     </div>
   </div>
 

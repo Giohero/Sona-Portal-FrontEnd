@@ -28,7 +28,7 @@ export class GeolocationService {
 
   getTradeshowLocation(newTradeshowLocation:string): void {
     //console.log(newToken)
-    console.log(newTradeshowLocation)
+    //console.log(newTradeshowLocation)
     this.Tradeshow.next(newTradeshowLocation);
   }
 

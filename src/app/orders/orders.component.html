@@ -237,7 +237,7 @@
 <br>
 
 <!-- <button class="button-container" *ngIf="Cart!.length > 0 && currentTab === 'List Items'" (click)="finishOrder()" [disabled]="idIndex === 0" >Finish Order</button> -->
-<button class="button-container" *ngIf="Cart!.length > 0" (click)="finishOrder()" style="margin-left: 35px;" >Finish Order</button>
+<button class="button-container" *ngIf="Cart!.length > 0 || searchText != '' " (click)="finishOrder()" style="margin-left: 35px;" >Finish Order</button>
 </div>
 <mat-card-actions class="footer"  *ngIf="itemsAdded" align="end" >
   <mat-divider></mat-divider>

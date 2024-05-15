@@ -7,6 +7,7 @@ import { BusinessPartner } from '../models/customer';
 import { Order } from '../models/car';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
+import { MsalService } from '@azure/msal-angular';
 
 @Injectable({
   providedIn: 'root'
@@ -49,7 +50,6 @@ export class ServiceService {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`
             });
-            //console.log(headers)
             observer.next(headers);
           } else {
             observer.next(new HttpHeaders());
@@ -57,6 +57,7 @@ export class ServiceService {
         },
         (error) => {
           observer.error(error);
+          this.auth.getTokenMSAL()
         }
       );
     });
