@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "SonaPortal:build:production"
+              "buildTarget": "SonaPortal:build:production"
             },
             "development": {
-              "browserTarget": "SonaPortal:build:development"
+              "buildTarget": "SonaPortal:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +82,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "SonaPortal:build"
+            "buildTarget": "SonaPortal:build"
           }
         },
         "test": {
